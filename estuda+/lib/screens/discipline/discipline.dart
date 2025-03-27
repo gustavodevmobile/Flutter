@@ -9,6 +9,7 @@ import 'package:estudamais/service/service.dart';
 import 'package:estudamais/widgets/animated_button_retangulare.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
+import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackBar.dart';
 
 import 'package:flutter/material.dart';
@@ -140,33 +141,7 @@ class _DisciplineState extends State<Discipline> {
               showSnackBar(context, 'Selecione uma disciplina para continuar.',
                   Colors.red);
             } else {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => Dialog.fullscreen(
-                        backgroundColor: const Color.fromARGB(6, 255, 255, 255),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Center(
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.white,
-                                color: Colors.indigo,
-                                strokeAlign: 8,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: Text(
-                                'Carregando...',
-                                style: GoogleFonts.aboreto(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ));
+              showLoadingDialog(context, 'Buscando questões...');
               fetchQuestionsByDiscipline((questions) {
                 if (!mounted) return;
                 if (questions.isNotEmpty) {
@@ -192,44 +167,6 @@ class _DisciplineState extends State<Discipline> {
                 if (!mounted) return;
                 showSnackBar(context, errorMessage, Colors.red);
               });
-              // try {
-              //   final scaffoldMesseger = ScaffoldMessenger.of(context);
-
-              //   // este metodo recebe como paramêtro uma Lista de disciplinas que foram selecionadas e retorna as questões das disciplinas selecionadas,exceto as questões com os ids já respondidos;
-              //   List<ModelQuestions> questionsByDiscipline = await service
-              //       .getQuestionsByDiscipline(listDisciplinesSelected);
-              //   for (var question in questionsByDiscipline) {
-              //     //pega as disciplinas e enviar para SchoolYear
-              //     //listDisciplines.add(question.discipline);
-              //     // pega os anos e e enviar para SchoolYear
-              //     showListSchoolYears.add(question.schoolYear);
-              //   }
-              //   //print('questions $questionsByDiscipline');
-
-              //   if (questionsByDiscipline.isNotEmpty) {
-              //     Routes().popRoutes(
-              //       context,
-              //       SchoolYears(
-              //         questionsByDisciplines: questionsByDiscipline,
-              //         disciplines: listDisciplinesSelected..sort(),
-              //         schoolYears: showListSchoolYears.toSet().toList()..sort(),
-              //       ),
-              //     );
-              //   } else {
-              //     scaffoldMesseger.showSnackBar(const SnackBar(
-              //       content: Text(
-              //           'Todas as questões desta discilina já foram respondidas.'),
-              //       backgroundColor: Colors.blue,
-              //     ));
-              //     Navigator.pop(context);
-              //   }
-              // } catch (err) {
-              //   showSnackBar(
-              //     context,
-              //     'Ops, algo deu errado, tente novamente mais tarde.',
-              //     Colors.red,
-              //   );
-              // }
             }
           },
           child: const ButtonNext(

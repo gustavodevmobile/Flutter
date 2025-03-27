@@ -1,7 +1,8 @@
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/models.dart';
-import 'package:estudamais/service/service_questions_corrects/providers/questions_corrects_providers.dart';
+import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/service_questions_corrects/questions_corrects.dart';
+import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,7 @@ class ExpandedCorrects extends StatefulWidget {
 
 class _ExpandedCorrectsState extends State<ExpandedCorrects> {
   bool enable = false;
-  QuestionsCorrects questionsCorrects = QuestionsCorrects();
+  ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
   List<Map<String, dynamic>> listMapSubjectsAndSchoolYear = [];
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class _ExpandedCorrectsState extends State<ExpandedCorrects> {
                 setState(
                   () {
                     listMapSubjectsAndSchoolYear =
-                        questionsCorrects.showSubjectsAndSchoolyeaCorrects(
+                        questionsCorrects.showSubjectsAndSchoolyear(
                       widget.discipline[index],
                       widget.resultQuestions,
                     );

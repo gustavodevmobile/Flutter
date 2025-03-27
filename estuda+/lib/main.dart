@@ -1,6 +1,6 @@
 import 'package:estudamais/database/storage_shared_preferences.dart';
-import 'package:estudamais/service/service_questions_corrects/providers/questions_corrects_providers.dart';
-import 'package:estudamais/service/service_questions_incorrects/providers/questions_incorrects_providers.dart';
+import 'package:estudamais/service/questions_corrects_providers.dart';
+import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:estudamais/models/models.dart';

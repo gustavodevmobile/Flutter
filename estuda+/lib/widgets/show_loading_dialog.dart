@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-showLoadingDialog(BuildContext context) {
+showLoadingDialog(BuildContext context, String msg) {
   showDialog(
     context: context,
     builder: (BuildContext context) => Dialog.fullscreen(
@@ -19,11 +19,11 @@ showLoadingDialog(BuildContext context) {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Text(
-              'Carregando...',
+              msg,
               style: GoogleFonts.aboreto(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 20),
+                  fontSize: 16),
             ),
           ),
         ],

@@ -3,8 +3,9 @@ import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/models.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/screen_questions/questions_corrects.dart';
-import 'package:estudamais/service/service_questions_corrects/providers/questions_corrects_providers.dart';
+import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/service_questions_corrects/questions_corrects.dart';
+import 'package:estudamais/service/service_resum_questions.dart';
 
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
@@ -26,7 +27,8 @@ class AccumulatedRight extends StatefulWidget {
 }
 
 class _AccumulatedRightState extends State<AccumulatedRight> {
-  QuestionsCorrects questionsCorrectsDb = QuestionsCorrects();
+  ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
+  //QuestionsCorrects questionsCorrects = QuestionsCorrects();
   ScrollController scrollController = ScrollController();
   bool enable = false;
   ExpansionTileController? controleExpansion = ExpansionTileController();
@@ -89,7 +91,7 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: ExpandedCorrects(
                     discipline:
-                        questionsCorrectsDb.getDisciplineOfQuestionsCorrects(
+                        questionsCorrects.getDisciplineOfQuestions(
                             corrects.resultQuestionsCorrects),
                     resultQuestions: corrects.resultQuestionsCorrects,
                   ),
@@ -111,11 +113,15 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
                         Colors.red,
                       );
                     } else {
-                      resultQuestionsCorrects = questionsCorrectsDb.getResultQuestionsCorrects(
-                          corrects.resultQuestionsCorrects,
-                          corrects.subjectsAndSchoolYearSelected);
-                      Routes()
-                          .pushRoute(context, PageQuestionsCorrects(resultQuestions: resultQuestionsCorrects,));
+                      resultQuestionsCorrects =
+                          questionsCorrects.getResultQuestions(
+                              corrects.resultQuestionsCorrects,
+                              corrects.subjectsAndSchoolYearSelected);
+                      Routes().pushRoute(
+                          context,
+                          PageQuestionsCorrects(
+                            resultQuestions: resultQuestionsCorrects,
+                          ));
                     }
                   },
                   child: const ButtonNext(textContent: 'Mostrar questões'),

@@ -1,6 +1,7 @@
 import 'package:estudamais/models/models.dart';
-import 'package:estudamais/service/service_questions_incorrects/providers/questions_incorrects_providers.dart';
+import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service_questions_incorrects/questions_incorrets.dart';
+import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class ExpandedIncorrects extends StatefulWidget {
 
 class _ExpandedIncorrectsState extends State<ExpandedIncorrects> {
   bool enable = false;
-  QuestionsIncorrects questionsIncorrects = QuestionsIncorrects();
+  ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
   List<Map<String, dynamic>> mapListSubAndYearIncorrects = [];
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class _ExpandedIncorrectsState extends State<ExpandedIncorrects> {
                   () {
                     // FAZ A CONSULTA PARA OBTER O ASSUNTO E O ANO ESCOLAR TANTO DAS CORRETAS COMO DAS INCORRETAS
                     mapListSubAndYearIncorrects =
-                        questionsIncorrects.showSubjectsAndSchoolyeaIncorrects(
+                        questionsIncorrects.showSubjectsAndSchoolyear(
                       widget.discipline[index],
                       incorrects.resultQuestionsIncorrects,
                     );
@@ -84,7 +85,7 @@ class _ExpandedIncorrectsState extends State<ExpandedIncorrects> {
                                     .showSubjectAndSchoolYearSelected(
                               mapListSubAndYearIncorrects[index]['subjects'],
                               mapListSubAndYearIncorrects[index]['schoolYear'],
-                              incorrects.resultQuestionsIncorrects,
+                              //incorrects.resultQuestionsIncorrects,
                             );
                             incorrects.subjectAndSchoolYearSelected(
                                 listSubjectsAndSchoolYearSelected);

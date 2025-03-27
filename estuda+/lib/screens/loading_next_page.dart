@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/database/storage_shared_preferences.dart';
-
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/models.dart';
 import 'package:estudamais/screens/home/home.dart';
-import 'package:estudamais/service/service_questions_corrects/providers/questions_corrects_providers.dart';
-import 'package:estudamais/service/service_questions_corrects/questions_corrects.dart';
-import 'package:estudamais/service/service_questions_incorrects/providers/questions_incorrects_providers.dart';
+import 'package:estudamais/service/questions_corrects_providers.dart';
+import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service_questions_incorrects/questions_incorrets.dart';
 import 'package:estudamais/service/service.dart';
+import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/widgets/loading.dart';
 import 'package:page_transition/page_transition.dart';
@@ -31,8 +30,8 @@ class LoadingNextPage extends StatefulWidget {
 }
 
 class _LoadingNextPageState extends State<LoadingNextPage> {
-  QuestionsCorrects questionsCorrects = QuestionsCorrects();
-  QuestionsIncorrects questionsIncorrects = QuestionsIncorrects();
+  ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
+  ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
   Service service = Service();
   String msg = 'Buscando informações...';
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
@@ -60,12 +59,12 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     // passa o returno do método counterDisciplineIncorrects para atualizar na home as disciplinas respondidas corretamente
     Provider.of<QuestionsCorrectsProvider>(listen: false, context)
         .disciplinesAnswereds(
-            questionsCorrects.counterDisciplineCorrects(corrects));
+            questionsCorrects.counterDiscipline(corrects));
 
     // passa o returno do método counterDisciplineIncorrects para atualizar na home as disciplinas respondidas incorretamente
     Provider.of<QuestionsIncorrectsProvider>(listen: false, context)
         .disciplinesAnswereds(
-            questionsIncorrects.counterDisciplineIncorrects(incorrects));
+            questionsIncorrects.counterDiscipline(incorrects));
 
     // obtém todas as questões respondidas corretamente
     Provider.of<QuestionsCorrectsProvider>(listen: false, context)
@@ -131,7 +130,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
 
     // busca as questões pelos ids respondidas corretamente
     yield await questionsCorrects
-        .getQuestionsCorrects(amountCorrects)
+        .getQuestions(amountCorrects)
         .then((resultCorrects) {
       corrects = resultCorrects;
     });
@@ -141,7 +140,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
 
     // busca as questões pelos ids respondidas incorretamente
     yield await questionsIncorrects
-        .getQuestionsIncorrects(amountIncorrects)
+        .getQuestions(amountIncorrects)
         .then((resultIncorrects) {
       incorrects = resultIncorrects;
     });

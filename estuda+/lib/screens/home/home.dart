@@ -2,18 +2,13 @@ import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/database/storage_shared_preferences.dart';
 import 'package:estudamais/screens/accumulated_corrects/accumulated_right.dart';
 import 'package:estudamais/screens/accumulated_incorrects/accumulated_wrongs.dart';
-
 import 'package:estudamais/screens/discipline/discipline.dart';
 import 'package:estudamais/screens/home/widgets/dashbord_displice.dart';
 import 'package:estudamais/screens/initial_screen.dart';
-import 'package:estudamais/service/service_questions_corrects/providers/questions_corrects_providers.dart';
-
-import 'package:estudamais/service/service_questions_corrects/questions_corrects.dart';
-import 'package:estudamais/service/service_questions_incorrects/providers/questions_incorrects_providers.dart';
-
-import 'package:estudamais/service/service_questions_incorrects/questions_incorrets.dart';
+import 'package:estudamais/service/questions_corrects_providers.dart';
+import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service.dart';
-
+import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';
@@ -36,8 +31,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   double shadowBox = 10;
   Service service = Service();
-  QuestionsCorrects questionsCorrects = QuestionsCorrects();
-  QuestionsIncorrects questionsIncorrects = QuestionsIncorrects();
+  ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
+  ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
   List<String> listIdsAnswereds = [];
   List<String> listIdsCorrects = [];
@@ -53,20 +48,29 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  void showDisciplines() async {
-    showLoadingDialog(context);
+  void fetchDisciplines(Function(List<String> disciplies) onSuccess,
+      Function(String) onError) async {
     try {
       disciplines = await service.getDisciplines();
-      Routes().popRoutes(
-          // ignore: use_build_context_synchronously
-          context,
-          Discipline(disciplines: disciplines));
+      if (!mounted) return;
+      onSuccess(disciplines);
     } catch (e) {
-      // ignore: use_build_context_synchronously
-      showSnackBar(context, 'Ops, algo deu errado, tente novamente mais tarde',
-          Colors.red);
+      if (!mounted) return;
+      onError('Não foi possível buscar as Disciplinas.');
     }
   }
+
+  // void showDisciplines() async {
+  //   showLoadingDialog(context);
+  //   try {
+  //     disciplines = await service.getDisciplines();
+  //     Routes().popRoutes(context, Discipline(disciplines: disciplines));
+  //   } catch (e) {
+  //     // ignore: use_build_context_synchronously
+  //     showSnackBar(context, 'Ops, algo deu errado, tente novamente mais tarde',
+  //         Colors.red);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +129,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTileDrawer(
                 contextText: 'Responder questões',
                 onTap: () {
-                  showDisciplines();
+                  showLoadingDialog(context, 'Buscando disciplinas...');
+                  fetchDisciplines((disciplines) {
+                    if (disciplines.isNotEmpty) {
+                      Routes().popRoutes(
+                        context,
+                        Discipline(disciplines: disciplines),
+                      );
+                    } else {
+                      showSnackBar(
+                          context,
+                          'Ops, algo deu errado em buscar disciplinas',
+                          Colors.red);
+                    }
+                  }, (onError) {
+                    showSnackBar(context, onError, Colors.red);
+                  });
                   // fechao container onde mostra questão ja respondida
                   value1.actBoxAnswered(0);
                 },
@@ -177,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             value1.answered(false);
                             Routes()
                                 .pushRoute(context, const AccumulatedRight());
-                            questionsCorrects.getDisciplineOfQuestionsCorrects(
+                            questionsCorrects.getDisciplineOfQuestions(
                                 corrects.resultQuestionsCorrects);
                             corrects.subjectsAndSchoolYearSelected.clear();
                             value1.showSubjects(false);
@@ -230,9 +249,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 value1.answered(false);
                                 Routes().pushRoute(
                                     context, const AccumulatedWrongs());
-                                questionsIncorrects
-                                    .getDisciplineOfQuestionsIncorrects(
-                                        incorrects.resultQuestionsIncorrects);
+                                questionsIncorrects.getDisciplineOfQuestions(
+                                    incorrects.resultQuestionsIncorrects);
                                 incorrects.subjectsAndSchoolYearSelected
                                     .clear();
                                 value1.showSubjects(false);
@@ -282,7 +300,21 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
             onTap: () {
-              showDisciplines();
+              showLoadingDialog(context, 'Buscando disciplinas...');
+              fetchDisciplines((disciplines) {
+                if (disciplines.isNotEmpty) {
+                  if (!mounted) return;
+                  Routes().popRoutes(
+                    context,
+                    Discipline(disciplines: disciplines),
+                  );
+                } else {
+                  showSnackBar(context,
+                      'Ops, algo deu errado em buscar disciplinas', Colors.red);
+                }
+              }, (onError) {
+                showSnackBar(context, onError, Colors.red);
+              });
             },
             child: const ButtonNext(
               textContent: 'Iniciar',

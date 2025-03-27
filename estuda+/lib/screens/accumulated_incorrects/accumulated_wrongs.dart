@@ -3,8 +3,9 @@ import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/models.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/screen_questions/questions_incorrects.dart';
-import 'package:estudamais/service/service_questions_incorrects/providers/questions_incorrects_providers.dart';
+import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service_questions_incorrects/questions_incorrets.dart';
+import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/screens/accumulated_incorrects/widgets/expanded_incorrects.dart';
@@ -25,7 +26,7 @@ class AccumulatedWrongs extends StatefulWidget {
 
 class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
   bool checked = false;
-  QuestionsIncorrects questionsIncorrectsDb = QuestionsIncorrects();
+  ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
 
   onChecked() {
     setState(() {
@@ -93,7 +94,7 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ExpandedIncorrects(
-                      discipline: questionsIncorrectsDb.getDisciplineOfQuestionsIncorrects(incorrects.resultQuestionsIncorrects)
+                      discipline: questionsIncorrects.getDisciplineOfQuestions(incorrects.resultQuestionsIncorrects)
                     ),
                   ),
                   const Padding(
@@ -112,7 +113,7 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                           Colors.red,
                         );
                       } else {
-                        resultQuestionsIncorrects = questionsIncorrectsDb.getResultQuestionsIncorrects(incorrects.resultQuestionsIncorrects, incorrects.subjectsAndSchoolYearSelected);
+                        resultQuestionsIncorrects = questionsIncorrects.getResultQuestions(incorrects.resultQuestionsIncorrects, incorrects.subjectsAndSchoolYearSelected);
                         Routes().pushRoute(
                             context, PageQuestionsIncorrects(resultQuestions: resultQuestionsIncorrects,));
                         
