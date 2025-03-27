@@ -1,0 +1,47 @@
+name: estudamais
+description: "A new Flutter project."
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  lottie: ^3.1.2
+  sqflite: ^2.4.0
+  http: ^1.2.2
+  provider: ^6.1.2
+  flutter_native_splash: ^2.4.2
+  flutter_dotenv: ^5.2.1
+  google_fonts: ^6.2.1
+  page_transition: ^2.2.1
+  shared_preferences: ^2.5.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/lotties/
+    - assets/fonts/
+    - .env
+# flutter_native_splash:
+#   color: "#3817E5"
+#   image: assets/images/lampada.png
+#   android_12:
+#     color: "#42a5f5"
+#     image: assets/images/lampada.png
+#     icon_background_color: "#4d1245"
+
