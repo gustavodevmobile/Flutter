@@ -22,6 +22,8 @@ class BoxAlternatives extends StatefulWidget {
 class _BoxAlternativesState extends State<BoxAlternatives> {
   final ControllerQuestions _controllerQuestions = ControllerQuestions();
 
+  
+
   bool answered = false;
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,10 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(width: 1, color: Colors.black26,),
+                            border: Border.all(
+                              width: 1,
+                              color: Colors.black26,
+                            ),
                             color: Colors.white),
                         child: Text(
                           widget.option,

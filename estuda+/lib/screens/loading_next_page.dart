@@ -6,22 +6,16 @@ import 'package:estudamais/models/models.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
-import 'package:estudamais/service/service_questions_incorrects/questions_incorrets.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
+import 'package:estudamais/widgets/show_snackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/widgets/loading.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class LoadingNextPage extends StatefulWidget {
-  //final List<String> listIdsAnswered;
-  // final List<String> listIdsCorrects;
-  // final List<String> listIdsIncorrects;
   const LoadingNextPage({
-    //required this.listIdsAnswered,
-    // required this.listIdsCorrects,
-    // required this.listIdsIncorrects,
     super.key,
   });
 
@@ -30,20 +24,20 @@ class LoadingNextPage extends StatefulWidget {
 }
 
 class _LoadingNextPageState extends State<LoadingNextPage> {
-  ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
-  ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
+  ServiceResumQuestions questionsCorrectsAndIncorrects =
+      ServiceResumQuestions();
+  //ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
   Service service = Service();
   String msg = 'Buscando informações...';
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
   nextPage(
-    List<ModelQuestions> corrects,
-    List<ModelQuestions> incorrects,
-    List<String> amountAnswereds,
-    List<String> amountCorrects,
-    List<String> amountIncorrects,
-    
-  ) {
+      List<ModelQuestions> corrects,
+      List<ModelQuestions> incorrects,
+      List<String> amountAnswereds,
+      List<String> amountCorrects,
+      List<String> amountIncorrects,
+      String error) {
     // atualiza a quantidade de questões respondidas atraves do provider
     Provider.of<ModelPoints>(listen: false, context)
         .answeredsAmount(amountAnswereds.length.toString());
@@ -59,12 +53,12 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     // passa o returno do método counterDisciplineIncorrects para atualizar na home as disciplinas respondidas corretamente
     Provider.of<QuestionsCorrectsProvider>(listen: false, context)
         .disciplinesAnswereds(
-            questionsCorrects.counterDiscipline(corrects));
+            questionsCorrectsAndIncorrects.counterDiscipline(corrects));
 
     // passa o returno do método counterDisciplineIncorrects para atualizar na home as disciplinas respondidas incorretamente
     Provider.of<QuestionsIncorrectsProvider>(listen: false, context)
         .disciplinesAnswereds(
-            questionsIncorrects.counterDiscipline(incorrects));
+            questionsCorrectsAndIncorrects.counterDiscipline(incorrects));
 
     // obtém todas as questões respondidas corretamente
     Provider.of<QuestionsCorrectsProvider>(listen: false, context)
@@ -79,13 +73,20 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     //     .getListDisciplines(disciplines);
 
     Navigator.push(
-      context,
-      PageTransition(
-        type: PageTransitionType.fade,
-        duration: const Duration(seconds: 1),
-        child: const HomeScreen(),
-      ),
-    );
+        context,
+        PageTransition(
+          type: PageTransitionType.fade,
+          duration: const Duration(seconds: 1),
+          child: const HomeScreen(),
+        ),
+      );
+
+    // if (corrects.isNotEmpty && incorrects.isNotEmpty) {
+      
+    // } else {
+    //   showSnackBar(context, error, Colors.red);
+    //   Navigator.pop(context);
+    // }
   }
 
   Stream getDatas() async* {
@@ -94,7 +95,8 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     List<String> amountAnswereds = [];
     List<String> amountCorrects = [];
     List<String> amountIncorrects = [];
-    
+    String error = '';
+
     // faz a busca dos ids das questões respondidas
     yield await sharedPreferences
         .recoverIds(StorageSharedPreferences.keyIdsAnswereds)
@@ -129,28 +131,34 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     // });
 
     // busca as questões pelos ids respondidas corretamente
-    yield await questionsCorrects
-        .getQuestions(amountCorrects)
-        .then((resultCorrects) {
-      corrects = resultCorrects;
+    yield await questionsCorrectsAndIncorrects.getQuestions(amountCorrects,
+        (questionsCorrects) {
+      corrects = questionsCorrects;
+    }, (error) {
+      error = error;
+      print('error1 $error');
     });
+
     setState(() {
       msg = 'Questões corretas ok!';
     });
 
     // busca as questões pelos ids respondidas incorretamente
-    yield await questionsIncorrects
-        .getQuestions(amountIncorrects)
-        .then((resultIncorrects) {
-      incorrects = resultIncorrects;
+    yield await questionsCorrectsAndIncorrects.getQuestions(amountIncorrects,
+        (questionsIncorrects) {
+      incorrects = questionsIncorrects;
+    }, (error) {
+      error = error;
+      print('error2 $error');
     });
+
     setState(() {
       msg = 'Questões incorretas ok!';
     });
     // atualiza o progresso do usuario
 
     yield nextPage(corrects, incorrects, amountAnswereds, amountCorrects,
-        amountIncorrects);
+        amountIncorrects, error);
   }
 
   late final StreamController _controller = StreamController(
@@ -175,7 +183,9 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
         stream: _controller.stream,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            Navigator.pop(context);
+            return const Text('deu ruim');
+            //showSnackBar(context, 'deu ruim', Colors.red);
           } else {
             switch (snapshot.connectionState) {
               case ConnectionState.none:

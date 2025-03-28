@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'; // importM + tab
 import 'package:calculadora/componentes/buttons.dart';
-import 'package:flutter/widgets.dart';
 import 'package:dart_eval/dart_eval.dart';
 
 void main() {

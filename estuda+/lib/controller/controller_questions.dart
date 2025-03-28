@@ -1,21 +1,14 @@
 import 'dart:async';
-
 import 'package:estudamais/database/storage_shared_preferences.dart';
 import 'package:estudamais/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ControllerQuestions {
-  //DaoUserResum database = DaoUserResum();
 //cor do box alternative
   Color corAlternativa = Colors.white;
   // container onde mostra questão ja respondida
   double heightBoxIsAnswered = 0;
-  //atualiza id das questões respondidas
-
-  //atualiza id das questões respondidas corretas
-
-  //atualiza id das questões respondidas incorretas
 
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
@@ -37,9 +30,10 @@ class ControllerQuestions {
         corAlternativa = Colors.green;
 
         sharedPreferences.removeIdsInList(
-            StorageSharedPreferences.keyIdsAnsweredsIncorrects,
-            idQuestion,
-            StorageSharedPreferences.keyIdsAnsweredsCorrects);
+          StorageSharedPreferences.keyIdsAnsweredsIncorrects,
+          idQuestion,
+          StorageSharedPreferences.keyIdsAnsweredsCorrects,
+        );
       } else {
         // se errar, nada muda.
         corAlternativa = Colors.red;
@@ -52,10 +46,7 @@ class ControllerQuestions {
 //recebe como argumento o boleano, se ja foi respodida, a resposta, a alternativa clicada, o context e a id da questão correspondente
   void isCorrect(bool isAnswered, String response, String alternative,
       int indexQuestion, BuildContext context, String idQuestion) {
-    print('id: $idQuestion');
-    //String? idsAnswerCorrect;
-    List<dynamic> idsAnswerIncorrect = [];
-    // idsAnswer.add(idQuestion);
+
     // salva o id da questão em ids respondidos
     sharedPreferences.saveIds(
         idQuestion, StorageSharedPreferences.keyIdsAnswereds);
@@ -70,32 +61,29 @@ class ControllerQuestions {
         //salva o id da questão em ids respondidos corretamente
         sharedPreferences.saveIds(
             idQuestion, StorageSharedPreferences.keyIdsAnsweredsCorrects);
-
-        // sharedPreferences
-        //     .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects)
-        //     .then((ids) {
-        //       int values = ids.length + 1;
-        //   idsAnswerCorrect = values.toString() ;
-        //   print('idsAnswerCorrect $idsAnswerCorrect');
-
-        // });
-        // Provider.of<ModelPoints>(listen: false, context)
-        //       .answeredsCorrects(idsAnswerCorrect ?? '0');
+        // pega a quantidade de acertos
+        int amountCorrects = int.parse(
+            Provider.of<ModelPoints>(listen: false, context).correctsCurrents);
+        // acrescenta + 1 na quantidade de acertos
+        amountCorrects++;
+        // atualiza na pointsAndErrors a quantidade de acertos
+        Provider.of<ModelPoints>(listen: false, context)
+            .answeredsCorrects(amountCorrects.toString());
       } else {
+        // muda a cor da alternativa para vermelho
         corAlternativa = Colors.red;
         //salva o id da questão em ids respondidos incorretamente
         sharedPreferences.saveIds(
             idQuestion, StorageSharedPreferences.keyIdsAnsweredsIncorrects);
-
-        timer = Timer(const Duration(seconds: 2), () {
-          sharedPreferences
-              .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects)
-              .then((ids) {
-            idsAnswerIncorrect = ids;
-          });
-          Provider.of<ModelPoints>(listen: false, context)
-              .answeredsIncorrects(idsAnswerIncorrect.length.toString());
-        });
+        // pega a quantidade de erros
+        int amountIncorrects = int.parse(
+            Provider.of<ModelPoints>(listen: false, context)
+                .incorrectsCurrents);
+        //acrescenta + 1 na quantidade de erros
+        amountIncorrects++;
+        // atualiza na pointAndAErrors a quantidade de erros
+        Provider.of<ModelPoints>(listen: false, context)
+            .answeredsIncorrects(amountIncorrects.toString());
       }
     }
   }

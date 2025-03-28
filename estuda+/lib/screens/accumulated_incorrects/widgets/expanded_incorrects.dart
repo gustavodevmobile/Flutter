@@ -1,6 +1,5 @@
 import 'package:estudamais/models/models.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
-import 'package:estudamais/service/service_questions_incorrects/questions_incorrets.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

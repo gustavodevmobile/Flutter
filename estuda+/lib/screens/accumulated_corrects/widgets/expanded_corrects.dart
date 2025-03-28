@@ -1,7 +1,6 @@
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/models.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
-import 'package:estudamais/service/service_questions_corrects/questions_corrects.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

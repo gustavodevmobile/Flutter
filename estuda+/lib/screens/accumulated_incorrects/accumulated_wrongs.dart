@@ -4,7 +4,6 @@ import 'package:estudamais/models/models.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/screen_questions/questions_incorrects.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
-import 'package:estudamais/service/service_questions_incorrects/questions_incorrets.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';

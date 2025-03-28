@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:descobrindo_as_coisas/src/components/backgroud.dart';
 import 'package:descobrindo_as_coisas/src/components/draggables.dart';

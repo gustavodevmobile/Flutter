@@ -10,11 +10,14 @@ class ServiceResumQuestions {
   List<Map<String, dynamic>> mapYearAndSubjectSelected = [];
 // PEGA TODAS AS QUESTÕES RESPONDIDAS CORRETAMENTE pelo id da questão, COLOCA EM UMA LIST CENTRAL PARA PODER SERVIR COMO BASE DE CONSULTA. É CHAMADO NO CARREGAMENTO DA HOME.
 
-  Future<List<ModelQuestions>> getQuestions(List<String> listIdCorrects) async {
+  Future<List<ModelQuestions>> getQuestions(
+      List<String> listIds,
+      Function(List<ModelQuestions>) onSuccess,
+      Function(String) onError) async {
     List<ModelQuestions> resultQuestionsCorrect = [];
     try {
       http.Response response = await http.get(
-        Uri.parse('http://$_questoesAll/questao/$listIdCorrects'),
+        Uri.parse('http://$_questoesAll/questao/$listIds'),
       );
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
@@ -24,31 +27,33 @@ class ServiceResumQuestions {
           question['image'] = bytesImage;
           resultQuestionsCorrect.add(ModelQuestions.toMap(question));
         }
-
+        
+        onSuccess(resultQuestionsCorrect);
         print('Questões corretas recebidas com sucesso');
       } else {
-        print('Erro ao buscar questões corretas');
+        print('resultQuestionsCorrect $resultQuestionsCorrect');
+        onError('Algo deu errado em buscar resumo de questões');
       }
     } catch (e) {
-      print('Erro ao buscar questões corretas: $e');
+      onError('Erro ao buscar resumo de questões');
+      print('Erro ao buscar resumo de questões: $e');
     }
     return resultQuestionsCorrect;
   }
 
 // PEGA AS DISCIPLINAS QUE FORAM RESPONDIDAS CORRETAMENTE ao clicar em resumo ,PARA PODER RENDERIZAR NA accumulated_right no Widget animated_button_progress.dart
-  List<String> getDisciplineOfQuestions(
-      List<ModelQuestions> resultQuestionsCorrect) {
-    List<String> listDisciplinesCorrect = [];
+  List<String> getDisciplineOfQuestions(List<ModelQuestions> resultQuestions) {
+    List<String> listDisciplines = [];
     try {
-      if (resultQuestionsCorrect.isNotEmpty) {
-        for (var disciplines in resultQuestionsCorrect) {
-          listDisciplinesCorrect.add(disciplines.discipline);
+      if (resultQuestions.isNotEmpty) {
+        for (var disciplines in resultQuestions) {
+          listDisciplines.add(disciplines.discipline);
         }
       }
     } catch (e) {
       print('Erro ao buscar disciplinas: $e');
     }
-    return listDisciplinesCorrect.toSet().toList();
+    return listDisciplines.toSet().toList();
   }
 
   // faz a seleção dos assuntos e anos escolares selecionados e retorna um map com o assunto e ano escolar sem repetição, como feedbackdo que foi selecionado

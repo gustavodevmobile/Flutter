@@ -11,6 +11,7 @@ class ModelPoints extends ChangeNotifier {
   String correctsCurrents = '';
   String incorrectsCurrents = '';
   List<String> listDisciplines = [];
+  bool hasConnection = false;
 
   void actBoxAnswered(double active) {
     boxIsAnswered = active;
@@ -49,6 +50,11 @@ class ModelPoints extends ChangeNotifier {
 
   void getListDisciplines(List<String> listDis) {
     listDisciplines = listDis;
+    notifyListeners();
+  }
+
+  void isConnected(bool value) {
+    hasConnection = value;
     notifyListeners();
   }
 }

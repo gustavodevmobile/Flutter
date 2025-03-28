@@ -60,18 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // void showDisciplines() async {
-  //   showLoadingDialog(context);
-  //   try {
-  //     disciplines = await service.getDisciplines();
-  //     Routes().popRoutes(context, Discipline(disciplines: disciplines));
-  //   } catch (e) {
-  //     // ignore: use_build_context_synchronously
-  //     showSnackBar(context, 'Ops, algo deu errado, tente novamente mais tarde',
-  //         Colors.red);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Consumer3<ModelPoints, QuestionsCorrectsProvider,
@@ -311,6 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else {
                   showSnackBar(context,
                       'Ops, algo deu errado em buscar disciplinas', Colors.red);
+                  Navigator.pop(context);
                 }
               }, (onError) {
                 showSnackBar(context, onError, Colors.red);
