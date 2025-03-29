@@ -49,20 +49,7 @@ class _SubjectsState extends State<Subjects> {
             automaticallyImplyLeading: false,
             leading: IconButton(
                 onPressed: () {
-                  // remove todas as rotas da pilha e vai para a page schoolYear
                   Routes().popRoutes(context, const HomeScreen());
-                  // limpa a List das questões por disciplinas
-                  //Service.questionsByDiscipline.clear();
-                  // limpa a List das questões por ano
-                  // Service.questionsBySchoolYear.clear();
-                  // // limpa a List das questões por assunto
-                  // Service.schoolYearAndSubjects.clear();
-                  // // limpa a List dos anos selecionados
-                  // Service.listSelectedSchoolYear.clear();
-                  // // limpa a List das disciplinas selecionadas
-                  // Service.listSelectedDisciplines.clear();
-                  // // limpa a List das questões
-                  // Service.resultQuestionsBySubjectsAndSchoolYear.clear();
                 },
                 icon: const Icon(
                   Icons.arrow_back_ios,
@@ -191,7 +178,7 @@ class _SubjectsState extends State<Subjects> {
           floatingActionButton: GestureDetector(
               onTap: () {
                 if (listMapSubjectsAndSchoolYear.isEmpty) {
-                  showSnackBar(
+                  showSnackBarError(
                     context,
                     'Selecione o assunto para concluir.',
                     Colors.red,

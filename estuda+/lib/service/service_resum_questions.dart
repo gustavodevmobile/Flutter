@@ -11,9 +11,8 @@ class ServiceResumQuestions {
 // PEGA TODAS AS QUESTÕES RESPONDIDAS CORRETAMENTE pelo id da questão, COLOCA EM UMA LIST CENTRAL PARA PODER SERVIR COMO BASE DE CONSULTA. É CHAMADO NO CARREGAMENTO DA HOME.
 
   Future<List<ModelQuestions>> getQuestions(
-      List<String> listIds,
-      Function(List<ModelQuestions>) onSuccess,
-      Function(String) onError) async {
+    List<String> listIds,
+  ) async {
     List<ModelQuestions> resultQuestionsCorrect = [];
     try {
       http.Response response = await http.get(
@@ -27,15 +26,12 @@ class ServiceResumQuestions {
           question['image'] = bytesImage;
           resultQuestionsCorrect.add(ModelQuestions.toMap(question));
         }
-        
-        onSuccess(resultQuestionsCorrect);
+
         print('Questões corretas recebidas com sucesso');
       } else {
         print('resultQuestionsCorrect $resultQuestionsCorrect');
-        onError('Algo deu errado em buscar resumo de questões');
       }
     } catch (e) {
-      onError('Erro ao buscar resumo de questões');
       print('Erro ao buscar resumo de questões: $e');
     }
     return resultQuestionsCorrect;

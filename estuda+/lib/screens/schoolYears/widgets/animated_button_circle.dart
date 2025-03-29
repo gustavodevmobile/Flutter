@@ -12,19 +12,18 @@ class AnimatedButtonCircle extends StatefulWidget {
   final double? fontSizeSecondary;
   final Function onTap;
 
-  AnimatedButtonCircle(this.textPrimary, this.widthButton, this.heightButton,
-      this.fontSizePrimary, this.onTap,
+  const AnimatedButtonCircle(this.textPrimary, this.widthButton,
+      this.heightButton, this.fontSizePrimary, this.onTap,
       {this.textSecondary, this.fontSizeSecondary, super.key});
-  bool backButton = false;
-  Color shadowColor = Colors.black87;
-  double shadowBox = 8;
 
   @override
   State<AnimatedButtonCircle> createState() => _AnimatedButtonCircleState();
 }
 
 class _AnimatedButtonCircleState extends State<AnimatedButtonCircle> {
- 
+  bool backButton = false;
+  Color shadowColor = Colors.black87;
+  double shadowBox = 8;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +41,7 @@ class _AnimatedButtonCircleState extends State<AnimatedButtonCircle> {
                 width: widget.widthButton + 5,
                 height: widget.heightButton + 5,
                 decoration: BoxDecoration(
-                  color: widget.shadowColor,
+                  color: shadowColor,
                   shape: BoxShape.circle,
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
@@ -55,26 +54,25 @@ class _AnimatedButtonCircleState extends State<AnimatedButtonCircle> {
               ),
             ),
             AnimatedPositioned(
-              bottom: widget.shadowBox,
+              bottom: shadowBox,
               duration: const Duration(milliseconds: 60),
               child: GestureDetector(
                 onTap: () {
-                  widget.backButton = !widget.backButton;
+                  backButton = !backButton;
                   value.actionBtnCircle = !value.actionBtnCircle;
-                  if (widget.backButton) {
-                    value.actionBtnCircle = widget.backButton;
+                  if (backButton) {
+                    value.actionBtnCircle = backButton;
                     setState(() {
-                      widget.shadowColor = Colors.white;
-                      widget.shadowBox = 3;
+                      shadowColor = Colors.white;
+                      shadowBox = 3;
                     });
                     widget.onTap();
-                    
                   } else {
-                    print(widget.backButton);
-                    value.actionBtnCircle = widget.backButton;
+                    print(backButton);
+                    value.actionBtnCircle = backButton;
                     setState(() {
-                      widget.shadowColor = Colors.black87;
-                      widget.shadowBox = 8;
+                      shadowColor = Colors.black87;
+                      shadowBox = 8;
                     });
                     widget.onTap();
                   }

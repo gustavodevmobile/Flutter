@@ -54,7 +54,7 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                 Routes().popRoutes(context, const HomeScreen());
               },
               icon: const Icon(
-                Icons.arrow_back,
+                 Icons.arrow_back_ios,
                 color: Colors.white,
               ),
             ),
@@ -106,7 +106,7 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                     onTap: () {
                        List<ModelQuestions> resultQuestionsIncorrects = [];
                       if (incorrects.subjectsAndSchoolYearSelected.isEmpty) {
-                        showSnackBar(
+                        showSnackBarError(
                           context,
                           'Selecione a disciplina e o assunto para continuar.',
                           Colors.red,
@@ -124,23 +124,6 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
               ),
             ),
           ),
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerFloat,
-          // floatingActionButton: GestureDetector(
-          //   onTap: () {
-          //     if (QuestionsIncorrects.mapYearAndSubjectSelected.isEmpty) {
-          //       showSnackBar(
-          //         context,
-          //         'Selecione a disciplina e o assunto para continuar.',
-          //         Colors.red,
-          //       );
-          //     } else {
-          //       Routes().pushRoute(context, const PageQuestionsIncorrects());
-          //       QuestionsIncorrects().getResultQuestionsIncorrects();
-          //     }
-          //   },
-          //   child: const ButtonNext(textContent: 'Mostrar questões'),
-          // ),
         );
       },
     );

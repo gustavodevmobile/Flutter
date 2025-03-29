@@ -12,7 +12,8 @@ class BoxAlternatives extends StatefulWidget {
   final String idQuestion;
 
   const BoxAlternatives(this.alternative, this.option, this.response,
-      this.isAnswered, this.indexQuestion, this.idQuestion,
+      this.isAnswered, this.indexQuestion,
+      this.idQuestion,
       {super.key});
 
   @override
@@ -84,7 +85,7 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                           widget.isAnswered,
                           widget.response,
                           widget.alternative,
-                          widget.indexQuestion,
+                         // widget.indexQuestion,
                           context,
                           widget.idQuestion,
                         );

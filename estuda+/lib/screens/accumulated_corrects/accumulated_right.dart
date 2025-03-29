@@ -27,9 +27,8 @@ class AccumulatedRight extends StatefulWidget {
 
 class _AccumulatedRightState extends State<AccumulatedRight> {
   ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
-  //QuestionsCorrects questionsCorrects = QuestionsCorrects();
   ScrollController scrollController = ScrollController();
-  bool enable = false;
+  //bool enable = false;
   ExpansionTileController? controleExpansion = ExpansionTileController();
 
   @override
@@ -48,12 +47,11 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {
-                //QuestionsCorrects.subjectsOfQuestionsCorrects.clear();
-                //QuestionsIncorrects.subjectsOfQuestionsIncorrects.clear();
+                
                 Routes().popRoutes(context, const HomeScreen());
               },
               icon: const Icon(
-                Icons.arrow_back,
+                 Icons.arrow_back_ios,
                 color: Colors.white,
               ),
             ),
@@ -108,7 +106,7 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
                     onTap: () {
                       List<ModelQuestions> resultQuestionsCorrects = [];
                       if (corrects.subjectsAndSchoolYearSelected.isEmpty) {
-                        showSnackBar(
+                        showSnackBarError(
                           context,
                           'Selecione a disciplina e o assunto para continuar.',
                           Colors.red,

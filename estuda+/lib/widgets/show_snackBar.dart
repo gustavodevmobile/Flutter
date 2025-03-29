@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-showSnackBar(BuildContext context, String error, Color colorMsg) {
+void showSnackBarError(BuildContext context, String error, Color colorMsg) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(error),

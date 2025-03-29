@@ -2,13 +2,11 @@
 import 'package:estudamais/controller/connection.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/database/storage_shared_preferences.dart';
-
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackBar.dart';
 import 'package:flutter/material.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class ScreenInitial extends StatefulWidget {
   const ScreenInitial({super.key});
@@ -49,11 +47,11 @@ class _ScreenInitialState extends State<ScreenInitial> {
                         msgFeedbasck: 'Buscando',));
                     } else {
                       Navigator.pop(context);
-                      showSnackBar(
+                      showSnackBarError(
                           context, 'Sem conexão com internet', Colors.red);
                     }
                   }, (onError) {
-                    showSnackBar(context, onError, Colors.red);
+                    showSnackBarError(context, onError, Colors.red);
                   });
                 },
                 child: const ButtonNext(

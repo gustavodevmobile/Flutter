@@ -38,15 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> listIdsCorrects = [];
   List<String> listIdsIncorrects = [];
   List<String> disciplines = [];
-  // List<ModelQuestions>? corrects = questionsCorrects;
   bool? enable;
-
-  @override
-  void initState() {
-    print(
-        'disciplinas ${Provider.of<ModelPoints>(listen: false, context).listDisciplines}');
-    super.initState();
-  }
 
   void fetchDisciplines(Function(List<String> disciplies) onSuccess,
       Function(String) onError) async {
@@ -60,11 +52,30 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void handleFetchDisciplines(
+      BuildContext context, Function(List<String>) onSuccess) {
+    showLoadingDialog(context, 'Buscando disciplinas...');
+    fetchDisciplines((disciplines) {
+      if (disciplines.isNotEmpty) {
+        if (!mounted) return;
+        Navigator.pop(context);
+        onSuccess(disciplines);
+      } else {
+        Navigator.pop(context);
+        showSnackBarError(
+            context, 'Ops, algo deu errado em buscar disciplinas', Colors.red);
+      }
+    }, (onError) {
+      Navigator.pop(context);
+      showSnackBarError(context, onError, Colors.red);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer3<ModelPoints, QuestionsCorrectsProvider,
             QuestionsIncorrectsProvider>(
-        builder: (context, value1, corrects, incorrects, child) {
+        builder: (context, value, corrects, incorrects, child) {
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -93,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   children: [
                     TextSpan(
-                      text: value1.answeredsCurrents,
+                      text: value.answeredsCurrents,
                       style: GoogleFonts.aboreto(
                         color: Colors.amber,
                         fontWeight: FontWeight.bold,
@@ -117,24 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTileDrawer(
                 contextText: 'Responder questões',
                 onTap: () {
-                  showLoadingDialog(context, 'Buscando disciplinas...');
-                  fetchDisciplines((disciplines) {
-                    if (disciplines.isNotEmpty) {
-                      Routes().popRoutes(
-                        context,
-                        Discipline(disciplines: disciplines),
-                      );
-                    } else {
-                      showSnackBar(
-                          context,
-                          'Ops, algo deu errado em buscar disciplinas',
-                          Colors.red);
-                    }
-                  }, (onError) {
-                    showSnackBar(context, onError, Colors.red);
+                  handleFetchDisciplines(context, (disciplines) {
+                    Routes().popRoutes(
+                      context,
+                      Discipline(disciplines: disciplines),
+                    );
                   });
-                  // fechao container onde mostra questão ja respondida
-                  value1.actBoxAnswered(0);
+                  value.actBoxAnswered(0);
                 },
                 icon: const Icon(Icons.auto_stories_rounded),
               ),
@@ -173,26 +173,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: ListView(
                   children: [
+                    // WIDGET BOXRESUM DAS QUANTIDAS DE QUESTÕES RESPODIDAS CORRETAMENTE
                     BoxResum(
-                      value1.correctsCurrents,
+                      value.correctsCurrents,
                       'Corretas',
                       Lottie.asset('./assets/lotties/Animation_correct.json'),
                       TextButton(
                         onPressed: () {
                           //print(value1.correctsCurrents);
                           if (corrects.resultQuestionsCorrects.isNotEmpty) {
-                            value1.answered(false);
                             Routes()
                                 .pushRoute(context, const AccumulatedRight());
                             questionsCorrects.getDisciplineOfQuestions(
                                 corrects.resultQuestionsCorrects);
                             corrects.subjectsAndSchoolYearSelected.clear();
-                            value1.showSubjects(false);
+                            //fecha onde mostra os assuntos selecionados
+                            value.showSubjects(false);
                           } else {
-                            showSnackBar(
-                                context,
-                                'Ainda não temos nenhuma questão respondida.',
-                                Colors.blue);
+                            showSnackBarError(
+                              context,
+                              'Ainda não temos nenhuma questão respondida.',
+                              Colors.blue,
+                            );
                           }
                         },
                         child: Text(
@@ -201,49 +203,43 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    corrects.listDisciplinesAnswered.isNotEmpty
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: corrects.listDisciplinesAnswered.length,
-                            itemBuilder: (context, int index) {
-                              return DashbordDisplice(
-                                corrects.listDisciplinesAnswered[index]
-                                    ['discipline'],
-                                Colors.green,
-                                corrects.listDisciplinesAnswered[index]
-                                        ['amount'] /
-                                    100,
-                                corrects.listDisciplinesAnswered[index]
-                                        ['amount']
-                                    .toString(),
-                              );
-                            })
-                        : Container(
-                            width: 200,
-                            height: 200,
-                            color: Colors.white,
-                          ),
+                    // DASHBORD DAS DISCIPLINAS RESPONDIDAS CORRETAMENTE
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: corrects.listDisciplinesAnswered.length,
+                      itemBuilder: (context, int index) {
+                        return DashbordDisplice(
+                          corrects.listDisciplinesAnswered[index]['discipline'],
+                          Colors.green,
+                          corrects.listDisciplinesAnswered[index]['amount'] /
+                              100,
+                          corrects.listDisciplinesAnswered[index]['amount']
+                              .toString(),
+                        );
+                      },
+                    ),
+                    // WIDGET BOXRESUM DAS QUANTIDAS DE QUESTÕES RESPODIDAS INCORRETAMENTE
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
                       child: BoxResum(
-                        value1.incorrectsCurrents,
+                        value.incorrectsCurrents,
                         'Incorretas',
                         Lottie.asset('./assets/lotties/alert.json'),
                         TextButton(
                             onPressed: () {
-                              print(value1.correctsCurrents);
+                              // print(value1.correctsCurrents);
                               if (incorrects
                                   .resultQuestionsIncorrects.isNotEmpty) {
-                                value1.answered(false);
+                                value.answered(false);
                                 Routes().pushRoute(
                                     context, const AccumulatedWrongs());
                                 questionsIncorrects.getDisciplineOfQuestions(
                                     incorrects.resultQuestionsIncorrects);
                                 incorrects.subjectsAndSchoolYearSelected
                                     .clear();
-                                value1.showSubjects(false);
+                                value.showSubjects(false);
                               } else {
-                                showSnackBar(
+                                showSnackBarError(
                                     context,
                                     'Ainda não temos nenhuma questão respondida.',
                                     Colors.blue);
@@ -255,6 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             )),
                       ),
                     ),
+                    // WIDGET DASHBORD DISCIPLINAS RESPONDIDAS INCORRETAMENTE
                     ListView.builder(
                         shrinkWrap: true,
                         itemCount: incorrects.listDisciplinesAnswered.length,
@@ -288,21 +285,11 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
             onTap: () {
-              showLoadingDialog(context, 'Buscando disciplinas...');
-              fetchDisciplines((disciplines) {
-                if (disciplines.isNotEmpty) {
-                  if (!mounted) return;
-                  Routes().popRoutes(
-                    context,
-                    Discipline(disciplines: disciplines),
-                  );
-                } else {
-                  showSnackBar(context,
-                      'Ops, algo deu errado em buscar disciplinas', Colors.red);
-                  Navigator.pop(context);
-                }
-              }, (onError) {
-                showSnackBar(context, onError, Colors.red);
+              handleFetchDisciplines(context, (disciplines) {
+                Routes().popRoutes(
+                  context,
+                  Discipline(disciplines: disciplines),
+                );
               });
             },
             child: const ButtonNext(

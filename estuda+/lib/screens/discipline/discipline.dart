@@ -138,7 +138,7 @@ class _DisciplineState extends State<Discipline> {
         floatingActionButton: GestureDetector(
           onTap: () async {
             if (listDisciplinesSelected.isEmpty) {
-              showSnackBar(context, 'Selecione uma disciplina para continuar.',
+              showSnackBarError(context, 'Selecione uma disciplina para continuar.',
                   Colors.red);
             } else {
               showLoadingDialog(context, 'Buscando questões...');
@@ -157,7 +157,7 @@ class _DisciplineState extends State<Discipline> {
                     ),
                   );
                 } else {
-                  showSnackBar(
+                  showSnackBarError(
                       context,
                       'Todas as questões desta disciplina já foram respondidas',
                       Colors.blue);
@@ -165,7 +165,7 @@ class _DisciplineState extends State<Discipline> {
                 }
               }, (errorMessage) {
                 if (!mounted) return;
-                showSnackBar(context, errorMessage, Colors.red);
+                showSnackBarError(context, errorMessage, Colors.red);
               });
             }
           },

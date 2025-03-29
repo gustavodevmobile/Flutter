@@ -80,7 +80,7 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                           widget.isAnswered,
                           widget.response,
                           widget.alternative,
-                          widget.indexQuestion,
+                          //widget.indexQuestion,
                           context,
                           widget.idQuestion,
                         );

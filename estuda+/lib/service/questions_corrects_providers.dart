@@ -9,7 +9,6 @@ class QuestionsCorrectsProvider extends ChangeNotifier {
 
   void questionsCorrects(List<ModelQuestions> question) {
     resultQuestionsCorrects = question;
-
     notifyListeners();
   }
 

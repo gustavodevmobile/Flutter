@@ -1,9 +1,5 @@
-import 'package:estudamais/controller/connection.dart';
-import 'package:estudamais/database/storage_shared_preferences.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:estudamais/models/models.dart';
@@ -26,7 +22,7 @@ void main() async {
       ),
     ], child: const MyApp()),
   );
-  StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+  //StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
   
 }
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/database/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/models.dart';
@@ -8,9 +7,9 @@ import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/widgets/loading.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -30,17 +29,22 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
       ServiceResumQuestions();
   //ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
   Service service = Service();
-  String msg = 'Buscando informações...';
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
   ValueNotifier<String> msgLoading = ValueNotifier<String>('Buscando dados...');
+  TextStyle textStyle = GoogleFonts.aboreto(
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    color: Colors.indigo,
+  );
 
-  nextPage(
-      List<ModelQuestions> corrects,
-      List<ModelQuestions> incorrects,
-      List<String> amountAnswereds,
-      List<String> amountCorrects,
-      List<String> amountIncorrects,
-      String error) {
+// atualiza o progresso do usurario e chama a home
+  void nextPage(
+    List<ModelQuestions> corrects,
+    List<ModelQuestions> incorrects,
+    List<String> amountAnswereds,
+    List<String> amountCorrects,
+    List<String> amountIncorrects,
+  ) {
     // atualiza a quantidade de questões respondidas atraves do provider
     Provider.of<ModelPoints>(listen: false, context)
         .answeredsAmount(amountAnswereds.length.toString());
@@ -85,85 +89,118 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     );
   }
 
-  List<String> amountAnswereds = [];
+// faz a busca dos ids de todas as questões respondidas
+  List<String> idsAnswereds = [];
   Future fetchAnsweredsIds(
       Function(List<String>) answeredsIds, Function(String) onError) async {
-    List<String> amountAnswereds = [];
+    List<String> ids = [];
     msgLoading.value = '${widget.msgFeedbasck} respodidas...';
     try {
-      amountAnswereds = await sharedPreferences
+      ids = await sharedPreferences
           .recoverIds(StorageSharedPreferences.keyIdsAnswereds);
-      answeredsIds(amountAnswereds);
+      answeredsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscas ids das questões respondidas: $e ');
     }
   }
 
-  List<String> amountCorrects = [];
+// faz a busca dos ids das questões corretas
+  List<String> idsCorrects = [];
   Future fetchCorrectsIds(
       Function(List<String>) correctsIds, Function(String) onError) async {
     msgLoading.value = '${widget.msgFeedbasck} ids corretas...';
+    List<String> ids = [];
     try {
-      amountCorrects = await sharedPreferences
+      ids = await sharedPreferences
           .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects);
+      correctsIds(ids);
     } catch (e) {
-      onError('Algo deu errado em buscas ids das questões respondidas: $e ');
+      onError('Algo deu errado em buscar ids das questões corretas: $e ');
+    }
+  }
+
+// faz a busca dos ids das questões incorretas
+  List<String> idsIncorrects = [];
+  Future fetchIncorrectsIds(
+      Function(List<String>) incorrectsIds, Function(String) onError) async {
+    msgLoading.value = '${widget.msgFeedbasck} ids incorretas...';
+    List<String> ids = [];
+    try {
+      ids = await sharedPreferences
+          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects);
+      incorrectsIds(ids);
+    } catch (e) {
+      onError('Algo deu errado em buscar ids das questões incorretas: $e ');
+    }
+  }
+
+// faz a busca das questões corretas atraves do ids delas
+  List<ModelQuestions> corrects = [];
+  Future fetchCorrectsQuestions(
+      Function(List<ModelQuestions>) correctsQuestions,
+      Function(String) onError) async {
+    msgLoading.value = '${widget.msgFeedbasck} questões corretas...';
+    List<ModelQuestions> questions = [];
+    try {
+      questions =
+          await questionsCorrectsAndIncorrects.getQuestions(idsCorrects);
+      correctsQuestions(questions);
+    } catch (e) {
+      onError('Algo deu errado em buscar questões corretas: $e ');
+    }
+  }
+
+//faz a busca das questões incorretas atraves dos ids delas
+  List<ModelQuestions> incorrects = [];
+  Future fetchIncorrectsQuestions(
+      Function(List<ModelQuestions>) incorrectsQuestions,
+      Function(String) onError) async {
+    msgLoading.value = '${widget.msgFeedbasck} questões incorretas...';
+    List<ModelQuestions> questions = [];
+    try {
+      questions =
+          await questionsCorrectsAndIncorrects.getQuestions(idsIncorrects);
+      incorrectsQuestions(questions);
+    } catch (e) {
+      onError('Algo deu errado em buscar questões incorretas: $e ');
     }
   }
 
   Stream getDatas() async* {
-    List<ModelQuestions> incorrects = [];
-    List<ModelQuestions> corrects = [];
-
-    List<String> amountIncorrects = [];
-    String error = '';
-
-    // faz a busca dos ids das questões respondidas
     yield await fetchAnsweredsIds((answeredsIds) {
-      amountAnswereds = answeredsIds;
+      idsAnswereds = answeredsIds;
     }, (onError) {
       msgLoading.value = onError;
     });
-    // faz a busca dos ids das questões respondidas corretamente
 
     yield await fetchCorrectsIds((correctsIds) {
-      amountCorrects = correctsIds;
+      idsCorrects = correctsIds;
     }, (onError) {
       msgLoading.value = onError;
     });
 
-    // faz a busca dos ids das questões respondidas incorretamente
-    msgLoading.value = '${widget.msgFeedbasck} ids incorretas...';
-    yield await sharedPreferences
-        .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects)
-        .then((ids) {
-      amountIncorrects = ids;
+    yield await fetchIncorrectsIds((incorrectsIds) {
+      idsIncorrects = incorrectsIds;
+    }, (onError) {
+      msgLoading.value = onError;
     });
 
-    // busca as questões pelos ids respondidas corretamente
-    msgLoading.value = '${widget.msgFeedbasck} questões corretas...';
-    yield await questionsCorrectsAndIncorrects.getQuestions(amountCorrects,
-        (questionsCorrects) {
-      corrects = questionsCorrects;
-    }, (error) {
-      error = error;
-      print('error1 $error');
+    yield await fetchCorrectsQuestions((correctsQuestions) {
+      corrects = correctsQuestions;
+    }, (onError) {
+      msgLoading.value = onError;
     });
 
-    // busca as questões pelos ids respondidas incorretamente
-    msgLoading.value = '${widget.msgFeedbasck} questões incorretas...';
-    yield await questionsCorrectsAndIncorrects.getQuestions(amountIncorrects,
-        (questionsIncorrects) {
-      incorrects = questionsIncorrects;
-    }, (error) {
-      error = error;
-      //print('error2 $error');
+    yield await fetchIncorrectsQuestions((incorrectsQuestions) {
+      incorrects = incorrectsQuestions;
+    }, (onError) {
+      msgLoading.value = onError;
     });
 
     // atualiza o progresso do usuario
     msgLoading.value = 'Atualizando informações...';
-    yield nextPage(corrects, incorrects, amountAnswereds, amountCorrects,
-        amountIncorrects, error);
+    nextPage(
+        corrects, incorrects, idsAnswereds, idsCorrects, idsIncorrects);
   }
 
   late final StreamController _controller = StreamController(
@@ -186,7 +223,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     return Scaffold(
         body: ValueListenableBuilder(
             valueListenable: msgLoading,
-            builder: (context, msg, child) {
+            builder: (context, value, child) {
               return StreamBuilder(
                 stream: _controller.stream,
                 builder: (context, AsyncSnapshot snapshot) {
@@ -198,30 +235,24 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                   } else {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:
-                        return const Column(
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Loading(),
+                            const Loading(),
                             Text(
                               'Aguardando dados...',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.indigo),
+                              style: textStyle
                             ),
                           ],
                         );
                       case ConnectionState.waiting:
-                        return const Column(
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Loading(),
+                            const Loading(),
                             Text(
                               'Aguardando informações...',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.indigo),
+                              style: textStyle
                             ),
                           ],
                         );
@@ -231,32 +262,15 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                           children: [
                             const Loading(),
                             Text(
-                              msg,
-                              style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.indigo),
+                              value,
+                              style: textStyle
                             ),
                           ],
                         );
                       case ConnectionState.done:
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  Routes()
-                                      .pushRoute(context, const HomeScreen());
-                                },
-                                child: const Text('Ir para Home')),
-                            const Text(
-                              'Pronto!',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.indigo),
-                            ),
-                          ],
+                        return Text(
+                          'Pronto!',
+                          style: textStyle
                         );
                     }
                   }
