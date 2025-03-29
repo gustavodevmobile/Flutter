@@ -98,7 +98,7 @@ class _PageQuestionsIncorrectsState extends State<PageQuestionsIncorrects> {
                       PageTransition(
                           type: PageTransitionType.fade,
                           duration: const Duration(seconds: 1),
-                          child: const LoadingNextPage()),
+                          child: const LoadingNextPage(msgFeedbasck: 'Atualizando')),
                       (route) => false,
                     );
 

@@ -32,9 +32,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   Service service = Service();
   String msg = 'Buscando informações...';
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-   final ValueNotifier<String> msgLoading =
-      ValueNotifier<String>('${widget.msgFeedbasck} dados...');
-  
+  ValueNotifier<String> msgLoading = ValueNotifier<String>('Buscando dados...');
 
   nextPage(
       List<ModelQuestions> corrects,
@@ -43,7 +41,6 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
       List<String> amountCorrects,
       List<String> amountIncorrects,
       String error) {
-       
     // atualiza a quantidade de questões respondidas atraves do provider
     Provider.of<ModelPoints>(listen: false, context)
         .answeredsAmount(amountAnswereds.length.toString());
@@ -88,31 +85,55 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     );
   }
 
-  Stream getDatas() async* {
-    List<ModelQuestions> corrects = [];
-    List<ModelQuestions> incorrects = [];
+  List<String> amountAnswereds = [];
+  Future fetchAnsweredsIds(
+      Function(List<String>) answeredsIds, Function(String) onError) async {
     List<String> amountAnswereds = [];
-    List<String> amountCorrects = [];
+    msgLoading.value = '${widget.msgFeedbasck} respodidas...';
+    try {
+      amountAnswereds = await sharedPreferences
+          .recoverIds(StorageSharedPreferences.keyIdsAnswereds);
+      answeredsIds(amountAnswereds);
+    } catch (e) {
+      onError('Algo deu errado em buscas ids das questões respondidas: $e ');
+    }
+  }
+
+  List<String> amountCorrects = [];
+  Future fetchCorrectsIds(
+      Function(List<String>) correctsIds, Function(String) onError) async {
+    msgLoading.value = '${widget.msgFeedbasck} ids corretas...';
+    try {
+      amountCorrects = await sharedPreferences
+          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects);
+    } catch (e) {
+      onError('Algo deu errado em buscas ids das questões respondidas: $e ');
+    }
+  }
+
+  Stream getDatas() async* {
+    List<ModelQuestions> incorrects = [];
+    List<ModelQuestions> corrects = [];
+
     List<String> amountIncorrects = [];
     String error = '';
 
     // faz a busca dos ids das questões respondidas
-    msgLoading.value = 'Busncando respodidas...';
-    yield await sharedPreferences
-        .recoverIds(StorageSharedPreferences.keyIdsAnswereds)
-        .then((ids) {
-      amountAnswereds = ids;
+    yield await fetchAnsweredsIds((answeredsIds) {
+      amountAnswereds = answeredsIds;
+    }, (onError) {
+      msgLoading.value = onError;
     });
     // faz a busca dos ids das questões respondidas corretamente
-    msgLoading.value = 'Busncando ids corretas...';
-    yield await sharedPreferences
-        .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects)
-        .then((ids) {
-      amountCorrects = ids;
+
+    yield await fetchCorrectsIds((correctsIds) {
+      amountCorrects = correctsIds;
+    }, (onError) {
+      msgLoading.value = onError;
     });
 
     // faz a busca dos ids das questões respondidas incorretamente
-    msgLoading.value = 'Busncando ids incorretas...';
+    msgLoading.value = '${widget.msgFeedbasck} ids incorretas...';
     yield await sharedPreferences
         .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects)
         .then((ids) {
@@ -120,7 +141,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     });
 
     // busca as questões pelos ids respondidas corretamente
-    msgLoading.value = 'Busncando questões corretas...';
+    msgLoading.value = '${widget.msgFeedbasck} questões corretas...';
     yield await questionsCorrectsAndIncorrects.getQuestions(amountCorrects,
         (questionsCorrects) {
       corrects = questionsCorrects;
@@ -130,7 +151,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     });
 
     // busca as questões pelos ids respondidas incorretamente
-    msgLoading.value = 'Busncando questões incorretas...';
+    msgLoading.value = '${widget.msgFeedbasck} questões incorretas...';
     yield await questionsCorrectsAndIncorrects.getQuestions(amountIncorrects,
         (questionsIncorrects) {
       incorrects = questionsIncorrects;
