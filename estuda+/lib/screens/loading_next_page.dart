@@ -15,7 +15,9 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class LoadingNextPage extends StatefulWidget {
+  final String msgFeedbasck;
   const LoadingNextPage({
+    required this.msgFeedbasck,
     super.key,
   });
 
@@ -30,6 +32,9 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   Service service = Service();
   String msg = 'Buscando informações...';
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+   final ValueNotifier<String> msgLoading =
+      ValueNotifier<String>('${widget.msgFeedbasck} dados...');
+  
 
   nextPage(
       List<ModelQuestions> corrects,
@@ -38,6 +43,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
       List<String> amountCorrects,
       List<String> amountIncorrects,
       String error) {
+       
     // atualiza a quantidade de questões respondidas atraves do provider
     Provider.of<ModelPoints>(listen: false, context)
         .answeredsAmount(amountAnswereds.length.toString());
@@ -73,20 +79,13 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     //     .getListDisciplines(disciplines);
 
     Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.fade,
-          duration: const Duration(seconds: 1),
-          child: const HomeScreen(),
-        ),
-      );
-
-    // if (corrects.isNotEmpty && incorrects.isNotEmpty) {
-      
-    // } else {
-    //   showSnackBar(context, error, Colors.red);
-    //   Navigator.pop(context);
-    // }
+      context,
+      PageTransition(
+        type: PageTransitionType.fade,
+        duration: const Duration(seconds: 1),
+        child: const HomeScreen(),
+      ),
+    );
   }
 
   Stream getDatas() async* {
@@ -98,39 +97,30 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     String error = '';
 
     // faz a busca dos ids das questões respondidas
+    msgLoading.value = 'Busncando respodidas...';
     yield await sharedPreferences
         .recoverIds(StorageSharedPreferences.keyIdsAnswereds)
         .then((ids) {
       amountAnswereds = ids;
     });
-    setState(() {
-      msg = 'Ids das Respondidas ok!';
-    });
     // faz a busca dos ids das questões respondidas corretamente
+    msgLoading.value = 'Busncando ids corretas...';
     yield await sharedPreferences
         .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects)
         .then((ids) {
       amountCorrects = ids;
     });
-    setState(() {
-      msg = 'Ids das Corretas ok!';
-    });
+
     // faz a busca dos ids das questões respondidas incorretamente
+    msgLoading.value = 'Busncando ids incorretas...';
     yield await sharedPreferences
         .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects)
         .then((ids) {
       amountIncorrects = ids;
     });
-    setState(() {
-      msg = 'Ids das Incorretas ok!';
-    });
-
-    // //busca o nome das disciplinas.
-    // yield await service.getDisciplines().then((disciplines) {
-    //   listDisciplines = disciplines;
-    // });
 
     // busca as questões pelos ids respondidas corretamente
+    msgLoading.value = 'Busncando questões corretas...';
     yield await questionsCorrectsAndIncorrects.getQuestions(amountCorrects,
         (questionsCorrects) {
       corrects = questionsCorrects;
@@ -139,24 +129,18 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
       print('error1 $error');
     });
 
-    setState(() {
-      msg = 'Questões corretas ok!';
-    });
-
     // busca as questões pelos ids respondidas incorretamente
+    msgLoading.value = 'Busncando questões incorretas...';
     yield await questionsCorrectsAndIncorrects.getQuestions(amountIncorrects,
         (questionsIncorrects) {
       incorrects = questionsIncorrects;
     }, (error) {
       error = error;
-      print('error2 $error');
+      //print('error2 $error');
     });
 
-    setState(() {
-      msg = 'Questões incorretas ok!';
-    });
     // atualiza o progresso do usuario
-
+    msgLoading.value = 'Atualizando informações...';
     yield nextPage(corrects, incorrects, amountAnswereds, amountCorrects,
         amountIncorrects, error);
   }
@@ -179,79 +163,84 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-        stream: _controller.stream,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasError) {
-            Navigator.pop(context);
-            return const Text('deu ruim');
-            //showSnackBar(context, 'deu ruim', Colors.red);
-          } else {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Loading(),
-                    Text(
-                      'Aguardando dados...',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo),
-                    ),
-                  ],
-                );
-              case ConnectionState.waiting:
-                return const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Loading(),
-                    Text(
-                      'Aguardando informações...',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo),
-                    ),
-                  ],
-                );
-              case ConnectionState.active:
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Loading(),
-                    Text(
-                      msg,
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo),
-                    ),
-                  ],
-                );
-              case ConnectionState.done:
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Routes().pushRoute(context, const HomeScreen());
-                        },
-                        child: const Text('Ir para Home')),
-                    const Text(
-                      'Pronto!',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo),
-                    ),
-                  ],
-                );
-            }
-          }
-        },
-      ),
-    );
+        body: ValueListenableBuilder(
+            valueListenable: msgLoading,
+            builder: (context, msg, child) {
+              return StreamBuilder(
+                stream: _controller.stream,
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasError) {
+                    Navigator.pop(context);
+                    return const Text(
+                        'Algo saiu errado, tente novamente mais tarde');
+                    //showSnackBar(context, 'deu ruim', Colors.red);
+                  } else {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                        return const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Loading(),
+                            Text(
+                              'Aguardando dados...',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo),
+                            ),
+                          ],
+                        );
+                      case ConnectionState.waiting:
+                        return const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Loading(),
+                            Text(
+                              'Aguardando informações...',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo),
+                            ),
+                          ],
+                        );
+                      case ConnectionState.active:
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Loading(),
+                            Text(
+                              msg,
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo),
+                            ),
+                          ],
+                        );
+                      case ConnectionState.done:
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  Routes()
+                                      .pushRoute(context, const HomeScreen());
+                                },
+                                child: const Text('Ir para Home')),
+                            const Text(
+                              'Pronto!',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo),
+                            ),
+                          ],
+                        );
+                    }
+                  }
+                },
+              );
+            }));
   }
 }

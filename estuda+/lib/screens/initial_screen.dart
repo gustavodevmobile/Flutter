@@ -45,7 +45,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
                     if (isConnected) {
                       if (!mounted) return;
                       Navigator.pop(context);
-                      Routes().pushRoute(context, const LoadingNextPage());
+                      Routes().pushRoute(context, const LoadingNextPage(msgFeedbasck: 'Buscando',));
                     } else {
                       Navigator.pop(context);
                       showSnackBar(
