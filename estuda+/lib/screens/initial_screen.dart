@@ -5,7 +5,7 @@ import 'package:estudamais/database/storage_shared_preferences.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 
 class ScreenInitial extends StatefulWidget {

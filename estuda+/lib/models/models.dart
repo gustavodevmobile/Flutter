@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ModelPoints extends ChangeNotifier {
-  double boxIsAnswered = 0;
+  //double boxIsAnswered = 0;
   bool isAnswered = false;
+  bool isAnsweredBox = false;
   bool actionBtnCircle = false;
   bool actionBtnRetangulare = false;
   bool progressError = false;
@@ -13,8 +14,11 @@ class ModelPoints extends ChangeNotifier {
   List<String> listDisciplines = [];
   bool hasConnection = false;
 
-  void actBoxAnswered(double active) {
-    boxIsAnswered = active;
+  
+
+  // Método responsável por abrir o container caso a questão ja tenha sido respondida.
+  void openBoxAlreadyAnswereds(bool value) {
+    isAnsweredBox = value;
     notifyListeners();
   }
 

@@ -27,7 +27,7 @@ class ServiceResumQuestions {
           resultQuestionsCorrect.add(ModelQuestions.toMap(question));
         }
 
-        print('Questões corretas recebidas com sucesso');
+        print('Questões recebidas com sucesso');
       } else {
         print('resultQuestionsCorrect $resultQuestionsCorrect');
       }

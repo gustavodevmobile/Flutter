@@ -7,7 +7,7 @@ import 'package:estudamais/service/service.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/list_selected_scrollable.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:estudamais/models/models.dart';

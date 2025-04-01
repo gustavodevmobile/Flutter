@@ -10,7 +10,7 @@ import 'package:estudamais/widgets/animated_button_retangulare.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -42,7 +42,7 @@ class _DisciplineState extends State<Discipline> {
       Function(String) onError) async {
     try {
       List<ModelQuestions> questions =
-          await service.getQuestionsByDiscipline(listDisciplinesSelected);
+          await service.getQuestionsByDiscipline(listDisciplinesSelected, context);
       onSuccess(questions);
     } catch (e) {
       onError('Ops, algo deu errado, tente novamente mais tarde');

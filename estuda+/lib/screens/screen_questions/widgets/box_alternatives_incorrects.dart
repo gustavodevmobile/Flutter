@@ -1,3 +1,4 @@
+import 'package:estudamais/database/storage_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/models/models.dart';
@@ -7,12 +8,12 @@ class BoxAlternativesIncorrects extends StatefulWidget {
   final String alternative;
   final String option;
   final String response;
-  final bool isAnswered;
+  //final bool isAnswered;
   final int indexQuestion;
   final String idQuestion;
 
   const BoxAlternativesIncorrects(this.alternative, this.option, this.response,
-      this.isAnswered, this.indexQuestion, this.idQuestion,
+      this.indexQuestion, this.idQuestion,
       {super.key});
 
   @override
@@ -21,9 +22,14 @@ class BoxAlternativesIncorrects extends StatefulWidget {
 }
 
 class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
-  final ControllerQuestions _controllerQuestions = ControllerQuestions();
+  final ControllerQuestions controllerQuestions = ControllerQuestions();
 
-  bool answered = false;
+  Future<bool> isInCorrects() async {
+    bool inCorrects = await controllerQuestions.ifAnswered(widget.idQuestion,
+        context, StorageSharedPreferences.keyIdsAnsweredsCorrects);
+    return inCorrects;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -46,7 +52,7 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                           blurRadius: 1,
                           spreadRadius: 1)
                     ],
-                    color: _controllerQuestions.corAlternativa,
+                    color: controllerQuestions.corAlternativa,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       width: 2,
@@ -73,21 +79,22 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                         style: const TextStyle(fontSize: 20),
                       ),
                     ),
-                    onTap: () {
-                      setState(() {
-                        answered = true;
-                        _controllerQuestions.recoverQuestionsIncorrects(
-                          widget.isAnswered,
-                          widget.response,
-                          widget.alternative,
-                          //widget.indexQuestion,
-                          context,
-                          widget.idQuestion,
-                        );
-                        value.actBoxAnswered(
-                            _controllerQuestions.heightBoxIsAnswered);
-                        value.answered(answered);
-                      });
+                    onTap: () async {
+                      bool inCorrects = await isInCorrects();
+                      if (inCorrects) {
+                        value.openBoxAlreadyAnswereds(true);
+                      } else if (controllerQuestions.isAnsweredIncorrects) {
+                        value.openBoxAlreadyAnswereds(true);
+                      } else {
+                        setState(() {
+                          controllerQuestions.recoverQuestionsIncorrects(
+                            widget.response,
+                            widget.alternative,
+                            context,
+                            widget.idQuestion,
+                          );
+                        });
+                      }
                     },
                   ),
                 ),

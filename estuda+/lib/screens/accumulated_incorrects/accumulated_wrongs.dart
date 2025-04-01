@@ -10,7 +10,7 @@ import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/screens/accumulated_incorrects/widgets/expanded_incorrects.dart';
 
 import 'package:estudamais/widgets/map_selected_scrollable.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -54,7 +54,7 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                 Routes().popRoutes(context, const HomeScreen());
               },
               icon: const Icon(
-                 Icons.arrow_back_ios,
+                Icons.arrow_back_ios,
                 color: Colors.white,
               ),
             ),
@@ -93,8 +93,9 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ExpandedIncorrects(
-                      discipline: questionsIncorrects.getDisciplineOfQuestions(incorrects.resultQuestionsIncorrects)
-                    ),
+                        discipline:
+                            questionsIncorrects.getDisciplineOfQuestions(
+                                incorrects.resultQuestionsIncorrects)),
                   ),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -104,7 +105,8 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                   ),
                   GestureDetector(
                     onTap: () {
-                       List<ModelQuestions> resultQuestionsIncorrects = [];
+                      value.openBoxAlreadyAnswereds(false);
+                      List<ModelQuestions> resultQuestionsIncorrects = [];
                       if (incorrects.subjectsAndSchoolYearSelected.isEmpty) {
                         showSnackBarError(
                           context,
@@ -112,10 +114,15 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                           Colors.red,
                         );
                       } else {
-                        resultQuestionsIncorrects = questionsIncorrects.getResultQuestions(incorrects.resultQuestionsIncorrects, incorrects.subjectsAndSchoolYearSelected);
+                        resultQuestionsIncorrects =
+                            questionsIncorrects.getResultQuestions(
+                                incorrects.resultQuestionsIncorrects,
+                                incorrects.subjectsAndSchoolYearSelected);
                         Routes().pushRoute(
-                            context, PageQuestionsIncorrects(resultQuestions: resultQuestionsIncorrects,));
-                        
+                            context,
+                            PageQuestionsIncorrects(
+                              resultQuestions: resultQuestionsIncorrects,
+                            ));
                       }
                     },
                     child: const ButtonNext(textContent: 'Mostrar questões'),

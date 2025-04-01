@@ -11,7 +11,7 @@ import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/screens/accumulated_corrects/widgets/expanded_corrects.dart';
 
 import 'package:estudamais/widgets/map_selected_scrollable.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -129,24 +129,7 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
               ),
             ),
           ),
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerFloat,
-          // floatingActionButton:
-          // GestureDetector(
-          //   onTap: () {
-          //     if (QuestionsCorrects.mapYearAndSubjectSelected.isEmpty) {
-          //       showSnackBar(
-          //         context,
-          //         'Selecione a disciplina e o assunto para continuar.',
-          //         Colors.red,
-          //       );
-          //     } else {
-          //       QuestionsCorrects().getResultQuestionsCorrects();
-          //       Routes().pushRoute(context, const PageQuestionsCorrects());
-          //     }
-          //   },
-          //   child: const ButtonNext(textContent: 'Mostrar questões'),
-          // ),
+         
         );
       },
     );

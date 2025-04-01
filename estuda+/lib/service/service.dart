@@ -6,6 +6,8 @@
 
 import 'dart:convert';
 import 'package:estudamais/database/storage_shared_preferences.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 //import 'package:dio/dio.dart';
 import 'dart:typed_data';
@@ -42,7 +44,8 @@ class Service {
   // busca as questões por disciplinas
   Future<List<ModelQuestions>> getQuestionsByDiscipline(
       // recebe uma lista das disciplinas selecionadas
-      List<String> disciplines) async {
+      List<String> disciplines,
+      BuildContext context) async {
     List<ModelQuestions> questionsByDiscipline = [];
     // converte essa lista em json para ser enviado como parametro para rota
     var listDisciplinesJson = jsonEncode(disciplines);
@@ -53,10 +56,11 @@ class Service {
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
         print('Todas as questões recebidas com sucesso');
-        
+
         // faz a busca dos ids das questões já respodidas.
-        List<String> listIdsAnswereds = await sharedPreferences
-            .recoverIds(StorageSharedPreferences.keyIdsAnswereds);
+        List<String> listIdsAnswereds = await sharedPreferences.recoverIds(
+            StorageSharedPreferences.keyIdsAnswereds,
+            (error) => showSnackBarError(context, error, Colors.red));
 
         // converte a imagem de bytes para um Uint8List
         for (var question in list) {
@@ -65,11 +69,13 @@ class Service {
           question['image'] = bytesImage;
           questionsByDiscipline.add(ModelQuestions.toMap(question));
         }
+
+       
         // retira as questões que ja foram respodidas pelos ids das questões respondidas.
         for (var id in listIdsAnswereds) {
           questionsByDiscipline.removeWhere((el) => el.id == id);
         }
-        
+
         for (var qs in questionsByDiscipline) {
           print('questões: ${qs.id}, ${qs.schoolYear}, ${qs.discipline}');
         }

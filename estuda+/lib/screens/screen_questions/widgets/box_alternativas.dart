@@ -1,3 +1,4 @@
+import 'package:estudamais/database/storage_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/models/models.dart';
@@ -7,13 +8,11 @@ class BoxAlternatives extends StatefulWidget {
   final String alternative;
   final String option;
   final String response;
-  final bool isAnswered;
   final int indexQuestion;
   final String idQuestion;
 
   const BoxAlternatives(this.alternative, this.option, this.response,
-      this.isAnswered, this.indexQuestion,
-      this.idQuestion,
+      this.indexQuestion, this.idQuestion,
       {super.key});
 
   @override
@@ -21,11 +20,8 @@ class BoxAlternatives extends StatefulWidget {
 }
 
 class _BoxAlternativesState extends State<BoxAlternatives> {
-  final ControllerQuestions _controllerQuestions = ControllerQuestions();
+  final ControllerQuestions controllerQuestions = ControllerQuestions();
 
-  
-
-  bool answered = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -48,7 +44,7 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                           blurRadius: 1,
                           spreadRadius: 1)
                     ],
-                    color: _controllerQuestions.corAlternativa,
+                    color: controllerQuestions.corAlternativa,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       width: 2,
@@ -79,19 +75,21 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                       ),
                     ),
                     onTap: () {
-                      setState(() {
-                        answered = true;
-                        _controllerQuestions.isCorrect(
-                          widget.isAnswered,
-                          widget.response,
-                          widget.alternative,
-                         // widget.indexQuestion,
-                          context,
-                          widget.idQuestion,
-                        );
-                        value.actBoxAnswered(
-                            _controllerQuestions.heightBoxIsAnswered);
-                        value.answered(answered);
+                      controllerQuestions
+                          .ifAnswered(widget.idQuestion, context, StorageSharedPreferences.keyIdsAnswereds)
+                          .then((isAnswered) {
+                        if (isAnswered) {
+                          value.openBoxAlreadyAnswereds(true);
+                        } else {
+                          setState(() {
+                            controllerQuestions.isCorrect(
+                              widget.response,
+                              widget.alternative,
+                              context,
+                              widget.idQuestion,
+                            );
+                          });
+                        }
                       });
                     },
                   ),

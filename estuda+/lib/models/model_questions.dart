@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+// Class responsável pelo modelo de questões que serão recebidas da api.
 class ModelQuestions {
   String id;
   String elementarySchool;
@@ -29,7 +30,7 @@ class ModelQuestions {
     required this.alternativeC,
     required this.alternativeD,
   });
-
+// Método que converte Map<String<dynamic>> para ModelQuestions
   ModelQuestions.toMap(
     Map<String, dynamic> ask,
   )   : id = ask['id'].toString(),

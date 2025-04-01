@@ -6,7 +6,7 @@ import 'package:estudamais/widgets/animated_button_retangulare.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/list_selected_scrollable.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/models/models.dart';
 import 'package:estudamais/service/service.dart';
@@ -193,8 +193,10 @@ class _SubjectsState extends State<Subjects> {
                       PageQuestionsBySchoolYear(
                         questions: questions,
                       ));
+                  // Método que atualiza o estado do box da alternativa, que nenhuma questão foi respondida.
                   value.answered(false);
-                  value.actBoxAnswered(0);
+                  // Método que atualiza o estado no box onde mostra "questão ja respondida", passando false para fecha-lo;
+                  value.openBoxAlreadyAnswereds(false);
                 }
               },
               child: const ButtonNext(

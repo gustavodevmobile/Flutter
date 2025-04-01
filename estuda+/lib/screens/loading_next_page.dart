@@ -7,6 +7,7 @@ import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/widgets/loading.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -97,7 +98,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     msgLoading.value = '${widget.msgFeedbasck} respodidas...';
     try {
       ids = await sharedPreferences
-          .recoverIds(StorageSharedPreferences.keyIdsAnswereds);
+          .recoverIds(StorageSharedPreferences.keyIdsAnswereds, (error)=>showSnackBarError(context, error, Colors.red));
       answeredsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscas ids das questões respondidas: $e ');
@@ -112,7 +113,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     List<String> ids = [];
     try {
       ids = await sharedPreferences
-          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects);
+          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects,(error)=>showSnackBarError(context, error, Colors.red));
       correctsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscar ids das questões corretas: $e ');
@@ -127,7 +128,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     List<String> ids = [];
     try {
       ids = await sharedPreferences
-          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects);
+          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects, (error)=>showSnackBarError(context, error, Colors.red));
       incorrectsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscar ids das questões incorretas: $e ');

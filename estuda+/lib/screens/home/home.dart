@@ -13,7 +13,7 @@ import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';
-import 'package:estudamais/widgets/show_snackBar.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -134,7 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Discipline(disciplines: disciplines),
                     );
                   });
-                  value.actBoxAnswered(0);
+                  //Atualiza o método responsável por abrir o container caso a questão já tenha sido respondida, recebe0 para retornar ao estado fechado.
+                  value.openBoxAlreadyAnswereds(false);
                 },
                 icon: const Icon(Icons.auto_stories_rounded),
               ),
@@ -192,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           } else {
                             showSnackBarError(
                               context,
-                              'Ainda não temos nenhuma questão respondida.',
+                              'Não temos nenhuma questão correta.',
                               Colors.blue,
                             );
                           }
@@ -241,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               } else {
                                 showSnackBarError(
                                     context,
-                                    'Ainda não temos nenhuma questão respondida.',
+                                    'Não temos nenhuma questão incorreta.',
                                     Colors.blue);
                               }
                             },
