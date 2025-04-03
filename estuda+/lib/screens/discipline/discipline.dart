@@ -1,3 +1,4 @@
+import 'package:estudamais/controller/controller_disciplines.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/discipline/widget/discipline_list.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
@@ -29,26 +30,8 @@ class Discipline extends StatefulWidget {
 }
 
 class _DisciplineState extends State<Discipline> {
-  Color? colorFindError;
-  String? textFindError;
-  bool enable = false;
-  Service service = Service();
-  //double heightButtonNext = 0;
-  List<String> listDisciplinesSelected = [];
-  List<String> showListSchoolYears = [];
-
-  StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-
-  void fetchQuestionsByDiscipline(Function(List<ModelQuestions>) onSuccess,
-      Function(String) onError) async {
-    try {
-      List<ModelQuestions> questions = await service.getQuestionsByDiscipline(
-          listDisciplinesSelected, context);
-      onSuccess(questions);
-    } catch (e) {
-      onError('Ops, algo deu errado, tente novamente mais tarde');
-    }
-  }
+  ControllerDisciplines controllerDisciplines = ControllerDisciplines();
+  List<String> disciplinesSelecteds = [];
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +56,9 @@ class _DisciplineState extends State<Discipline> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  alignment: Alignment.center,
+                child: Center(
                   child: Text(
-                    'Selecione a disciplina:',
+                    'Selecione a(s) disciplina(s):',
                     style: AppTheme.customTextStyle(fontSize: 20),
                   ),
                 ),
@@ -84,31 +66,32 @@ class _DisciplineState extends State<Discipline> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                    padding: const EdgeInsets.only(top: 8, bottom: 20),
-                    decoration: BoxDecoration(
-                        color: Colors.white38,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const <BoxShadow>[
-                          BoxShadow(
-                            offset: Offset(0, 3),
-                            blurRadius: 5,
-                            color: Colors.black38,
-                          )
-                        ]),
-                    child: DisciplineList(
-                      disciplines: widget.disciplines,
-                      onDisciplineTap: (discipline) {
-                        if (value.actionBtnRetangulare) {
-                          listDisciplinesSelected.add(
-                            discipline,
-                          );
-                        } else {
-                          listDisciplinesSelected.remove(
-                            discipline,
-                          );
-                        }
-                      },
-                    )),
+                  padding: const EdgeInsets.only(top: 8, bottom: 20),
+                  decoration: BoxDecoration(
+                      color: Colors.white38,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                          offset: Offset(0, 3),
+                          blurRadius: 5,
+                          color: Colors.black38,
+                        )
+                      ]),
+                  child: DisciplineList(
+                    disciplines: widget.disciplines,
+                    onDisciplineTap: (discipline) {
+                      if (value.actionBtnRetangulare) {
+                        disciplinesSelecteds.add(
+                          discipline,
+                        );
+                      } else {
+                        disciplinesSelecteds.remove(
+                          discipline,
+                        );
+                      }
+                    },
+                  ),
+                ),
               ),
             ],
           ),
@@ -116,48 +99,8 @@ class _DisciplineState extends State<Discipline> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
           onTap: () async {
-            List<String> disciplinesContent = [];
-            if (listDisciplinesSelected.isEmpty) {
-              showSnackBarError(context,
-                  'Selecione uma disciplina para continuar.', Colors.red);
-            } else {
-              showLoadingDialog(context, 'Buscando questões...');
-              fetchQuestionsByDiscipline((questions) {
-                if (questions.isNotEmpty) {
-                  for (var question in questions) {
-                    showListSchoolYears.add(question.schoolYear);
-                    disciplinesContent.add(question.discipline);
-                  }
-                  if (!mounted) return;
-                  Routes().popRoutes(
-                    context,
-                    SchoolYears(
-                      questionsByDisciplines: questions,
-                      disciplines: disciplinesContent.toSet().toList()..sort(),
-                      schoolYears: showListSchoolYears.toSet().toList()..sort(),
-                    ),
-                  );
-                  for (var dis in listDisciplinesSelected) {
-                    if (!disciplinesContent.contains(dis)) {
-                      showSnackBarError(
-                          context,
-                          'Todas as questões de $dis já foram respondidas.',
-                          Colors.orange);
-                    }
-                  }
-                } else {
-                  showSnackBarError(
-                      context,
-                      'Todas as questões desta(s) disciplina(s) já foram respondidas.',
-                      Colors.blue);
-                  Navigator.pop(context);
-                }
-              }, (errorMessage) {
-                if (!mounted) return;
-                showSnackBarError(context, errorMessage, Colors.red);
-                Navigator.pop(context);
-              });
-            }
+            controllerDisciplines.handlerFetchQuestionsByDiscipline(
+                context, disciplinesSelecteds);
           },
           child: const ButtonNext(
             textContent: 'Buscar Questões',
