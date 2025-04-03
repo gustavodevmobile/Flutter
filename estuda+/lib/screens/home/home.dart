@@ -1,3 +1,4 @@
+import 'package:estudamais/controller/controller_home.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/screens/resum/accumulated_corrects/accumulated_right.dart';
@@ -35,42 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
   ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-  //List<String> listIdsAnswereds = [];
-  // List<String> listIdsCorrects = [];
-  // List<String> listIdsIncorrects = [];
-  List<String> disciplines = [];
-  // bool? enable;
-
-  void fetchDisciplines(Function(List<String> disciplies) onSuccess,
-      Function(String) onError) async {
-    try {
-      disciplines = await service.getDisciplines();
-      if (!mounted) return;
-      onSuccess(disciplines);
-    } catch (e) {
-      if (!mounted) return;
-      onError('Não foi possível buscar as Disciplinas.');
-    }
-  }
-
-  void handleFetchDisciplines(
-      BuildContext context, Function(List<String>) onSuccess) {
-    showLoadingDialog(context, 'Buscando disciplinas...');
-    fetchDisciplines((disciplines) {
-      if (disciplines.isNotEmpty) {
-        if (!mounted) return;
-        Navigator.pop(context);
-        onSuccess(disciplines);
-      } else {
-        Navigator.pop(context);
-        showSnackBarError(
-            context, 'Ops, algo deu errado em buscar disciplinas', Colors.red);
-      }
-    }, (onError) {
-      Navigator.pop(context);
-      showSnackBarError(context, onError, Colors.red);
-    });
-  }
+  ControllerHome controllerHome = ControllerHome();
 
   @override
   Widget build(BuildContext context) {
@@ -101,9 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: AppTheme.customTextStyle(fontSize: 13),
                   children: [
                     TextSpan(
-                      text: value.answeredsCurrents,
-                      style: AppTheme.customTextStyle(fontSize: 20, color: Colors.amber)
-                    )
+                        text: value.answeredsCurrents,
+                        style: AppTheme.customTextStyle(
+                            fontSize: 20, color: Colors.amber))
                   ],
                 ),
               ),
@@ -121,12 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTileDrawer(
                 contextText: 'Responder questões',
                 onTap: () {
-                  handleFetchDisciplines(context, (disciplines) {
-                    Routes().popRoutes(
-                      context,
-                      Discipline(disciplines: disciplines),
-                    );
-                  });
+                  controllerHome.handleFetchDisciplines(context);
                   //Atualiza o método responsável por abrir o container caso a questão já tenha sido respondida, recebe0 para retornar ao estado fechado.
                   value.openBoxAlreadyAnswereds(false);
                 },
@@ -191,10 +152,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
                         },
-                        child: Text(
-                          'Resumo',
-                          style: AppTheme.customTextStyle(fontSize: 13, color: Colors.indigo, underline: true)
-                        ),
+                        child: Text('Resumo',
+                            style: AppTheme.customTextStyle(
+                                fontSize: 13,
+                                color: Colors.indigo,
+                                underline: true)),
                       ),
                     ),
                     // DASHBORD DAS DISCIPLINAS RESPONDIDAS CORRETAMENTE
@@ -241,7 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Text(
                               'Resumo',
-                              style: AppTheme.customTextStyle(fontSize: 13, color: Colors.indigo, underline: true),
+                              style: AppTheme.customTextStyle(
+                                  fontSize: 13,
+                                  color: Colors.indigo,
+                                  underline: true),
                             )),
                       ),
                     ),
@@ -279,12 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
             onTap: () {
-              handleFetchDisciplines(context, (disciplines) {
-                Routes().popRoutes(
-                  context,
-                  Discipline(disciplines: disciplines),
-                );
-              });
+              controllerHome.handleFetchDisciplines(context);
             },
             child: const ButtonNext(
               textContent: 'Iniciar',

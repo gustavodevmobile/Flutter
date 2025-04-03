@@ -59,7 +59,7 @@ class _DisciplineState extends State<Discipline> {
                 child: Center(
                   child: Text(
                     'Selecione a(s) disciplina(s):',
-                    style: AppTheme.customTextStyle(fontSize: 20),
+                    style: AppTheme.customTextStyle(fontSize: 20, fontWeight: true),
                   ),
                 ),
               ),
@@ -99,6 +99,7 @@ class _DisciplineState extends State<Discipline> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
           onTap: () async {
+            if (!mounted) return;
             controllerDisciplines.handlerFetchQuestionsByDiscipline(
                 context, disciplinesSelecteds);
           },
