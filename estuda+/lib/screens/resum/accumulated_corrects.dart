@@ -2,6 +2,7 @@ import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
+import 'package:estudamais/screens/resum/widgets/never_subjects_selected.dart';
 import 'package:estudamais/screens/screen_questions/questions_corrects.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
@@ -14,18 +15,17 @@ import 'package:estudamais/screens/resum/widgets/disicipline_expansion_panel_rad
 import 'package:estudamais/screens/resum/widgets/map_selected_scrollable.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:provider/provider.dart';
 
-class AccumulatedRight extends StatefulWidget {
-  const AccumulatedRight({super.key});
+class AccumulatedCorrects extends StatefulWidget {
+  const AccumulatedCorrects({super.key});
 
   @override
-  State<AccumulatedRight> createState() => _AccumulatedRightState();
+  State<AccumulatedCorrects> createState() => _AccumulatedCorrectsState();
 }
 
-class _AccumulatedRightState extends State<AccumulatedRight> {
+class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
   ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
   ScrollController scrollController = ScrollController();
   //bool enable = false;
@@ -58,18 +58,21 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
                 children: [
                   Center(
                     child: Text('Assuntos selecionados:',
-                        style: AppTheme.customTextStyle(color: Colors.amber)),
+                        style: AppTheme.customTextStyle(
+                            color: Colors.white, fontWeight: true)),
                   ),
-                  // Mostra os assuntos das disciplinas selecionadas.
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 300),
-                    child: Visibility(
-                      visible: value.showBoxSubjects,
-                      child: MapSelectedDisciplines(
-                        listMap: corrects.subjectsAndSchoolYearSelected,
-                      ),
-                    ),
-                  ),
+                  // Widget que mostra os assuntos das disciplinas selecionadas.
+                  corrects.subjectsAndSchoolYearSelected.isEmpty
+                      ? const NeverSubjectsSelected()
+                      : AnimatedSize(
+                          duration: const Duration(milliseconds: 300),
+                          child: Visibility(
+                            visible: value.showBoxSubjects,
+                            child: MapSelectedSubjects(
+                              listMap: corrects.subjectsAndSchoolYearSelected,
+                            ),
+                          ),
+                        ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12.0),
                     child: Divider(
@@ -80,7 +83,8 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
                     padding: const EdgeInsets.symmetric(
                         vertical: 4.0, horizontal: 8.0),
                     child: Text('Selecione a disciplina e o assunto:',
-                        style: AppTheme.customTextStyle(color: Colors.amberAccent)),
+                        style: AppTheme.customTextStyle(
+                            color: Colors.white, fontWeight: true)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

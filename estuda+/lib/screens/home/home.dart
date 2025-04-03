@@ -1,23 +1,17 @@
 import 'package:estudamais/controller/controller_home.dart';
 import 'package:estudamais/controller/routes.dart';
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
-import 'package:estudamais/screens/resum/accumulated_corrects/accumulated_right.dart';
-import 'package:estudamais/screens/resum/accumulated_incorrects/accumulated_wrongs.dart';
-import 'package:estudamais/screens/discipline/discipline.dart';
+import 'package:estudamais/screens/resum/accumulated_corrects.dart';
+import 'package:estudamais/screens/resum/accumulated_incorrectas.dart';
 import 'package:estudamais/screens/home/widgets/dashbord_displice.dart';
 import 'package:estudamais/screens/initial_screen.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
-import 'package:estudamais/service/service.dart';
-import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';
-import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/widgets/box_resum.dart';
@@ -31,11 +25,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  double shadowBox = 10;
-  Service service = Service();
-  ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
-  ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
-  StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+  Routes routes = Routes();
   ControllerHome controllerHome = ControllerHome();
 
   @override
@@ -87,9 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTileDrawer(
                 contextText: 'Responder questões',
                 onTap: () {
+                  // Chama o método no controller que manipula e busca as disciplinas na api.
                   controllerHome.handleFetchDisciplines(context);
-                  //Atualiza o método responsável por abrir o container caso a questão já tenha sido respondida, recebe0 para retornar ao estado fechado.
-                  value.openBoxAlreadyAnswereds(false);
+                  //value.openBoxAlreadyAnswereds(false);
                 },
                 icon: const Icon(Icons.auto_stories_rounded),
               ),
@@ -135,14 +125,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Lottie.asset('./assets/lotties/Animation_correct.json'),
                       TextButton(
                         onPressed: () {
-                          //print(value1.correctsCurrents);
                           if (corrects.resultQuestionsCorrects.isNotEmpty) {
                             Routes()
-                                .pushRoute(context, const AccumulatedRight());
-                            questionsCorrects.getDisciplineOfQuestions(
-                                corrects.resultQuestionsCorrects);
+                                .pushRoute(context, const AccumulatedCorrects());
+                            //Limpa a lista que guarda os assuntos selecionados.
                             corrects.subjectsAndSchoolYearSelected.clear();
-                            //fecha onde mostra os assuntos selecionados
+                            //Fecha onde mostra os assuntos selecionados.
                             value.showSubjects(false);
                           } else {
                             showSnackBarError(
@@ -152,11 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
                         },
-                        child: Text('Resumo',
-                            style: AppTheme.customTextStyle(
-                                fontSize: 13,
-                                color: Colors.indigo,
-                                underline: true)),
+                        child: Text(
+                          'Resumo',
+                          style: AppTheme.customTextStyle(
+                              fontSize: 13,
+                              color: Colors.indigo,
+                              underline: true),
+                        ),
                       ),
                     ),
                     // DASHBORD DAS DISCIPLINAS RESPONDIDAS CORRETAMENTE
@@ -182,32 +172,33 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Incorretas',
                         Lottie.asset('./assets/lotties/alert.json'),
                         TextButton(
-                            onPressed: () {
-                              // print(value1.correctsCurrents);
-                              if (incorrects
-                                  .resultQuestionsIncorrects.isNotEmpty) {
-                                // value.answered(false);
-                                Routes().pushRoute(
-                                    context, const AccumulatedWrongs());
-                                questionsIncorrects.getDisciplineOfQuestions(
-                                    incorrects.resultQuestionsIncorrects);
-                                incorrects.subjectsAndSchoolYearSelected
-                                    .clear();
-                                value.showSubjects(false);
-                              } else {
-                                showSnackBarError(
-                                    context,
-                                    'Não temos nenhuma questão incorreta.',
-                                    Colors.blue);
-                              }
-                            },
-                            child: Text(
-                              'Resumo',
-                              style: AppTheme.customTextStyle(
-                                  fontSize: 13,
-                                  color: Colors.indigo,
-                                  underline: true),
-                            )),
+                          onPressed: () {
+                            if (incorrects
+                                .resultQuestionsIncorrects.isNotEmpty) {
+                              routes.pushRoute(
+                                context,
+                                const AccumulatedIncorrects(),
+                              );
+                              //Limpa a lista que guarda os assuntos selecionados.
+                              incorrects.subjectsAndSchoolYearSelected.clear();
+                              //Fecha onde mostra os assuntos selecionados.
+                              value.showSubjects(false);
+                            } else {
+                              showSnackBarError(
+                                context,
+                                'Não temos nenhuma questão incorreta.',
+                                Colors.blue,
+                              );
+                            }
+                          },
+                          child: Text(
+                            'Resumo',
+                            style: AppTheme.customTextStyle(
+                                fontSize: 13,
+                                color: Colors.indigo,
+                                underline: true),
+                          ),
+                        ),
                       ),
                     ),
                     // WIDGET DASHBORD DISCIPLINAS RESPONDIDAS INCORRETAMENTE
@@ -228,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }),
                     TextButton(
                       onPressed: () {
-                        Routes().pushRoute(context, const ScreenInitial());
+                        routes.pushRoute(context, const ScreenInitial());
                       },
                       child: const Text(
                         'Sair',
@@ -244,6 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
             onTap: () {
+              // Chama o controller que manipula e busca as disciplinasna api
               controllerHome.handleFetchDisciplines(context);
             },
             child: const ButtonNext(

@@ -53,6 +53,7 @@ class ServiceResumQuestions {
   }
 
   // faz a seleção dos assuntos e anos escolares selecionados e retorna um map com o assunto e ano escolar sem repetição, como feedbackdo que foi selecionado
+
   List<Map<String, dynamic>> showSubjectAndSchoolYearSelected(
       String subjects, String schoolYear) {
     List<Map<String, dynamic>> listAuxYearAndSubjectSelected = [];
@@ -62,11 +63,13 @@ class ServiceResumQuestions {
       'schoolYear': schoolYear,
       'subjects': subjects,
     };
+    //if()
     listAuxYearAndSubjectSelected.add(listMap);
     final listJson =
-        listAuxYearAndSubjectSelected.map((el) => jsonEncode(el)).toList();
+        mapYearAndSubjectSelected.map((el) => jsonEncode(el)).toList();
     final setList = listJson.toSet().toList();
     listAux = setList.map((el) => jsonDecode(el)).toList();
+
     for (var el in listAux) {
       mapYearAndSubjectSelected.add(el);
     }

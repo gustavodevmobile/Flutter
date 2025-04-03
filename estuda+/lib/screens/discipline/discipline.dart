@@ -1,25 +1,13 @@
 import 'package:estudamais/controller/controller_disciplines.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/discipline/widget/discipline_list.dart';
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
-import 'package:estudamais/models/model_questions.dart';
-
 import 'package:estudamais/screens/home/home.dart';
-import 'package:estudamais/screens/schoolYears/school_years.dart';
-
-import 'package:estudamais/service/service.dart';
 import 'package:estudamais/theme/app_theme.dart';
-import 'package:estudamais/widgets/animated_button_retangulare.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
-import 'package:estudamais/widgets/show_loading_dialog.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
-
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
-
-import 'package:provider/provider.dart';
-//import 'package:progress_button/progress_button.dart';
+import 'package:provider/provider.dart'; 
 
 class Discipline extends StatefulWidget {
   final List<String> disciplines;
@@ -59,7 +47,8 @@ class _DisciplineState extends State<Discipline> {
                 child: Center(
                   child: Text(
                     'Selecione a(s) disciplina(s):',
-                    style: AppTheme.customTextStyle(fontSize: 20, fontWeight: true),
+                    style: AppTheme.customTextStyle(
+                        fontSize: 20, fontWeight: true),
                   ),
                 ),
               ),

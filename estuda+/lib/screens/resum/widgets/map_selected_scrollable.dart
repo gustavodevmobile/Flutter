@@ -1,23 +1,24 @@
 import 'package:estudamais/providers/global_providers.dart';
+import 'package:estudamais/screens/resum/widgets/never_subjects_selected.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class MapSelectedDisciplines extends StatefulWidget {
+class MapSelectedSubjects extends StatefulWidget {
   final List listMap;
-  const MapSelectedDisciplines({required this.listMap, super.key});
+  const MapSelectedSubjects({required this.listMap, super.key});
 
   @override
-  State<MapSelectedDisciplines> createState() => _MapSelectedDisciplinesState();
+  State<MapSelectedSubjects> createState() => _MapSelectedSubjectsState();
 }
 
-class _MapSelectedDisciplinesState extends State<MapSelectedDisciplines> {
+class _MapSelectedSubjectsState extends State<MapSelectedSubjects> {
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
+    bool isEmpty = false;
     return Consumer3<GlobalProviders, QuestionsCorrectsProvider,
             QuestionsIncorrectsProvider>(
         builder: (context, value, corrects, incorrects, child) {
@@ -41,44 +42,42 @@ class _MapSelectedDisciplinesState extends State<MapSelectedDisciplines> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 5),
-                      child: Text(
-                        ' ${widget.listMap[index]['subjects']} -',
-                        style: AppTheme.customTextStyle2()
-                      ),
+                      child: Text(' ${widget.listMap[index]['subjects']} -',
+                          style: AppTheme.customTextStyle2()),
                     ),
-                    Text(
-                      '${widget.listMap[index]['schoolYear']}',
-                      style: AppTheme.customTextStyle2(color: Colors.amber)
-                    ),
+                    Text('${widget.listMap[index]['schoolYear']}',
+                        style: AppTheme.customTextStyle2(color: Colors.amber)),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: GestureDetector(
                           onTap: () {
-                            setState(() {
-                              if (corrects
-                                  .subjectsAndSchoolYearSelected.isNotEmpty) {
-                                corrects.subjectsAndSchoolYearSelected
-                                    .removeWhere(
-                                  (el) =>
-                                      el['subjects'] ==
-                                          widget.listMap[index]['subjects'] &&
-                                      el['schoolYear'] ==
-                                          widget.listMap[index]['schoolYear'],
-                                );
-                              }
+                            setState(
+                              () {
+                                if (corrects
+                                    .subjectsAndSchoolYearSelected.isNotEmpty) {
+                                  corrects.subjectsAndSchoolYearSelected
+                                      .removeWhere(
+                                    (el) =>
+                                        el['subjects'] ==
+                                            widget.listMap[index]['subjects'] &&
+                                        el['schoolYear'] ==
+                                            widget.listMap[index]['schoolYear'],
+                                  );
+                                }
 
-                              if (incorrects
-                                  .subjectsAndSchoolYearSelected.isNotEmpty) {
-                                incorrects.subjectsAndSchoolYearSelected
-                                    .removeWhere(
-                                  (el) =>
-                                      el['subjects'] ==
-                                          widget.listMap[index]['subjects'] &&
-                                      el['schoolYear'] ==
-                                          widget.listMap[index]['schoolYear'],
-                                );
-                              }
-                            });
+                                if (incorrects
+                                    .subjectsAndSchoolYearSelected.isNotEmpty) {
+                                  incorrects.subjectsAndSchoolYearSelected
+                                      .removeWhere(
+                                    (el) =>
+                                        el['subjects'] ==
+                                            widget.listMap[index]['subjects'] &&
+                                        el['schoolYear'] ==
+                                            widget.listMap[index]['schoolYear'],
+                                  );
+                                }
+                              },
+                            );
                           },
                           child: const Icon(
                             Icons.clear_sharp,

@@ -43,11 +43,13 @@ class BoxResum extends StatelessWidget {
                       child: SizedBox(
                         child: Row(
                           children: [
-                            Text(value,
-                                style: AppTheme.customTextStyle(
-                                  fontSize: 30,
-                                  color: Colors.black87,
-                                )),
+                            Text(
+                              value,
+                              style: AppTheme.customTextStyle(
+                                fontSize: 30,
+                                color: Colors.black87,
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: SizedBox(
@@ -65,10 +67,9 @@ class BoxResum extends StatelessWidget {
                                       child: Text(
                                         description,
                                         style: AppTheme.customTextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black87,
-                                          fontWeight: true
-                                        ),
+                                            fontSize: 18,
+                                            color: Colors.black87,
+                                            fontWeight: true),
                                       ),
                                     ),
                                   ],

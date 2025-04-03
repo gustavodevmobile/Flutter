@@ -2,6 +2,7 @@ import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
+import 'package:estudamais/screens/resum/widgets/never_subjects_selected.dart';
 import 'package:estudamais/screens/screen_questions/questions_incorrects.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
@@ -16,30 +17,27 @@ import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AccumulatedWrongs extends StatefulWidget {
-  const AccumulatedWrongs({super.key});
+class AccumulatedIncorrects extends StatefulWidget {
+  const AccumulatedIncorrects({super.key});
 
   @override
-  State<AccumulatedWrongs> createState() => _AccumulatedWrongsState();
+  State<AccumulatedIncorrects> createState() => _AccumulatedIncorrectsState();
 }
 
-class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
+class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
   ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
 
   @override
   Widget build(BuildContext context) {
     return Consumer2<GlobalProviders, QuestionsIncorrectsProvider>(
-      builder: (context, value, incorrects, child) {
+      builder: (context, valueGlobal, incorrects, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              'Respondidas incorretamente',
-              style: AppTheme.customTextStyle()
-            ),
+            title: Text('Respondidas incorretamente',
+                style: AppTheme.customTextStyle()),
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {
-                
                 Routes().popRoutes(context, const HomeScreen());
               },
               icon: const Icon(
@@ -55,20 +53,20 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                 shrinkWrap: true,
                 children: [
                   Center(
-                    child: Text(
-                      'Assuntos selecionados:',
-                      style: AppTheme.customTextStyle()
-                    ),
+                    child: Text('Assuntos selecionados:',
+                        style: AppTheme.customTextStyle(fontWeight: true)),
                   ),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 400),
-                    child: Visibility(
-                      visible: value.showBoxSubjects,
-                      child: MapSelectedDisciplines(
-                        listMap: incorrects.subjectsAndSchoolYearSelected,
-                      ),
-                    ),
-                  ),
+                  incorrects.subjectsAndSchoolYearSelected.isEmpty
+                      ? const NeverSubjectsSelected()
+                      : AnimatedSize(
+                          duration: const Duration(milliseconds: 400),
+                          child: Visibility(
+                            visible: valueGlobal.showBoxSubjects,
+                            child: MapSelectedSubjects(
+                              listMap: incorrects.subjectsAndSchoolYearSelected,
+                            ),
+                          ),
+                        ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Divider(
@@ -78,28 +76,19 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
-                    child: Text(
-                      'Selecione a disciplina e o assunto:',
-                      style: AppTheme.customTextStyle()
-                    ),
+                    child: Text('Selecione a disciplina e o assunto:',
+                        style: AppTheme.customTextStyle(fontWeight: true)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: DisiciplineExpansionPanelRadio(
-                        discipline:
-                            questionsIncorrects.getDisciplineOfQuestions(
-                                incorrects.resultQuestionsIncorrects),
-                        resultQuestions: incorrects.resultQuestionsIncorrects,
-                        activitySubjectsAndSchoolYearCorrects: false,
-                        activitySubjectsAndSchoolYearIncorrects: true),
+                      discipline: questionsIncorrects.getDisciplineOfQuestions(
+                          incorrects.resultQuestionsIncorrects),
+                      resultQuestions: incorrects.resultQuestionsIncorrects,
+                      activitySubjectsAndSchoolYearCorrects: false,
+                      activitySubjectsAndSchoolYearIncorrects: true,
+                    ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  //   child: ExpandedIncorrects(
-                  //       discipline:
-                  //           questionsIncorrects.getDisciplineOfQuestions(
-                  //               incorrects.resultQuestionsIncorrects)),
-                  // ),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Divider(
@@ -108,7 +97,7 @@ class _AccumulatedWrongsState extends State<AccumulatedWrongs> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      value.openBoxAlreadyAnswereds(false);
+                      valueGlobal.openBoxAlreadyAnswereds(false);
                       List<ModelQuestions> resultQuestionsIncorrects = [];
                       if (incorrects.subjectsAndSchoolYearSelected.isEmpty) {
                         showSnackBarError(
