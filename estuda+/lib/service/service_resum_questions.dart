@@ -100,7 +100,7 @@ class ServiceResumQuestions {
   // faz a busca atraves da disciplina selecionada
   // retorna uma lista de map com assunto e ano escolar, sem repetição
   // mostra no expanted
-  List<Map<String, dynamic>> showSubjectsAndSchoolyear(
+  List<Map<String, dynamic>> showSubjectsAndSchoolyearInDiscipline(
       String discipline, List<ModelQuestions> resultQuestionsCorrects) {
     List<Map<String, dynamic>> mapListSubAndYearCorrects = [];
     Map<String, dynamic> mapYearAndSubject = {};

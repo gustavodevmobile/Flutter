@@ -1,11 +1,13 @@
 import 'package:estudamais/controller/routes.dart';
-import 'package:estudamais/database/storage_shared_preferences.dart';
+import 'package:estudamais/screens/discipline/widget/discipline_list.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
 
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/schoolYears/school_years.dart';
 
 import 'package:estudamais/service/service.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/animated_button_retangulare.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
@@ -13,8 +15,7 @@ import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 
 import 'package:provider/provider.dart';
 //import 'package:progress_button/progress_button.dart';
@@ -32,7 +33,7 @@ class _DisciplineState extends State<Discipline> {
   String? textFindError;
   bool enable = false;
   Service service = Service();
-  double heightButtonNext = 0;
+  //double heightButtonNext = 0;
   List<String> listDisciplinesSelected = [];
   List<String> showListSchoolYears = [];
 
@@ -41,8 +42,8 @@ class _DisciplineState extends State<Discipline> {
   void fetchQuestionsByDiscipline(Function(List<ModelQuestions>) onSuccess,
       Function(String) onError) async {
     try {
-      List<ModelQuestions> questions =
-          await service.getQuestionsByDiscipline(listDisciplinesSelected, context);
+      List<ModelQuestions> questions = await service.getQuestionsByDiscipline(
+          listDisciplinesSelected, context);
       onSuccess(questions);
     } catch (e) {
       onError('Ops, algo deu errado, tente novamente mais tarde');
@@ -51,7 +52,7 @@ class _DisciplineState extends State<Discipline> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ModelPoints>(builder: (context, value, child) {
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -64,108 +65,97 @@ class _DisciplineState extends State<Discipline> {
                 Icons.arrow_back_ios,
                 color: Colors.white,
               )),
-          title: Text(
-            'Disciplinas',
-            style: GoogleFonts.aboreto(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          title: Text('Disciplinas',
+              style: AppTheme.customTextStyle(fontSize: 16)),
         ),
-        body: Stack(
-          children: [
-            Background(
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Selecione a disciplina:',
-                        style: GoogleFonts.aboreto(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                    ),
+        body: Background(
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Selecione a disciplina:',
+                    style: AppTheme.customTextStyle(fontSize: 20),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 8, bottom: 20),
-                      decoration: BoxDecoration(
-                          color: Colors.white38,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: const <BoxShadow>[
-                            BoxShadow(
-                              offset: Offset(0, 3),
-                              blurRadius: 5,
-                              color: Colors.black38,
-                            )
-                          ]),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: widget.disciplines.length,
-                        itemBuilder: (context, int index) {
-                          return AnimatedButtonRectangular(
-                            title: widget.disciplines[index],
-                            fontSizeTitle: 22,
-                            textDirection: MainAxisAlignment.center,
-                            onTap: () {
-                              if (value.actionBtnRetangulare) {
-                                listDisciplinesSelected
-                                    .add(widget.disciplines[index]);
-                                heightButtonNext = 50;
-                              } else {
-                                listDisciplinesSelected
-                                    .remove(widget.disciplines[index]);
-
-                                heightButtonNext = 0;
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    padding: const EdgeInsets.only(top: 8, bottom: 20),
+                    decoration: BoxDecoration(
+                        color: Colors.white38,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: const <BoxShadow>[
+                          BoxShadow(
+                            offset: Offset(0, 3),
+                            blurRadius: 5,
+                            color: Colors.black38,
+                          )
+                        ]),
+                    child: DisciplineList(
+                      disciplines: widget.disciplines,
+                      onDisciplineTap: (discipline) {
+                        if (value.actionBtnRetangulare) {
+                          listDisciplinesSelected.add(
+                            discipline,
+                          );
+                        } else {
+                          listDisciplinesSelected.remove(
+                            discipline,
+                          );
+                        }
+                      },
+                    )),
+              ),
+            ],
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
           onTap: () async {
+            List<String> disciplinesContent = [];
             if (listDisciplinesSelected.isEmpty) {
-              showSnackBarError(context, 'Selecione uma disciplina para continuar.',
-                  Colors.red);
+              showSnackBarError(context,
+                  'Selecione uma disciplina para continuar.', Colors.red);
             } else {
               showLoadingDialog(context, 'Buscando questões...');
               fetchQuestionsByDiscipline((questions) {
-                if (!mounted) return;
                 if (questions.isNotEmpty) {
                   for (var question in questions) {
                     showListSchoolYears.add(question.schoolYear);
+                    disciplinesContent.add(question.discipline);
                   }
+                  if (!mounted) return;
                   Routes().popRoutes(
                     context,
                     SchoolYears(
                       questionsByDisciplines: questions,
-                      disciplines: listDisciplinesSelected..sort(),
+                      disciplines: disciplinesContent.toSet().toList()..sort(),
                       schoolYears: showListSchoolYears.toSet().toList()..sort(),
                     ),
                   );
+                  for (var dis in listDisciplinesSelected) {
+                    if (!disciplinesContent.contains(dis)) {
+                      showSnackBarError(
+                          context,
+                          'Todas as questões de $dis já foram respondidas.',
+                          Colors.orange);
+                    }
+                  }
                 } else {
                   showSnackBarError(
                       context,
-                      'Todas as questões desta disciplina já foram respondidas',
+                      'Todas as questões desta(s) disciplina(s) já foram respondidas.',
                       Colors.blue);
                   Navigator.pop(context);
                 }
               }, (errorMessage) {
                 if (!mounted) return;
                 showSnackBarError(context, errorMessage, Colors.red);
+                Navigator.pop(context);
               });
             }
           },

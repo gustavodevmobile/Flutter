@@ -26,26 +26,4 @@ class Routes {
           child: widget),
     );
   }
-
-  // void pushRouteFad(BuildContext context, Widget widget) {
-  //   Navigator.push(
-  //     context,
-  //     PageTransition(
-  //         type: PageTransitionType.fade,
-  //         //alignment: Alignment.center,
-  //         duration: const Duration(seconds: 1),
-  //         child: widget),
-  //   );
-  // }
-
-  // void pushRouteRemoveUntilFad(BuildContext context, Widget widget) {
-  //   Navigator.pushAndRemoveUntil(
-  //       context,
-  //       PageTransition(
-  //           type: PageTransitionType.fade,
-  //           //alignment: Alignment.center,
-  //           duration: const Duration(seconds: 1),
-  //           child: widget),
-  //       (route) => false);
-  // }
 }

@@ -10,7 +10,7 @@ import 'package:estudamais/widgets/list_selected_scrollable.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:provider/provider.dart';
 //import 'package:progress_button/progress_button.dart';
 
@@ -36,7 +36,7 @@ class _SchoolYearsState extends State<SchoolYears> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ModelPoints>(builder: (context, value, child) {
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,

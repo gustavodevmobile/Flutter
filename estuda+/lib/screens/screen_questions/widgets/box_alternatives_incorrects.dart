@@ -1,7 +1,7 @@
-import 'package:estudamais/database/storage_shared_preferences.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_questions.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:provider/provider.dart';
 
 class BoxAlternativesIncorrects extends StatefulWidget {
@@ -34,7 +34,7 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8),
-      child: Consumer<ModelPoints>(
+      child: Consumer<GlobalProviders>(
         builder: (context, value, child) {
           return Column(
             children: [
@@ -83,7 +83,7 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                       bool inCorrects = await isInCorrects();
                       if (inCorrects) {
                         value.openBoxAlreadyAnswereds(true);
-                      } else if (controllerQuestions.isAnsweredIncorrects) {
+                      } else if (ControllerQuestions.isAnsweredIncorrects) {
                         value.openBoxAlreadyAnswereds(true);
                       } else {
                         setState(() {
@@ -94,6 +94,7 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                             widget.idQuestion,
                           );
                         });
+                        ControllerQuestions.isAnsweredIncorrects = true;
                       }
                     },
                   ),

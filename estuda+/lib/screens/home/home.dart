@@ -1,7 +1,7 @@
 import 'package:estudamais/controller/routes.dart';
-import 'package:estudamais/database/storage_shared_preferences.dart';
-import 'package:estudamais/screens/accumulated_corrects/accumulated_right.dart';
-import 'package:estudamais/screens/accumulated_incorrects/accumulated_wrongs.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/screens/resum/accumulated_corrects/accumulated_right.dart';
+import 'package:estudamais/screens/resum/accumulated_incorrects/accumulated_wrongs.dart';
 import 'package:estudamais/screens/discipline/discipline.dart';
 import 'package:estudamais/screens/home/widgets/dashbord_displice.dart';
 import 'package:estudamais/screens/initial_screen.dart';
@@ -9,6 +9,7 @@ import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';
@@ -17,7 +18,7 @@ import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/widgets/box_resum.dart';
 import 'package:provider/provider.dart';
 
@@ -34,11 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
   ServiceResumQuestions questionsCorrects = ServiceResumQuestions();
   ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-  List<String> listIdsAnswereds = [];
-  List<String> listIdsCorrects = [];
-  List<String> listIdsIncorrects = [];
+  //List<String> listIdsAnswereds = [];
+  // List<String> listIdsCorrects = [];
+  // List<String> listIdsIncorrects = [];
   List<String> disciplines = [];
-  bool? enable;
+  // bool? enable;
 
   void fetchDisciplines(Function(List<String> disciplies) onSuccess,
       Function(String) onError) async {
@@ -73,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<ModelPoints, QuestionsCorrectsProvider,
+    return Consumer3<GlobalProviders, QuestionsCorrectsProvider,
             QuestionsIncorrectsProvider>(
         builder: (context, value, corrects, incorrects, child) {
       return Scaffold(
@@ -97,19 +98,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: RichText(
                 text: TextSpan(
                   text: 'Total de questões respondidas: ',
-                  style: GoogleFonts.aboreto(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
+                  style: AppTheme.customTextStyle(fontSize: 13),
                   children: [
                     TextSpan(
                       text: value.answeredsCurrents,
-                      style: GoogleFonts.aboreto(
-                        color: Colors.amber,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
+                      style: AppTheme.customTextStyle(fontSize: 20, color: Colors.amber)
                     )
                   ],
                 ),
@@ -200,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         child: Text(
                           'Resumo',
-                          style: GoogleFonts.roboto(color: Colors.amber),
+                          style: AppTheme.customTextStyle(fontSize: 13, color: Colors.indigo, underline: true)
                         ),
                       ),
                     ),
@@ -231,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               // print(value1.correctsCurrents);
                               if (incorrects
                                   .resultQuestionsIncorrects.isNotEmpty) {
-                                value.answered(false);
+                                // value.answered(false);
                                 Routes().pushRoute(
                                     context, const AccumulatedWrongs());
                                 questionsIncorrects.getDisciplineOfQuestions(
@@ -248,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Text(
                               'Resumo',
-                              style: GoogleFonts.roboto(color: Colors.amber),
+                              style: AppTheme.customTextStyle(fontSize: 13, color: Colors.indigo, underline: true),
                             )),
                       ),
                     ),

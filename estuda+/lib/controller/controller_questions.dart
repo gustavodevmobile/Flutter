@@ -1,5 +1,5 @@
-import 'package:estudamais/database/storage_shared_preferences.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +12,9 @@ class ControllerQuestions {
   double heightBoxIsAnswered = 0;
   //Instância StorageSharedPreferences onde armazena os dados (ids) localmente.
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-  bool isAnswered = false;
-  bool isAnsweredIncorrects = false;
+  
+   static bool isAnsweredIncorrects = false;
+  
 
 // Método responsável por recuperar as questões respodidas incorretamente, fazendo a lógica de remover o id dos ids incorretos e salvar o id correspondente nos ids corretos.
   void recoverQuestionsIncorrects(
@@ -25,7 +26,7 @@ class ControllerQuestions {
       BuildContext context,
       // Id da questão
       String idQuestion) {
-    // variável que recebe false se não estiver sido respodida e true se ja tiver sido respondida
+    
     if (response == alternative) {
       // muda a cor do box alternativa para verde
       corAlternativa = Colors.green;
@@ -47,25 +48,24 @@ class ControllerQuestions {
       );
       // pega a quantidade de ids incorretos;
       int amountIncorrects = int.parse(
-          Provider.of<ModelPoints>(listen: false, context).incorrectsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context).incorrectsCurrents);
       // decrementa 1
       amountIncorrects--;
       // atualiza na pointsAndErrors a quantidade de erros;
-      Provider.of<ModelPoints>(listen: false, context)
+      Provider.of<GlobalProviders>(listen: false, context)
           .answeredsIncorrects(amountIncorrects.toString());
 
       // pega a quantidade de ids corretos;
       int amountCorrects = int.parse(
-          Provider.of<ModelPoints>(listen: false, context).correctsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context).correctsCurrents);
       // acrescenta + 1 na quantidade de acertos;
       amountCorrects++;
       // atualiza na pointsAndErrors a quantidade de acertos;
-      Provider.of<ModelPoints>(listen: false, context)
+      Provider.of<GlobalProviders>(listen: false, context)
           .answeredsCorrects(amountCorrects.toString());
     } else {
       // Se errar, nada muda.
       corAlternativa = Colors.red;
-      isAnsweredIncorrects = true;
     }
   }
 
@@ -78,8 +78,8 @@ class ControllerQuestions {
         showSnackBarError(context, onError, Colors.red);
       },
     );
-    isAnswered = listIds.contains(id);
-    print('isAnswered $isAnswered');
+    bool isAnswered = listIds.contains(id);
+    //print('isAnswered $isAnswered');
     return isAnswered;
   }
 
@@ -113,11 +113,11 @@ class ControllerQuestions {
       });
       // pega a quantidade de ids corretos;
       int amountCorrects = int.parse(
-          Provider.of<ModelPoints>(listen: false, context).correctsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context).correctsCurrents);
       // acrescenta + 1 na quantidade de acertos;
       amountCorrects++;
       // atualiza na pointsAndErrors a quantidade de acertos;
-      Provider.of<ModelPoints>(listen: false, context)
+      Provider.of<GlobalProviders>(listen: false, context)
           .answeredsCorrects(amountCorrects.toString());
       // Se não...
     } else {
@@ -131,11 +131,11 @@ class ControllerQuestions {
       });
       // pega a quantidade de ids incorretos;
       int amountIncorrects = int.parse(
-          Provider.of<ModelPoints>(listen: false, context).incorrectsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context).incorrectsCurrents);
       //acrescenta + 1 na quantidade de erros
       amountIncorrects++;
       // atualiza na pointAndAErrors a quantidade de erros;
-      Provider.of<ModelPoints>(listen: false, context)
+      Provider.of<GlobalProviders>(listen: false, context)
           .answeredsIncorrects(amountIncorrects.toString());
     }
   }

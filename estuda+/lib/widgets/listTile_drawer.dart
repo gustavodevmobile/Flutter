@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:provider/provider.dart';
 
 class ListTileDrawer extends StatelessWidget {
@@ -16,7 +16,7 @@ class ListTileDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ModelPoints>(builder: (context, value, child) {
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
         child: Card(

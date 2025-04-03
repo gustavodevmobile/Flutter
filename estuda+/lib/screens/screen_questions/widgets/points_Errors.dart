@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:provider/provider.dart';
 
 class PointsAndErrors extends StatefulWidget {
@@ -13,15 +13,8 @@ class _PointsAndErrorsState extends State<PointsAndErrors> {
   //final CounterErrors counterErrors = CounterErrors();
 
   @override
-  void initState() {
-    print(
-        'pontos ${Provider.of<ModelPoints>(listen: false, context).correctsCurrents}');
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Consumer<ModelPoints>(
+    return Consumer<GlobalProviders>(
       builder: (context, value, child) {
         return Row(
           children: [

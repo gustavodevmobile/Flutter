@@ -1,4 +1,5 @@
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +28,7 @@ class _AnimatedButtonCircleState extends State<AnimatedButtonCircle> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ModelPoints>(builder: (context, value, child) {
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return SizedBox(
         width: 115,
         height: 115,
@@ -97,24 +98,11 @@ class _AnimatedButtonCircleState extends State<AnimatedButtonCircle> {
                     children: [
                       Text(
                         widget.textPrimary.substring(0, 2),
-                        style: GoogleFonts.aboreto(
-                          fontSize: 30,
-                          color: Colors.white,
-                        ),
+                        style: AppTheme.customTextStyle(fontSize: 30)
                       ),
                       Text(
                         widget.textPrimary.substring(3, 6),
-                        style: GoogleFonts.aboreto(
-                          fontSize: 20,
-                          color: Colors.amber,
-                          shadows: [
-                            const Shadow(
-                              color: Colors.black54,
-                              blurRadius: 7,
-                              offset: Offset(0.0, 3.0),
-                            )
-                          ],
-                        ),
+                        style: AppTheme.customTextStyle(fontSize: 20, color: Colors.amber)
                       ),
                       //Text(widget.id.toString())
                     ],

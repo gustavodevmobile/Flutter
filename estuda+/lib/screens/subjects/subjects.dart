@@ -8,7 +8,7 @@ import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/list_selected_scrollable.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +42,7 @@ class _SubjectsState extends State<Subjects> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ModelPoints>(
+    return Consumer<GlobalProviders>(
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
@@ -194,7 +194,7 @@ class _SubjectsState extends State<Subjects> {
                         questions: questions,
                       ));
                   // Método que atualiza o estado do box da alternativa, que nenhuma questão foi respondida.
-                  value.answered(false);
+                  //value.answered(false);
                   // Método que atualiza o estado no box onde mostra "questão ja respondida", passando false para fecha-lo;
                   value.openBoxAlreadyAnswereds(false);
                 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DashbordDisplice extends StatefulWidget {
   final String displice;
@@ -41,7 +42,7 @@ class _DashbordDispliceState extends State<DashbordDisplice> {
                   left: 8.0, right: 8.0, top: 4, bottom: 4.0),
               child: Text(
                 widget.displice,
-                style: const TextStyle(color: Colors.black),
+                style: GoogleFonts.exo2()
                 //style: GoogleFonts.aboreto(fontSize: 10),
               ),
             ),
@@ -61,7 +62,7 @@ class _DashbordDispliceState extends State<DashbordDisplice> {
                   width: 60,
                   child: Text(
                     widget.countAnswer,
-                    style: const TextStyle(fontSize: 20, color: Colors.black),
+                    style:GoogleFonts.exo2(fontSize: 20)
                   ),
                 )
               ],

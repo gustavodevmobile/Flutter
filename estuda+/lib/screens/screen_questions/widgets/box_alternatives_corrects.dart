@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:provider/provider.dart';
 
 class BoxAlternativesCorrects extends StatefulWidget {
@@ -30,7 +30,7 @@ class _BoxAlternativesCorrectsState extends State<BoxAlternativesCorrects> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8),
-      child: Consumer<ModelPoints>(
+      child: Consumer<GlobalProviders>(
         builder: (context, value, child) {
           return Column(
             children: [

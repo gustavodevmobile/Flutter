@@ -5,7 +5,7 @@
 // 3 - NA SCREEN subject.dart, SELECIONA-SE OS ASSUNTOS DESEJADOS E O MÉTODO getQuestionsAllBySubjectsAndSchoolYear BUSCA TODAS AS QUESTÕES DO ANO E DO ASSUNTO SELECIONADOS EM questionsByDiscipline;
 
 import 'dart:convert';
-import 'package:estudamais/database/storage_shared_preferences.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -45,7 +45,7 @@ class Service {
   Future<List<ModelQuestions>> getQuestionsByDiscipline(
       // recebe uma lista das disciplinas selecionadas
       List<String> disciplines,
-      BuildContext context) async {
+      BuildContext context ) async {
     List<ModelQuestions> questionsByDiscipline = [];
     // converte essa lista em json para ser enviado como parametro para rota
     var listDisciplinesJson = jsonEncode(disciplines);

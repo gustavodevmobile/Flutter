@@ -1,4 +1,4 @@
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -56,7 +56,7 @@ class _ButtonProgressState extends State<ButtonProgress>
 
   void buttonProgress() {
     bool findError =
-        (Provider.of<ModelPoints>(context, listen: false).progressError);
+        (Provider.of<GlobalProviders>(context, listen: false).progressError);
     Future.delayed(const Duration(milliseconds: 2300)).then((value) {
       if (widht == 250) {
         colorTextBtn = Colors.white;
@@ -91,7 +91,7 @@ class _ButtonProgressState extends State<ButtonProgress>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ModelPoints>(builder: (context, value, child) {
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Padding(
         padding: const EdgeInsets.only(left: 40, right: 40),
         child: GestureDetector(

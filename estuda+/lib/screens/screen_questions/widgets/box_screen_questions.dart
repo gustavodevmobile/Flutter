@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:flutter/material.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_type_question.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -57,6 +57,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
       Uint8List string = widget.image;
       bytesImageString = utf8.decode(string);
     }
+    //ControllerQuestions.isAnsweredIncorrects = false;
     super.initState();
   }
 
@@ -67,7 +68,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Consumer<ModelPoints>(builder: (context, value, child) {
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return ListView(
         children: [
           Padding(

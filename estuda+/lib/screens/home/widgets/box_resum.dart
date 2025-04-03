@@ -1,3 +1,4 @@
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,17 +39,15 @@ class BoxResum extends StatelessWidget {
                       child: image,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 10),
+                      padding: const EdgeInsets.only(left: 12),
                       child: SizedBox(
                         child: Row(
                           children: [
-                            Text(
-                              value,
-                              style: GoogleFonts.aboreto(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            Text(value,
+                                style: AppTheme.customTextStyle(
+                                  fontSize: 30,
+                                  color: Colors.black87,
+                                )),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: SizedBox(
@@ -56,17 +55,20 @@ class BoxResum extends StatelessWidget {
                                   children: [
                                     Text(
                                       'Respostas',
-                                      style: GoogleFonts.aboreto(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold),
+                                      style: AppTheme.customTextStyle(
+                                        fontSize: 10,
+                                        color: Colors.black87,
+                                      ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Text(
                                         description,
-                                        style: GoogleFonts.aboreto(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                        style: AppTheme.customTextStyle(
+                                          fontSize: 18,
+                                          color: Colors.black87,
+                                          fontWeight: true
+                                        ),
                                       ),
                                     ),
                                   ],

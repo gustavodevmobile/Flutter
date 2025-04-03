@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:estudamais/database/storage_shared_preferences.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
@@ -47,15 +47,15 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     List<String> amountIncorrects,
   ) {
     // atualiza a quantidade de questões respondidas atraves do provider
-    Provider.of<ModelPoints>(listen: false, context)
+    Provider.of<GlobalProviders>(listen: false, context)
         .answeredsAmount(amountAnswereds.length.toString());
 
     // atualiza a quantidade de questões respondidas corretamente atraves do provider
-    Provider.of<ModelPoints>(listen: false, context)
+    Provider.of<GlobalProviders>(listen: false, context)
         .answeredsCorrects(amountCorrects.length.toString());
 
     // atualiza a quantidade de questões respondidas incorretamente atraves do provider
-    Provider.of<ModelPoints>(listen: false, context)
+    Provider.of<GlobalProviders>(listen: false, context)
         .answeredsIncorrects(amountIncorrects.length.toString());
 
     // passa o returno do método counterDisciplineIncorrects para atualizar na home as disciplinas respondidas corretamente

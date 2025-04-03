@@ -1,4 +1,4 @@
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +36,7 @@ class _AnimatedButtonRetangulareState extends State<AnimatedButtonRectangular>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Consumer<ModelPoints>(builder: (context, value, child) {
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
@@ -72,17 +72,15 @@ class _AnimatedButtonRetangulareState extends State<AnimatedButtonRectangular>
                         buttonDown = 2;
                         // cor da sombra muda pra branco
                         shadowColor = Colors.amber;
-                        // print(
-                        //     'value.actionBtnRetangulare ${value.actionBtnRetangulare}');
-                        // chama a função que faz a consulta por disciplica passando value.actionBtnRetangulare = true
+
+                        // chama a função que faz a consulta por disciplica passando value.
                         widget.onTap();
                       } else {
                         // sobe o botão para 8
                         buttonDown = 8;
                         // muda a cor da sombra para preto
                         shadowColor = Colors.black87;
-                        // print(
-                        //     'value.actionBtnRetangulare ${value.actionBtnRetangulare}');
+
                         // chama a função que faz a remoção da disciplina consultada
                         widget.onTap();
                       }

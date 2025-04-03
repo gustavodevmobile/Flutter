@@ -1,7 +1,9 @@
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/questions_incorrects_providers.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class MapSelectedDisciplines extends StatefulWidget {
@@ -16,7 +18,7 @@ class _MapSelectedDisciplinesState extends State<MapSelectedDisciplines> {
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
-    return Consumer3<ModelPoints, QuestionsCorrectsProvider,
+    return Consumer3<GlobalProviders, QuestionsCorrectsProvider,
             QuestionsIncorrectsProvider>(
         builder: (context, value, corrects, incorrects, child) {
       return Padding(
@@ -41,18 +43,12 @@ class _MapSelectedDisciplinesState extends State<MapSelectedDisciplines> {
                       padding: const EdgeInsets.only(right: 5),
                       child: Text(
                         ' ${widget.listMap[index]['subjects']} -',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 16),
+                        style: AppTheme.customTextStyle2()
                       ),
                     ),
                     Text(
                       '${widget.listMap[index]['schoolYear']}',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.yellow,
-                          fontSize: 14),
+                      style: AppTheme.customTextStyle2(color: Colors.amber)
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),

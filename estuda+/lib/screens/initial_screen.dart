@@ -1,7 +1,7 @@
 //  ESSA É A TELA INICIAL ONDE O USUARIO SE CADASTRA OU CHAMA A TELA PARA FAZER O LOGIN.
 import 'package:estudamais/controller/connection.dart';
 import 'package:estudamais/controller/routes.dart';
-import 'package:estudamais/database/storage_shared_preferences.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';

@@ -1,16 +1,17 @@
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/screen_questions/questions_corrects.dart';
 import 'package:estudamais/service/questions_corrects_providers.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
+import 'package:estudamais/theme/app_theme.dart';
 
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
-import 'package:estudamais/screens/accumulated_corrects/widgets/expanded_corrects.dart';
+import 'package:estudamais/screens/resum/widgets/disicipline_expansion_panel_radio.dart';
 
-import 'package:estudamais/widgets/map_selected_scrollable.dart';
+import 'package:estudamais/screens/resum/widgets/map_selected_scrollable.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +19,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class AccumulatedRight extends StatefulWidget {
-  //final List<ModelQuestions> questionsCorrects;
   const AccumulatedRight({super.key});
 
   @override
@@ -33,25 +33,19 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ModelPoints, QuestionsCorrectsProvider>(
+    return Consumer2<GlobalProviders, QuestionsCorrectsProvider>(
       builder: (context, value, corrects, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              'Respondidas corretamente',
-              style: GoogleFonts.aboreto(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
+            title: Text('Respondidas corretamente',
+                style: AppTheme.customTextStyle(fontSize: 15)),
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {
-                
                 Routes().popRoutes(context, const HomeScreen());
               },
               icon: const Icon(
-                 Icons.arrow_back_ios,
+                Icons.arrow_back_ios,
                 color: Colors.white,
               ),
             ),
@@ -63,14 +57,10 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
                 shrinkWrap: true,
                 children: [
                   Center(
-                    child: Text(
-                      'Assuntos selecionados:',
-                      style: GoogleFonts.aboreto(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
+                    child: Text('Assuntos selecionados:',
+                        style: AppTheme.customTextStyle(color: Colors.amber)),
                   ),
+                  // Mostra os assuntos das disciplinas selecionadas.
                   AnimatedSize(
                     duration: const Duration(milliseconds: 300),
                     child: Visibility(
@@ -87,14 +77,22 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: ExpandedCorrects(
-                      discipline:
-                          questionsCorrects.getDisciplineOfQuestions(
-                              corrects.resultQuestionsCorrects),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 4.0, horizontal: 8.0),
+                    child: Text('Selecione a disciplina e o assunto:',
+                        style: AppTheme.customTextStyle(color: Colors.amberAccent)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DisiciplineExpansionPanelRadio(
+                      discipline: questionsCorrects.getDisciplineOfQuestions(
+                          corrects.resultQuestionsCorrects),
                       resultQuestions: corrects.resultQuestionsCorrects,
+                      activitySubjectsAndSchoolYearCorrects: true,
+                      activitySubjectsAndSchoolYearIncorrects: false,
                     ),
                   ),
+
                   const Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
@@ -129,7 +127,6 @@ class _AccumulatedRightState extends State<AccumulatedRight> {
               ),
             ),
           ),
-         
         );
       },
     );

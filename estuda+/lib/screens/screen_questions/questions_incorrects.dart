@@ -1,4 +1,4 @@
-import 'package:estudamais/database/storage_shared_preferences.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_alternatives_incorrects.dart';
@@ -6,7 +6,7 @@ import 'package:estudamais/screens/screen_questions/widgets/points_Errors.dart';
 import 'package:estudamais/widgets/background.dart';
 
 import 'package:flutter/material.dart';
-import 'package:estudamais/models/models.dart';
+import 'package:estudamais/providers/global_providers.dart';
 
 import 'package:estudamais/screens/screen_questions/widgets/box_questions.dart';
 
@@ -41,7 +41,7 @@ class _PageQuestionsIncorrectsState extends State<PageQuestionsIncorrects> {
         toolbarHeight: 5,
         automaticallyImplyLeading: false,
       ),
-      body: Consumer<ModelPoints>(
+      body: Consumer<GlobalProviders>(
         builder: (context, value, child) {
           return Background(
             child: PageView.builder(
