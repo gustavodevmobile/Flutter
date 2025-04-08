@@ -12,9 +12,8 @@ class ControllerQuestions {
   double heightBoxIsAnswered = 0;
   //Instância StorageSharedPreferences onde armazena os dados (ids) localmente.
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-  
-   static bool isAnsweredIncorrects = false;
-  
+
+  static bool isAnswered = false;
 
 // Método responsável por recuperar as questões respodidas incorretamente, fazendo a lógica de remover o id dos ids incorretos e salvar o id correspondente nos ids corretos.
   void recoverQuestionsIncorrects(
@@ -26,7 +25,6 @@ class ControllerQuestions {
       BuildContext context,
       // Id da questão
       String idQuestion) {
-    
     if (response == alternative) {
       // muda a cor do box alternativa para verde
       corAlternativa = Colors.green;
@@ -48,7 +46,8 @@ class ControllerQuestions {
       );
       // pega a quantidade de ids incorretos;
       int amountIncorrects = int.parse(
-          Provider.of<GlobalProviders>(listen: false, context).incorrectsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context)
+              .incorrectsCurrents);
       // decrementa 1
       amountIncorrects--;
       // atualiza na pointsAndErrors a quantidade de erros;
@@ -57,30 +56,20 @@ class ControllerQuestions {
 
       // pega a quantidade de ids corretos;
       int amountCorrects = int.parse(
-          Provider.of<GlobalProviders>(listen: false, context).correctsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context)
+              .correctsCurrents);
       // acrescenta + 1 na quantidade de acertos;
       amountCorrects++;
       // atualiza na pointsAndErrors a quantidade de acertos;
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsCorrects(amountCorrects.toString());
+      isAnswered = true;
     } else {
       // Se errar, nada muda.
       corAlternativa = Colors.red;
-    }
-  }
 
-  Future<bool> ifAnswered(String id, BuildContext context, key) async {
-    // verifica se a questão já foi respondida
-    List<String> listIds = await sharedPreferences.recoverIds(
-      key,
-      (onError) {
-        // caso ocorra um erro, exibe a mensagem de erro
-        showSnackBarError(context, onError, Colors.red);
-      },
-    );
-    bool isAnswered = listIds.contains(id);
-    //print('isAnswered $isAnswered');
-    return isAnswered;
+      isAnswered = true;
+    }
   }
 
 // Método responsável por fazer a lógica das questões respondidas e as devidas atualizações.
@@ -113,13 +102,15 @@ class ControllerQuestions {
       });
       // pega a quantidade de ids corretos;
       int amountCorrects = int.parse(
-          Provider.of<GlobalProviders>(listen: false, context).correctsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context)
+              .correctsCurrents);
       // acrescenta + 1 na quantidade de acertos;
       amountCorrects++;
       // atualiza na pointsAndErrors a quantidade de acertos;
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsCorrects(amountCorrects.toString());
       // Se não...
+      isAnswered = true;
     } else {
       // muda a cor da alternativa para vermelho;
       corAlternativa = Colors.red;
@@ -131,12 +122,14 @@ class ControllerQuestions {
       });
       // pega a quantidade de ids incorretos;
       int amountIncorrects = int.parse(
-          Provider.of<GlobalProviders>(listen: false, context).incorrectsCurrents);
+          Provider.of<GlobalProviders>(listen: false, context)
+              .incorrectsCurrents);
       //acrescenta + 1 na quantidade de erros
       amountIncorrects++;
       // atualiza na pointAndAErrors a quantidade de erros;
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsIncorrects(amountIncorrects.toString());
+      isAnswered = true;
     }
   }
 }

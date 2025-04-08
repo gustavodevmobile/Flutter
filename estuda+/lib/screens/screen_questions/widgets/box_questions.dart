@@ -1,3 +1,4 @@
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class BoxQuestions extends StatelessWidget {
@@ -10,7 +11,7 @@ class BoxQuestions extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Text(
               question,
-              style: const TextStyle(fontSize: 18),
+              style: AppTheme.customTextStyle2(fontSize: 18, color: Colors.indigo),
             ),
     );
   }

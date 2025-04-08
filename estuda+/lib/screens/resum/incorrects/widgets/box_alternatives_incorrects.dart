@@ -1,4 +1,5 @@
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -8,7 +9,6 @@ class BoxAlternativesIncorrects extends StatefulWidget {
   final String alternative;
   final String option;
   final String response;
-  //final bool isAnswered;
   final int indexQuestion;
   final String idQuestion;
 
@@ -24,12 +24,6 @@ class BoxAlternativesIncorrects extends StatefulWidget {
 class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
   final ControllerQuestions controllerQuestions = ControllerQuestions();
 
-  Future<bool> isInCorrects() async {
-    bool inCorrects = await controllerQuestions.ifAnswered(widget.idQuestion,
-        context, StorageSharedPreferences.keyIdsAnsweredsCorrects);
-    return inCorrects;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -43,7 +37,6 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 100),
                   width: MediaQuery.of(context).size.width,
-                  // height: 60,
                   decoration: BoxDecoration(
                     boxShadow: const [
                       BoxShadow(
@@ -62,8 +55,8 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                   child: InkWell(
                     child: ListTile(
                       leading: Container(
-                        width: 50,
-                        height: 50,
+                        width: 40,
+                        height: 40,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
@@ -71,30 +64,30 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                             color: Colors.white),
                         child: Text(
                           widget.option,
-                          style: const TextStyle(fontSize: 30),
+                          style: AppTheme.customTextStyle2(
+                              color: Colors.black87, fontSize: 25),
                         ),
                       ),
                       title: Text(
                         widget.alternative,
-                        style: const TextStyle(fontSize: 20),
+                        style: AppTheme.customTextStyle2(
+                            color: Colors.black87, fontSize: 18),
                       ),
                     ),
                     onTap: () async {
-                      bool inCorrects = await isInCorrects();
-                      if (inCorrects) {
-                        value.openBoxAlreadyAnswereds(true);
-                      } else if (ControllerQuestions.isAnsweredIncorrects) {
-                        value.openBoxAlreadyAnswereds(true);
+                      if (!ControllerQuestions.isAnswered) {
+                        setState(
+                          () {
+                            controllerQuestions.recoverQuestionsIncorrects(
+                              widget.response,
+                              widget.alternative,
+                              context,
+                              widget.idQuestion,
+                            );
+                          },
+                        );
                       } else {
-                        setState(() {
-                          controllerQuestions.recoverQuestionsIncorrects(
-                            widget.response,
-                            widget.alternative,
-                            context,
-                            widget.idQuestion,
-                          );
-                        });
-                        ControllerQuestions.isAnsweredIncorrects = true;
+                        value.openBoxAlreadyAnswereds(true);
                       }
                     },
                   ),

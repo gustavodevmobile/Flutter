@@ -1,7 +1,4 @@
 import 'package:estudamais/providers/global_providers.dart';
-import 'package:estudamais/screens/resum/widgets/never_subjects_selected.dart';
-import 'package:estudamais/service/questions_corrects_providers.dart';
-import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,10 +15,8 @@ class _MapSelectedSubjectsState extends State<MapSelectedSubjects> {
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
-    bool isEmpty = false;
-    return Consumer3<GlobalProviders, QuestionsCorrectsProvider,
-            QuestionsIncorrectsProvider>(
-        builder: (context, value, corrects, incorrects, child) {
+    //bool isEmpty = false;
+    return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Scrollbar(
@@ -53,21 +48,9 @@ class _MapSelectedSubjectsState extends State<MapSelectedSubjects> {
                           onTap: () {
                             setState(
                               () {
-                                if (corrects
+                                if (value
                                     .subjectsAndSchoolYearSelected.isNotEmpty) {
-                                  corrects.subjectsAndSchoolYearSelected
-                                      .removeWhere(
-                                    (el) =>
-                                        el['subjects'] ==
-                                            widget.listMap[index]['subjects'] &&
-                                        el['schoolYear'] ==
-                                            widget.listMap[index]['schoolYear'],
-                                  );
-                                }
-
-                                if (incorrects
-                                    .subjectsAndSchoolYearSelected.isNotEmpty) {
-                                  incorrects.subjectsAndSchoolYearSelected
+                                  value.subjectsAndSchoolYearSelected
                                       .removeWhere(
                                     (el) =>
                                         el['subjects'] ==

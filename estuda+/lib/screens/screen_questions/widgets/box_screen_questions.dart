@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_type_question.dart';
@@ -22,7 +24,6 @@ class ScreenQuestions extends StatefulWidget {
   final String elementarySchool;
   final String schoolYear;
   final Widget correctsAndIncorrects;
-
   final TextButton? textButton;
 
   const ScreenQuestions(
@@ -57,8 +58,18 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
       Uint8List string = widget.image;
       bytesImageString = utf8.decode(string);
     }
-    //ControllerQuestions.isAnsweredIncorrects = false;
+    ControllerQuestions.isAnswered = false;
+    print('initState: ${ControllerQuestions.isAnswered}');
     super.initState();
+  }
+
+  void nextQuestion() {
+    widget.controller.nextPage(
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.ease,
+    );
+    Provider.of<GlobalProviders>(listen: false, context)
+        .openBoxAlreadyAnswereds(false);
   }
 
   @override
@@ -175,6 +186,26 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
             ),
           ),
           Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Container(
+              alignment: Alignment.bottomRight,
+              width: MediaQuery.of(context).size.width,
+              child: GestureDetector(
+                onTap: (){
+                  print('Manda o feedback!');
+                },
+                child: const Text(
+                'Questão com problema?',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+                
+                // AppTheme.customTextStyle(
+                //     color: Colors.white, fontSize: 10, underline: true),
+                          ),
+              ),
+            ),
+          ),
+        
+          Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
             child: Row(
@@ -182,50 +213,43 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
               children: [
                 TextButton(
                   onPressed: () {
-                    widget.controller.previousPage(
-                      duration: const Duration(milliseconds: 700),
-                      curve: Curves.ease,
-                    );
+                    nextQuestion();
                   },
-                  child: const Text(
-                    'Voltar',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
+                  child: Text(
+                    'Pular',
+                    style: AppTheme.customTextStyle2(fontSize: 20),
                   ),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    //print('teste');
-                    widget.controller.nextPage(
-                      duration: const Duration(milliseconds: 700),
-                      curve: Curves.ease,
-                    );
-                    // value.answered(false);
-                    value.openBoxAlreadyAnswereds(false);
+                    nextQuestion();
                   },
-                  child: const Text('Próximo'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    //Routes().pushRouteFade(context, const TransitionPage());
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.fade,
-                        duration: const Duration(seconds: 1),
-                        child:
-                            const LoadingNextPage(msgFeedbasck: 'Atualizando'),
-                      ),
-                      (route) => false,
-                    );
-                  },
-                  child: const Text(
-                    'Sair',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  child: Text(
+                    'Próximo',
+                    style: AppTheme.customTextStyle2(
+                        color: Colors.indigo, fontSize: 18),
                   ),
                 ),
+                widget.textButton ??
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.fade,
+                            duration: const Duration(seconds: 1),
+                            child: const LoadingNextPage(
+                                msgFeedbasck: 'Atualizando'),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      child: Text(
+                        'Sair',
+                        style: AppTheme.customTextStyle2(
+                            fontSize: 20, color: Colors.amber),
+                      ),
+                    ),
               ],
             ),
           ),

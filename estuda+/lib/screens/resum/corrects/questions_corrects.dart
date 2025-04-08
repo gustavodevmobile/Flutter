@@ -1,32 +1,30 @@
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
-import 'package:estudamais/screens/loading_next_page.dart';
-import 'package:estudamais/screens/screen_questions/widgets/box_alternatives_incorrects.dart';
+import 'package:estudamais/screens/home/home.dart';
+import 'package:estudamais/screens/resum/corrects/widgets/box_alternatives_corrects.dart';
 import 'package:estudamais/screens/screen_questions/widgets/points_Errors.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
-
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 
+import 'package:estudamais/service/service.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_questions.dart';
 
 import 'package:estudamais/screens/screen_questions/widgets/box_screen_questions.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
-class PageQuestionsIncorrects extends StatefulWidget {
+class PageQuestionsCorrects extends StatefulWidget {
   final List<ModelQuestions> resultQuestions;
-  const PageQuestionsIncorrects({required this.resultQuestions, super.key});
+  const PageQuestionsCorrects({required this.resultQuestions, super.key});
 
   @override
-  State<PageQuestionsIncorrects> createState() =>
-      _PageQuestionsIncorrectsState();
+  State<PageQuestionsCorrects> createState() => _PageQuestionsCorrectsState();
 }
 
-class _PageQuestionsIncorrectsState extends State<PageQuestionsIncorrects> {
-  //Service service = Service();
+class _PageQuestionsCorrectsState extends State<PageQuestionsCorrects> {
+  Service service = Service();
   final controller = PageController();
-  StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
   @override
   void dispose() {
@@ -50,40 +48,33 @@ class _PageQuestionsIncorrectsState extends State<PageQuestionsIncorrects> {
               itemCount: widget.resultQuestions.length,
               itemBuilder: (context, index) {
                 return ScreenQuestions(
-                  boxQuestions:
-                      BoxQuestions(widget.resultQuestions[index].question),
+                  boxQuestions: BoxQuestions(
+                      //mostra a pergunta
+                      widget.resultQuestions[index].question),
+                  //mostra a imagem se tiver
                   image: widget.resultQuestions[index].image,
-                  boxAlternativesA: BoxAlternativesIncorrects(
+                  boxAlternativesA: BoxAlternativesCorrects(
+                    // mostra a alternativa
                     widget.resultQuestions[index].alternativeA,
                     'A',
+                    //pega a resposta para comparar com a resposta da alternativa
                     widget.resultQuestions[index].answer,
-                    //value.isAnswered,
-                    index,
-                    widget.resultQuestions[index].id.toString(),
+                    // se ja foi respondida
                   ),
-                  boxAlternativesB: BoxAlternativesIncorrects(
+                  boxAlternativesB: BoxAlternativesCorrects(
                     widget.resultQuestions[index].alternativeB,
                     'B',
                     widget.resultQuestions[index].answer,
-                    //value.isAnswered,
-                    index,
-                    widget.resultQuestions[index].id.toString(),
                   ),
-                  boxAlternativesC: BoxAlternativesIncorrects(
+                  boxAlternativesC: BoxAlternativesCorrects(
                     widget.resultQuestions[index].alternativeC,
                     'C',
                     widget.resultQuestions[index].answer,
-                    //value.isAnswered,
-                    index,
-                    widget.resultQuestions[index].id.toString(),
                   ),
-                  boxAlternativesD: BoxAlternativesIncorrects(
+                  boxAlternativesD: BoxAlternativesCorrects(
                     widget.resultQuestions[index].alternativeD,
                     'D',
                     widget.resultQuestions[index].answer,
-                    //value.isAnswered,
-                    index,
-                    widget.resultQuestions[index].id.toString(),
                   ),
                   controller: controller,
                   indexQuestion: index,
@@ -95,23 +86,13 @@ class _PageQuestionsIncorrectsState extends State<PageQuestionsIncorrects> {
                   schoolYear: widget.resultQuestions[index].schoolYear,
                   correctsAndIncorrects: const PointsAndErrors(),
                   textButton: TextButton(
-                    onPressed: () {
-                      //Routes().pushRouteFade(context, const TransitionPage());
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        PageTransition(
-                            type: PageTransitionType.fade,
-                            duration: const Duration(seconds: 1),
-                            child: const LoadingNextPage(
-                                msgFeedbasck: 'Atualizando')),
-                        (route) => false,
-                      );
-            
-                    },
-                    child: const Text(
+                    child: Text(
                       'Sair',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: AppTheme.customTextStyle2(fontSize: 20),
                     ),
+                    onPressed: () {
+                      Routes().pushRoute(context, const HomeScreen());
+                    },
                   ),
                 );
               },

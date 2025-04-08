@@ -54,29 +54,29 @@ class ServiceResumQuestions {
 
   // faz a seleção dos assuntos e anos escolares selecionados e retorna um map com o assunto e ano escolar sem repetição, como feedbackdo que foi selecionado
 
-  List<Map<String, dynamic>> showSubjectAndSchoolYearSelected(
-      String subjects, String schoolYear) {
-    List<Map<String, dynamic>> listAuxYearAndSubjectSelected = [];
-    List<dynamic> listAux = [];
-    Map<String, dynamic> listMap = {};
-    listMap = {
-      'schoolYear': schoolYear,
-      'subjects': subjects,
-    };
-    //if()
-    listAuxYearAndSubjectSelected.add(listMap);
-    final listJson =
-        mapYearAndSubjectSelected.map((el) => jsonEncode(el)).toList();
-    final setList = listJson.toSet().toList();
-    listAux = setList.map((el) => jsonDecode(el)).toList();
+  // List<Map<String, dynamic>> showSubjectAndSchoolYearSelected(
+  //     String subjects, String schoolYear) {
+  //   List<Map<String, dynamic>> listAuxYearAndSubjectSelected = [];
+  //   List<dynamic> listAux = [];
+  //   Map<String, dynamic> listMap = {};
+  //   listMap = {
+  //     'schoolYear': schoolYear,
+  //     'subjects': subjects,
+  //   };
+  //   //if()
+  //   listAuxYearAndSubjectSelected.add(listMap);
+  //   final listJson =
+  //       mapYearAndSubjectSelected.map((el) => jsonEncode(el)).toList();
+  //   final setList = listJson.toSet().toList();
+  //   listAux = setList.map((el) => jsonDecode(el)).toList();
 
-    for (var el in listAux) {
-      mapYearAndSubjectSelected.add(el);
-    }
+  //   for (var el in listAux) {
+  //     mapYearAndSubjectSelected.add(el);
+  //   }
 
-    print('mapYearAndSubjectSelected $mapYearAndSubjectSelected');
-    return mapYearAndSubjectSelected;
-  }
+  //   print('mapYearAndSubjectSelected $mapYearAndSubjectSelected');
+  //   return mapYearAndSubjectSelected;
+  // }
 
   // faz a consulta das quaestões corretas pelo mapYearAndSubjectSelected
   List<ModelQuestions> getResultQuestions(
@@ -95,7 +95,7 @@ class ServiceResumQuestions {
     } catch (e) {
       print('Erro ao buscar questões por assunto: $e');
     }
-    print('resultQuestions $resultQuestions');
+   // print('resultQuestions $resultQuestions');
     return resultQuestions;
   }
 
@@ -104,13 +104,13 @@ class ServiceResumQuestions {
   // retorna uma lista de map com assunto e ano escolar, sem repetição
   // mostra no expanted
   List<Map<String, dynamic>> showSubjectsAndSchoolyearInDiscipline(
-      String discipline, List<ModelQuestions> resultQuestionsCorrects) {
-    List<Map<String, dynamic>> mapListSubAndYearCorrects = [];
+      String discipline, List<ModelQuestions> resultQuestions) {
+    List<Map<String, dynamic>> mapListSubAndYear = [];
     Map<String, dynamic> mapYearAndSubject = {};
     List<Map<String, dynamic>> result = [];
 
-    if (resultQuestionsCorrects.isNotEmpty) {
-      for (var map in resultQuestionsCorrects) {
+    if (resultQuestions.isNotEmpty) {
+      for (var map in resultQuestions) {
         if (map.discipline == discipline) {
           mapYearAndSubject = {
             'schoolYear': map.schoolYear,
@@ -126,17 +126,17 @@ class ServiceResumQuestions {
       final decodeList = setList.map((el) => jsonDecode(el)).toList();
 
       for (var listMap in decodeList) {
-        mapListSubAndYearCorrects.add(listMap);
+        mapListSubAndYear.add(listMap);
       }
 
-      print('mapListSubAndYearCorrects $mapListSubAndYearCorrects');
+      //print('mapListSubAndYearCorrects $mapListSubAndYear');
     }
-    return mapListSubAndYearCorrects;
+    return mapListSubAndYear;
   }
 
 // contador das disciplinas respondidas
   List<Map<String, dynamic>> counterDiscipline(
-      List<ModelQuestions> resultQuestionsCorrect) {
+      List<ModelQuestions> resultQuestions) {
     List<Map<String, dynamic>> listAmountAnswered = [];
 
     List<String> portugues = [];
@@ -145,7 +145,7 @@ class ServiceResumQuestions {
     List<String> historia = [];
     List<String> ciencias = [];
 
-    for (var dis in resultQuestionsCorrect) {
+    for (var dis in resultQuestions) {
       switch (dis.discipline) {
         case 'Português':
           portugues.add(dis.discipline);

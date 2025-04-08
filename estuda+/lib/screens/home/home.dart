@@ -1,11 +1,9 @@
 import 'package:estudamais/controller/controller_home.dart';
 import 'package:estudamais/controller/routes.dart';
-import 'package:estudamais/screens/resum/accumulated_corrects.dart';
-import 'package:estudamais/screens/resum/accumulated_incorrectas.dart';
+import 'package:estudamais/screens/resum/corrects/accumulated_corrects.dart';
+import 'package:estudamais/screens/resum/incorrects/accumulated_incorrects.dart';
 import 'package:estudamais/screens/home/widgets/dashbord_displice.dart';
 import 'package:estudamais/screens/initial_screen.dart';
-import 'package:estudamais/service/questions_corrects_providers.dart';
-import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
@@ -30,9 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<GlobalProviders, QuestionsCorrectsProvider,
-            QuestionsIncorrectsProvider>(
-        builder: (context, value, corrects, incorrects, child) {
+    return Consumer<GlobalProviders>(
+        builder: (context, valueProvider, child) {
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -57,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: AppTheme.customTextStyle(fontSize: 13),
                   children: [
                     TextSpan(
-                        text: value.answeredsCurrents,
+                        text: valueProvider.answeredsCurrents,
                         style: AppTheme.customTextStyle(
                             fontSize: 20, color: Colors.amber))
                   ],
@@ -120,18 +117,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     // WIDGET BOXRESUM DAS QUANTIDAS DE QUESTÕES RESPODIDAS CORRETAMENTE
                     BoxResum(
-                      value.correctsCurrents,
+                      valueProvider.correctsCurrents,
                       'Corretas',
                       Lottie.asset('./assets/lotties/Animation_correct.json'),
                       TextButton(
                         onPressed: () {
-                          if (corrects.resultQuestionsCorrects.isNotEmpty) {
+                          if (valueProvider.resultQuestionsCorrects.isNotEmpty) {
                             Routes()
                                 .pushRoute(context, const AccumulatedCorrects());
                             //Limpa a lista que guarda os assuntos selecionados.
-                            corrects.subjectsAndSchoolYearSelected.clear();
+                            valueProvider.subjectsAndSchoolYearSelected.clear();
                             //Fecha onde mostra os assuntos selecionados.
-                            value.showSubjects(false);
+                            valueProvider.showSubjects(false);
                           } else {
                             showSnackBarError(
                               context,
@@ -152,14 +149,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     // DASHBORD DAS DISCIPLINAS RESPONDIDAS CORRETAMENTE
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: corrects.listDisciplinesAnswered.length,
+                      itemCount: valueProvider.listDisciplinesAnsweredCorrects.length,
                       itemBuilder: (context, int index) {
                         return DashbordDisplice(
-                          corrects.listDisciplinesAnswered[index]['discipline'],
+                          valueProvider.listDisciplinesAnsweredCorrects[index]['discipline'],
                           Colors.green,
-                          corrects.listDisciplinesAnswered[index]['amount'] /
+                          valueProvider.listDisciplinesAnsweredCorrects[index]['amount'] /
                               100,
-                          corrects.listDisciplinesAnswered[index]['amount']
+                          valueProvider.listDisciplinesAnsweredCorrects[index]['amount']
                               .toString(),
                         );
                       },
@@ -168,21 +165,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
                       child: BoxResum(
-                        value.incorrectsCurrents,
+                        valueProvider.incorrectsCurrents,
                         'Incorretas',
                         Lottie.asset('./assets/lotties/alert.json'),
                         TextButton(
                           onPressed: () {
-                            if (incorrects
+                            if (valueProvider
                                 .resultQuestionsIncorrects.isNotEmpty) {
                               routes.pushRoute(
                                 context,
                                 const AccumulatedIncorrects(),
                               );
                               //Limpa a lista que guarda os assuntos selecionados.
-                              incorrects.subjectsAndSchoolYearSelected.clear();
+                              valueProvider.subjectsAndSchoolYearSelected.clear();
                               //Fecha onde mostra os assuntos selecionados.
-                              value.showSubjects(false);
+                              valueProvider.showSubjects(false);
                             } else {
                               showSnackBarError(
                                 context,
@@ -204,16 +201,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     // WIDGET DASHBORD DISCIPLINAS RESPONDIDAS INCORRETAMENTE
                     ListView.builder(
                         shrinkWrap: true,
-                        itemCount: incorrects.listDisciplinesAnswered.length,
+                        itemCount: valueProvider.listDisciplinesAnsweredIncorrects.length,
                         itemBuilder: (context, int index) {
                           return DashbordDisplice(
-                              incorrects.listDisciplinesAnswered[index]
+                              valueProvider.listDisciplinesAnsweredIncorrects[index]
                                   ['discipline'],
                               Colors.red,
-                              incorrects.listDisciplinesAnswered[index]
+                              valueProvider.listDisciplinesAnsweredIncorrects[index]
                                       ['amount'] /
                                   100,
-                              incorrects.listDisciplinesAnswered[index]
+                              valueProvider.listDisciplinesAnsweredIncorrects[index]
                                       ['amount']
                                   .toString());
                         }),

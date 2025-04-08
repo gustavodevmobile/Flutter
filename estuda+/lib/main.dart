@@ -1,5 +1,3 @@
-import 'package:estudamais/service/questions_corrects_providers.dart';
-import 'package:estudamais/service/questions_incorrects_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -10,20 +8,16 @@ void main() async {
   await dotenv.load();
 
   runApp(
-    MultiProvider(providers: [
-      ChangeNotifierProvider(
-        create: (context) => GlobalProviders(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => QuestionsCorrectsProvider(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => QuestionsIncorrectsProvider(),
-      ),
-    ], child: const MyApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => GlobalProviders(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
   );
   //StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-  
 }
 
 class MyApp extends StatelessWidget {
