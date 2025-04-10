@@ -1,10 +1,7 @@
-import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
-import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/screens/resum/incorrects/widgets/box_alternatives_incorrects.dart';
 import 'package:estudamais/screens/screen_questions/widgets/points_Errors.dart';
-import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 
 import 'package:flutter/material.dart';
@@ -13,7 +10,6 @@ import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_questions.dart';
 
 import 'package:estudamais/screens/screen_questions/widgets/box_screen_questions.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class PageQuestionsIncorrects extends StatefulWidget {

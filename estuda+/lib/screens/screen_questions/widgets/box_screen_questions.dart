@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
+import 'package:estudamais/service/service_feedbacks.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -192,7 +193,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
               width: MediaQuery.of(context).size.width,
               child: GestureDetector(
                 onTap: (){
-                  print('Manda o feedback!');
+                  ServiceFeedbacks().sendFeedback(widget.id);
                 },
                 child: const Text(
                 'Questão com problema?',

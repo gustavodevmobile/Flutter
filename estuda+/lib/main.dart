@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Estuda +',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // useMaterial3: true,
+        useMaterial3: true,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.indigo,
           // shape: RoundedRectangleBorder(

@@ -6,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class ServiceResumQuestions {
-  final String _questoesAll = dotenv.env['questoes']!;
+  final String _questoesAll = dotenv.env['server']!;
   List<Map<String, dynamic>> mapYearAndSubjectSelected = [];
 // PEGA TODAS AS QUESTÕES RESPONDIDAS CORRETAMENTE pelo id da questão, COLOCA EM UMA LIST CENTRAL PARA PODER SERVIR COMO BASE DE CONSULTA. É CHAMADO NO CARREGAMENTO DA HOME.
 

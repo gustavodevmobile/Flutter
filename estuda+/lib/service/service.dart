@@ -11,13 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 //import 'package:dio/dio.dart';
 import 'dart:typed_data';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:flutter/foundation.dart';
 
 class Service {
-  final String _questoesAll = dotenv.env['questoes']!;
+  final String _questoesAll = dotenv.env['server']!;
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
 // busca os nomes das disciplinas das questões
