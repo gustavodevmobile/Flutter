@@ -4,6 +4,8 @@ import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/service/service_feedbacks.dart';
 import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/feedback_modal.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_type_question.dart';
@@ -60,7 +62,6 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
       bytesImageString = utf8.decode(string);
     }
     ControllerQuestions.isAnswered = false;
-    print('initState: ${ControllerQuestions.isAnswered}');
     super.initState();
   }
 
@@ -79,7 +80,6 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     return Consumer<GlobalProviders>(builder: (context, value, child) {
       return ListView(
         children: [
@@ -192,20 +192,28 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
               alignment: Alignment.bottomRight,
               width: MediaQuery.of(context).size.width,
               child: GestureDetector(
-                onTap: (){
-                  ServiceFeedbacks().sendFeedback(widget.id);
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    builder: (BuildContext context) {
+                      return FeedbackModal(questionId: widget.id);
+                    },
+                  );
                 },
                 child: const Text(
-                'Questão com problema?',
-                style: TextStyle(color: Colors.white, fontSize: 13),
-                
-                // AppTheme.customTextStyle(
-                //     color: Colors.white, fontSize: 10, underline: true),
-                          ),
+                  'Questão com problema?',
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+
+                  // AppTheme.customTextStyle(
+                  //     color: Colors.white, fontSize: 10, underline: true),
+                ),
               ),
             ),
           ),
-        
           Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
