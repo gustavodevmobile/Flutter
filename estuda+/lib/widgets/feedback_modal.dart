@@ -1,3 +1,4 @@
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/service/service_feedbacks.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
@@ -17,6 +18,7 @@ class FeedbackModalState extends State<FeedbackModal> {
     'Erro no enunciado',
     'Erro nas alternativas',
     'Erro na resposta correta',
+    'Erro de digitação',
     'Outro problema'
   ];
   final List<String> selectedOptions = [];
@@ -35,20 +37,22 @@ class FeedbackModalState extends State<FeedbackModal> {
     if (selectedOptions.isEmpty) {
       showSnackBarError(context, 'Selecione pelo menos uma opção de feedback!',
           Colors.orange);
-      return;
+      Navigator.pop(context); // Fecha o modal
     }
 
     await serviceFeedbacks.sendFeedback(
       widget.questionId,
       context,
       selectedOptions,
-      (response) {
-        showSnackBarError(
-            context, response, Colors.green);
+      (success) {
+        if(!mounted) return;
+        showSnackBarError(context, success, Colors.green);
         Navigator.pop(context); // Fecha o modal
       },
       (error) {
+        if(!mounted) return;
         showSnackBarError(context, error, Colors.red);
+        Navigator.pop(context); // Fecha o modal
       },
     );
   }
@@ -65,10 +69,12 @@ class FeedbackModalState extends State<FeedbackModal> {
             'Selecione os problemas encontrados:',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           ...feedbackOptions.map((option) {
             return CheckboxListTile(
-              title: Text(option),
+              title: Text(option,
+                  style: AppTheme.customTextStyle2(
+                      color: Colors.indigo, fontSize: 18)),
               value: selectedOptions.contains(option),
               onChanged: (_) {
                 toggleOption(option);
@@ -77,16 +83,21 @@ class FeedbackModalState extends State<FeedbackModal> {
           }),
           const SizedBox(height: 16),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TextButton(
+              ElevatedButton(
                 onPressed: sendFeedback,
-                child: const Text('Enviar Feedback'),
+                child: Text(
+                  'Enviar Feedback',
+                  style: AppTheme.customTextStyle2(color: Colors.black),
+                ),
               ),
-              TextButton(
+              ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context); // Fecha o modal
                 },
-                child: const Text('Cancelar'),
+                child: Text('Cancelar',
+                    style: AppTheme.customTextStyle2(color: Colors.red)),
               ),
             ],
           )

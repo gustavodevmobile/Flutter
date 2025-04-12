@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,12 @@ class StorageSharedPreferences {
   static const String keyIdsAnsweredsCorrects = 'ids_answereds_corrects';
   // Chave dos ids das questões respondidas incorretamente.
   static const String keyIdsAnsweredsIncorrects = 'ids_answereds_incorrects';
+  // Chave dos ids e data das questões respondidas.
+  static const String keyIdsAndDateAnsweredsCorrectsResum =
+      'ids_date_answereds_corrects_resum';
+  // Chave dos ids e data das questões respondidas incorretamente.
+  static const String keyIdsAndDateAnsweredsIncorrectsResum =
+      'ids_date_answereds_incorrects_resum';
   // instância de classe SharedPreferencesAsync
   SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
 
@@ -56,7 +63,7 @@ class StorageSharedPreferences {
     } catch (e) {
       onError('Erro ao buscar ids localmente:$e');
     }
-    
+
     if (result == null) {
       return [];
       //onError('Erro ao buscar ids. O resultado retornou nulo');
@@ -95,8 +102,42 @@ class StorageSharedPreferences {
   }
 
   void deleteListIds() {
-    deleta(StorageSharedPreferences.keyIdsAnswereds);
-    deleta(StorageSharedPreferences.keyIdsAnsweredsCorrects);
-    deleta(StorageSharedPreferences.keyIdsAnsweredsIncorrects);
+    deleta(keyIdsAnswereds);
+    deleta(keyIdsAnsweredsCorrects);
+    deleta(keyIdsAnsweredsIncorrects);
+    deleta(keyIdsAndDateAnsweredsCorrectsResum);
+    deleta(keyIdsAndDateAnsweredsIncorrectsResum);
+  }
+
+  void saveIdsAndDateResum(
+      String id, String date, String hours, String key, Function(String) onError) async {
+    List<String> idsAndDate = [];
+    
+    final Map<String, dynamic> answeredData = {
+      "id": id,
+      "date": date,
+      "hours": hours
+    };
+
+    final String jsonString = jsonEncode(answeredData);
+    idsAndDate.add(jsonString);
+    try {
+      // Faz a busca dos ids salvos localmente
+      List<String>? resultIdsAndDate = await prefsAsync.getStringList(key);
+      // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
+      if (resultIdsAndDate == null) {
+        idsAndDate.add(jsonString);
+        await prefsAsync.setStringList(key, idsAndDate);
+        // Caso contrário,
+      } else {
+        //add na lista recebida
+        resultIdsAndDate.add(jsonString);
+        //e salva a lista atualizada
+        await prefsAsync.setStringList(key, resultIdsAndDate);
+      }
+      print('id e data salvos com sucesso: $jsonString');
+    } catch (erro) {
+      onError('Erro ao salvar id de questões respondidas: $erro');
+    }
   }
 }

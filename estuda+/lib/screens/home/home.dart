@@ -1,5 +1,6 @@
 import 'package:estudamais/controller/controller_home.dart';
 import 'package:estudamais/controller/routes.dart';
+import 'package:estudamais/screens/home/widgets/menu_drawer.dart';
 import 'package:estudamais/screens/resum/corrects/accumulated_corrects.dart';
 import 'package:estudamais/screens/resum/incorrects/accumulated_incorrects.dart';
 import 'package:estudamais/screens/home/widgets/dashbord_displice.dart';
@@ -28,8 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GlobalProviders>(
-        builder: (context, valueProvider, child) {
+    return Consumer<GlobalProviders>(builder: (context, valueProvider, child) {
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -54,9 +54,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: AppTheme.customTextStyle(fontSize: 13),
                   children: [
                     TextSpan(
-                        text: valueProvider.answeredsCurrents,
-                        style: AppTheme.customTextStyle(
-                            fontSize: 20, color: Colors.amber))
+                      text: valueProvider.answeredsCurrents,
+                      style: AppTheme.customTextStyle(
+                        fontSize: 20,
+                        color: Colors.amber,
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -64,50 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         drawer: Drawer(
-          backgroundColor: const Color.fromARGB(255, 209, 209, 209),
-          child: ListView(
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(color: Colors.blue),
-                child: Text('Header'),
-              ),
-              ListTileDrawer(
-                contextText: 'Responder questões',
-                onTap: () {
-                  // Chama o método no controller que manipula e busca as disciplinas na api.
-                  controllerHome.handleFetchDisciplines(context);
-                  //value.openBoxAlreadyAnswereds(false);
-                },
-                icon: const Icon(Icons.auto_stories_rounded),
-              ),
-              ListTileDrawer(
-                contextText: 'Resumo Corretas',
-                onTap: () {},
-                icon: const Icon(Icons.list),
-              ),
-              ListTileDrawer(
-                contextText: 'Resumo Incorretas',
-                onTap: () {},
-                icon: const Icon(Icons.list),
-              ),
-              ListTileDrawer(
-                contextText: 'Sobre',
-                onTap: () {},
-                icon: const Icon(Icons.help),
-              ),
-              ListTileDrawer(
-                contextText: 'Excluir respostas',
-                onTap: () {},
-                icon: const Icon(Icons.delete),
-              ),
-              ListTileDrawer(
-                contextText: 'Sair',
-                onTap: () {},
-                icon: const Icon(Icons.exit_to_app),
-              ),
-            ],
-          ),
-        ),
+            backgroundColor: const Color.fromARGB(255, 209, 209, 209),
+            child: MenuDrawer()),
         body: Stack(
           children: <Widget>[
             Background(
@@ -122,9 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       Lottie.asset('./assets/lotties/Animation_correct.json'),
                       TextButton(
                         onPressed: () {
-                          if (valueProvider.resultQuestionsCorrects.isNotEmpty) {
-                            Routes()
-                                .pushRoute(context, const AccumulatedCorrects());
+                          if (valueProvider
+                              .resultQuestionsCorrects.isNotEmpty) {
+                            Routes().pushRoute(
+                                context, const AccumulatedCorrects());
                             //Limpa a lista que guarda os assuntos selecionados.
                             valueProvider.subjectsAndSchoolYearSelected.clear();
                             //Fecha onde mostra os assuntos selecionados.
@@ -149,14 +111,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     // DASHBORD DAS DISCIPLINAS RESPONDIDAS CORRETAMENTE
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: valueProvider.listDisciplinesAnsweredCorrects.length,
+                      itemCount:
+                          valueProvider.listDisciplinesAnsweredCorrects.length,
                       itemBuilder: (context, int index) {
                         return DashbordDisplice(
-                          valueProvider.listDisciplinesAnsweredCorrects[index]['discipline'],
+                          valueProvider.listDisciplinesAnsweredCorrects[index]
+                              ['discipline'],
                           Colors.green,
-                          valueProvider.listDisciplinesAnsweredCorrects[index]['amount'] /
+                          valueProvider.listDisciplinesAnsweredCorrects[index]
+                                  ['amount'] /
                               100,
-                          valueProvider.listDisciplinesAnsweredCorrects[index]['amount']
+                          valueProvider.listDisciplinesAnsweredCorrects[index]
+                                  ['amount']
                               .toString(),
                         );
                       },
@@ -177,7 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const AccumulatedIncorrects(),
                               );
                               //Limpa a lista que guarda os assuntos selecionados.
-                              valueProvider.subjectsAndSchoolYearSelected.clear();
+                              valueProvider.subjectsAndSchoolYearSelected
+                                  .clear();
                               //Fecha onde mostra os assuntos selecionados.
                               valueProvider.showSubjects(false);
                             } else {
@@ -201,16 +168,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     // WIDGET DASHBORD DISCIPLINAS RESPONDIDAS INCORRETAMENTE
                     ListView.builder(
                         shrinkWrap: true,
-                        itemCount: valueProvider.listDisciplinesAnsweredIncorrects.length,
+                        itemCount: valueProvider
+                            .listDisciplinesAnsweredIncorrects.length,
                         itemBuilder: (context, int index) {
                           return DashbordDisplice(
-                              valueProvider.listDisciplinesAnsweredIncorrects[index]
+                              valueProvider
+                                      .listDisciplinesAnsweredIncorrects[index]
                                   ['discipline'],
                               Colors.red,
-                              valueProvider.listDisciplinesAnsweredIncorrects[index]
-                                      ['amount'] /
+                              valueProvider.listDisciplinesAnsweredIncorrects[
+                                      index]['amount'] /
                                   100,
-                              valueProvider.listDisciplinesAnsweredIncorrects[index]
+                              valueProvider
+                                  .listDisciplinesAnsweredIncorrects[index]
                                       ['amount']
                                   .toString());
                         }),

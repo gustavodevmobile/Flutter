@@ -26,11 +26,6 @@ class GlobalProviders extends ChangeNotifier {
     isAnsweredBox = value;
     notifyListeners();
   }
-  
-  // void handlerAnswereds(bool value) {
-  //   isAnswered = value;
-  //   notifyListeners();
-  // }
 
   //Método responsável por habilitar e desabilitar o visualização dos assuntos selecionados nas telas das questões corretas e incorretas.
   void showSubjects(bool show) {
@@ -73,11 +68,6 @@ class GlobalProviders extends ChangeNotifier {
     resultQuestionsCorrects = question;
     notifyListeners();
   }
-// Método responsável por atualizar o estado da lista de disciplinas.
-  // void subjectsAndSchoolYea(List<Map<String, dynamic>> listMap) {
-  //   listMapSubjectsAndSchoolYear = listMap;
-  //   notifyListeners();
-  // }
 
   void subjectAndSchoolYearSelected(
       Map<String, dynamic> subjectsAndSchoolYear) {

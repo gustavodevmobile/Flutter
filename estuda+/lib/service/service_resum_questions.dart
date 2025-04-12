@@ -52,32 +52,6 @@ class ServiceResumQuestions {
     return listDisciplines.toSet().toList();
   }
 
-  // faz a seleção dos assuntos e anos escolares selecionados e retorna um map com o assunto e ano escolar sem repetição, como feedbackdo que foi selecionado
-
-  // List<Map<String, dynamic>> showSubjectAndSchoolYearSelected(
-  //     String subjects, String schoolYear) {
-  //   List<Map<String, dynamic>> listAuxYearAndSubjectSelected = [];
-  //   List<dynamic> listAux = [];
-  //   Map<String, dynamic> listMap = {};
-  //   listMap = {
-  //     'schoolYear': schoolYear,
-  //     'subjects': subjects,
-  //   };
-  //   //if()
-  //   listAuxYearAndSubjectSelected.add(listMap);
-  //   final listJson =
-  //       mapYearAndSubjectSelected.map((el) => jsonEncode(el)).toList();
-  //   final setList = listJson.toSet().toList();
-  //   listAux = setList.map((el) => jsonDecode(el)).toList();
-
-  //   for (var el in listAux) {
-  //     mapYearAndSubjectSelected.add(el);
-  //   }
-
-  //   print('mapYearAndSubjectSelected $mapYearAndSubjectSelected');
-  //   return mapYearAndSubjectSelected;
-  // }
-
   // faz a consulta das quaestões corretas pelo mapYearAndSubjectSelected
   List<ModelQuestions> getResultQuestions(
       List<ModelQuestions> resultQuestionsCorrect,
@@ -95,7 +69,6 @@ class ServiceResumQuestions {
     } catch (e) {
       print('Erro ao buscar questões por assunto: $e');
     }
-   // print('resultQuestions $resultQuestions');
     return resultQuestions;
   }
 
@@ -128,8 +101,6 @@ class ServiceResumQuestions {
       for (var listMap in decodeList) {
         mapListSubAndYear.add(listMap);
       }
-
-      //print('mapListSubAndYearCorrects $mapListSubAndYear');
     }
     return mapListSubAndYear;
   }

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
-import 'package:estudamais/service/service_feedbacks.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/feedback_modal.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
@@ -109,10 +108,10 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                         children: [
                           Text(
                             'ID Questão ${widget.id}',
-                            style: const TextStyle(
-                                fontSize: 20,
+                            style: AppTheme.customTextStyle2(
+                                fontSize: 18,
                                 color: Colors.indigo,
-                                fontWeight: FontWeight.bold),
+                                ),
                           ),
                           widget.correctsAndIncorrects
                         ],
@@ -231,7 +230,17 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    nextQuestion();
+                    if (ControllerQuestions.isAnswered) {
+                      nextQuestion();
+                    }else{
+                      showSnackBarError(
+                      context,
+                      'Questão não respondida. Você deve pular ou responder a questão para passar para a próxima',
+                      Colors.orange,
+                      duration: const Duration(seconds: 5),
+                    );
+                    }
+                    
                   },
                   child: Text(
                     'Próximo',
