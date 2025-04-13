@@ -8,7 +8,7 @@ class StorageSharedPreferences {
   // Chave dos ids das questões respondidas.
   static const String keyIdsAnswereds = 'ids_Answereds';
   // Chave dos ids das questões respondidas corretamente.
-  static const String keyIdsAnsweredsCorrects = 'ids_answereds_corrects';
+  //static const String keyIdsAnsweredsCorrects = 'ids_answereds_corrects';
   // Chave dos ids das questões respondidas incorretamente.
   static const String keyIdsAnsweredsIncorrects = 'ids_answereds_incorrects';
   // Chave dos ids e data das questões respondidas.
@@ -19,6 +19,7 @@ class StorageSharedPreferences {
       'ids_date_answereds_incorrects_resum';
   // instância de classe SharedPreferencesAsync
   SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
+  final DateTime dateNow = DateTime.now().toUtc();
 
 // Método que salva os ids na forma de lista, utilizado para fazer a recuperação das questões respodidas incorretamente.
   Future<void> saveIdsList(
@@ -31,29 +32,29 @@ class StorageSharedPreferences {
   }
 
   // Método que salva os ids das questões.
-  Future<void> saveIds(
-      String value, String key, Function(String) onError) async {
-    List<String> idsAnswereds = [];
+  // Future<void> saveIds(
+  //     String value, String key, Function(String) onError) async {
+  //   List<String> idsAnswereds = [];
 
-    try {
-      // Faz a busca dos ids salvos localmente
-      List<String>? resultIdsAnswereds = await prefsAsync.getStringList(key);
-      // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
-      if (resultIdsAnswereds == null) {
-        idsAnswereds.add(value);
-        await prefsAsync.setStringList(key, idsAnswereds);
+  //   try {
+  //     // Faz a busca dos ids salvos localmente
+  //     List<String>? resultIdsAnswereds = await prefsAsync.getStringList(key);
+  //     // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
+  //     if (resultIdsAnswereds == null) {
+  //       idsAnswereds.add(value);
+  //       await prefsAsync.setStringList(key, idsAnswereds);
 
-        // Caso contrário,
-      } else {
-        //add na lista recebida
-        resultIdsAnswereds.add(value);
-        //e salva a lista atualizada
-        await prefsAsync.setStringList(key, resultIdsAnswereds);
-      }
-    } catch (erro) {
-      onError('Erro ao salvar id de questões respondidas: $erro');
-    }
-  }
+  //       // Caso contrário,
+  //     } else {
+  //       //add na lista recebida
+  //       resultIdsAnswereds.add(value);
+  //       //e salva a lista atualizada
+  //       await prefsAsync.setStringList(key, resultIdsAnswereds);
+  //     }
+  //   } catch (erro) {
+  //     onError('Erro ao salvar id de questões respondidas: $erro');
+  //   }
+  // }
 
 // Método responsável por ler os ids salvos localmente.
   Future<List<String>> recoverIds(String key, Function(String) onError) async {
@@ -74,13 +75,22 @@ class StorageSharedPreferences {
 // Método responsável por remover id da lista salva localmente.
   void removeIdsInList(String keyRemove, String id, String keyAdd,
       BuildContext context, Function(String) onError) async {
+    List<Map<String, dynamic>> listMap = [];
+    List<String> listIds = [];
     try {
       // Pega a lista dos ids das incorretas.
-      List<String> listIds = await recoverIds(
+      List<String> listJson = await recoverIds(
           keyRemove, (error) => showSnackBarError(context, error, Colors.red));
 
+      for (var id in listJson) {
+        listMap.add(jsonDecode(id));
+      }
       // Remove o id em questão
-      listIds.remove(id);
+      listMap.removeWhere((el) => el['id'] == id);
+
+      for (var map in listMap) {
+        listIds.add(jsonEncode(map));
+      }
 
       // Salva os ids restantes como list nos ids incorretos.
       saveIdsList(keyRemove, listIds, (error) {
@@ -88,7 +98,7 @@ class StorageSharedPreferences {
       });
 
       // Salva o id da questão que acertou nos ids corretos.
-      await saveIds(
+      await saveIdsAndDateResum(
           id, keyAdd, (error) => showSnackBarError(context, error, Colors.red));
     } catch (e) {
       onError('Erro ao salvar id questão incorreta em ids corretos: $e');
@@ -103,16 +113,20 @@ class StorageSharedPreferences {
 
   void deleteListIds() {
     deleta(keyIdsAnswereds);
-    deleta(keyIdsAnsweredsCorrects);
+    //deleta(keyIdsAnsweredsCorrects);
     deleta(keyIdsAnsweredsIncorrects);
     deleta(keyIdsAndDateAnsweredsCorrectsResum);
     deleta(keyIdsAndDateAnsweredsIncorrectsResum);
   }
 
-  void saveIdsAndDateResum(
-      String id, String date, String hours, String key, Function(String) onError) async {
+  Future<void> saveIdsAndDateResum(
+      String id, String key, Function(String) onError) async {
     List<String> idsAndDate = [];
-    
+    String date =
+        '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year}';
+    String hours =
+        '${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}';
+
     final Map<String, dynamic> answeredData = {
       "id": id,
       "date": date,
@@ -120,11 +134,12 @@ class StorageSharedPreferences {
     };
 
     final String jsonString = jsonEncode(answeredData);
-    idsAndDate.add(jsonString);
+
     try {
       // Faz a busca dos ids salvos localmente
       List<String>? resultIdsAndDate = await prefsAsync.getStringList(key);
       // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
+      print('resultIdsAndDate $resultIdsAndDate');
       if (resultIdsAndDate == null) {
         idsAndDate.add(jsonString);
         await prefsAsync.setStringList(key, idsAndDate);

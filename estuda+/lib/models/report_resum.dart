@@ -13,6 +13,8 @@ class ReportResum {
     required this.hours,
   });
 
+  
+
   ReportResum.toMap(Map<String, dynamic> map)
       : schoolYear = map['schoolYear'],
         discipline = map['discipline'],

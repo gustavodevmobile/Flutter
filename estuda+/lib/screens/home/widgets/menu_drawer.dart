@@ -1,4 +1,7 @@
 import 'package:estudamais/controller/controller_home.dart';
+import 'package:estudamais/controller/controller_report_resum.dart';
+import 'package:estudamais/controller/routes.dart';
+import 'package:estudamais/screens/send_report_screen.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -33,11 +36,14 @@ class MenuDrawer extends StatelessWidget {
           onTap: () {},
           icon: const Icon(Icons.list),
         ),
-        
         ListTileDrawer(
           contextText: 'Enviar relatório de questões',
-          onTap: () {},
-          icon: const Icon(Icons.list,),
+          onTap: () {
+            Routes().pushRoute(context, const SendReportScreen());
+          },
+          icon: const Icon(
+            Icons.list,
+          ),
         ),
         ListTileDrawer(
           contextText: 'Enviar Feedback',

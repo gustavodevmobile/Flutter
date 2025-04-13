@@ -1,4 +1,5 @@
 import 'package:estudamais/models/model_questions.dart';
+import 'package:estudamais/models/report_resum.dart';
 import 'package:flutter/material.dart';
 
 // Classe responsável por geranciar o estado
@@ -20,6 +21,8 @@ class GlobalProviders extends ChangeNotifier {
   List<dynamic> subjectsAndSchoolYearSelected = [];
   List<Map<String, dynamic>> listDisciplinesAnsweredCorrects = [];
   List<Map<String, dynamic>> listDisciplinesAnsweredIncorrects = [];
+  List<ReportResum> reportsCorrects = [];
+  List<ReportResum> reportsIncorrects = [];
 
   // Método responsável por atualizar o estado em abrir e fechar o AnimatedContainer caso a questão ja tenha sido respondida.
   void openBoxAlreadyAnswereds(bool value) {
@@ -85,6 +88,16 @@ class GlobalProviders extends ChangeNotifier {
 
   void disciplinesAnsweredsIncorrects(List<Map<String, dynamic>> listMap) {
     listDisciplinesAnsweredIncorrects = listMap;
+    notifyListeners();
+  }
+
+  void reportResumCorrects(List<ReportResum> list) {
+    reportsCorrects = list;
+    notifyListeners();
+  }
+
+  void reportResumIncorrects(List<ReportResum> list) {
+    reportsIncorrects = list;
     notifyListeners();
   }
 }

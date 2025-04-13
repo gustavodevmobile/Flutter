@@ -8,7 +8,6 @@ import 'package:estudamais/screens/initial_screen.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
-import 'package:estudamais/widgets/listTile_drawer.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';

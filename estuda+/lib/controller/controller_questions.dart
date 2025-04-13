@@ -15,8 +15,6 @@ class ControllerQuestions {
 
   static bool isAnswered = false;
 
-  final DateTime dateNow = DateTime.now().toUtc();
-
 // Método responsável por recuperar as questões respodidas incorretamente, fazendo a lógica de remover o id dos ids incorretos e salvar o id correspondente nos ids corretos.
   void recoverQuestionsIncorrects(
       // Recebe a resposta da alternativa
@@ -38,11 +36,11 @@ class ControllerQuestions {
       //4º Salva a lista dos ids incorretos, sem o id da questão correspondente.
       sharedPreferences.removeIdsInList(
         // Chave dos ids incorretos
-        StorageSharedPreferences.keyIdsAnsweredsIncorrects,
+        StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
         // Id da questão.
         idQuestion,
         // Chave dos ids corretos
-        StorageSharedPreferences.keyIdsAnsweredsCorrects,
+        StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
         context,
         (error) => showSnackBarError(context, error, Colors.red),
       );
@@ -86,21 +84,11 @@ class ControllerQuestions {
     // Id da questão
     String idQuestion,
   ) async {
-    // salva o id da questão em ids respondidos
-    sharedPreferences
-        .saveIds(idQuestion, StorageSharedPreferences.keyIdsAnswereds, (error) {
-      showSnackBarError(context, error, Colors.red);
-    });
     // Verifica alternativa escolhida x resposta correta
     if (response == alternative) {
       // muda a cor do box alternativa para verde
       corAlternativa = Colors.green;
-      //salva o id da questão em ids respondidos corretamente
-      sharedPreferences
-          .saveIds(idQuestion, StorageSharedPreferences.keyIdsAnsweredsCorrects,
-              (error) {
-        showSnackBarError(context, error, Colors.red);
-      });
+
       // pega a quantidade de ids corretos;
       int amountCorrects = int.parse(
           Provider.of<GlobalProviders>(listen: false, context)
@@ -112,12 +100,9 @@ class ControllerQuestions {
           .answeredsCorrects(amountCorrects.toString());
       // Se não...
       isAnswered = true;
-      String date =
-          '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year}';
-      String hours =
-          '${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}';
+
       // salva o id e data da questão em ids respondidos corretamente;
-      sharedPreferences.saveIdsAndDateResum(idQuestion, date, hours,
+      sharedPreferences.saveIdsAndDateResum(idQuestion,
           StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
           (onError) {
         showSnackBarError(context, onError, Colors.red);
@@ -125,12 +110,7 @@ class ControllerQuestions {
     } else {
       // muda a cor da alternativa para vermelho;
       corAlternativa = Colors.red;
-      //salva o id e data da questão em ids respondidos incorretamente;
-      sharedPreferences.saveIds(
-          idQuestion, StorageSharedPreferences.keyIdsAnsweredsIncorrects,
-          (error) {
-        showSnackBarError(context, error, Colors.red);
-      });
+
       // pega a quantidade de ids incorretos;
       int amountIncorrects = int.parse(
           Provider.of<GlobalProviders>(listen: false, context)
@@ -141,13 +121,9 @@ class ControllerQuestions {
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsIncorrects(amountIncorrects.toString());
       isAnswered = true;
-      
-      //salva o id e data da questão em ids respondidos incorretamente;
-      String date = '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year}';
-      String hours =
-          '${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}';
-      // salva o id e data da questão em ids respondidos corretamente;
-      sharedPreferences.saveIdsAndDateResum(idQuestion, date, hours,
+
+      // salva o id e data da questão em ids respondidos incorretamente;
+      sharedPreferences.saveIdsAndDateResum(idQuestion,
           StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
           (onError) {
         showSnackBarError(context, onError, Colors.red);

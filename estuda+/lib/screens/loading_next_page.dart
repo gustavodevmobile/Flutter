@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:estudamais/controller/controller_report_resum.dart';
+import 'package:estudamais/models/report_resum.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -30,6 +33,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   Service service = Service();
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
   ValueNotifier<String> msgLoading = ValueNotifier<String>('Buscando dados...');
+  ControllerReportResum controllerReportResum = ControllerReportResum();
   TextStyle textStyle = GoogleFonts.aboreto(
     fontSize: 15,
     fontWeight: FontWeight.bold,
@@ -74,9 +78,27 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     Provider.of<GlobalProviders>(listen: false, context)
         .questionsIncorrects(incorrects);
 
-    // pega o nome das disiciplinas
-    // Provider.of<ModelPoints>(listen: false, context)
-    //     .getListDisciplines(disciplines);
+  // cria a lista de resumo das questões corretas, para envio ao backend.
+    controllerReportResum.reportCorrectsQuestions(
+        corrects,
+        StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
+        context, (resultReport) {
+      Provider.of<GlobalProviders>(listen: false, context)
+          .reportResumCorrects(resultReport);
+    }, (error) {
+      showSnackBarError(context, error, Colors.red);
+    });
+    
+  // cria a lista de resumo das questões incorretas, para envio ao backend.
+    controllerReportResum.reportCorrectsQuestions(
+        incorrects,
+        StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
+        context, (resultReport) {
+      Provider.of<GlobalProviders>(listen: false, context)
+          .reportResumIncorrects(resultReport);
+    }, (error) {
+      showSnackBarError(context, error, Colors.red);
+    });
 
     Navigator.push(
       context,
@@ -95,8 +117,9 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     List<String> ids = [];
     msgLoading.value = '${widget.msgFeedbasck} respodidas...';
     try {
-      ids = await sharedPreferences
-          .recoverIds(StorageSharedPreferences.keyIdsAnswereds, (error)=>showSnackBarError(context, error, Colors.red));
+      ids = await sharedPreferences.recoverIds(
+          StorageSharedPreferences.keyIdsAnswereds,
+          (error) => showSnackBarError(context, error, Colors.red));
       answeredsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscas ids das questões respondidas: $e ');
@@ -108,10 +131,20 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   Future fetchCorrectsIds(
       Function(List<String>) correctsIds, Function(String) onError) async {
     msgLoading.value = '${widget.msgFeedbasck} ids corretas...';
+    List<String> listJson = [];
     List<String> ids = [];
     try {
-      ids = await sharedPreferences
-          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsCorrects,(error)=>showSnackBarError(context, error, Colors.red));
+      //
+      listJson = await sharedPreferences.recoverIds(
+        StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
+        (error) => showSnackBarError(context, error, Colors.red),
+      );
+      for (var json in listJson) {
+        Map<String, dynamic> map = jsonDecode(json);
+        ids.add(map['id']);
+      }
+
+      print('ids $ids');
       correctsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscar ids das questões corretas: $e ');
@@ -123,10 +156,17 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   Future fetchIncorrectsIds(
       Function(List<String>) incorrectsIds, Function(String) onError) async {
     msgLoading.value = '${widget.msgFeedbasck} ids incorretas...';
+    List<String> listJson = [];
     List<String> ids = [];
     try {
-      ids = await sharedPreferences
-          .recoverIds(StorageSharedPreferences.keyIdsAnsweredsIncorrects, (error)=>showSnackBarError(context, error, Colors.red));
+      listJson = await sharedPreferences.recoverIds(
+          StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
+          (error) => showSnackBarError(context, error, Colors.red));
+      for (var json in listJson) {
+        Map<String, dynamic> map = jsonDecode(json);
+        ids.add(map['id']);
+      }
+      print('idsIncorrects $ids');
       incorrectsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscar ids das questões incorretas: $e ');
@@ -198,8 +238,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
 
     // atualiza o progresso do usuario
     msgLoading.value = 'Atualizando informações...';
-    nextPage(
-        corrects, incorrects, idsAnswereds, idsCorrects, idsIncorrects);
+    nextPage(corrects, incorrects, idsAnswereds, idsCorrects, idsIncorrects);
   }
 
   late final StreamController _controller = StreamController(
@@ -238,10 +277,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Loading(),
-                            Text(
-                              'Aguardando dados...',
-                              style: textStyle
-                            ),
+                            Text('Aguardando dados...', style: textStyle),
                           ],
                         );
                       case ConnectionState.waiting:
@@ -249,10 +285,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Loading(),
-                            Text(
-                              'Aguardando informações...',
-                              style: textStyle
-                            ),
+                            Text('Aguardando informações...', style: textStyle),
                           ],
                         );
                       case ConnectionState.active:
@@ -260,17 +293,11 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Loading(),
-                            Text(
-                              value,
-                              style: textStyle
-                            ),
+                            Text(value, style: textStyle),
                           ],
                         );
                       case ConnectionState.done:
-                        return Text(
-                          'Pronto!',
-                          style: textStyle
-                        );
+                        return Text('Pronto!', style: textStyle);
                     }
                   }
                 },
