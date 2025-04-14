@@ -31,30 +31,30 @@ class StorageSharedPreferences {
     }
   }
 
-  // Método que salva os ids das questões.
-  // Future<void> saveIds(
-  //     String value, String key, Function(String) onError) async {
-  //   List<String> idsAnswereds = [];
+  //Método que salva os ids das questões.
+  Future<void> saveIds(
+      String value, String key, Function(String) onError) async {
+    List<String> idsAnswereds = [];
 
-  //   try {
-  //     // Faz a busca dos ids salvos localmente
-  //     List<String>? resultIdsAnswereds = await prefsAsync.getStringList(key);
-  //     // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
-  //     if (resultIdsAnswereds == null) {
-  //       idsAnswereds.add(value);
-  //       await prefsAsync.setStringList(key, idsAnswereds);
+    try {
+      // Faz a busca dos ids salvos localmente
+      List<String>? resultIdsAnswereds = await prefsAsync.getStringList(key);
+      // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
+      if (resultIdsAnswereds == null) {
+        idsAnswereds.add(value);
+        await prefsAsync.setStringList(key, idsAnswereds);
 
-  //       // Caso contrário,
-  //     } else {
-  //       //add na lista recebida
-  //       resultIdsAnswereds.add(value);
-  //       //e salva a lista atualizada
-  //       await prefsAsync.setStringList(key, resultIdsAnswereds);
-  //     }
-  //   } catch (erro) {
-  //     onError('Erro ao salvar id de questões respondidas: $erro');
-  //   }
-  // }
+        // Caso contrário,
+      } else {
+        //add na lista recebida
+        resultIdsAnswereds.add(value);
+        //e salva a lista atualizada
+        await prefsAsync.setStringList(key, resultIdsAnswereds);
+      }
+    } catch (erro) {
+      onError('Erro ao salvar id de questões respondidas: $erro');
+    }
+  }
 
 // Método responsável por ler os ids salvos localmente.
   Future<List<String>> recoverIds(String key, Function(String) onError) async {

@@ -1,5 +1,4 @@
 import 'package:estudamais/controller/controller_home.dart';
-import 'package:estudamais/controller/controller_report_resum.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/send_report_screen.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';

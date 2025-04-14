@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:estudamais/controller/controller_report_resum.dart';
-import 'package:estudamais/models/report_resum.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -78,7 +77,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     Provider.of<GlobalProviders>(listen: false, context)
         .questionsIncorrects(incorrects);
 
-  // cria a lista de resumo das questões corretas, para envio ao backend.
+    // cria a lista de resumo das questões corretas, para envio ao backend.
     controllerReportResum.reportCorrectsQuestions(
         corrects,
         StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
@@ -88,8 +87,8 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     }, (error) {
       showSnackBarError(context, error, Colors.red);
     });
-    
-  // cria a lista de resumo das questões incorretas, para envio ao backend.
+
+    // cria a lista de resumo das questões incorretas, para envio ao backend.
     controllerReportResum.reportCorrectsQuestions(
         incorrects,
         StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
@@ -118,8 +117,10 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     msgLoading.value = '${widget.msgFeedbasck} respodidas...';
     try {
       ids = await sharedPreferences.recoverIds(
-          StorageSharedPreferences.keyIdsAnswereds,
-          (error) => showSnackBarError(context, error, Colors.red));
+        StorageSharedPreferences.keyIdsAnswereds,
+        (error) => showSnackBarError(context, error, Colors.red),
+      );
+      print('ids $ids');
       answeredsIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscas ids das questões respondidas: $e ');

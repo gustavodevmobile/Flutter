@@ -84,6 +84,11 @@ class ControllerQuestions {
     // Id da questão
     String idQuestion,
   ) async {
+    // Salva os ids de todas as questões respodidas.
+    sharedPreferences
+        .saveIds(idQuestion, StorageSharedPreferences.keyIdsAnswereds, (error) {
+      showSnackBarError(context, error, Colors.red);
+    });
     // Verifica alternativa escolhida x resposta correta
     if (response == alternative) {
       // muda a cor do box alternativa para verde

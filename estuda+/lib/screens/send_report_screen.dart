@@ -30,8 +30,13 @@ class SendReportScreen extends StatelessWidget {
                 onPressed: () {
                   final email = emailController.text.trim();
                   if (email.isNotEmpty) {
-                    controller.sendReportToBackend(value.reportsCorrects,
-                        value.reportsIncorrects, email, context, (onError) {
+                    controller.sendReportToBackend(
+                        value.reportsCorrects,
+                        value.reportsCorrects.length.toString(),
+                        value.reportsIncorrects,
+                        value.reportsIncorrects.length.toString(),
+                        email,
+                        context, (onError) {
                       showSnackBarError(context, onError, Colors.red);
                     });
                   } else {

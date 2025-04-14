@@ -34,9 +34,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.indigo,
-          // shape: RoundedRectangleBorder(
-          //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(70)),
-          // )
         ),
       ),
       home: const ScreenInitial(),

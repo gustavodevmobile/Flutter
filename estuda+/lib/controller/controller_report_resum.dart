@@ -41,7 +41,7 @@ class ControllerReportResum {
         }
       }
       reportCorrects(listReportResum);
-    } on Exception catch (e) {
+    } on Exception {
       onError('Erro ao criar resumo de questões para envio de relatório');
     }
   }
@@ -61,20 +61,22 @@ class ControllerReportResum {
 
   Future<void> sendReportToBackend(
       List<ReportResum> listReportResumCorrects,
+      String amountCorrects,
       List<ReportResum> listReportResumIncorrects,
+      String amountIncorrects,
       String email,
       BuildContext context,
       Function(String) onError) async {
     ReportService reportService = ReportService();
     final List<Map<String, dynamic>> reportDataCorrects =
         convertReportResumToMap(listReportResumCorrects);
-        
+
     final List<Map<String, dynamic>> reportDataIncorrects =
         convertReportResumToMap(listReportResumIncorrects);
 
     try {
       await reportService.sendReport(
-          reportDataCorrects, reportDataIncorrects, email, (onSuccess) {
+          reportDataCorrects,amountCorrects, reportDataIncorrects, amountIncorrects, email, (onSuccess) {
         showSnackBarError(context, onSuccess, Colors.green);
       }, (onError) {
         showSnackBarError(context, onError, Colors.red);
