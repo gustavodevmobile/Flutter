@@ -14,7 +14,6 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   lottie: ^3.1.2
-  sqflite: ^2.4.0
   http: ^1.2.2
   provider: ^6.1.2
   flutter_native_splash: ^2.4.2
@@ -39,11 +38,17 @@ flutter:
     - assets/lotties/
     - assets/fonts/
     - .env
+  
+flutter_native_splash:
+  background_image: "assets/images/LOGOESTUDAMAIS2.png"
+  branding: "assets/images/LOGOESTUDAMAIS2.png"
+
 # flutter_native_splash:
 #   color: "#3817E5"
-#   image: assets/images/lampada.png
+#   image: assets/images/LOGOESTUDAMAIS2.png
 #   android_12:
 #     color: "#42a5f5"
-#     image: assets/images/lampada.png
+#     image: assets/images/LOGOESTUDAMAIS2.png
 #     icon_background_color: "#4d1245"
 
+  
