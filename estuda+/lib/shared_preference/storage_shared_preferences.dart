@@ -34,7 +34,7 @@ class StorageSharedPreferences {
   //Método que salva os ids das questões.
   Future<void> saveIds(
       String value, String key, Function(String) onError) async {
-    List<String> idsAnswereds = [];
+    //List<String> idsAnswereds = [];
 
     try {
       // Faz a busca dos ids salvos localmente
