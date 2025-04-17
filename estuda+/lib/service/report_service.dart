@@ -15,7 +15,7 @@ class ReportService {
       Function(String) onError) async {
     try {
       final response = await http.post(
-        Uri.parse('http://$server/report'),
+        Uri.parse('$server/report'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'reportDataCorrects': reportDataCorrects,
@@ -25,6 +25,7 @@ class ReportService {
           'email': email, // Adiciona o e-mail ao corpo da requisição
         }),
       );
+      print('reportDataCorrects $reportDataCorrects');
 
       if (response.statusCode == 200) {
         onSuccess(response.body);

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/report_resum.dart';
+import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/service/report_service.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
@@ -75,9 +77,10 @@ class ControllerReportResum {
         convertReportResumToMap(listReportResumIncorrects);
 
     try {
-      await reportService.sendReport(
-          reportDataCorrects,amountCorrects, reportDataIncorrects, amountIncorrects, email, (onSuccess) {
+      await reportService.sendReport(reportDataCorrects, amountCorrects,
+          reportDataIncorrects, amountIncorrects, email, (onSuccess) {
         showSnackBarError(context, onSuccess, Colors.green);
+        Routes().pushRoute(context, const HomeScreen());
       }, (onError) {
         showSnackBarError(context, onError, Colors.red);
       });

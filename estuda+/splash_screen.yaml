@@ -1,0 +1,11 @@
+flutter_native_splash:
+  color: "#ffffff"
+  background_image: assets/images/LOGOESTUDAMAIS2.png
+  # image: assets/images/LOGOESTUDAMAIS2.png
+  android_gravity: fill
+  android_12:
+    color: "#ffffff"
+    background_image: assets/images/LOGOESTUDAMAIS2.png
+   # image: assets/images/LOGOESTUDAMAIS2.png
+    icon_background_color: "#ffffff"
+    android_gravity: fill

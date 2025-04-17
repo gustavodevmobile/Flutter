@@ -11,12 +11,11 @@ class ServiceResumQuestions {
 // PEGA TODAS AS QUESTÕES RESPONDIDAS CORRETAMENTE pelo id da questão, COLOCA EM UMA LIST CENTRAL PARA PODER SERVIR COMO BASE DE CONSULTA. É CHAMADO NO CARREGAMENTO DA HOME.
 
   Future<List<ModelQuestions>> getQuestions(
-    List<String> listIds,
-  ) async {
-    List<ModelQuestions> resultQuestionsCorrect = [];
+      List<String> listIds, Function(String) onError) async {
+    List<ModelQuestions> resultQuestions = [];
     try {
       http.Response response = await http.get(
-        Uri.parse('http://$_questoesAll/questao/$listIds'),
+        Uri.parse('$_questoesAll/questao/$listIds'),
       );
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
@@ -24,17 +23,15 @@ class ServiceResumQuestions {
           Uint8List bytesImage =
               Uint8List.fromList(question['image']['data'].cast<int>());
           question['image'] = bytesImage;
-          resultQuestionsCorrect.add(ModelQuestions.toMap(question));
+          resultQuestions.add(ModelQuestions.toMap(question));
         }
-
-        print('Questões recebidas com sucesso');
       } else {
-        print('resultQuestionsCorrect $resultQuestionsCorrect');
+        onError('Erro ao buscar questões respondidas');
       }
     } catch (e) {
-      print('Erro ao buscar resumo de questões: $e');
+      onError('Erro ao buscar resumo de questões: $e');
     }
-    return resultQuestionsCorrect;
+    return resultQuestions;
   }
 
 // PEGA AS DISCIPLINAS QUE FORAM RESPONDIDAS CORRETAMENTE ao clicar em resumo ,PARA PODER RENDERIZAR NA accumulated_right no Widget animated_button_progress.dart

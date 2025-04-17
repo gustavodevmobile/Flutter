@@ -15,6 +15,7 @@ class ControllerHome {
       disciplines = await service.getDisciplines();
       onSuccess(disciplines);
     } catch (e) {
+      print(e);
       onError('Não foi possível buscar as Disciplinas: $e');
     }
   }

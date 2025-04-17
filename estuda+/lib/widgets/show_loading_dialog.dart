@@ -1,3 +1,4 @@
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,6 +27,11 @@ showLoadingDialog(BuildContext context, String msg) {
                   fontSize: 16),
             ),
           ),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancelar', style: AppTheme.customTextStyle2( )))
         ],
       ),
     ),

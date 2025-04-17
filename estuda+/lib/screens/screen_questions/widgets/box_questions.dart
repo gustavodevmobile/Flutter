@@ -9,10 +9,16 @@ class BoxQuestions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Text(
-              question,
-              style: AppTheme.customTextStyle2(fontSize: 18, color: Colors.indigo),
-            ),
+      child: Container(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          question,
+          style: AppTheme.customTextStyle2(
+            fontSize: 18,
+            color: Colors.indigo,
+          ),
+        ),
+      ),
     );
   }
 }

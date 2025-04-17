@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Resumo',
                           style: AppTheme.customTextStyle(
                               fontSize: 13,
-                              color: Colors.indigo,
+                              color: Colors.black,
                               underline: true),
                         ),
                       ),
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             'Resumo',
                             style: AppTheme.customTextStyle(
                                 fontSize: 13,
-                                color: Colors.indigo,
+                                color: Colors.black,
                                 underline: true),
                           ),
                         ),

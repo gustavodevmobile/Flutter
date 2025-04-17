@@ -23,7 +23,7 @@ class Service {
   Future<List<String>> getDisciplines() async {
     List<String> listDisciplines = [];
     http.Response response = await http.get(
-      Uri.parse('http://$_questoesAll/disciplinas'),
+      Uri.parse('$_questoesAll/disciplinas'),
     );
     try {
       if (response.statusCode == 200) {
@@ -49,7 +49,7 @@ class Service {
     // converte essa lista em json para ser enviado como parametro para rota
     var listDisciplinesJson = jsonEncode(disciplines);
     http.Response response = await http.get(
-      Uri.parse('http://$_questoesAll/questoes/$listDisciplinesJson'),
+      Uri.parse('$_questoesAll/questoes/$listDisciplinesJson'),
     );
     try {
       if (response.statusCode == 200) {

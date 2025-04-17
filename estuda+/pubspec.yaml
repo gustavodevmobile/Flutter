@@ -16,7 +16,6 @@ dependencies:
   lottie: ^3.1.2
   http: ^1.2.2
   provider: ^6.1.2
-  flutter_native_splash: ^2.4.2
   flutter_dotenv: ^5.2.1
   google_fonts: ^6.2.1
   page_transition: ^2.2.1
@@ -28,8 +27,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_native_splash: ^2.4.2
   flutter_lints: ^4.0.0
+
+flutter_native_splash:
+  file: splash_screen.yaml 
 
 flutter:
   uses-material-design: true
@@ -39,16 +41,9 @@ flutter:
     - assets/fonts/
     - .env
   
-flutter_native_splash:
-  background_image: "assets/images/LOGOESTUDAMAIS2.png"
-  branding: "assets/images/LOGOESTUDAMAIS2.png"
 
-# flutter_native_splash:
-#   color: "#3817E5"
-#   image: assets/images/LOGOESTUDAMAIS2.png
-#   android_12:
-#     color: "#42a5f5"
-#     image: assets/images/LOGOESTUDAMAIS2.png
-#     icon_background_color: "#4d1245"
+
+
+    
 
   

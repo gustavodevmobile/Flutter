@@ -4,13 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_report_resum.dart';
 import 'package:provider/provider.dart';
 
-class SendReportScreen extends StatelessWidget {
+class SendReportScreen extends StatefulWidget {
   const SendReportScreen({super.key});
 
   @override
+  State<SendReportScreen> createState() => _SendReportScreenState();
+}
+
+class _SendReportScreenState extends State<SendReportScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final ControllerReportResum controller = ControllerReportResum();
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final ControllerReportResum controller = ControllerReportResum();
     return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(title: const Text('Enviar Relatório')),
@@ -29,6 +35,7 @@ class SendReportScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   final email = emailController.text.trim();
+
                   if (email.isNotEmpty) {
                     controller.sendReportToBackend(
                         value.reportsCorrects,
@@ -39,6 +46,8 @@ class SendReportScreen extends StatelessWidget {
                         context, (onError) {
                       showSnackBarError(context, onError, Colors.red);
                     });
+                    //if(!mounted)
+                    //Navigator.pop(context);
                   } else {
                     showSnackBarError(context,
                         'Por favor, insira um e-mail válido.', Colors.orange);

@@ -10,7 +10,7 @@ class ServiceFeedbacks {
       Function(String) onSuccess, Function(String) onError) async {
     try {
       final response = await http.post(
-        Uri.parse('http://$server/feedback'),
+        Uri.parse('$server/feedback'),
         headers: {
           'Content-Type': 'application/json',
         },

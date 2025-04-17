@@ -182,8 +182,10 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     msgLoading.value = '${widget.msgFeedbasck} questões corretas...';
     List<ModelQuestions> questions = [];
     try {
-      questions =
-          await questionsCorrectsAndIncorrects.getQuestions(idsCorrects);
+      questions = await questionsCorrectsAndIncorrects.getQuestions(idsCorrects,
+          (error) {
+        showSnackBarError(context, error, Colors.red);
+      });
       correctsQuestions(questions);
     } catch (e) {
       onError('Algo deu errado em buscar questões corretas: $e ');
@@ -198,8 +200,10 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     msgLoading.value = '${widget.msgFeedbasck} questões incorretas...';
     List<ModelQuestions> questions = [];
     try {
-      questions =
-          await questionsCorrectsAndIncorrects.getQuestions(idsIncorrects);
+      questions = await questionsCorrectsAndIncorrects
+          .getQuestions(idsIncorrects, (onError) {
+        showSnackBarError(context, onError, Colors.red);
+      });
       incorrectsQuestions(questions);
     } catch (e) {
       onError('Algo deu errado em buscar questões incorretas: $e ');
