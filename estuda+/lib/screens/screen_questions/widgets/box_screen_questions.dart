@@ -109,9 +109,9 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                           Text(
                             'ID Questão ${widget.id}',
                             style: AppTheme.customTextStyle2(
-                                fontSize: 18,
-                                color: Colors.indigo,
-                                ),
+                              fontSize: 18,
+                              color: Colors.indigo,
+                            ),
                           ),
                           widget.correctsAndIncorrects
                         ],
@@ -232,18 +232,17 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                   onPressed: () {
                     if (ControllerQuestions.isAnswered) {
                       nextQuestion();
-                    }else{
+                    } else {
                       showSnackBarError(
-                      context,
-                      'Questão não respondida. Você deve pular ou responder a questão para passar para a próxima',
-                      Colors.orange,
-                      duration: const Duration(seconds: 5),
-                    );
+                        context,
+                        'Questão não respondida. Você deve pular ou responder a questão para passar para a próxima',
+                        Colors.orange,
+                        duration: const Duration(seconds: 5),
+                      );
                     }
-                    
                   },
                   child: Text(
-                    'Próximo',
+                    'Próxima',
                     style: AppTheme.customTextStyle2(
                         color: Colors.indigo, fontSize: 18),
                   ),

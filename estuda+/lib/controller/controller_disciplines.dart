@@ -54,7 +54,7 @@ class ControllerDisciplines {
       BuildContext context, List<String> listDisciplines) {
     if (listDisciplines.isEmpty) {
       showSnackBarError(
-          context, 'Selecione uma disciplina para continuar.', Colors.red);
+          context, 'Selecione uma disciplina para continuar.', Colors.blue);
     } else {
       showLoadingDialog(context, 'Buscando questões...');
       fetchQuestionsByDiscipline(listDisciplines, context, (questions) {

@@ -44,16 +44,7 @@ class _SchoolYearsState extends State<SchoolYears> {
             onPressed: () {
               setState(
                 () {
-                  // remove todas as rotas da pilha e vai para disciplines
                   Routes().popRoutes(context, const HomeScreen());
-                  // limpa consultas por disciplina
-                  //Service.questionsByDiscipline.clear();
-                  // limpa consultas por ano
-                  //Service.questionsBySchoolYear.clear();
-                  // limpa List disciplinas selecionadas
-                  //Service.listSelectedDisciplines.clear();
-                  // limpa List anos selecionados
-                  //Service.listSelectedSchoolYear.clear();
                 },
               );
             },
@@ -158,12 +149,15 @@ class _SchoolYearsState extends State<SchoolYears> {
                 showSnackBarError(
                   context,
                   'Selecione o ano escolar para continuar.',
-                  Colors.red,
+                  Colors.blue,
                 );
               } else {
-                List<ModelQuestions> questionsBySchoolYear = service.getQuestionsBySchoolYear(
-                    schoolYears, widget.questionsByDisciplines);
-                List<Map<String, dynamic>> schoolYearAndSubject = service.getSubjectsBySchoolYears(schoolYears, widget.questionsByDisciplines);
+                List<ModelQuestions> questionsBySchoolYear =
+                    service.getQuestionsBySchoolYear(
+                        schoolYears, widget.questionsByDisciplines);
+                List<Map<String, dynamic>> schoolYearAndSubject =
+                    service.getSubjectsBySchoolYears(
+                        schoolYears, widget.questionsByDisciplines);
                 Routes().pushRoute(
                     context,
                     Subjects(

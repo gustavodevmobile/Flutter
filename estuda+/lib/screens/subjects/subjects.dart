@@ -180,8 +180,8 @@ class _SubjectsState extends State<Subjects> {
                 if (listMapSubjectsAndSchoolYear.isEmpty) {
                   showSnackBarError(
                     context,
-                    'Selecione o assunto para concluir.',
-                    Colors.red,
+                    'Selecione o(s) assunto(s) para concluir.',
+                    Colors.blue,
                   );
                 } else {
                   List<ModelQuestions> questions =

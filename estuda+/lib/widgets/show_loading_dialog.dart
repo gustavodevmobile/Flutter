@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,19 +22,8 @@ showLoadingDialog(BuildContext context, String msg) {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Text(
-              msg,
-              style: GoogleFonts.aboreto(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16),
-            ),
+            child: Text(msg, style: AppTheme.customTextStyle(fontSize: 16)),
           ),
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar', style: AppTheme.customTextStyle2( )))
         ],
       ),
     ),
