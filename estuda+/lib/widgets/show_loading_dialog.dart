@@ -1,9 +1,6 @@
-import 'dart:async';
 
 import 'package:estudamais/theme/app_theme.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 showLoadingDialog(BuildContext context, String msg) {
   showDialog(

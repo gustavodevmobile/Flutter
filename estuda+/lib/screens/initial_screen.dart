@@ -1,5 +1,4 @@
 //  ESSA É A TELA INICIAL ONDE O USUARIO SE CADASTRA OU CHAMA A TELA PARA FAZER O LOGIN.
-import 'dart:async';
 
 import 'package:estudamais/controller/connection.dart';
 import 'package:estudamais/controller/routes.dart';
