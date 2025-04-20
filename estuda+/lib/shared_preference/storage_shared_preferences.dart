@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:estudamais/models/user.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,19 +8,41 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StorageSharedPreferences {
   // Chave dos ids das questões respondidas.
   static const String keyIdsAnswereds = 'ids_Answereds';
-  // Chave dos ids das questões respondidas corretamente.
-  //static const String keyIdsAnsweredsCorrects = 'ids_answereds_corrects';
-  // Chave dos ids das questões respondidas incorretamente.
-  static const String keyIdsAnsweredsIncorrects = 'ids_answereds_incorrects';
   // Chave dos ids e data das questões respondidas.
   static const String keyIdsAndDateAnsweredsCorrectsResum =
       'ids_date_answereds_corrects_resum';
   // Chave dos ids e data das questões respondidas incorretamente.
   static const String keyIdsAndDateAnsweredsIncorrectsResum =
       'ids_date_answereds_incorrects_resum';
+  // Chave do nome do usuário
+  static const String user = 'user';
+  // Chave de confirmação se esta registrado
+  static const bool isRegister = false;
+
   // instância de classe SharedPreferencesAsync
   SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
   final DateTime dateNow = DateTime.now().toUtc();
+
+  Future<void> saveUser(
+      User user, Function(String) onSuccess, Function(String) onError) async {
+    final userData = jsonEncode(user);
+    try {
+      await prefsAsync.setString('user', userData);
+      onSuccess('Usuário inserido com sucesso');
+    } catch (erro) {
+      onError('Erro ao inserir usuário');
+    }
+  }
+
+  Future<void> isRegisterUser(bool value, Function(String) onError) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isRegister', value);
+    } catch (e) {
+      onError('Erro ao salvar estado de cadastro: $e');
+    }
+// Armazena o valor
+  }
 
 // Método que salva os ids na forma de lista, utilizado para fazer a recuperação das questões respodidas incorretamente.
   Future<void> saveIdsList(
@@ -31,7 +54,7 @@ class StorageSharedPreferences {
     }
   }
 
-  //Método que salva os ids das questões.
+  //Método que salva usuario .
   Future<void> saveIds(
       String value, String key, Function(String) onError) async {
     //List<String> idsAnswereds = [];
@@ -108,7 +131,7 @@ class StorageSharedPreferences {
   void deleteListIds() {
     deleta(keyIdsAnswereds);
     //deleta(keyIdsAnsweredsCorrects);
-    deleta(keyIdsAnsweredsIncorrects);
+    //deleta(keyIdsAnsweredsIncorrects);
     deleta(keyIdsAndDateAnsweredsCorrectsResum);
     deleta(keyIdsAndDateAnsweredsIncorrectsResum);
   }

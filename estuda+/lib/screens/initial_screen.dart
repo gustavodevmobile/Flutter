@@ -2,6 +2,7 @@
 
 import 'package:estudamais/controller/connection.dart';
 import 'package:estudamais/controller/routes.dart';
+import 'package:estudamais/screens/register/register.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/button_next.dart';
@@ -36,7 +37,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: GestureDetector(
                 onTap: () {
                   showLoadingDialog(context, 'Verificando conexão...');
@@ -59,12 +60,17 @@ class _ScreenInitialState extends State<ScreenInitial> {
                     showSnackBarError(context, onError, Colors.red);
                   });
                 },
-                child: const ButtonNext(
-                  textContent: 'Entrar',
-                  height: 70,
-                ),
+                child: const ButtonNext(textContent: 'Entrar'),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: GestureDetector(
+                  onTap: () {
+                    Routes().pushRoute(context, const RegisterUser());
+                  },
+                  child: const ButtonNext(textContent: 'Cadastrar')),
+            )
           ],
         ),
       ),

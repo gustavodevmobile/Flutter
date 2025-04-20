@@ -4,7 +4,6 @@ import 'package:estudamais/screens/home/widgets/menu_drawer.dart';
 import 'package:estudamais/screens/resum/corrects/accumulated_corrects.dart';
 import 'package:estudamais/screens/resum/incorrects/accumulated_incorrects.dart';
 import 'package:estudamais/screens/home/widgets/dashbord_displice.dart';
-import 'package:estudamais/screens/initial_screen.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
