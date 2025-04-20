@@ -10,6 +10,7 @@ class BoxQuestions extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Container(
+      
         alignment: Alignment.centerLeft,
         child: Text(
           question,

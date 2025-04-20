@@ -264,49 +264,54 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ValueListenableBuilder(
-            valueListenable: msgLoading,
-            builder: (context, value, child) {
-              return StreamBuilder(
-                stream: _controller.stream,
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasError) {
-                    Navigator.pop(context);
-                    return const Text(
-                        'Algo saiu errado, tente novamente mais tarde');
-                    //showSnackBar(context, 'deu ruim', Colors.red);
-                  } else {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.none:
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Loading(),
-                            Text('Aguardando dados...', style: textStyle),
-                          ],
-                        );
-                      case ConnectionState.waiting:
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Loading(),
-                            Text('Aguardando informações...', style: textStyle),
-                          ],
-                        );
-                      case ConnectionState.active:
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Loading(),
-                            Text(value, style: textStyle),
-                          ],
-                        );
-                      case ConnectionState.done:
-                        return Text('Pronto!', style: textStyle);
-                    }
+      body: ValueListenableBuilder(
+        valueListenable: msgLoading,
+        builder: (context, value, child) {
+          return SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: StreamBuilder(
+              stream: _controller.stream,
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasError) {
+                  Navigator.pop(context);
+                  return const Text(
+                      'Algo saiu errado, tente novamente mais tarde');
+                  //showSnackBar(context, 'deu ruim', Colors.red);
+                } else {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Loading(),
+                          Text('Aguardando dados...', style: textStyle),
+                        ],
+                      );
+                    case ConnectionState.waiting:
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Loading(),
+                          Text('Aguardando informações...', style: textStyle),
+                        ],
+                      );
+                    case ConnectionState.active:
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Loading(),
+                          Text(value, style: textStyle),
+                        ],
+                      );
+                    case ConnectionState.done:
+                      return Text('Pronto!', style: textStyle);
                   }
-                },
-              );
-            }));
+                }
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }

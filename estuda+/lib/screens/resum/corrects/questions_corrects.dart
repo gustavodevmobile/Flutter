@@ -32,6 +32,15 @@ class _PageQuestionsCorrectsState extends State<PageQuestionsCorrects> {
     super.dispose();
   }
 
+  void nextQuestion() {
+    controller.nextPage(
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.ease,
+    );
+    Provider.of<GlobalProviders>(listen: false, context)
+        .openBoxAlreadyAnswereds(false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +94,18 @@ class _PageQuestionsCorrectsState extends State<PageQuestionsCorrects> {
                       widget.resultQuestions[index].elementarySchool,
                   schoolYear: widget.resultQuestions[index].schoolYear,
                   correctsAndIncorrects: const PointsAndErrors(),
-                  textButton: TextButton(
+                  textButtonJump: const SizedBox.shrink(),
+                  btnNextQuestion: ElevatedButton(
+                    onPressed: () {
+                      nextQuestion();
+                    },
+                    child: Text(
+                      'Próxima',
+                      style: AppTheme.customTextStyle2(
+                          color: Colors.indigo, fontSize: 18),
+                    ),
+                  ),
+                  textButtonExit: TextButton(
                     child: Text(
                       'Sair',
                       style: AppTheme.customTextStyle2(fontSize: 20),

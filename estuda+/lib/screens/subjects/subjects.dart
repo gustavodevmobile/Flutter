@@ -200,7 +200,7 @@ class _SubjectsState extends State<Subjects> {
                 }
               },
               child: const ButtonNext(
-                textContent: 'Buscar',
+                textContent: 'Responder',
               )),
         );
       },

@@ -4,6 +4,7 @@ import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/feedback_modal.dart';
+import 'package:estudamais/widgets/image_question.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -26,7 +27,9 @@ class ScreenQuestions extends StatefulWidget {
   final String elementarySchool;
   final String schoolYear;
   final Widget correctsAndIncorrects;
-  final TextButton? textButton;
+  final Widget? textButtonJump;
+  final ElevatedButton? btnNextQuestion;
+  final TextButton? textButtonExit;
 
   const ScreenQuestions(
       {required this.boxQuestions,
@@ -43,7 +46,9 @@ class ScreenQuestions extends StatefulWidget {
       required this.elementarySchool,
       required this.schoolYear,
       required this.correctsAndIncorrects,
-      this.textButton,
+      this.textButtonJump,
+      this.btnNextQuestion,
+      this.textButtonExit,
       super.key});
 
   @override
@@ -98,7 +103,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                           spreadRadius: 1)
                     ]),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(
@@ -125,11 +130,14 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: BoxTypeQuestion(
-                        widget.elementarySchool,
-                        widget.discipline,
-                        widget.schoolYear,
-                        widget.subject,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: BoxTypeQuestion(
+                          widget.elementarySchool,
+                          widget.discipline,
+                          widget.schoolYear,
+                          widget.subject,
+                        ),
                       ),
                     ),
                     const Divider(
@@ -140,17 +148,10 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                     ),
                     widget.boxQuestions,
                     Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: bytesImageString == 'sem imagem'
                             ? const SizedBox.shrink()
-                            : Image.memory(
-                                widget.image,
-                                width: MediaQuery.of(context).size.width,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const SizedBox.shrink();
-                                },
-                              )),
+                            : ImageQuestion(image: widget.image)),
                     widget.boxAlternativesA,
                     widget.boxAlternativesB,
                     widget.boxAlternativesC,
@@ -217,8 +218,9 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
             padding:
                 const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                widget.textButtonJump ??
                 TextButton(
                   onPressed: () {
                     nextQuestion();
@@ -228,6 +230,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                     style: AppTheme.customTextStyle2(fontSize: 20),
                   ),
                 ),
+                widget.btnNextQuestion ??
                 ElevatedButton(
                   onPressed: () {
                     if (ControllerQuestions.isAnswered) {
@@ -247,7 +250,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                         color: Colors.indigo, fontSize: 18),
                   ),
                 ),
-                widget.textButton ??
+                widget.textButtonExit ??
                     TextButton(
                       onPressed: () {
                         Navigator.pushAndRemoveUntil(

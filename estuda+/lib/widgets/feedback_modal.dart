@@ -45,12 +45,12 @@ class FeedbackModalState extends State<FeedbackModal> {
       context,
       selectedOptions,
       (success) {
-        if(!mounted) return;
+        if (!mounted) return;
         showSnackBarError(context, success, Colors.green);
         Navigator.pop(context); // Fecha o modal
       },
       (error) {
-        if(!mounted) return;
+        if (!mounted) return;
         showSnackBarError(context, error, Colors.red);
         Navigator.pop(context); // Fecha o modal
       },
@@ -61,47 +61,53 @@ class FeedbackModalState extends State<FeedbackModal> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Selecione os problemas encontrados:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 14),
-          ...feedbackOptions.map((option) {
-            return CheckboxListTile(
-              title: Text(option,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Selecione os problemas encontrados:',
+              style: AppTheme.customTextStyle2(color: Colors.black, fontSize: 16),
+            ),
+            const SizedBox(height: 10),
+            ...feedbackOptions.map((option) {
+              return CheckboxListTile(
+                title: Text(
+                  option,
                   style: AppTheme.customTextStyle2(
-                      color: Colors.indigo, fontSize: 18)),
-              value: selectedOptions.contains(option),
-              onChanged: (_) {
-                toggleOption(option);
-              },
-            );
-          }),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: sendFeedback,
-                child: Text(
-                  'Enviar Feedback',
-                  style: AppTheme.customTextStyle2(color: Colors.black),
+                      color: Colors.indigo, fontSize: 18),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); // Fecha o modal
+                value: selectedOptions.contains(option),
+                onChanged: (_) {
+                  toggleOption(option);
                 },
-                child: Text('Cancelar',
-                    style: AppTheme.customTextStyle2(color: Colors.red)),
-              ),
-            ],
-          )
-        ],
+              );
+            }),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: sendFeedback,
+                  child: Text(
+                    'Enviar Feedback',
+                    style: AppTheme.customTextStyle2(color: Colors.black),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Fecha o modal
+                  },
+                  child: Text(
+                    'Cancelar',
+                    style: AppTheme.customTextStyle2(color: Colors.red),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
