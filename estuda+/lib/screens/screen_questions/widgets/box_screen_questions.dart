@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:estudamais/controller/controller_questions.dart';
+import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/feedback_modal.dart';
@@ -9,7 +10,6 @@ import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_type_question.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class ScreenQuestions extends StatefulWidget {
@@ -221,47 +221,41 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 widget.textButtonJump ??
-                TextButton(
-                  onPressed: () {
-                    nextQuestion();
-                  },
-                  child: Text(
-                    'Pular',
-                    style: AppTheme.customTextStyle2(fontSize: 20),
-                  ),
-                ),
+                    TextButton(
+                      onPressed: () {
+                        nextQuestion();
+                      },
+                      child: Text(
+                        'Pular',
+                        style: AppTheme.customTextStyle2(fontSize: 20),
+                      ),
+                    ),
                 widget.btnNextQuestion ??
-                ElevatedButton(
-                  onPressed: () {
-                    if (ControllerQuestions.isAnswered) {
-                      nextQuestion();
-                    } else {
-                      showSnackBarError(
-                        context,
-                        'Questão não respondida. Você deve pular ou responder a questão para passar para a próxima',
-                        Colors.orange,
-                        duration: const Duration(seconds: 5),
-                      );
-                    }
-                  },
-                  child: Text(
-                    'Próxima',
-                    style: AppTheme.customTextStyle2(
-                        color: Colors.indigo, fontSize: 18),
-                  ),
-                ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (ControllerQuestions.isAnswered) {
+                          nextQuestion();
+                        } else {
+                          showSnackBarError(
+                            context,
+                            'Questão não respondida. Você deve pular ou responder a questão para passar para a próxima',
+                            Colors.orange,
+                            duration: const Duration(seconds: 5),
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Próxima',
+                        style: AppTheme.customTextStyle2(
+                            color: Colors.indigo, fontSize: 18),
+                      ),
+                    ),
                 widget.textButtonExit ??
                     TextButton(
                       onPressed: () {
-                        Navigator.pushAndRemoveUntil(
+                        Routes().pushFade(
                           context,
-                          PageTransition(
-                            type: PageTransitionType.fade,
-                            duration: const Duration(seconds: 1),
-                            child: const LoadingNextPage(
-                                msgFeedbasck: 'Atualizando'),
-                          ),
-                          (route) => false,
+                          const LoadingNextPage(msgFeedbasck: 'Atualizando'),
                         );
                       },
                       child: Text(

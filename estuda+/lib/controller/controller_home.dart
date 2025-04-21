@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 class ControllerHome {
   Service service = Service();
+  
   List<String> disciplines = [];
 
   void fetchDisciplines(Function(List<String> disciplines) onSuccess,
@@ -39,4 +40,6 @@ class ControllerHome {
       showSnackBarError(context, onError, Colors.red);
     });
   }
+
+  
 }

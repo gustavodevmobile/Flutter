@@ -17,7 +17,7 @@ class StorageSharedPreferences {
   // Chave do nome do usuário
   static const String user = 'user';
   // Chave de confirmação se esta registrado
-  static const bool isRegister = false;
+  static const String isRegister = 'isRegister';
 
   // instância de classe SharedPreferencesAsync
   SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
@@ -25,7 +25,7 @@ class StorageSharedPreferences {
 
   Future<void> saveUser(
       User user, Function(String) onSuccess, Function(String) onError) async {
-    final userData = jsonEncode(user);
+    final userData = jsonEncode(user.toJson());
     try {
       await prefsAsync.setString('user', userData);
       onSuccess('Usuário inserido com sucesso');
@@ -34,10 +34,40 @@ class StorageSharedPreferences {
     }
   }
 
+// Método responsável por recuperar o usuário cadastrado
+  Future<Map<String, dynamic>> recoverUser(
+      String keyUser, Function(String) onError) async {
+    Map<String, dynamic> userMap = {};
+    try {
+      final user = await prefsAsync.getString(keyUser);
+
+      if (user != null) {
+        userMap = jsonDecode(user);
+      } else {
+        onError('Error: User == null');
+      }
+    } catch (e) {
+      onError('Erro ao buscar usuário');
+    }
+    print(userMap);
+
+    return userMap;
+  }
+
+  Future<bool?> hasRegisteredUser(Function(String) onError) async {
+    //bool? status;
+    try {
+      return await prefsAsync.getBool(isRegister);
+    } catch (e) {
+      onError('Erro ao buscar status de usuário: $e');
+    }
+    return null;
+  }
+
+// Método responsável por recuperar o status do usuário.
   Future<void> isRegisterUser(bool value, Function(String) onError) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isRegister', value);
+      await prefsAsync.setBool(isRegister, value);
     } catch (e) {
       onError('Erro ao salvar estado de cadastro: $e');
     }
@@ -54,20 +84,21 @@ class StorageSharedPreferences {
     }
   }
 
-  //Método que salva usuario .
+  //Método que salva ids das questões respondidas .
   Future<void> saveIds(
       String value, String key, Function(String) onError) async {
     //List<String> idsAnswereds = [];
 
     try {
       // Faz a busca dos ids salvos localmente
-      List<String>? resultIdsAnswereds =
-          await prefsAsync.getStringList(key) ?? [];
+      List<String>? resultIdsAnswereds = await prefsAsync.getStringList(key);
       // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
       //add na lista recebida
-      resultIdsAnswereds.add(value);
-      //e salva a lista atualizada
-      await prefsAsync.setStringList(key, resultIdsAnswereds);
+      if (resultIdsAnswereds != null) {
+        resultIdsAnswereds.add(value);
+        //e salva a lista atualizada
+        await prefsAsync.setStringList(key, resultIdsAnswereds);
+      }
     } catch (erro) {
       onError('Erro ao salvar id de questões respondidas: $erro');
     }
@@ -128,12 +159,17 @@ class StorageSharedPreferences {
     print('$key deletados com sucesso');
   }
 
-  void deleteListIds() {
-    deleta(keyIdsAnswereds);
-    //deleta(keyIdsAnsweredsCorrects);
-    //deleta(keyIdsAnsweredsIncorrects);
-    deleta(keyIdsAndDateAnsweredsCorrectsResum);
-    deleta(keyIdsAndDateAnsweredsIncorrectsResum);
+  void deleteListIds(Function(String) onSuccess, Function(String) onError) {
+    try {
+      deleta(keyIdsAnswereds);
+      deleta(keyIdsAndDateAnsweredsCorrectsResum);
+      deleta(keyIdsAndDateAnsweredsIncorrectsResum);
+      deleta(user);
+      deleta(isRegister);
+      onSuccess('Usuário resetado com sucesso!');
+    } catch (e) {
+      onError('Erro ao resetar usuário: $e');
+    }
   }
 
   Future<void> saveIdsAndDateResum(

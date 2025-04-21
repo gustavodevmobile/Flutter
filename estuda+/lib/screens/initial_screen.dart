@@ -1,11 +1,11 @@
 //  ESSA É A TELA INICIAL ONDE O USUARIO SE CADASTRA OU CHAMA A TELA PARA FAZER O LOGIN.
-
 import 'package:estudamais/controller/connection.dart';
+import 'package:estudamais/controller/controller_initialscreen.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/register/register.dart';
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/button_next.dart';
+import 'package:estudamais/widgets/alert_dialog.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +19,11 @@ class ScreenInitial extends StatefulWidget {
 
 class _ScreenInitialState extends State<ScreenInitial> {
   Routes routes = Routes();
+  ControllerInitialscreen controllerInitialscreen = ControllerInitialscreen();
   bool connectionInternet = false;
+  AlertDialogUser alertDialogUser = AlertDialogUser();
 
-  StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+  //StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
   @override
   Widget build(BuildContext context) {
@@ -40,24 +42,33 @@ class _ScreenInitialState extends State<ScreenInitial> {
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: GestureDetector(
                 onTap: () {
-                  showLoadingDialog(context, 'Verificando conexão...');
-                  Connection().hasConnectionInternet((isConnected) {
-                    if (isConnected) {
-                      if (!mounted) return;
-                      Navigator.pop(context);
-                      Routes().pushRoute(
-                        context,
-                        const LoadingNextPage(
-                          msgFeedbasck: 'Buscando',
-                        ),
-                      );
+                  controllerInitialscreen.isRegistered(context, (hasStatus) {
+                    if (hasStatus != null) {
+                      showLoadingDialog(context, 'Verificando conexão...');
+                      Connection().hasConnectionInternet((isConnected) {
+                        if (isConnected) {
+                          if (!mounted) return;
+                          Navigator.pop(context);
+                          Routes().pushRoute(
+                            context,
+                            const LoadingNextPage(
+                              msgFeedbasck: 'Buscando',
+                            ),
+                          );
+                        } else {
+                          Navigator.pop(context);
+                          showSnackBarError(
+                              context, 'Sem conexão com internet', Colors.red);
+                        }
+                      }, (onError) {
+                        showSnackBarError(context, onError, Colors.red);
+                      });
                     } else {
-                      Navigator.pop(context);
                       showSnackBarError(
-                          context, 'Sem conexão com internet', Colors.red);
+                          context, 'Usuário não inserido!', Colors.red);
                     }
-                  }, (onError) {
-                    showSnackBarError(context, onError, Colors.red);
+                  }, (error) {
+                    showSnackBarError(context, error, Colors.red);
                   });
                 },
                 child: const ButtonNext(textContent: 'Entrar'),
@@ -66,26 +77,41 @@ class _ScreenInitialState extends State<ScreenInitial> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: GestureDetector(
-                  onTap: () {
-                    Routes().pushRoute(context, const RegisterUser());
-                  },
-                  child: const ButtonNext(textContent: 'Cadastrar')),
+                onTap: () {
+                  controllerInitialscreen.isRegistered(context, (hasStatus) {
+                    if (hasStatus == true) {
+                      showSnackBarError(
+                          context, 'Usuário já cadastrado!', Colors.orange);
+                    } else if (hasStatus == false) {
+                      alertDialogUser.showDialogUser(
+                        context,
+                        'Usuário não cadastrado!',
+                        'Usuário vazio.\nDeseja se cadastrar?',
+                        TextButton(
+                            onPressed: () {
+                              Routes().pushRoute(context, const RegisterUser());
+                            },
+                            child: const Text('Sim')),
+                        TextButton(
+                          onPressed: () {
+                            const LoadingNextPage(msgFeedbasck: 'Buscando');
+                          },
+                          child: const Text('Não'),
+                        ),
+                      );
+                    } else {
+                      Routes().pushRoute(context, const RegisterUser());
+                    }
+                  }, (onError) {});
+                },
+                child: const ButtonNext(
+                  textContent: 'Cadastrar',
+                  primary: Colors.yellow,
+                  secundary: Colors.white70,
+                  terciary: Colors.amber,
+                ),
+              ),
             )
-          ],
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: () {
-                sharedPreferences.deleteListIds();
-              },
-              child: const Text('deletar Ids'),
-            ),
           ],
         ),
       ),

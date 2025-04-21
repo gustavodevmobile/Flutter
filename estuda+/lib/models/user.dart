@@ -9,8 +9,16 @@ class User {
     required this.schoolYear,
   });
 
-  User.toMap(Map<String, dynamic> map)
+  User.toUser(Map<String, dynamic> map)
       : userName = map['userName'],
         birthDate = map['birthDate'],
         schoolYear = map['schoolYear'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userName': userName,
+      'birthDate': birthDate,
+      'schoolYear': schoolYear
+    };
+  }
 }

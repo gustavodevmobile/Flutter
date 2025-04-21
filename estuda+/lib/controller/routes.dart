@@ -15,15 +15,25 @@ class Routes {
     );
   }
 
-
   void pushRoute(BuildContext context, Widget widget) {
     Navigator.push(
       context,
       PageTransition(
           type: PageTransitionType.leftToRight,
           //alignment: Alignment.center,
-          duration: const Duration(milliseconds: 700),
+          duration: const Duration(milliseconds: 400),
           child: widget),
+    );
+  }
+
+  void pushFade(BuildContext context, Widget widget) {
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.fade,
+        duration: const Duration(seconds: 1),
+        child: widget,
+      ),
     );
   }
 }
