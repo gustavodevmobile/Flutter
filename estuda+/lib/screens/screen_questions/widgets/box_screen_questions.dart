@@ -177,7 +177,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                             style: TextStyle(
                                 fontSize: screenWidth * 0.04 ,
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 145, 18, 9)),
+                                color: const Color.fromARGB(255, 145, 18, 9)),
                           ),
                         ),
                       ),
