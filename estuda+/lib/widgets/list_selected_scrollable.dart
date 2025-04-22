@@ -4,12 +4,11 @@ class ListSelectedScrollable extends StatelessWidget {
   final List<String> list;
   final Color? textColor;
   final Axis direction;
-  
+
   const ListSelectedScrollable(
       {required this.list,
       this.textColor = Colors.white,
       required this.direction,
-      
       super.key});
 
   @override

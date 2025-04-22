@@ -50,7 +50,6 @@ class StorageSharedPreferences {
       onError('Erro ao buscar usuário');
     }
     print(userMap);
-
     return userMap;
   }
 
@@ -87,16 +86,19 @@ class StorageSharedPreferences {
   //Método que salva ids das questões respondidas .
   Future<void> saveIds(
       String value, String key, Function(String) onError) async {
-    //List<String> idsAnswereds = [];
+    List<String> listId = [];
 
     try {
       // Faz a busca dos ids salvos localmente
       List<String>? resultIdsAnswereds = await prefsAsync.getStringList(key);
       // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
       //add na lista recebida
-      if (resultIdsAnswereds != null) {
-        resultIdsAnswereds.add(value);
+      if (resultIdsAnswereds == null) {
+        listId.add(value);
         //e salva a lista atualizada
+        await prefsAsync.setStringList(key, listId);
+      } else {
+        resultIdsAnswereds.add(value);
         await prefsAsync.setStringList(key, resultIdsAnswereds);
       }
     } catch (erro) {
@@ -174,7 +176,7 @@ class StorageSharedPreferences {
 
   Future<void> saveIdsAndDateResum(
       String id, String key, Function(String) onError) async {
-    //List<String> idsAndDate = [];
+    List<String> idsAndDate = [];
     String date =
         '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year}';
     String hours =
@@ -190,15 +192,19 @@ class StorageSharedPreferences {
 
     try {
       // Faz a busca dos ids salvos localmente
-      List<String>? resultIdsAndDate =
-          await prefsAsync.getStringList(key) ?? [];
+      List<String>? resultIdsAndDate = await prefsAsync.getStringList(key);
       // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
       print('resultIdsAndDate $resultIdsAndDate');
       //add na lista recebida
-      resultIdsAndDate.add(jsonString);
-      //e salva a lista atualizada
-      await prefsAsync.setStringList(key, resultIdsAndDate);
-      print('id e data salvos com sucesso: $jsonString');
+      if (resultIdsAndDate == null) {
+        idsAndDate.add(jsonString);
+        //e salva a lista atualizada
+        await prefsAsync.setStringList(key, idsAndDate);
+        print('id e data salvos com sucesso: $jsonString');
+      } else {
+        resultIdsAndDate.add(jsonString);
+        await prefsAsync.setStringList(key, resultIdsAndDate);
+      }
     } catch (erro) {
       onError('Erro ao salvar id de questões respondidas: $erro');
     }

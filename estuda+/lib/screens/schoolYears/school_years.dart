@@ -36,6 +36,7 @@ class _SchoolYearsState extends State<SchoolYears> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
@@ -83,12 +84,12 @@ class _SchoolYearsState extends State<SchoolYears> {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width - 20,
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
                     'Selecione o Ano escolar:',
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: screenWidth * 0.05,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),
@@ -152,6 +153,7 @@ class _SchoolYearsState extends State<SchoolYears> {
                   Colors.blue,
                 );
               } else {
+                schoolYears.sort();
                 List<ModelQuestions> questionsBySchoolYear =
                     service.getQuestionsBySchoolYear(
                         schoolYears, widget.questionsByDisciplines);

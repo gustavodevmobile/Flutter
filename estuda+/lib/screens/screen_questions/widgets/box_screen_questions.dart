@@ -84,6 +84,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(builder: (context, value, child) {
       return ListView(
         children: [
@@ -171,10 +172,10 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           height: value.isAnsweredBox ? 30 : 0,
-                          child: const Text(
+                          child: Text(
                             'Ops, essa você já respondeu!',
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: screenWidth * 0.04 ,
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromARGB(255, 145, 18, 9)),
                           ),
@@ -190,7 +191,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Container(
               alignment: Alignment.bottomRight,
-              width: MediaQuery.of(context).size.width,
+              //width: MediaQuery.of(context).size.width,
               child: GestureDetector(
                 onTap: () {
                   showModalBottomSheet(

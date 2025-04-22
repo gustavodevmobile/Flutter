@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(builder: (context, valueProvider, child) {
       return Scaffold(
         appBar: AppBar(
@@ -48,13 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
               alignment: Alignment.topRight,
               child: RichText(
                 text: TextSpan(
-                  text: 'Total de questões respondidas: ',
-                  style: AppTheme.customTextStyle(fontSize: 13),
+                  text: 'Questões respondidas: ',
+                  style: AppTheme.customTextStyle(fontSize: screenWidth * 0.04),
                   children: [
                     TextSpan(
                       text: valueProvider.answeredsCurrents,
                       style: AppTheme.customTextStyle(
-                        fontSize: 20,
+                        fontSize: screenWidth * 0.07,
                         color: Colors.amber,
                       ),
                     )
@@ -64,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        drawer: Drawer(
-            backgroundColor: const Color.fromARGB(255, 209, 209, 209),
+        drawer: const Drawer(
+            backgroundColor: Color.fromARGB(255, 209, 209, 209),
             child: MenuDrawer()),
         body: Background(
           child: Padding(
@@ -80,8 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextButton(
                     onPressed: () {
                       if (valueProvider.resultQuestionsCorrects.isNotEmpty) {
-                        Routes()
-                            .pushRoute(context, const AccumulatedCorrects());
+                        routes.pushRoute(context, const AccumulatedCorrects());
                         //Limpa a lista que guarda os assuntos selecionados.
                         valueProvider.subjectsAndSchoolYearSelected.clear();
                         //Fecha onde mostra os assuntos selecionados.
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else {
                         showSnackBarError(
                           context,
-                          'Não temos nenhuma questão correta.',
+                          'Ainda não temos nenhuma questão respondida.',
                           Colors.blue,
                         );
                       }
@@ -97,12 +97,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       'Resumo',
                       style: AppTheme.customTextStyle(
-                          fontSize: 13, color: Colors.black, underline: true),
+                          fontSize: screenWidth * 0.03,
+                          color: Colors.black,
+                          underline: true),
                     ),
                   ),
                 ),
                 // DASHBORD DAS DISCIPLINAS RESPONDIDAS CORRETAMENTE
                 ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount:
                       valueProvider.listDisciplinesAnsweredCorrects.length,
@@ -142,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         } else {
                           showSnackBarError(
                             context,
-                            'Não temos nenhuma questão incorreta.',
+                            'Ainda não temos nenhuma questão respondida.',
                             Colors.blue,
                           );
                         }
@@ -150,28 +153,32 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         'Resumo',
                         style: AppTheme.customTextStyle(
-                            fontSize: 13, color: Colors.black, underline: true),
+                            fontSize: screenWidth * 0.03,
+                            color: Colors.black,
+                            underline: true),
                       ),
                     ),
                   ),
                 ),
                 // WIDGET DASHBORD DISCIPLINAS RESPONDIDAS INCORRETAMENTE
                 ListView.builder(
-                    shrinkWrap: true,
-                    itemCount:
-                        valueProvider.listDisciplinesAnsweredIncorrects.length,
-                    itemBuilder: (context, int index) {
-                      return DashbordDisplice(
-                          valueProvider.listDisciplinesAnsweredIncorrects[index]
-                              ['discipline'],
-                          Colors.red,
-                          valueProvider.listDisciplinesAnsweredIncorrects[index]
-                                  ['amount'] /
-                              100,
-                          valueProvider.listDisciplinesAnsweredIncorrects[index]
-                                  ['amount']
-                              .toString());
-                    }),
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount:
+                      valueProvider.listDisciplinesAnsweredIncorrects.length,
+                  itemBuilder: (context, int index) {
+                    return DashbordDisplice(
+                        valueProvider.listDisciplinesAnsweredIncorrects[index]
+                            ['discipline'],
+                        Colors.red,
+                        valueProvider.listDisciplinesAnsweredIncorrects[index]
+                                ['amount'] /
+                            100,
+                        valueProvider.listDisciplinesAnsweredIncorrects[index]
+                                ['amount']
+                            .toString());
+                  },
+                ),
                 const SizedBox(height: 16),
 
                 GestureDetector(

@@ -62,15 +62,15 @@ class FeedbackModalState extends State<FeedbackModal> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        height: MediaQuery.of(context).size.height,
+        child: ListView(
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Selecione os problemas encontrados:',
               style: AppTheme.customTextStyle2(color: Colors.black, fontSize: 16),
             ),
-            const SizedBox(height: 10),
+            //const SizedBox(height: 10),
             ...feedbackOptions.map((option) {
               return CheckboxListTile(
                 title: Text(
@@ -84,7 +84,7 @@ class FeedbackModalState extends State<FeedbackModal> {
                 },
               );
             }),
-            const SizedBox(height: 10),
+           // const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

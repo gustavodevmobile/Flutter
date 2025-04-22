@@ -6,6 +6,7 @@ class NeverSubjectsSelected extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -19,7 +20,7 @@ class NeverSubjectsSelected extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               'Nenhum assunto selecionado.',
-              style: AppTheme.customTextStyle2(color: Colors.yellow),
+              style: AppTheme.customTextStyle2(color: Colors.yellow, fontSize: screenWidth * 0.04),
             ),
           )
         ],

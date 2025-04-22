@@ -7,7 +7,7 @@ import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 
 class Discipline extends StatefulWidget {
   final List<String> disciplines;
@@ -23,6 +23,7 @@ class _DisciplineState extends State<Discipline> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
@@ -48,7 +49,7 @@ class _DisciplineState extends State<Discipline> {
                   child: Text(
                     'Selecione a(s) disciplina(s):',
                     style: AppTheme.customTextStyle(
-                        fontSize: 20, fontWeight: true),
+                        fontSize: screenWidth * 0.04, fontWeight: true),
                   ),
                 ),
               ),

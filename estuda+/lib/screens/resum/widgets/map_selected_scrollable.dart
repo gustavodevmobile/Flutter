@@ -15,7 +15,7 @@ class _MapSelectedSubjectsState extends State<MapSelectedSubjects> {
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
-    //bool isEmpty = false;
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(builder: (context, value, child) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -38,35 +38,39 @@ class _MapSelectedSubjectsState extends State<MapSelectedSubjects> {
                     Padding(
                       padding: const EdgeInsets.only(right: 5),
                       child: Text(' ${widget.listMap[index]['subjects']} -',
-                          style: AppTheme.customTextStyle2()),
+                          style: AppTheme.customTextStyle2(
+                              fontSize: screenWidth * 0.035)),
                     ),
-                    Text('${widget.listMap[index]['schoolYear']}',
-                        style: AppTheme.customTextStyle2(color: Colors.amber)),
+                    Text(
+                      '${widget.listMap[index]['schoolYear']}',
+                      style: AppTheme.customTextStyle2(
+                          color: Colors.amber, fontSize: screenWidth * 0.035),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: GestureDetector(
-                          onTap: () {
-                            setState(
-                              () {
-                                if (value
-                                    .subjectsAndSchoolYearSelected.isNotEmpty) {
-                                  value.subjectsAndSchoolYearSelected
-                                      .removeWhere(
-                                    (el) =>
-                                        el['subjects'] ==
-                                            widget.listMap[index]['subjects'] &&
-                                        el['schoolYear'] ==
-                                            widget.listMap[index]['schoolYear'],
-                                  );
-                                }
-                              },
-                            );
-                          },
-                          child: const Icon(
-                            Icons.clear_sharp,
-                            color: Colors.red,
-                            size: 20,
-                          )),
+                        onTap: () {
+                          setState(
+                            () {
+                              if (value
+                                  .subjectsAndSchoolYearSelected.isNotEmpty) {
+                                value.subjectsAndSchoolYearSelected.removeWhere(
+                                  (el) =>
+                                      el['subjects'] ==
+                                          widget.listMap[index]['subjects'] &&
+                                      el['schoolYear'] ==
+                                          widget.listMap[index]['schoolYear'],
+                                );
+                              }
+                            },
+                          );
+                        },
+                        child: const Icon(
+                          Icons.clear_sharp,
+                          color: Colors.red,
+                          size: 25,
+                        ),
+                      ),
                     )
                   ],
                 );

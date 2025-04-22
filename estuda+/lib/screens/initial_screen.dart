@@ -86,7 +86,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
                       alertDialogUser.showDialogUser(
                         context,
                         'Usuário não cadastrado!',
-                        'Usuário vazio.\nDeseja se cadastrar?',
+                        'Usuário não foi cadastrado.\nDeseja se cadastrar?',
                         TextButton(
                             onPressed: () {
                               Routes().pushRoute(context, const RegisterUser());
@@ -94,6 +94,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
                             child: const Text('Sim')),
                         TextButton(
                           onPressed: () {
+                            print('aqui');
                             const LoadingNextPage(msgFeedbasck: 'Buscando');
                           },
                           child: const Text('Não'),
@@ -107,7 +108,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
                 child: const ButtonNext(
                   textContent: 'Cadastrar',
                   primary: Colors.yellow,
-                  secundary: Colors.white70,
+                  secundary: Colors.white,
                   terciary: Colors.amber,
                 ),
               ),

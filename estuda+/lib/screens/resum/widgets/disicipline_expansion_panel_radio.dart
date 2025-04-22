@@ -31,9 +31,7 @@ class _DisiciplineExpansionPanelRadioState
   ServiceResumQuestions questions = ServiceResumQuestions();
   @override
   Widget build(BuildContext context) {
-    return Consumer<GlobalProviders>(
-        builder: (context, valueGlobal,
-            child) {
+    return Consumer<GlobalProviders>(builder: (context, valueGlobal, child) {
       return ValueListenableBuilder(
         valueListenable: listMap,
         builder: (context, value, child) {
@@ -77,10 +75,6 @@ class _DisiciplineExpansionPanelRadioState
                         return GestureDetector(
                           onTap: () {
                             if (widget.activitySubjectsAndSchoolYearCorrects) {
-                              // questions.showSubjectAndSchoolYearSelected(
-                              //   value[index]['subjects'],
-                              //   value[index]['schoolYear'],
-                              // );
                               valueGlobal
                                   .subjectAndSchoolYearSelected(value[index]);
                               valueGlobal.showSubjects(true);
@@ -88,11 +82,6 @@ class _DisiciplineExpansionPanelRadioState
 
                             if (widget
                                 .activitySubjectsAndSchoolYearIncorrects) {
-                              // questions.showSubjectAndSchoolYearSelected(
-                              //   value[index]['subjects'],
-                              //   value[index]['schoolYear'],
-                              // );
-
                               valueGlobal
                                   .subjectAndSchoolYearSelected(value[index]);
                               valueGlobal.showSubjects(true);
@@ -116,10 +105,10 @@ class _DisiciplineExpansionPanelRadioState
                               child: ListTile(
                                 minTileHeight: 10,
                                 title: Text(value[index]['subjects'],
-                                    style: AppTheme.customTextStyle()),
+                                    style: AppTheme.customTextStyle(fontWeight: true)),
                                 trailing: Text(value[index]['schoolYear'],
                                     style: AppTheme.customTextStyle(
-                                        color: Colors.amber)),
+                                        color: Colors.amber, fontWeight: true)),
                               ),
                             ),
                           ),

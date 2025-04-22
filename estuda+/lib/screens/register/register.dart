@@ -1,6 +1,5 @@
 import 'package:estudamais/controller/controller_register.dart';
 import 'package:estudamais/models/user.dart';
-import 'package:estudamais/widgets/alert_dialog.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +58,7 @@ class _RegisterUserState extends State<RegisterUser> {
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+        //height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -74,7 +73,7 @@ class _RegisterUserState extends State<RegisterUser> {
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: formKey,
-            child: Column(
+            child: ListView(
               children: [
                 TextFormField(
                   controller: nameController,
@@ -94,7 +93,7 @@ class _RegisterUserState extends State<RegisterUser> {
                       border: OutlineInputBorder(),
                       helperText: ('Ex. dd/mm/aaaa')),
                   validator: controllerRegister.validateBirthDate,
-                  keyboardType: TextInputType.datetime,
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(height: 20),
                 TextFormField(

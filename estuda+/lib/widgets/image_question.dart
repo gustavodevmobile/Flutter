@@ -12,12 +12,15 @@ class ImageQuestion extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.memory(
-          image,
-          //width: MediaQuery.of(context).size.width,
-          errorBuilder: (context, error, stackTrace) {
-            return const SizedBox.shrink();
-          },
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Image.memory(
+            image,
+            //width: MediaQuery.of(context).size.width,
+            errorBuilder: (context, error, stackTrace) {
+              return const SizedBox.shrink();
+            },
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(right: 8.0),
@@ -36,12 +39,9 @@ class ImageQuestion extends StatelessWidget {
                           InteractiveViewer(
                             child: Align(
                               alignment: Alignment.center,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.memory(
-                                  image,
-                                  width: MediaQuery.of(context).size.width,
-                                ),
+                              child: Image.memory(
+                                image,
+                                width: MediaQuery.of(context).size.width,
                               ),
                             ),
                           ),

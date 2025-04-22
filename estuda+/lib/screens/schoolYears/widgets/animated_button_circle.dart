@@ -27,6 +27,7 @@ class _AnimatedButtonCircleState extends State<AnimatedButtonCircle> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(builder: (context, value, child) {
       return SizedBox(
         width: 115,
@@ -95,14 +96,11 @@ class _AnimatedButtonCircleState extends State<AnimatedButtonCircle> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        widget.textPrimary.substring(0, 2),
-                        style: AppTheme.customTextStyle(fontSize: 30)
-                      ),
-                      Text(
-                        widget.textPrimary.substring(3, 6),
-                        style: AppTheme.customTextStyle(fontSize: 20, color: Colors.amber)
-                      ),
+                      Text(widget.textPrimary.substring(0, 2),
+                          style: AppTheme.customTextStyle(fontSize: screenWidth * 0.08)),
+                      Text(widget.textPrimary.substring(3, 6),
+                          style: AppTheme.customTextStyle(
+                              fontSize: screenWidth * 0.04, color: Colors.amber)),
                       //Text(widget.id.toString())
                     ],
                   ),

@@ -24,6 +24,7 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8),
       child: Consumer<GlobalProviders>(
@@ -35,7 +36,6 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 100),
                   width: MediaQuery.of(context).size.width,
-                  // height: 60,
                   decoration: BoxDecoration(
                     boxShadow: const [
                       BoxShadow(
@@ -67,7 +67,8 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                         child: Text(
                           widget.option,
                           style: AppTheme.customTextStyle2(
-                              color: Colors.black87, fontSize: 25),
+                              color: Colors.black87,
+                              fontSize: screenWidth * 0.05),
                         ),
                       ),
                       title: Text(

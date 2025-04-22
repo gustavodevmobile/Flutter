@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- <item>
-        <bitmap android:gravity="fill" android:src="@drawable/background"/>
-    </item> -->
     <item>
-        <bitmap android:gravity="center" android:src="@drawable/logo_app"/>
+        <shape>
+            <gradient
+                android:angle="45"
+                android:startColor="#007777"
+                android:endColor="#00008B"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/splash_image" /> <!-- Nome da imagem -->
     </item>
 </layer-list>

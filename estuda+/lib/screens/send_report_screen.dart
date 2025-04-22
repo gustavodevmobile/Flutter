@@ -45,7 +45,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                         email,
                         context, (onError) {
                       showSnackBarError(context, onError, Colors.red);
-                    });
+                    }, value.answeredsCurrents);
                     //if(!mounted)
                     //Navigator.pop(context);
                   } else {

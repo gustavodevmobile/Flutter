@@ -28,12 +28,13 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(
       builder: (context, valueGlobal, child) {
         return Scaffold(
           appBar: AppBar(
             title: Text('Respondidas incorretamente',
-                style: AppTheme.customTextStyle()),
+                style: AppTheme.customTextStyle(fontSize: screenWidth * 0.035),),
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {
@@ -53,7 +54,7 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                 children: [
                   Center(
                     child: Text('Assuntos selecionados:',
-                        style: AppTheme.customTextStyle(fontWeight: true)),
+                        style: AppTheme.customTextStyle(fontWeight: true, fontSize: screenWidth * 0.04),),
                   ),
                   valueGlobal.subjectsAndSchoolYearSelected.isEmpty
                       ? const NeverSubjectsSelected()
@@ -77,7 +78,7 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
                     child: Text('Selecione a disciplina e o assunto:',
-                        style: AppTheme.customTextStyle(fontWeight: true)),
+                        style: AppTheme.customTextStyle(fontWeight: true, fontSize: screenWidth * 0.03)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

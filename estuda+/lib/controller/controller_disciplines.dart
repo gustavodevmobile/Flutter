@@ -6,10 +6,13 @@ import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 
+// Classe resposnsável por fazer o controller na busca das disciplinas na screen discipline
 class ControllerDisciplines {
   Service service = Service();
   Set<String> disciplinesContent = {};
 
+// Método responsável por buscar as questões por disciplina selecionada,
+// passa uma lista de disciplinas onde o método service.getQuestionsByDiscipline serializa para ser enviado ao backend
   void fetchQuestionsByDiscipline(
       List<String> disciplines,
       BuildContext context,

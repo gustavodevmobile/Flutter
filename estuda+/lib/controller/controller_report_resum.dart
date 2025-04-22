@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/models/report_resum.dart';
+import 'package:estudamais/models/user.dart';
+import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/service/report_service.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ControllerReportResum {
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
@@ -61,6 +64,19 @@ class ControllerReportResum {
     }).toList();
   }
 
+  Future<User> getUser(BuildContext context, Function(String) onError) async {
+    Map<String, dynamic> userMap = {};
+    try {
+      userMap = await sharedPreferences
+          .recoverUser(StorageSharedPreferences.user, (onError) {
+        showSnackBarError(context, onError, Colors.red);
+      });
+    } catch (e) {
+      onError('Erro ao buscar usuário para envio de relatório: $e');
+    }
+    return User.toUser(userMap);
+  }
+
   Future<void> sendReportToBackend(
       List<ReportResum> listReportResumCorrects,
       String amountCorrects,
@@ -68,7 +84,7 @@ class ControllerReportResum {
       String amountIncorrects,
       String email,
       BuildContext context,
-      Function(String) onError) async {
+      Function(String) onError, String amountAnswered) async {
     ReportService reportService = ReportService();
     final List<Map<String, dynamic>> reportDataCorrects =
         convertReportResumToMap(listReportResumCorrects);
@@ -76,8 +92,13 @@ class ControllerReportResum {
     final List<Map<String, dynamic>> reportDataIncorrects =
         convertReportResumToMap(listReportResumIncorrects);
 
+    User user = await getUser(context, (onError) {
+      showSnackBarError(context, onError, Colors.red);
+    });
+
+    
     try {
-      await reportService.sendReport(reportDataCorrects, amountCorrects,
+      await reportService.sendReport(user, amountAnswered,reportDataCorrects, amountCorrects,
           reportDataIncorrects, amountIncorrects, email, (onSuccess) {
         showSnackBarError(context, onSuccess, Colors.green);
         Routes().pushRoute(context, const HomeScreen());

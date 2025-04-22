@@ -42,6 +42,7 @@ class _SubjectsState extends State<Subjects> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(
       builder: (context, value, child) {
         return Scaffold(
@@ -57,7 +58,7 @@ class _SubjectsState extends State<Subjects> {
                 )),
             title: Text(
               'Disciplina / Ano escolar / Assunto',
-              style: GoogleFonts.aboreto(fontSize: 16, color: Colors.white),
+              style: GoogleFonts.aboreto(fontSize: screenWidth * 0.03, color: Colors.white),
             ),
           ),
           body: Background(
@@ -96,10 +97,10 @@ class _SubjectsState extends State<Subjects> {
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     alignment: Alignment.center,
-                    child: const Text(
+                    child: Text(
                       'Selecione os assuntos:',
                       style: TextStyle(
-                          fontSize: 25,
+                          fontSize: screenWidth * 0.06,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),

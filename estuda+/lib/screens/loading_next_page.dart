@@ -33,8 +33,9 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
   ValueNotifier<String> msgLoading = ValueNotifier<String>('Buscando dados...');
   ControllerReportResum controllerReportResum = ControllerReportResum();
+  
   TextStyle textStyle = GoogleFonts.aboreto(
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: FontWeight.bold,
     color: Colors.indigo,
   );
@@ -263,6 +264,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: ValueListenableBuilder(
         valueListenable: msgLoading,

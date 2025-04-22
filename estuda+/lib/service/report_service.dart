@@ -1,11 +1,17 @@
 import 'dart:convert';
+import 'package:estudamais/models/user.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ReportService {
   final String server = dotenv.env['server']!;
+  final StorageSharedPreferences storageSharedPreferences =
+      StorageSharedPreferences();
 
   Future<void> sendReport(
+      User user,
+      String amountAnswered,
       List<Map<String, dynamic>> reportDataCorrects,
       String amountCorrects,
       List<Map<String, dynamic>> reportDataIncorrects,
@@ -18,6 +24,10 @@ class ReportService {
         Uri.parse('$server/report'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
+          'userName': user.userName,
+          'birthDate': user.birthDate,
+          'schoolYear': user.schoolYear,
+          'amountAnswered': amountAnswered,
           'reportDataCorrects': reportDataCorrects,
           'amountCorrects': amountCorrects,
           'reportDataIncorrects': reportDataIncorrects,

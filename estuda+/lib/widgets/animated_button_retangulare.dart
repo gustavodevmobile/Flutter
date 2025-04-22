@@ -15,7 +15,7 @@ class AnimatedButtonRectangular extends StatefulWidget {
       required this.onTap,
       this.tralling,
       this.leading,
-      this.fontSizeTitle = 18.0,
+      this.fontSizeTitle,
       this.textDirection,
       super.key});
 
@@ -29,6 +29,7 @@ class _AnimatedButtonRetangulareState extends State<AnimatedButtonRectangular>
   double buttonDown = 8;
   Color shadowColor = Colors.black87;
   bool enable = false;
+  double btn = 50;
 
   @override
   bool get wantKeepAlive => true;
@@ -88,7 +89,7 @@ class _AnimatedButtonRetangulareState extends State<AnimatedButtonRectangular>
                   },
                   child: Container(
                     alignment: Alignment.center,
-                    height: 50,
+                    height: btn,
                     width: MediaQuery.of(context).size.width - 65,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
@@ -102,31 +103,33 @@ class _AnimatedButtonRetangulareState extends State<AnimatedButtonRectangular>
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
-                      mainAxisAlignment: widget.textDirection ??
-                          MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: Text(
-                            widget.title,
-                            style: TextStyle(
-                                fontSize: widget.fontSizeTitle,
-                                color: Colors.white),
+                        SizedBox(
+                          width: btn * 4,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Text(
+                              widget.title,
+                              style: TextStyle(
+                                  fontSize: widget.fontSizeTitle,
+                                  color: Colors.white),
+                            ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 10, right: 15),
+                          padding: const EdgeInsets.only(top: 8, right: 15),
                           child: Column(
                             children: [
                               Text(
                                 widget.leading ?? '',
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: btn * 0.3, color: Colors.white),
                               ),
                               Text(
                                 widget.tralling ?? '',
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.amber),
+                                style: TextStyle(
+                                    fontSize: btn * 0.2, color: Colors.amber),
                               )
                             ],
                           ),

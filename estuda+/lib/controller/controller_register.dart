@@ -77,7 +77,7 @@ class ControllerRegister {
     alertDialogUser.showDialogUser(
       context,
       'Aviso!',
-      "Este cadastro é necessário para compor a identificação do usuário na formatação do documentos em pdf de resumo de desempenho que poderá ser enviado, caso não queira essa funcionalidade, clique em 'Sair', caso contrário, em 'Continuar.",
+      "Este cadastro é necessário para compor a identificação do usuário na formatação do documento em pdf de resumo de desempenho que poderá ser enviado, caso não queira essa funcionalidade, clique em 'Sair', caso contrário, em 'Continuar.",
       TextButton(
         onPressed: () {
           Navigator.of(context).pop(); // Fecha o diálogo
