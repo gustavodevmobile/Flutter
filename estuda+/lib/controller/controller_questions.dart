@@ -135,4 +135,13 @@ class ControllerQuestions {
       });
     }
   }
+
+  void nextQuestion(PageController controller, BuildContext context) {
+    controller.nextPage(
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.ease,
+    );
+    Provider.of<GlobalProviders>(listen: false, context)
+        .openBoxAlreadyAnswereds(false);
+  }
 }

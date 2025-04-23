@@ -11,7 +11,7 @@
     </item>
     <item>
         <bitmap
-            android:gravity="center"
+            android:gravity="fill"
             android:src="@drawable/splash_image" /> <!-- Nome da imagem -->
     </item>
 </layer-list>

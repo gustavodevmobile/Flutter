@@ -95,7 +95,6 @@ class StorageSharedPreferences {
       //add na lista recebida
       if (resultIdsAnswereds == null) {
         listId.add(value);
-        //e salva a lista atualizada
         await prefsAsync.setStringList(key, listId);
       } else {
         resultIdsAnswereds.add(value);
@@ -193,15 +192,13 @@ class StorageSharedPreferences {
     try {
       // Faz a busca dos ids salvos localmente
       List<String>? resultIdsAndDate = await prefsAsync.getStringList(key);
+
       // Se não foi salvo nada ainda, add uma nova lista com o valor recebido
-      print('resultIdsAndDate $resultIdsAndDate');
-      //add na lista recebida
       if (resultIdsAndDate == null) {
         idsAndDate.add(jsonString);
-        //e salva a lista atualizada
         await prefsAsync.setStringList(key, idsAndDate);
-        print('id e data salvos com sucesso: $jsonString');
       } else {
+        //add na lista recebida
         resultIdsAndDate.add(jsonString);
         await prefsAsync.setStringList(key, resultIdsAndDate);
       }

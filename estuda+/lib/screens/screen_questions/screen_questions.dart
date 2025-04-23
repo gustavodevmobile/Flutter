@@ -1,5 +1,8 @@
+import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
+import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/screens/screen_questions/widgets/points_Errors.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -23,6 +26,7 @@ class PageQuestionsBySchoolYear extends StatefulWidget {
 class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
   Service service = Service();
   final controller = PageController();
+  ValueNotifier<String> discipline = ValueNotifier<String>('');
 
   @override
   void dispose() {
@@ -36,6 +40,7 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
       appBar: AppBar(
         toolbarHeight: 5,
         automaticallyImplyLeading: false,
+        
       ),
       body: Consumer<GlobalProviders>(
         builder: (context, value, child) {
@@ -84,7 +89,6 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
                   elementarySchool: widget.questions[index].elementarySchool,
                   schoolYear: widget.questions[index].schoolYear,
                   correctsAndIncorrects: const PointsAndErrors(),
-                  
                 );
               },
             ),

@@ -102,40 +102,50 @@ class _AnimatedButtonRetangulareState extends State<AnimatedButtonRectangular>
                       ),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: btn * 4,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 15),
-                            child: Text(
-                              widget.title,
-                              style: TextStyle(
-                                  fontSize: widget.fontSizeTitle,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8, right: 15),
-                          child: Column(
+                    child: widget.tralling == null
+                        ? Text(
+                            widget.title,
+                            style: TextStyle(
+                                fontSize: widget.fontSizeTitle,
+                                color: Colors.white),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                widget.leading ?? '',
-                                style: TextStyle(
-                                    fontSize: btn * 0.3, color: Colors.white),
+                              SizedBox(
+                                width: btn * 4,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text(
+                                    widget.title,
+                                    style: TextStyle(
+                                        fontSize: widget.fontSizeTitle,
+                                        color: Colors.white),
+                                  ),
+                                ),
                               ),
-                              Text(
-                                widget.tralling ?? '',
-                                style: TextStyle(
-                                    fontSize: btn * 0.2, color: Colors.amber),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 8, right: 15),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.leading ?? '',
+                                      style: TextStyle(
+                                          fontSize: btn * 0.3,
+                                          color: Colors.white),
+                                    ),
+                                    Text(
+                                      widget.tralling ?? '',
+                                      style: TextStyle(
+                                          fontSize: btn * 0.2,
+                                          color: Colors.amber),
+                                    )
+                                  ],
+                                ),
                               )
                             ],
                           ),
-                        )
-                      ],
-                    ),
                   ),
                 ),
               ),
