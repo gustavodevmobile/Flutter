@@ -6,7 +6,6 @@ import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/feedback_modal.dart';
 import 'package:estudamais/widgets/image_question.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_type_question.dart';
