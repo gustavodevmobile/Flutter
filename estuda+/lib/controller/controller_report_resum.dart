@@ -99,7 +99,7 @@ class ControllerReportResum {
       await reportService.sendReport(user, amountAnswered,reportDataCorrects, amountCorrects,
           reportDataIncorrects, amountIncorrects, email, (onSuccess) {
         showSnackBarError(context, onSuccess, Colors.green);
-        Routes().pushRoute(context, const HomeScreen());
+        
       }, (onError) {
         showSnackBarError(context, onError, Colors.red);
       });

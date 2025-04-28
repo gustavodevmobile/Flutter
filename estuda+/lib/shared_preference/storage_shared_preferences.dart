@@ -206,4 +206,38 @@ class StorageSharedPreferences {
       onError('Erro ao salvar id de questões respondidas: $erro');
     }
   }
+
+  Future<void> saveReportToHistory(String filePath, String userName,
+      Function(String) onSuccess, Function(String) onError) async {
+    try {
+      List<String> history =
+          await prefsAsync.getStringList('reportHistory') ?? [];
+      history.add(
+        jsonEncode(
+          {
+            'filePath': filePath,
+            'userName': userName,
+            'date': DateTime.now().toIso8601String()
+          },
+        ),
+      );
+      await prefsAsync.setStringList('reportHistory', history);
+      onSuccess('Relatório salvo com sucesso!');
+    } catch (e) {
+      onError('Erro ao salvar histórico de relatórios: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getReportHistory() async {
+    List<String> history = [];
+    try {
+      history = await prefsAsync.getStringList('reportHistory') ?? [];
+      print(history);
+    } on Exception catch (e) {
+      print('Erro ao recuperar histórico de relatórios: $e');
+    }
+    return history
+        .map((item) => jsonDecode(item) as Map<String, dynamic>)
+        .toList();
+  }
 }
