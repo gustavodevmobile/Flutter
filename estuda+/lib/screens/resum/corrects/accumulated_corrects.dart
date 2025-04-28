@@ -107,7 +107,7 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                     onTap: () {
                       List<ModelQuestions> resultQuestionsCorrects = [];
                       if (value.subjectsAndSchoolYearSelected.isEmpty) {
-                        showSnackBarError(
+                        showSnackBarFeedback(
                           context,
                           'Selecione a disciplina e o assunto para continuar.',
                           Colors.red,

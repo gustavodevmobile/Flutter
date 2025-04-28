@@ -9,7 +9,7 @@ class ControllerInitialscreen {
       Function(String) onError) async {
     try {
       hasStatus(await sharedPreferences.hasRegisteredUser((onError) {
-        showSnackBarError(context, onError, Colors.red);
+        showSnackBarFeedback(context, onError, Colors.red);
       }));
     } catch (e) {
       onError('Erro ao buscar status do usuário: $e');

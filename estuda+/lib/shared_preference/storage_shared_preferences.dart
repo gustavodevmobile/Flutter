@@ -3,6 +3,7 @@ import 'package:estudamais/models/user.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 // Classe responsável por faer o aramazenamento dos ids como base de consulta.
 class StorageSharedPreferences {
@@ -128,8 +129,8 @@ class StorageSharedPreferences {
     List<String> listIds = [];
     try {
       // Pega a lista dos ids das incorretas.
-      List<String> listJson = await recoverIds(
-          keyRemove, (error) => showSnackBarError(context, error, Colors.red));
+      List<String> listJson = await recoverIds(keyRemove,
+          (error) => showSnackBarFeedback(context, error, Colors.red));
 
       for (var id in listJson) {
         listMap.add(jsonDecode(id));
@@ -143,12 +144,12 @@ class StorageSharedPreferences {
 
       // Salva os ids restantes como list nos ids incorretos.
       saveIdsList(keyRemove, listIds, (error) {
-        showSnackBarError(context, error, Colors.red);
+        showSnackBarFeedback(context, error, Colors.red);
       });
 
       // Salva o id da questão que acertou nos ids corretos.
-      await saveIdsAndDateResum(
-          id, keyAdd, (error) => showSnackBarError(context, error, Colors.red));
+      await saveIdsAndDateResum(id, keyAdd,
+          (error) => showSnackBarFeedback(context, error, Colors.red));
     } catch (e) {
       onError('Erro ao salvar id questão incorreta em ids corretos: $e');
     }
@@ -167,6 +168,7 @@ class StorageSharedPreferences {
       deleta(keyIdsAndDateAnsweredsIncorrectsResum);
       deleta(user);
       deleta(isRegister);
+      deleta('reportHistory');
       onSuccess('Usuário resetado com sucesso!');
     } catch (e) {
       onError('Erro ao resetar usuário: $e');
@@ -176,6 +178,7 @@ class StorageSharedPreferences {
   Future<void> saveIdsAndDateResum(
       String id, String key, Function(String) onError) async {
     List<String> idsAndDate = [];
+
     String date =
         '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year}';
     String hours =
@@ -209,15 +212,24 @@ class StorageSharedPreferences {
 
   Future<void> saveReportToHistory(String filePath, String userName,
       Function(String) onSuccess, Function(String) onError) async {
+    var uuid = const Uuid();
+    // Gera um id único para cada questão respondida
+    String uniqueId = uuid.v4();
+    String date =
+        '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year}';
+    String hours =
+        '${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}';
     try {
       List<String> history =
           await prefsAsync.getStringList('reportHistory') ?? [];
       history.add(
         jsonEncode(
           {
+            'id': uniqueId,
             'filePath': filePath,
             'userName': userName,
-            'date': DateTime.now().toIso8601String()
+            'date': date,
+            'hours': hours
           },
         ),
       );
@@ -239,5 +251,22 @@ class StorageSharedPreferences {
     return history
         .map((item) => jsonDecode(item) as Map<String, dynamic>)
         .toList();
+  }
+
+  void removeReportHistory(String id, Function(String) onSuccess,
+      Function(String) onError) async {
+    try {
+      List<String> history =
+          await prefsAsync.getStringList('reportHistory') ?? [];
+      if(history.isNotEmpty){
+        history.removeWhere((item) => jsonDecode(item)['id'] == id);
+      }else{
+        onError('Erro ao remover relatório de resumo: lista vazia');
+      }
+      await prefsAsync.setStringList('reportHistory', history);
+      onSuccess('Relatório de resumo removido com sucesso');
+    } catch (e) {
+      onError('Erro ao remover relatório de resumo');
+    }
   }
 }

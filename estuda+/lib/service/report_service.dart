@@ -64,7 +64,6 @@ class ReportService {
         await storageSharedPreferences
             .saveReportToHistory(file.path, user.userName, (success) {
           //showSnackBarError(context, success, Colors.green);
-          print(success);
         }, (error) {
          // showSnackBarError(context, error, Colors.red);
           print(error);

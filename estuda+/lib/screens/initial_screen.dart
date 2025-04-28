@@ -57,18 +57,18 @@ class _ScreenInitialState extends State<ScreenInitial> {
                           );
                         } else {
                           Navigator.pop(context);
-                          showSnackBarError(
+                          showSnackBarFeedback(
                               context, 'Sem conexão com internet', Colors.red);
                         }
                       }, (onError) {
-                        showSnackBarError(context, onError, Colors.red);
+                        showSnackBarFeedback(context, onError, Colors.red);
                       });
                     } else {
-                      showSnackBarError(
+                      showSnackBarFeedback(
                           context, 'Usuário não inserido!', Colors.red);
                     }
                   }, (error) {
-                    showSnackBarError(context, error, Colors.red);
+                    showSnackBarFeedback(context, error, Colors.red);
                   });
                 },
                 child: const ButtonNext(textContent: 'Entrar'),
@@ -80,7 +80,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
                 onTap: () {
                   controllerInitialscreen.isRegistered(context, (hasStatus) {
                     if (hasStatus == true) {
-                      showSnackBarError(
+                      showSnackBarFeedback(
                           context, 'Usuário já cadastrado!', Colors.orange);
                     } else if (hasStatus == false) {
                       alertDialogUser.showDialogUser(

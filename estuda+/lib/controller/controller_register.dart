@@ -60,15 +60,15 @@ class ControllerRegister {
       GlobalKey<FormState> formKey, BuildContext context, User user) async {
     if (formKey.currentState!.validate()) {
       await storageSharedPreferences.isRegisterUser(true, (error) {
-        showSnackBarError(context, error, Colors.red);
+        showSnackBarFeedback(context, error, Colors.red);
       });
 
       await storageSharedPreferences.saveUser(user, (onSuccess) {
-        showSnackBarError(context, onSuccess, Colors.green);
+        showSnackBarFeedback(context, onSuccess, Colors.green);
         Routes().pushRoute(
             context, const LoadingNextPage(msgFeedbasck: 'Inserindo'));
       }, (onError) {
-        showSnackBarError(context, onError, Colors.red);
+        showSnackBarFeedback(context, onError, Colors.red);
       });
     }
   }
@@ -92,7 +92,7 @@ class ControllerRegister {
           storageSharedPreferences.isRegisterUser(
             false,
             (error) {
-              showSnackBarError(context, error, Colors.red);
+              showSnackBarFeedback(context, error, Colors.red);
             },
           );
           Routes().pushRoute(

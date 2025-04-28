@@ -32,12 +32,12 @@ class ControllerHome {
         );
       } else {
         Navigator.pop(context);
-        showSnackBarError(
+        showSnackBarFeedback(
             context, 'Ops, algo deu errado em buscar disciplinas', Colors.red);
       }
     }, (onError) {
       Navigator.pop(context);
-      showSnackBarError(context, onError, Colors.red);
+      showSnackBarFeedback(context, onError, Colors.red);
     });
   }
 

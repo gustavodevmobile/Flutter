@@ -35,7 +35,7 @@ class FeedbackModalState extends State<FeedbackModal> {
 
   void sendFeedback() async {
     if (selectedOptions.isEmpty) {
-      showSnackBarError(context, 'Selecione pelo menos uma opção de feedback!',
+      showSnackBarFeedback(context, 'Selecione pelo menos uma opção de feedback!',
           Colors.orange);
       Navigator.pop(context); // Fecha o modal
     }
@@ -46,12 +46,12 @@ class FeedbackModalState extends State<FeedbackModal> {
       selectedOptions,
       (success) {
         if (!mounted) return;
-        showSnackBarError(context, success, Colors.green);
+        showSnackBarFeedback(context, success, Colors.green);
         Navigator.pop(context); // Fecha o modal
       },
       (error) {
         if (!mounted) return;
-        showSnackBarError(context, error, Colors.red);
+        showSnackBarFeedback(context, error, Colors.red);
         Navigator.pop(context); // Fecha o modal
       },
     );

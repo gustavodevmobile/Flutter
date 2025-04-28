@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         //Fecha onde mostra os assuntos selecionados.
                         valueProvider.showSubjects(false);
                       } else {
-                        showSnackBarError(
+                        showSnackBarFeedback(
                           context,
                           'Ainda não temos nenhuma questão respondida.',
                           Colors.blue,
@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           //Fecha onde mostra os assuntos selecionados.
                           valueProvider.showSubjects(false);
                         } else {
-                          showSnackBarError(
+                          showSnackBarFeedback(
                             context,
                             'Ainda não temos nenhuma questão respondida.',
                             Colors.blue,

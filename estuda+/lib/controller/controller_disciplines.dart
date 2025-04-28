@@ -47,7 +47,7 @@ class ControllerDisciplines {
   void checkerDisciplines(List<String> listDisciplines, BuildContext context) {
     for (var dis in listDisciplines) {
       if (!disciplinesContent.contains(dis)) {
-        showSnackBarError(context,
+        showSnackBarFeedback(context,
             'Todas as questões de $dis já foram respondidas.', Colors.orange);
       }
     }
@@ -56,7 +56,7 @@ class ControllerDisciplines {
   void handlerFetchQuestionsByDiscipline(
       BuildContext context, List<String> listDisciplines) {
     if (listDisciplines.isEmpty) {
-      showSnackBarError(
+      showSnackBarFeedback(
           context, 'Selecione uma disciplina para continuar.', Colors.blue);
     } else {
       showLoadingDialog(context, 'Buscando questões...');
@@ -72,14 +72,14 @@ class ControllerDisciplines {
           );
           checkerDisciplines(listDisciplines, context);
         } else {
-          showSnackBarError(
+          showSnackBarFeedback(
               context,
               'Todas as questões desta(s) disciplina(s) já foram respondidas.',
               Colors.blue);
           Navigator.pop(context);
         }
       }, (errorMessage) {
-        showSnackBarError(context, errorMessage, Colors.red);
+        showSnackBarFeedback(context, errorMessage, Colors.red);
         Navigator.pop(context);
       });
     }

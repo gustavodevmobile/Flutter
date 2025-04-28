@@ -86,7 +86,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
       Provider.of<GlobalProviders>(listen: false, context)
           .reportResumCorrects(resultReport);
     }, (error) {
-      showSnackBarError(context, error, Colors.red);
+      showSnackBarFeedback(context, error, Colors.red);
     });
 
     // cria a lista de resumo das questões incorretas, para envio ao backend.
@@ -97,7 +97,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
       Provider.of<GlobalProviders>(listen: false, context)
           .reportResumIncorrects(resultReport);
     }, (error) {
-      showSnackBarError(context, error, Colors.red);
+      showSnackBarFeedback(context, error, Colors.red);
     });
 
     Navigator.push(
@@ -119,7 +119,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     try {
       ids = await sharedPreferences.recoverIds(
         StorageSharedPreferences.keyIdsAnswereds,
-        (error) => showSnackBarError(context, error, Colors.red),
+        (error) => showSnackBarFeedback(context, error, Colors.red),
       );
       print('ids $ids');
       answeredsIds(ids);
@@ -139,7 +139,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
       //
       listJson = await sharedPreferences.recoverIds(
         StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
-        (error) => showSnackBarError(context, error, Colors.red),
+        (error) => showSnackBarFeedback(context, error, Colors.red),
       );
       for (var json in listJson) {
         Map<String, dynamic> map = jsonDecode(json);
@@ -163,7 +163,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     try {
       listJson = await sharedPreferences.recoverIds(
           StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
-          (error) => showSnackBarError(context, error, Colors.red));
+          (error) => showSnackBarFeedback(context, error, Colors.red));
       for (var json in listJson) {
         Map<String, dynamic> map = jsonDecode(json);
         ids.add(map['id']);
@@ -185,7 +185,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     try {
       questions = await questionsCorrectsAndIncorrects.getQuestions(idsCorrects,
           (error) {
-        showSnackBarError(context, error, Colors.red);
+        showSnackBarFeedback(context, error, Colors.red);
       });
       correctsQuestions(questions);
     } catch (e) {
@@ -203,7 +203,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
     try {
       questions = await questionsCorrectsAndIncorrects
           .getQuestions(idsIncorrects, (onError) {
-        showSnackBarError(context, onError, Colors.red);
+        showSnackBarFeedback(context, onError, Colors.red);
       });
       incorrectsQuestions(questions);
     } catch (e) {

@@ -101,7 +101,7 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                       valueGlobal.openBoxAlreadyAnswereds(false);
                       List<ModelQuestions> resultQuestionsIncorrects = [];
                       if (valueGlobal.subjectsAndSchoolYearSelected.isEmpty) {
-                        showSnackBarError(
+                        showSnackBarFeedback(
                           context,
                           'Selecione a disciplina e o assunto para continuar.',
                           Colors.red,

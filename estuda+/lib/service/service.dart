@@ -59,7 +59,7 @@ class Service {
         // faz a busca dos ids das questões já respodidas.
         List<String> listIdsAnswereds = await sharedPreferences.recoverIds(
             StorageSharedPreferences.keyIdsAnswereds,
-            (error) => showSnackBarError(context, error, Colors.red));
+            (error) => showSnackBarFeedback(context, error, Colors.red));
 
         // converte a imagem de bytes para um Uint8List
         for (var question in list) {

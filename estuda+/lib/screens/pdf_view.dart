@@ -11,6 +11,7 @@ class PdfViewerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(filePath);
     if (!File(filePath).existsSync()) {
       return Scaffold(
         appBar: AppBar(title: const Text('Erro')),

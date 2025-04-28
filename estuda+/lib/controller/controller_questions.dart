@@ -42,7 +42,7 @@ class ControllerQuestions {
         // Chave dos ids corretos
         StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
         context,
-        (error) => showSnackBarError(context, error, Colors.red),
+        (error) => showSnackBarFeedback(context, error, Colors.red),
       );
       // pega a quantidade de ids incorretos;
       int amountIncorrects = int.parse(
@@ -87,7 +87,7 @@ class ControllerQuestions {
     // Salva os ids de todas as questões respodidas.
     sharedPreferences
         .saveIds(idQuestion, StorageSharedPreferences.keyIdsAnswereds, (error) {
-      showSnackBarError(context, error, Colors.red);
+      showSnackBarFeedback(context, error, Colors.red);
     });
     // Verifica alternativa escolhida x resposta correta
     if (response == alternative) {
@@ -110,7 +110,7 @@ class ControllerQuestions {
       sharedPreferences.saveIdsAndDateResum(idQuestion,
           StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
           (onError) {
-        showSnackBarError(context, onError, Colors.red);
+        showSnackBarFeedback(context, onError, Colors.red);
       });
     } else {
       // muda a cor da alternativa para vermelho;
@@ -131,7 +131,7 @@ class ControllerQuestions {
       sharedPreferences.saveIdsAndDateResum(idQuestion,
           StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
           (onError) {
-        showSnackBarError(context, onError, Colors.red);
+        showSnackBarFeedback(context, onError, Colors.red);
       });
     }
   }

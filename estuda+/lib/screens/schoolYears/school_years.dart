@@ -147,7 +147,7 @@ class _SchoolYearsState extends State<SchoolYears> {
         floatingActionButton: GestureDetector(
             onTap: () {
               if (schoolYears.isEmpty) {
-                showSnackBarError(
+                showSnackBarFeedback(
                   context,
                   'Selecione o ano escolar para continuar.',
                   Colors.blue,

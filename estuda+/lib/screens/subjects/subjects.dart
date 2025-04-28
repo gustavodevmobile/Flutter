@@ -179,7 +179,7 @@ class _SubjectsState extends State<Subjects> {
           floatingActionButton: GestureDetector(
               onTap: () {
                 if (listMapSubjectsAndSchoolYear.isEmpty) {
-                  showSnackBarError(
+                  showSnackBarFeedback(
                     context,
                     'Selecione o(s) assunto(s) para concluir.',
                     Colors.blue,

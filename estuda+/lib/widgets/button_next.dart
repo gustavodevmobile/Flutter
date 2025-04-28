@@ -7,12 +7,14 @@ class ButtonNext extends StatelessWidget {
   final Color? primary;
   final Color? secundary;
   final Color? terciary;
+  final double? fontSize;
   const ButtonNext(
       {required this.textContent,
       this.height = 50,
       this.primary,
       this.secundary,
       this.terciary,
+      this.fontSize = 20,
       super.key});
 
   @override
@@ -35,8 +37,8 @@ class ButtonNext extends StatelessWidget {
           boxShadow: const [
             BoxShadow(
               color: Colors.black54,
-              spreadRadius: 2,
-              blurRadius: 4,
+              spreadRadius: 1,
+              blurRadius: 2,
             ),
           ],
           borderRadius: BorderRadius.circular(5),
@@ -45,7 +47,7 @@ class ButtonNext extends StatelessWidget {
           child: Text(
             textContent,
             style: GoogleFonts.aboreto(
-              fontSize: 20,
+              fontSize: fontSize,
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -61,7 +61,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 valueProvider.showSubjects(false);
               } else {
                 Navigator.pop(context);
-                showSnackBarError(
+                showSnackBarFeedback(
                   context,
                   'Ainda não temos nenhuma questão respondida.',
                   Colors.blue,
@@ -84,7 +84,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 valueProvider.showSubjects(false);
               } else {
                 Navigator.pop(context);
-                showSnackBarError(
+                showSnackBarFeedback(
                   context,
                   'Ainda não temos nenhuma questão respondida.',
                   Colors.blue,
@@ -121,7 +121,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   Routes().pushRoute(context, const SendReportScreen());
                 }
               }, (onError) {
-                showSnackBarError(context, onError, Colors.red);
+                showSnackBarFeedback(context, onError, Colors.red);
               });
             },
             icon: const Icon(
@@ -150,10 +150,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
                     sharedPreferences.deleteListIds(
                       (onSuccess) {
                         Routes().pushFade(context, const ScreenInitial());
-                        showSnackBarError(context, onSuccess, Colors.green);
+                        showSnackBarFeedback(context, onSuccess, Colors.green);
                       },
                       (onError) {
-                        showSnackBarError(context, onError, Colors.red);
+                        showSnackBarFeedback(context, onError, Colors.red);
                       },
                     );
                   },
