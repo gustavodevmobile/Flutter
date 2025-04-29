@@ -5,6 +5,7 @@ import 'package:estudamais/screens/pdf_view.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/button_next.dart';
+import 'package:estudamais/widgets/custom_dropdown.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,9 @@ class _SendReportScreenState extends State<SendReportScreen> {
   final FocusNode emailFocusNode = FocusNode();
   bool isEmailSaved = false; // Estado do checkbox
   String savedEmail = ''; // E-mail salvo
+  List<String> listSavedEmails = []; // Lista de e-mails salvos
+  String? selectedEmail; // E-mail selecionado no dropdown
+  OverlayEntry? overlayEntry; // OverlayEntry para o dropdown
 
   Future<List<Map<String, dynamic>>>? future =
       StorageSharedPreferences().getReportHistory();
@@ -33,14 +37,19 @@ class _SendReportScreenState extends State<SendReportScreen> {
   @override
   void dispose() {
     emailController.dispose();
-    emailFocusNode.dispose(); // Limpe o FocusNode
+    emailFocusNode.dispose();
+    //overlayEntry!.dispose(); // Limpe o FocusNode
     super.dispose();
   }
 
   @override
   void initState() {
     storageSharedPreferences.getSavedEmail((error) {
-      print('Erro ao recuperar e-mail salvo: $error');
+      showSnackBarFeedback(context, error, Colors.red);
+    }).then((list) {
+      setState(() {
+        listSavedEmails = list;
+      });
     });
     super.initState();
   }
@@ -76,6 +85,26 @@ class _SendReportScreenState extends State<SendReportScreen> {
             child: ListView(
               shrinkWrap: true,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 8.0,
+                  ),
+                  child: Text(
+                    'Emails salvos:',
+                    style: AppTheme.customTextStyle2(color: Colors.indigo),
+                  ),
+                ),
+                CustomDropdown(
+                  items: listSavedEmails,
+                  onItemSelected: (value) {
+                    setState(() {
+                      selectedEmail = value;
+                      emailController.text = selectedEmail!;
+                    });
+                  },
+                 
+                ),
+                const SizedBox(height: 18),
                 TextField(
                   controller: emailController,
                   focusNode: emailFocusNode,
@@ -98,7 +127,6 @@ class _SendReportScreenState extends State<SendReportScreen> {
                           onChanged: (value) {
                             setState(() {
                               isEmailSaved = value ?? false;
-                              print('isEmailSaved: $isEmailSaved');
                             });
 
                             if (isEmailSaved) {
@@ -109,12 +137,15 @@ class _SendReportScreenState extends State<SendReportScreen> {
                             }
                           },
                         ),
-                        const Text('Salvar e-mail'),
+                        Text(
+                          'Salvar e-mail',
+                          style: AppTheme.customTextStyle2(
+                              color: Colors.black, fontSize: 14),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                //const SizedBox(height: 8),
                 GestureDetector(
                     onTap: () async {
                       emailFocusNode.unfocus();
@@ -135,10 +166,10 @@ class _SendReportScreenState extends State<SendReportScreen> {
                                 storageSharedPreferences.getReportHistory();
                           });
                         });
-                        if(isEmailSaved){
+                        if (isEmailSaved) {
                           storageSharedPreferences.savedEmail(email, (onError) {
-                          showSnackBarFeedback(context, onError, Colors.red);
-                        });
+                            showSnackBarFeedback(context, onError, Colors.red);
+                          });
                         }
                       } else {
                         showSnackBarFeedback(
@@ -221,6 +252,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                             },
                             child: Card(
                               child: ListTile(
+                                minTileHeight: 4,
                                 title: Text(
                                   'Resumo Gerado',
                                   style: AppTheme.customTextStyle2(
