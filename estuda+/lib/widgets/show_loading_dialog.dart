@@ -19,7 +19,7 @@ showLoadingDialog(BuildContext context, String msg) {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Text(msg, style: AppTheme.customTextStyle(fontSize: 16)),
+            child: Text(msg, style: AppTheme.customTextStyle(fontSize: 16, fontWeight: true)),
           ),
         ],
       ),

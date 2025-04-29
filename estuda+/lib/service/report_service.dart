@@ -20,11 +20,6 @@ class ReportService {
     // Salva o PDF como um arquivo local
     final file = File(filePath);
     await file.writeAsBytes(pdfBytes);
-
-    // Salva o caminho no SharedPreferences
-    // final prefs = await SharedPreferences.getInstance();
-    // prefs.setString('lastGeneratedReport', filePath);
-
     return file;
   }
 

@@ -23,9 +23,27 @@ class _SendReportScreenState extends State<SendReportScreen> {
   final ControllerReportResum controller = ControllerReportResum();
   final StorageSharedPreferences storageSharedPreferences =
       StorageSharedPreferences();
+  final FocusNode emailFocusNode = FocusNode();
+  bool isEmailSaved = false; // Estado do checkbox
+  String savedEmail = ''; // E-mail salvo
 
   Future<List<Map<String, dynamic>>>? future =
       StorageSharedPreferences().getReportHistory();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    emailFocusNode.dispose(); // Limpe o FocusNode
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    storageSharedPreferences.getSavedEmail((error) {
+      print('Erro ao recuperar e-mail salvo: $error');
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +78,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
               children: [
                 TextField(
                   controller: emailController,
+                  focusNode: emailFocusNode,
                   decoration: const InputDecoration(
                     labelText: 'E-mail do destinatário',
                     border: OutlineInputBorder(),
@@ -67,9 +86,38 @@ class _SendReportScreenState extends State<SendReportScreen> {
                     fillColor: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: SizedBox(
+                    height: 30,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Checkbox(
+                          value: isEmailSaved,
+                          onChanged: (value) {
+                            setState(() {
+                              isEmailSaved = value ?? false;
+                              print('isEmailSaved: $isEmailSaved');
+                            });
+
+                            if (isEmailSaved) {
+                              // Salva o e-mail no SharedPreferences
+                              savedEmail = emailController.text.trim();
+                            } else {
+                              savedEmail = '';
+                            }
+                          },
+                        ),
+                        const Text('Salvar e-mail'),
+                      ],
+                    ),
+                  ),
+                ),
+                //const SizedBox(height: 8),
                 GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      emailFocusNode.unfocus();
                       final email = emailController.text.trim();
                       if (email.isNotEmpty) {
                         showLoadingDialog(context, 'Enviando...');
@@ -80,20 +128,23 @@ class _SendReportScreenState extends State<SendReportScreen> {
                             value.reportsIncorrects.length.toString(),
                             email,
                             context, (onError) {
-                          showSnackBarFeedback(context, onError, Colors.red);
-                          // Atualizaa tela após o envio do relatório
+                          showSnackBarFeedback(context, onError, Colors.orange);
                         }, value.answeredsCurrents).then((_) {
                           setState(() {
                             future =
                                 storageSharedPreferences.getReportHistory();
                           });
                         });
+                        if(isEmailSaved){
+                          storageSharedPreferences.savedEmail(email, (onError) {
+                          showSnackBarFeedback(context, onError, Colors.red);
+                        });
+                        }
                       } else {
                         showSnackBarFeedback(
-                            context,
-                            'Por favor, insira um e-mail válido.',
-                            Colors.orange);
+                            context, 'Insira um e-mail válido.', Colors.orange);
                       }
+                      emailController.clear();
                     },
                     child: const ButtonNext(
                       textContent: 'Enviar Resumo',
@@ -107,24 +158,33 @@ class _SendReportScreenState extends State<SendReportScreen> {
                   ),
                 ),
                 Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Resumos Enviados',
-                      style: AppTheme.customTextStyle(color: Colors.black),
-                    )),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Resumos Enviados',
+                    style: AppTheme.customTextStyle(
+                        color: Colors.indigo, fontWeight: true),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: future,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Erro: ${snapshot.error}'));
+                      return Center(
+                        child: Text('Erro: ${snapshot.error}'),
+                      );
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
-                          child: Text('Nenhum relatório encontrado.'));
+                        child: Text('Nenhum relatório encontrado.'),
+                      );
                     } else {
                       final reports = snapshot.data!;
                       return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: reports.length,
                         itemBuilder: (context, index) {
@@ -142,8 +202,9 @@ class _SendReportScreenState extends State<SendReportScreen> {
                               ),
                             ),
                             onDismissed: (direction) {
-                               // Remove o item da lista imediatamente
-                                reports.removeWhere((el)=> el['id'] == report['id']);
+                              // Remove o item da lista imediatamente
+                              reports.removeWhere(
+                                  (el) => el['id'] == report['id']);
                               // Remove o relatório da lista e atualiza o estado
                               setState(() {
                                 // Remova o relatório do armazenamento local
@@ -154,7 +215,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                                 }, (error) {
                                   showSnackBarFeedback(
                                       context, error, Colors.red);
-                                      Navigator.pop(context);
+                                  Navigator.pop(context);
                                 });
                               });
                             },

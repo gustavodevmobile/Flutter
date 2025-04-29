@@ -169,6 +169,7 @@ class StorageSharedPreferences {
       deleta(user);
       deleta(isRegister);
       deleta('reportHistory');
+      deleta('savedEmail');
       onSuccess('Usuário resetado com sucesso!');
     } catch (e) {
       onError('Erro ao resetar usuário: $e');
@@ -244,7 +245,7 @@ class StorageSharedPreferences {
     List<String> history = [];
     try {
       history = await prefsAsync.getStringList('reportHistory') ?? [];
-      print(history);
+      //print(history);
     } on Exception catch (e) {
       print('Erro ao recuperar histórico de relatórios: $e');
     }
@@ -253,14 +254,14 @@ class StorageSharedPreferences {
         .toList();
   }
 
-  void removeReportHistory(String id, Function(String) onSuccess,
-      Function(String) onError) async {
+  void removeReportHistory(
+      String id, Function(String) onSuccess, Function(String) onError) async {
     try {
       List<String> history =
           await prefsAsync.getStringList('reportHistory') ?? [];
-      if(history.isNotEmpty){
+      if (history.isNotEmpty) {
         history.removeWhere((item) => jsonDecode(item)['id'] == id);
-      }else{
+      } else {
         onError('Erro ao remover relatório de resumo: lista vazia');
       }
       await prefsAsync.setStringList('reportHistory', history);
@@ -268,5 +269,31 @@ class StorageSharedPreferences {
     } catch (e) {
       onError('Erro ao remover relatório de resumo');
     }
+  }
+
+  //Método que salva o email para envio de resumo
+  void savedEmail(String email, Function(String) onError) async {
+    try {
+      List<String> emails = await prefsAsync.getStringList('savedEmail') ?? [];
+      if (!emails.contains(email)) {
+        emails.add(email);
+        await prefsAsync.setStringList('savedEmail', emails);
+      }else{
+        onError('Email já salvo!');
+      }
+    } catch (e) {
+      onError('Erro ao salvar email: $e');
+    }
+  }
+
+  Future<List<String>> getSavedEmail(Function(String) onError) async {
+    List<String> emails = [];
+    try {
+      emails = await prefsAsync.getStringList('savedEmail') ?? [];
+      print(' emails: $emails');
+    } catch (e) {
+      onError('Erro ao buscar email: $e');
+    }
+    return emails;
   }
 }

@@ -78,8 +78,8 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                         setState(
                           () {
                             controllerQuestions.recoverQuestionsIncorrects(
-                              widget.response,
-                              widget.alternative,
+                              widget.response.trim(),
+                              widget.alternative.trim(),
                               context,
                               widget.idQuestion,
                             );

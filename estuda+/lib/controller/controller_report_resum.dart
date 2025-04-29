@@ -105,9 +105,13 @@ class ControllerReportResum {
         Navigator.pop(context);
       }, (onError) {
         showSnackBarFeedback(context, onError, Colors.red);
+        Navigator.pop(context);
       });
     } catch (e) {
       onError('Erro ao enviar relatório ao servidor: $e');
+      
     }
   }
+
+  
 }

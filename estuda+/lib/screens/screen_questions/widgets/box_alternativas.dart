@@ -81,8 +81,8 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                       if (!ControllerQuestions.isAnswered) {
                         setState(() {
                           controllerQuestions.isCorrect(
-                            widget.response,
-                            widget.alternative,
+                            widget.response.trim(),
+                            widget.alternative.trim(),
                             context,
                             widget.idQuestion,
                           );
