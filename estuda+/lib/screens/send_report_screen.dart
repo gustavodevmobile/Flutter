@@ -30,6 +30,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
   List<String> listSavedEmails = []; // Lista de e-mails salvos
   String? selectedEmail; // E-mail selecionado no dropdown
   OverlayEntry? overlayEntry; // OverlayEntry para o dropdown
+  //final GlobalKey<CustomDropdown> dropdownKey = GlobalKey();
 
   Future<List<Map<String, dynamic>>>? future =
       StorageSharedPreferences().getReportHistory();
@@ -38,7 +39,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
   void dispose() {
     emailController.dispose();
     emailFocusNode.dispose();
-    //overlayEntry!.dispose(); // Limpe o FocusNode
+
     super.dispose();
   }
 
@@ -65,8 +66,18 @@ class _SendReportScreenState extends State<SendReportScreen> {
           ),
           automaticallyImplyLeading: false,
           leading: IconButton(
+              // fecha o dropdown menu se estiver aberto
               onPressed: () {
-                Routes().popRoutes(context, const HomeScreen());
+              //final overlayEntry = dropdownKey.currentState?.overlayEntry;
+                value.closeDropdownMenu(false);
+                final isMenuOpen = value.isMenuOpen;
+                if (isMenuOpen) {
+                  // Fecha o menu dropdown
+                  value.closeDropdownMenu(false);
+                } else {
+                  // Navega para a HomeScreen
+                  Routes().popRoutes(context, const HomeScreen());
+                }
               },
               icon: const Icon(
                 Icons.arrow_back_ios,
@@ -95,6 +106,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                   ),
                 ),
                 CustomDropdown(
+                  //key: dropdownKey,                  
                   items: listSavedEmails,
                   onItemSelected: (value) {
                     setState(() {
@@ -102,7 +114,6 @@ class _SendReportScreenState extends State<SendReportScreen> {
                       emailController.text = selectedEmail!;
                     });
                   },
-                 
                 ),
                 const SizedBox(height: 18),
                 TextField(
@@ -162,8 +173,18 @@ class _SendReportScreenState extends State<SendReportScreen> {
                           showSnackBarFeedback(context, onError, Colors.orange);
                         }, value.answeredsCurrents).then((_) {
                           setState(() {
+                            // atualiaza a lista de resumos enviados
                             future =
                                 storageSharedPreferences.getReportHistory();
+                            // atualiza a lista de emails salvos
+                            storageSharedPreferences.getSavedEmail((error) {
+                              showSnackBarFeedback(context, error, Colors.red);
+                            }).then((list) {
+                              setState(() {
+                                listSavedEmails = list;
+                              });
+                            });
+                            isEmailSaved = false;
                           });
                         });
                         if (isEmailSaved) {

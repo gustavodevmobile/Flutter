@@ -23,6 +23,7 @@ class GlobalProviders extends ChangeNotifier {
   List<Map<String, dynamic>> listDisciplinesAnsweredIncorrects = [];
   List<ReportResum> reportsCorrects = [];
   List<ReportResum> reportsIncorrects = [];
+  bool isMenuOpen = false;
 
   // Método responsável por atualizar o estado em abrir e fechar o AnimatedContainer caso a questão ja tenha sido respondida.
   void openBoxAlreadyAnswereds(bool value) {
@@ -98,6 +99,11 @@ class GlobalProviders extends ChangeNotifier {
 
   void reportResumIncorrects(List<ReportResum> list) {
     reportsIncorrects = list;
+    notifyListeners();
+  }
+
+  void closeDropdownMenu(bool value) {
+    isMenuOpen = value;
     notifyListeners();
   }
 }

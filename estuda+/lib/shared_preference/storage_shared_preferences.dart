@@ -278,7 +278,7 @@ class StorageSharedPreferences {
       if (!emails.contains(email)) {
         emails.add(email);
         await prefsAsync.setStringList('savedEmail', emails);
-      }else{
+      } else {
         onError('Email já salvo!');
       }
     } catch (e) {
@@ -295,5 +295,21 @@ class StorageSharedPreferences {
       onError('Erro ao buscar email: $e');
     }
     return emails;
+  }
+
+  Future<void> removeEmail(String email, Function(String) onError,
+      Function(String) onSuccess) async {
+    try {
+      List<String> emails = await prefsAsync.getStringList('savedEmail') ?? [];
+      if (emails.isNotEmpty) {
+        emails.remove(email);
+        prefsAsync.setStringList('savedEmail', emails);
+        onSuccess('Email removido com sucesso!');
+      } else {
+        onError('Erro ao remover email: lista vazia');
+      }
+    } catch (e) {
+      onError('Erro ao remover email: $e');
+    }
   }
 }

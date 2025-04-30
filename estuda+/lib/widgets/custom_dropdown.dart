@@ -1,4 +1,9 @@
+import 'package:estudamais/providers/global_providers.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CustomDropdown extends StatefulWidget {
   final List<String> items;
@@ -17,9 +22,11 @@ class CustomDropdown extends StatefulWidget {
 
 class _CustomDropdownState extends State<CustomDropdown> {
   final LayerLink _layerLink = LayerLink();
-  OverlayEntry? _overlayEntry;
-  bool _isMenuOpen = false;
+  OverlayEntry? overlayEntry;
+  bool isMenuOpen = false;
   String? _selectedItem;
+  StorageSharedPreferences storageSharedPreferences =
+      StorageSharedPreferences();
 
   @override
   void initState() {
@@ -29,16 +36,14 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   @override
   void dispose() {
-    _overlayEntry?.remove();
-    _overlayEntry = null; // Limpa a referência ao OverlayEntry
-    if (_isMenuOpen) {
-      _closeMenu(); // Fecha o menu se estiver aberto
-    }
+    overlayEntry?.remove();
+    overlayEntry = null; // Limpa a referência ao OverlayEntry
     super.dispose();
   }
 
   void _toggleMenu() {
-    if (_isMenuOpen) {
+    print('widget.items ${widget.items}');
+    if (Provider.of<GlobalProviders>(listen: false, context).isMenuOpen) {
       _closeMenu();
     } else {
       _openMenu();
@@ -46,26 +51,26 @@ class _CustomDropdownState extends State<CustomDropdown> {
   }
 
   void _openMenu() {
-    if(!mounted) return; // Verifica se o widget ainda está montado
-    _overlayEntry = _createOverlayEntry();
-    Overlay.of(context).insert(_overlayEntry!);
+    //print(widget.items);
+    overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(overlayEntry!);
     setState(() {
-      _isMenuOpen = true;
+      Provider.of<GlobalProviders>(listen: false, context)
+          .closeDropdownMenu(true);
     });
-    print(_isMenuOpen);
   }
 
   void _closeMenu() {
-    if (_overlayEntry != null) {
-      _overlayEntry?.remove();
-      _overlayEntry = null; // Limpa a referência ao OverlayEntry
+    if (overlayEntry != null) {
+      overlayEntry?.remove();
+      overlayEntry = null; // Limpa a referência ao OverlayEntry
     }
-    if(mounted){
-       setState(() {
-      _isMenuOpen = false;
+    setState(() {
+      Provider.of<GlobalProviders>(listen: false, context)
+          .closeDropdownMenu(false);
     });
-    }
-    print(_isMenuOpen);
+
+    // print(_isMenuOpen);
   }
 
   OverlayEntry _createOverlayEntry() {
@@ -86,28 +91,50 @@ class _CustomDropdownState extends State<CustomDropdown> {
             child: ListView(
               padding: EdgeInsets.zero,
               shrinkWrap: true,
-              children: widget.items.map((item) {
-                return ListTile(
-                  title: Text(item),
-                  onTap: () {
-                    setState(() {
-                      _selectedItem = item;
-                    });
-                    widget.onItemSelected(item);
-                    _closeMenu();
-                  },
-                  trailing: IconButton(
-                      onPressed: () {
-                        print(item);
-                        _closeMenu();
+              children: widget.items.isEmpty
+                  ? [
+                      ListTile(
+                        title: Text(
+                          'Nenhum email salvo',
+                          style: AppTheme.customTextStyle2(color: Colors.black),
+                        ),
+                      )
+                    ]
+                  : widget.items.map(
+                      (item) {
+                        return ListTile(
+                          minTileHeight: 10,
+                          title: Text(item),
+                          onTap: () {
+                            setState(() {
+                              _selectedItem = item;
+                            });
+                            widget.onItemSelected(item);
+                            _closeMenu();
+                          },
+                          trailing: IconButton(
+                              onPressed: () {
+                                storageSharedPreferences.removeEmail(item,
+                                    (onError) {
+                                  showSnackBarFeedback(
+                                      context, onError, Colors.red);
+                                }, (onSuccess) {
+                                  showSnackBarFeedback(
+                                      context, onSuccess, Colors.green);
+                                }).then((_) {
+                                  widget.items.remove(item);
+                                  _closeMenu();
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                                size: 20,
+                              )),
+                        );
                       },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                        size: 20,
-                      )),
-                );
-              }).toList(),
+                    ).toList(),
+                    
             ),
           ),
         ),
