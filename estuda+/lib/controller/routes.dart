@@ -9,7 +9,7 @@ class Routes {
       context,
       PageTransition(
           type: PageTransitionType.rightToLeft,
-          duration: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: 500),
           child: widget),
       (route) => false,
     );

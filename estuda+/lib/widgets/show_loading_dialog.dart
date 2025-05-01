@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 showLoadingDialog(BuildContext context, String msg) {
   showDialog(
     context: context,
+    barrierDismissible: false, // Impede que o usuário feche o diálogo manualmente
     builder: (BuildContext context) => Dialog.fullscreen(
       backgroundColor: const Color.fromARGB(6, 255, 255, 255),
       child: Column(

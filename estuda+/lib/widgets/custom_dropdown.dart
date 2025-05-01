@@ -17,21 +17,21 @@ class CustomDropdown extends StatefulWidget {
       super.key});
 
   @override
-  State<CustomDropdown> createState() => _CustomDropdownState();
+  State<CustomDropdown> createState() => CustomDropdownState();
 }
 
-class _CustomDropdownState extends State<CustomDropdown> {
-  final LayerLink _layerLink = LayerLink();
+class CustomDropdownState extends State<CustomDropdown> {
+  final LayerLink layerLink = LayerLink();
   OverlayEntry? overlayEntry;
   bool isMenuOpen = false;
-  String? _selectedItem;
+  String? selectedItem;
   StorageSharedPreferences storageSharedPreferences =
       StorageSharedPreferences();
 
   @override
   void initState() {
     super.initState();
-    _selectedItem = widget.selectedItem;
+    selectedItem = widget.selectedItem;
   }
 
   @override
@@ -41,48 +41,46 @@ class _CustomDropdownState extends State<CustomDropdown> {
     super.dispose();
   }
 
-  void _toggleMenu() {
-    print('widget.items ${widget.items}');
-    if (Provider.of<GlobalProviders>(listen: false, context).isMenuOpen) {
-      _closeMenu();
+  void toggleMenu() {
+    if (isMenuOpen) {
+      closeMenu();
     } else {
-      _openMenu();
+      openMenu();
     }
   }
 
-  void _openMenu() {
+  void openMenu() {
     //print(widget.items);
-    overlayEntry = _createOverlayEntry();
+    overlayEntry = createOverlayEntry();
     Overlay.of(context).insert(overlayEntry!);
     setState(() {
+      isMenuOpen = true;
       Provider.of<GlobalProviders>(listen: false, context)
-          .closeDropdownMenu(true);
+          .closeDropdownMenu(isMenuOpen);
     });
   }
 
-  void _closeMenu() {
+  void closeMenu() {
     if (overlayEntry != null) {
       overlayEntry?.remove();
       overlayEntry = null; // Limpa a referência ao OverlayEntry
+      // }
+      setState(() {
+        isMenuOpen = false;
+        Provider.of<GlobalProviders>(listen: false, context)
+            .closeDropdownMenu(isMenuOpen);
+      });
     }
-    setState(() {
-      Provider.of<GlobalProviders>(listen: false, context)
-          .closeDropdownMenu(false);
-    });
-
-    // print(_isMenuOpen);
   }
 
-  OverlayEntry _createOverlayEntry() {
+  OverlayEntry createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
-    //final offset = renderBox.localToGlobal(Offset.zero);
-
     return OverlayEntry(
       builder: (context) => Positioned(
         width: size.width,
         child: CompositedTransformFollower(
-          link: _layerLink,
+          link: layerLink,
           showWhenUnlinked: false,
           offset: Offset(0, size.height),
           child: Material(
@@ -107,10 +105,10 @@ class _CustomDropdownState extends State<CustomDropdown> {
                           title: Text(item),
                           onTap: () {
                             setState(() {
-                              _selectedItem = item;
+                              selectedItem = item;
                             });
                             widget.onItemSelected(item);
-                            _closeMenu();
+                            closeMenu();
                           },
                           trailing: IconButton(
                               onPressed: () {
@@ -123,7 +121,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                                       context, onSuccess, Colors.green);
                                 }).then((_) {
                                   widget.items.remove(item);
-                                  _closeMenu();
+                                  closeMenu();
                                 });
                               },
                               icon: const Icon(
@@ -134,7 +132,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
                         );
                       },
                     ).toList(),
-                    
             ),
           ),
         ),
@@ -145,9 +142,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
   @override
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
-      link: _layerLink,
+      link: layerLink,
       child: GestureDetector(
-        onTap: _toggleMenu,
+        onTap: toggleMenu,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
@@ -159,7 +156,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _selectedItem ?? 'Selecione um item',
+                selectedItem ?? 'Selecione um item',
                 style: const TextStyle(color: Colors.black),
               ),
               const Icon(Icons.arrow_drop_down, color: Colors.black),

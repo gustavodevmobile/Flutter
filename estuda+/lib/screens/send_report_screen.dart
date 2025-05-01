@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
@@ -11,6 +13,7 @@ import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_report_resum.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SendReportScreen extends StatefulWidget {
   const SendReportScreen({super.key});
@@ -29,11 +32,31 @@ class _SendReportScreenState extends State<SendReportScreen> {
   String savedEmail = ''; // E-mail salvo
   List<String> listSavedEmails = []; // Lista de e-mails salvos
   String? selectedEmail; // E-mail selecionado no dropdown
-  OverlayEntry? overlayEntry; // OverlayEntry para o dropdown
-  //final GlobalKey<CustomDropdown> dropdownKey = GlobalKey();
+  final GlobalKey<CustomDropdownState> dropdownKey = GlobalKey();
 
   Future<List<Map<String, dynamic>>>? future =
       StorageSharedPreferences().getReportHistory();
+
+  //void shareFile(String filePath) async {
+    
+    // final file = File(filePath);
+
+    // if (file.existsSync()) {
+    //   SharePlus.instance.([filePath], text: 'Confira este documento PDF!');
+    // } else {
+    //   showSnackBarFeedback(context, 'Arquivo não encontrado.', Colors.red);
+    // }
+    // final params = ShareParams(
+    //   text: 'Confira este documento PDF!',
+    //   files: [XFile(filePath)],
+    // );
+
+    // final result = await SharePlus.instance.share(params);
+
+    // if (result.status == ShareResultStatus.success) {
+    //   print('Arquivo compartilhado com sucesso!');
+    // }
+  //}
 
   @override
   void dispose() {
@@ -68,16 +91,17 @@ class _SendReportScreenState extends State<SendReportScreen> {
           leading: IconButton(
               // fecha o dropdown menu se estiver aberto
               onPressed: () {
-              //final overlayEntry = dropdownKey.currentState?.overlayEntry;
-                value.closeDropdownMenu(false);
-                final isMenuOpen = value.isMenuOpen;
-                if (isMenuOpen) {
-                  // Fecha o menu dropdown
+                if (value.isMenuOpen) {
                   value.closeDropdownMenu(false);
-                } else {
-                  // Navega para a HomeScreen
-                  Routes().popRoutes(context, const HomeScreen());
+                  dropdownKey.currentState?.closeMenu();
                 }
+
+                //dropdownKey.currentState?.overlayEntry?.remove();
+                //dropdownKey.currentState?.overlayEntry = null;
+                Routes().popRoutes(
+                  context,
+                  const HomeScreen(),
+                );
               },
               icon: const Icon(
                 Icons.arrow_back_ios,
@@ -106,7 +130,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                   ),
                 ),
                 CustomDropdown(
-                  //key: dropdownKey,                  
+                  key: dropdownKey,
                   items: listSavedEmails,
                   onItemSelected: (value) {
                     setState(() {
@@ -141,7 +165,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                             });
 
                             if (isEmailSaved) {
-                              // Salva o e-mail no SharedPreferences
+                              // Hábilita salvar o e-mail no SharedPreferences
                               savedEmail = emailController.text.trim();
                             } else {
                               savedEmail = '';
@@ -260,7 +284,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                               // Remove o relatório da lista e atualiza o estado
                               setState(() {
                                 // Remova o relatório do armazenamento local
-                                StorageSharedPreferences().removeReportHistory(
+                                storageSharedPreferences.removeReportHistory(
                                     report['id'], (success) {
                                   showSnackBarFeedback(
                                       context, success, Colors.green);
@@ -284,9 +308,23 @@ class _SendReportScreenState extends State<SendReportScreen> {
                                   style: AppTheme.customTextStyle2(
                                       color: Colors.indigo, fontSize: 12),
                                 ),
-                                trailing: const Icon(
-                                  Icons.picture_as_pdf,
-                                  color: Colors.red,
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.share,
+                                        color: Colors.black87,
+                                      ),
+                                      onPressed: () {
+                                        //shareFile(report['filePath']);
+                                      },
+                                    ),
+                                    const Icon(
+                                      Icons.picture_as_pdf,
+                                      color: Colors.red,
+                                    ),
+                                  ],
                                 ),
                                 onTap: () {
                                   Routes().pushFade(
