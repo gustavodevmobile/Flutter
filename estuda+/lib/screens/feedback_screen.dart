@@ -1,6 +1,9 @@
+import 'package:estudamais/controller/controller_feedback_app.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/button_next.dart';
+import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 
@@ -12,40 +15,39 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
-  final TextEditingController _feedbackController = TextEditingController();
-  bool _isSubmitting = false;
+  final TextEditingController feedbackMessage = TextEditingController();
+  final FeedbackController feedbackController = FeedbackController();
+  final FocusNode feedbackMessageFocusNode = FocusNode();
 
   @override
   void dispose() {
-    _feedbackController.dispose();
+    feedbackMessage.dispose();
     super.dispose();
   }
 
-  void _submitFeedback() async {
-    if (_feedbackController.text.isEmpty) {
+  void submitFeedback() {
+    if (feedbackMessage.text.isEmpty) {
       showSnackBarFeedback(context, 'Insira seu Feedback', Colors.orange);
       return;
     }
+    feedbackMessageFocusNode.unfocus(); // Remove o foco do campo de texto
+    showLoadingDialog(context, 'Enviando Feedback...');
 
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    // Simule o envio do feedback (substitua por lógica real, como uma chamada de API)
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() {
-      _isSubmitting = false;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Obrigado pelo seu feedback!'),
-        backgroundColor: Colors.green,
-      ),
+    feedbackController.sendFeedbackApp(
+      feedbackMessage.text,
+      (success) {
+        if (!mounted) return;
+        showSnackBarFeedback(context, success, Colors.green);
+        Navigator.pop(context); // Fecha o loading dialog
+      },
+      (error) {
+        if (!mounted) return;
+        showSnackBarFeedback(context, error, Colors.red);
+        Navigator.pop(context); // Fecha o loading dialog
+      },
     );
 
-    _feedbackController.clear();
+    feedbackMessage.clear();
   }
 
   @override
@@ -78,7 +80,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             ),
             const SizedBox(height: 16),
             TextField(
-              controller: _feedbackController,
+              controller: feedbackMessage,
+              focusNode: feedbackMessageFocusNode,
               maxLines: 5,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -86,29 +89,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _isSubmitting ? null : _submitFeedback,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo,
-              ).copyWith(
-                backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                  (Set<WidgetState> states) {
-                    if (states.contains(WidgetState.pressed)) {
-                      return Colors.blue; // Cor quando pressionado
-                    }
-                    return Colors.indigo; // Cor padrão
-                  },
-                ),
-              ),
-              child: _isSubmitting
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                    )
-                  : Text(
-                      'Enviar',
-                      style: AppTheme.customTextStyle2(),
-                    ),
-            ),
+            GestureDetector(
+                onTap: () {
+                  submitFeedback();
+                },
+                child: const ButtonNext(
+                  textContent: 'Enviar',
+                ))
           ],
         ),
       ),

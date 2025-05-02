@@ -20,7 +20,7 @@ class Service {
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
 // busca os nomes das disciplinas das questões
-  Future<List<String>> getDisciplines() async {
+  Future<List<String>> getDisciplines(Function(String)onError) async {
     List<String> listDisciplines = [];
     http.Response response = await http.get(
       Uri.parse('$_questoesAll/disciplinas'),
@@ -28,14 +28,14 @@ class Service {
     try {
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
-        print('Todas as disciplinas recebidas com sucesso');
+        //print('Todas as disciplinas recebidas com sucesso');
         for (var dis in list) {
           listDisciplines.add(dis);
         }
       }
-      print('listDisciplines $listDisciplines');
+      //print('listDisciplines $listDisciplines');
     } catch (err) {
-      print('Erro ao buscar disciplinas: $err');
+      onError('Erro ao buscar disciplinas: $err');
     }
     return listDisciplines..sort();
   }
@@ -75,9 +75,7 @@ class Service {
           questionsByDiscipline.removeWhere((el) => el.id == id);
         }
 
-        for (var qs in questionsByDiscipline) {
-          print('questões: ${qs.id}, ${qs.schoolYear}, ${qs.discipline}');
-        }
+        
       }
     } catch (err) {
       print('Erro ao buscar questões por disciplina: $err');
@@ -90,8 +88,7 @@ class Service {
   List<ModelQuestions> getQuestionsBySchoolYear(
       List<String> schoolYear, List<ModelQuestions> questionsByDiscipline) {
     List<ModelQuestions> questionsBySchoolYear = [];
-    //listSelectedSchoolYear.add(schoolYear);
-    //listSelectedSchoolYear.toSet().toList();
+    
     try {
       if (questionsByDiscipline.isNotEmpty) {
         for (var questions in questionsByDiscipline) {
@@ -102,11 +99,7 @@ class Service {
           }
         }
       }
-      // print('listSelectedSchoolYear $listSelectedSchoolYear');
-      for (var q in questionsBySchoolYear) {
-        print(
-            'questões: ${q.id}, ${q.schoolYear} ${q.discipline}, ${q.subject}');
-      }
+      
     } catch (error) {
       print('Erro ao buscar questões por ano: $error');
     }
@@ -140,7 +133,7 @@ class Service {
       for (var listMap in newMap) {
         schoolYearAndSubjects.add(listMap);
       }
-      print('schoolYearAndSubjects $schoolYearAndSubjects');
+      //print('schoolYearAndSubjects $schoolYearAndSubjects');
     } catch (err) {
       print('Falha na busca dos dados: $err');
     }
@@ -166,19 +159,7 @@ class Service {
             }
           }
         }
-        // var result = questionsBySchoolYear
-        //     .where((element) =>
-        //         element.schoolYear == mapSubjectsAndSchoolYear['schoolYear'] &&
-        //         element.subject == subject &&
-        //         element.discipline == discipline)
-        //     .toList();
-        // for (var questions in result) {
-        //   //print('questions $questions');
-        //   resultQuestionsBySubjectsAndSchoolYear.add(questions);
-        //   //resultQuestionsBySubjectsAndSchoolYear.shuffle();
-        // }
-        print(
-            'resultQuestionsBySubjectsAndSchoolYear $resultQuestionsBySubjectsAndSchoolYear');
+       
       }
     } catch (err) {
       print('Erro ao buscar questões: $err');
@@ -186,20 +167,5 @@ class Service {
     return resultQuestionsBySubjectsAndSchoolYear;
   }
 
-// verifica se tem o ano selecionada na lista das questões das disciplinas selecionadas
-  // void findSchoolYear(
-  //     String schoolYear, List<ModelQuestions> questionsByDiscipline) {
-  //   List<ModelQuestions> contain = [];
-  //   for (var year in questionsByDiscipline) {
-  //     if (year.schoolYear.contains(schoolYear)) {
-  //       contain.add(year);
-  //     }
-  //   }
-  //   if (contain.isEmpty) {
-  //     isSchoolYear = false;
-  //   } else {
-  //     isSchoolYear = true;
-  //   }
-  //   print('isSchoolYear $isSchoolYear');
-  // }
+
 }

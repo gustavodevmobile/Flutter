@@ -1,6 +1,7 @@
+import 'package:estudamais/controller/controller_feedback_app.dart';
 import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:estudamais/service/service_feedbacks.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 
 class FeedbackModal extends StatefulWidget {
@@ -13,7 +14,7 @@ class FeedbackModal extends StatefulWidget {
 }
 
 class FeedbackModalState extends State<FeedbackModal> {
-  final ServiceFeedbacks serviceFeedbacks = ServiceFeedbacks();
+  final FeedbackController feedbackController = FeedbackController();
   final List<String> feedbackOptions = [
     'Erro no enunciado',
     'Erro nas alternativas',
@@ -34,15 +35,18 @@ class FeedbackModalState extends State<FeedbackModal> {
   }
 
   void sendFeedback() async {
+    Navigator.pop(context); // Fecha o modal
     if (selectedOptions.isEmpty) {
-      showSnackBarFeedback(context, 'Selecione pelo menos uma opção de feedback!',
-          Colors.orange);
+      showSnackBarFeedback(context,
+          'Selecione pelo menos uma opção de feedback!', Colors.orange);
       Navigator.pop(context); // Fecha o modal
     }
-
-    await serviceFeedbacks.sendFeedback(
+    //Navigator.pop(context); // Fecha o modal
+    // Exibe o loading dialog
+    showLoadingDialog(context, 'Enviando feedback...');
+    // Envia o feedback para o controller
+    await feedbackController.sendFeedbackFailures(
       widget.questionId,
-      context,
       selectedOptions,
       (success) {
         if (!mounted) return;
@@ -55,6 +59,7 @@ class FeedbackModalState extends State<FeedbackModal> {
         Navigator.pop(context); // Fecha o modal
       },
     );
+    //Navigator.pop(context); // Fecha o modal
   }
 
   @override
@@ -68,7 +73,8 @@ class FeedbackModalState extends State<FeedbackModal> {
           children: [
             Text(
               'Selecione os problemas encontrados:',
-              style: AppTheme.customTextStyle2(color: Colors.black, fontSize: 16),
+              style:
+                  AppTheme.customTextStyle2(color: Colors.black, fontSize: 16),
             ),
             //const SizedBox(height: 10),
             ...feedbackOptions.map((option) {
@@ -84,7 +90,7 @@ class FeedbackModalState extends State<FeedbackModal> {
                 },
               );
             }),
-           // const SizedBox(height: 10),
+            // const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

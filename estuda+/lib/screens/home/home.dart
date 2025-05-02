@@ -184,7 +184,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 GestureDetector(
                     onTap: () {
                       // Chama o controller que manipula e busca as disciplinasna api
-                      controllerHome.handleFetchDisciplines(context);
+                      controllerHome.handleFetchDisciplines(context, (onError) {
+                        showSnackBarFeedback(context, onError, Colors.red);
+                      });
                     },
                     child: const ButtonNext(
                       textContent: 'Iniciar',

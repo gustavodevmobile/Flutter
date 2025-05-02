@@ -55,7 +55,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
             contextText: 'Responder questões',
             onTap: () {
               // Chama o método no controller que manipula e busca as disciplinas na api.
-              controllerHome.handleFetchDisciplines(context);
+              controllerHome.handleFetchDisciplines(context, (error) {
+                showSnackBarFeedback(context, error, Colors.red);
+              });
               //value.openBoxAlreadyAnswereds(false);
             },
             icon: const Icon(
