@@ -11,6 +11,7 @@ class ReportService {
   final String server = dotenv.env['server']!;
   final StorageSharedPreferences storageSharedPreferences =
       StorageSharedPreferences();
+  final DateTime dateNow = DateTime.now().toUtc();
 
   Future<File> savePdfLocally(Uint8List pdfBytes, String fileName) async {
     // Obtém o diretório temporário para salvar o PDF
@@ -34,6 +35,8 @@ class ReportService {
     Function(String) onSuccess,
     Function(String) onError,
   ) async {
+    String date =
+        '${dateNow.day.toString().padLeft(2, '0')}.${dateNow.month.toString().padLeft(2, '0')}.${dateNow.year}';
     try {
       final response = await http.post(
         Uri.parse('$server/report'),
@@ -50,17 +53,17 @@ class ReportService {
           'email': email, // Adiciona o e-mail ao corpo da requisição
         }),
       );
-      print('reportDataCorrects $reportDataCorrects');
+      // print('reportDataCorrects $reportDataCorrects');
 
       if (response.statusCode == 200) {
         final file = await savePdfLocally(
-            response.bodyBytes, '${user.userName}_relatorio.pdf');
+            response.bodyBytes, '${user.userName}_${date}_relatorio.pdf');
 
         await storageSharedPreferences
             .saveReportToHistory(file.path, user.userName, (success) {
           //showSnackBarError(context, success, Colors.green);
         }, (error) {
-         // showSnackBarError(context, error, Colors.red);
+          // showSnackBarError(context, error, Colors.red);
           print(error);
         });
 
@@ -69,6 +72,7 @@ class ReportService {
         onError('Erro ao enviar relatório, ${response.statusCode}');
       }
     } catch (e) {
+      print(e);
       onError('Erro ao enviar relatório, $e');
     }
   }

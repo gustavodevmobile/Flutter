@@ -13,12 +13,14 @@ class ServiceResumQuestions {
   Future<List<ModelQuestions>> getQuestions(
       List<String> listIds, Function(String) onError) async {
     List<ModelQuestions> resultQuestions = [];
+   // print(_questoesAll);
     try {
       http.Response response = await http.get(
         Uri.parse('$_questoesAll/questao/$listIds'),
       );
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
+        //print('list: $list');
         for (var question in list) {
           Uint8List bytesImage =
               Uint8List.fromList(question['image']['data'].cast<int>());
@@ -30,6 +32,7 @@ class ServiceResumQuestions {
       }
     } catch (e) {
       onError('Erro ao buscar resumo de questões: $e');
+      print(e);
     }
     return resultQuestions;
   }

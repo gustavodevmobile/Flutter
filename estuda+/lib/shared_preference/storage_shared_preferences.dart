@@ -22,7 +22,7 @@ class StorageSharedPreferences {
 
   // instância de classe SharedPreferencesAsync
   SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
-  final DateTime dateNow = DateTime.now().toUtc();
+  final DateTime dateNow = DateTime.now();
 
   Future<void> saveUser(
       User user, Function(String) onSuccess, Function(String) onError) async {
@@ -216,6 +216,7 @@ class StorageSharedPreferences {
     var uuid = const Uuid();
     // Gera um id único para cada questão respondida
     String uniqueId = uuid.v4();
+
     String date =
         '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year}';
     String hours =
@@ -254,21 +255,22 @@ class StorageSharedPreferences {
         .toList();
   }
 
-  void removeReportHistory(
-      String id, Function(String) onSuccess, Function(String) onError) async {
+  void removeReportHistory(String id, Function(String)onSuccess, Function(String)onError) async {
+   
     try {
       List<String> history =
           await prefsAsync.getStringList('reportHistory') ?? [];
       if (history.isNotEmpty) {
         history.removeWhere((item) => jsonDecode(item)['id'] == id);
       } else {
-        onError('Erro ao remover relatório de resumo: lista vazia');
+        onError('Erro ao remover relatório: lista vazia');
       }
       await prefsAsync.setStringList('reportHistory', history);
-      onSuccess('Relatório de resumo removido com sucesso');
+      onSuccess('Relatório removido com sucesso!');
     } catch (e) {
-      onError('Erro ao remover relatório de resumo');
+      onError('Erro ao remover relatório: $e');
     }
+   
   }
 
   //Método que salva o email para envio de resumo

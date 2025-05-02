@@ -37,32 +37,23 @@ class _SendReportScreenState extends State<SendReportScreen> {
   Future<List<Map<String, dynamic>>>? future =
       StorageSharedPreferences().getReportHistory();
 
-  //void shareFile(String filePath) async {
-    
-    // final file = File(filePath);
+  void shareFile(String filePath) async {
+    final params = ShareParams(
+      text: 'Confira este documento PDF!',
+      files: [XFile(filePath)],
+    );
 
-    // if (file.existsSync()) {
-    //   SharePlus.instance.([filePath], text: 'Confira este documento PDF!');
-    // } else {
-    //   showSnackBarFeedback(context, 'Arquivo não encontrado.', Colors.red);
-    // }
-    // final params = ShareParams(
-    //   text: 'Confira este documento PDF!',
-    //   files: [XFile(filePath)],
-    // );
+    final result = await SharePlus.instance.share(params);
 
-    // final result = await SharePlus.instance.share(params);
-
-    // if (result.status == ShareResultStatus.success) {
-    //   print('Arquivo compartilhado com sucesso!');
-    // }
-  //}
+    if (result.status == ShareResultStatus.success) {
+      print('Arquivo compartilhado com sucesso!');
+    }
+  }
 
   @override
   void dispose() {
     emailController.dispose();
     emailFocusNode.dispose();
-
     super.dispose();
   }
 
@@ -278,21 +269,30 @@ class _SendReportScreenState extends State<SendReportScreen> {
                               ),
                             ),
                             onDismissed: (direction) {
-                              // Remove o item da lista imediatamente
-                              reports.removeWhere(
-                                  (el) => el['id'] == report['id']);
-                              // Remove o relatório da lista e atualiza o estado
+                              final scaffoldMessenger =
+                                  ScaffoldMessenger.of(context);
+                              // Remova o relatório do armazenamento local
+                              storageSharedPreferences.removeReportHistory(
+                                  report['id'], (onSuccess) {
+                                scaffoldMessenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(onSuccess, style: AppTheme.customTextStyle2()),
+                                    backgroundColor: Colors.green,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }, (onError) {
+                                scaffoldMessenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(onError, style: AppTheme.customTextStyle2()),
+                                    backgroundColor: Colors.red,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              });
                               setState(() {
-                                // Remova o relatório do armazenamento local
-                                storageSharedPreferences.removeReportHistory(
-                                    report['id'], (success) {
-                                  showSnackBarFeedback(
-                                      context, success, Colors.green);
-                                }, (error) {
-                                  showSnackBarFeedback(
-                                      context, error, Colors.red);
-                                  Navigator.pop(context);
-                                });
+                                reports.removeWhere(
+                                    (el) => el['id'] == report['id']);
                               });
                             },
                             child: Card(
@@ -317,7 +317,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                                         color: Colors.black87,
                                       ),
                                       onPressed: () {
-                                        //shareFile(report['filePath']);
+                                        shareFile(report['filePath']);
                                       },
                                     ),
                                     const Icon(

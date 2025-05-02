@@ -112,16 +112,18 @@ class CustomDropdownState extends State<CustomDropdown> {
                           },
                           trailing: IconButton(
                               onPressed: () {
-                                storageSharedPreferences.removeEmail(item,
-                                    (onError) {
-                                  showSnackBarFeedback(
-                                      context, onError, Colors.red);
-                                }, (onSuccess) {
-                                  showSnackBarFeedback(
-                                      context, onSuccess, Colors.green);
-                                }).then((_) {
-                                  widget.items.remove(item);
-                                  closeMenu();
+                                setState(() {
+                                  storageSharedPreferences.removeEmail(item,
+                                      (onError) {
+                                    showSnackBarFeedback(
+                                        context, onError, Colors.red);
+                                  }, (onSuccess) {
+                                    showSnackBarFeedback(
+                                        context, onSuccess, Colors.green);
+                                  }).then((_) {
+                                    widget.items.remove(item);
+                                    closeMenu();
+                                  });
                                 });
                               },
                               icon: const Icon(
