@@ -2,6 +2,7 @@ import 'package:estudamais/controller/controller_home.dart';
 import 'package:estudamais/controller/controller_initialscreen.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/providers/global_providers.dart';
+import 'package:estudamais/screens/feedback_screen.dart';
 import 'package:estudamais/screens/initial_screen.dart';
 import 'package:estudamais/screens/register/register.dart';
 import 'package:estudamais/screens/resum/corrects/accumulated_corrects.dart';
@@ -38,8 +39,17 @@ class _MenuDrawerState extends State<MenuDrawer> {
       return ListView(
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
-            child: Text('Header'),
+            decoration: BoxDecoration(color: Colors.white30),
+            child: Column(
+              children: [
+                Text('Olá fulano'),
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage:
+                      AssetImage('assets/images/right-6229376_1280.png'),
+                )
+              ],
+            ),
           ),
           ListTileDrawer(
             contextText: 'Responder questões',
@@ -48,7 +58,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
               controllerHome.handleFetchDisciplines(context);
               //value.openBoxAlreadyAnswereds(false);
             },
-            icon: const Icon(Icons.auto_stories_rounded),
+            icon: const Icon(
+              Icons.auto_stories_rounded,
+              color: Colors.indigo,
+            ),
           ),
           ListTileDrawer(
             contextText: 'Resumo Corretas',
@@ -68,7 +81,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 );
               }
             },
-            icon: const Icon(Icons.list),
+            icon: const Icon(
+              Icons.list,
+              color: Colors.black87,
+            ),
           ),
           ListTileDrawer(
             contextText: 'Resumo Incorretas',
@@ -125,12 +141,15 @@ class _MenuDrawerState extends State<MenuDrawer> {
               });
             },
             icon: const Icon(
-              Icons.list,
+              Icons.picture_as_pdf,
+              color: Colors.red,
             ),
           ),
           ListTileDrawer(
             contextText: 'Enviar Feedback',
-            onTap: () {},
+            onTap: () {
+              Routes().pushRoute(context, const FeedbackScreen());
+            },
             icon: const Icon(Icons.report),
           ),
           ListTileDrawer(
