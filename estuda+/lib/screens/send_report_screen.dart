@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';

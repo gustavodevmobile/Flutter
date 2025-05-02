@@ -52,7 +52,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Deixe seu Feedback', style: AppTheme.customTextStyle2(fontSize: 20),),
+        title: Text(
+          'Deixe seu Feedback',
+          style: AppTheme.customTextStyle2(fontSize: 20),
+        ),
         backgroundColor: Colors.indigo,
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -87,6 +90,15 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               onPressed: _isSubmitting ? null : _submitFeedback,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.indigo,
+              ).copyWith(
+                backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return Colors.blue; // Cor quando pressionado
+                    }
+                    return Colors.indigo; // Cor padrão
+                  },
+                ),
               ),
               child: _isSubmitting
                   ? const CircularProgressIndicator(
