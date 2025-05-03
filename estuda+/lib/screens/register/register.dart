@@ -85,6 +85,7 @@ class _RegisterUserState extends State<RegisterUser> {
                   keyboardType: TextInputType.text,
                 ),
                 const SizedBox(height: 20),
+
                 TextFormField(
                   controller: birthDateController,
                   decoration: const InputDecoration(
@@ -96,6 +97,7 @@ class _RegisterUserState extends State<RegisterUser> {
                   keyboardType: TextInputType.text,
                 ),
                 const SizedBox(height: 20),
+                
                 TextFormField(
                   controller: schoolYearController,
                   decoration: const InputDecoration(

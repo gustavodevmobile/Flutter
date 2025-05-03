@@ -15,6 +15,7 @@ class FeedbackModal extends StatefulWidget {
 
 class FeedbackModalState extends State<FeedbackModal> {
   final FeedbackController feedbackController = FeedbackController();
+
   final List<String> feedbackOptions = [
     'Erro no enunciado',
     'Erro nas alternativas',
@@ -35,31 +36,31 @@ class FeedbackModalState extends State<FeedbackModal> {
   }
 
   void sendFeedback() async {
-    Navigator.pop(context); // Fecha o modal
     if (selectedOptions.isEmpty) {
+      Navigator.pop(context); // Fecha o modal
       showSnackBarFeedback(context,
           'Selecione pelo menos uma opção de feedback!', Colors.orange);
-      Navigator.pop(context); // Fecha o modal
+    } else {
+      // Exibe o loading dialog
+      showLoadingDialog(context, 'Enviando feedback...');
+      // Envia o feedback para o controller
+      await feedbackController.sendFeedbackFailures(
+        widget.questionId,
+        selectedOptions,
+        (success) {
+          if (!mounted) return;
+          Navigator.pop(context); // Fecha o loading dialog
+          Navigator.pop(context); // Fecha o modal
+          showSnackBarFeedback(context, success, Colors.green);
+        },
+        (error) {
+          if (!mounted) return;
+          Navigator.pop(context); // Fecha o loading dialog
+          Navigator.pop(context); // Fecha o modal
+          showSnackBarFeedback(context, error, Colors.red);
+        },
+      );
     }
-    //Navigator.pop(context); // Fecha o modal
-    // Exibe o loading dialog
-    showLoadingDialog(context, 'Enviando feedback...');
-    // Envia o feedback para o controller
-    await feedbackController.sendFeedbackFailures(
-      widget.questionId,
-      selectedOptions,
-      (success) {
-        if (!mounted) return;
-        showSnackBarFeedback(context, success, Colors.green);
-        Navigator.pop(context); // Fecha o modal
-      },
-      (error) {
-        if (!mounted) return;
-        showSnackBarFeedback(context, error, Colors.red);
-        Navigator.pop(context); // Fecha o modal
-      },
-    );
-    //Navigator.pop(context); // Fecha o modal
   }
 
   @override

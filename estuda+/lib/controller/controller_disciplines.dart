@@ -26,7 +26,8 @@ class ControllerDisciplines {
       onError('Ops, algo deu errado, tente novamente mais tarde');
     }
   }
-
+// Método responsável por pegar os anos escolares da disciplina selecionada
+// e retorna uma lista de anos escolares
   List<String> getSchoolYearInDisciplines(
       List<ModelQuestions> questionsByDisciplines) {
     Set<String> showListSchoolYears = {};
@@ -35,7 +36,7 @@ class ControllerDisciplines {
     }
     return showListSchoolYears.toList()..sort();
   }
-
+//
   List<String> getDisciplinesContent(
       List<ModelQuestions> questionsByDisciplines) {
     for (var question in questionsByDisciplines) {

@@ -2,6 +2,7 @@ import 'package:estudamais/controller/controller_home.dart';
 import 'package:estudamais/controller/controller_initialscreen.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/providers/global_providers.dart';
+import 'package:estudamais/screens/about.dart';
 import 'package:estudamais/screens/feedback_screen.dart';
 import 'package:estudamais/screens/initial_screen.dart';
 import 'package:estudamais/screens/register/register.dart';
@@ -9,6 +10,7 @@ import 'package:estudamais/screens/resum/corrects/accumulated_corrects.dart';
 import 'package:estudamais/screens/resum/incorrects/accumulated_incorrects.dart';
 import 'package:estudamais/screens/send_report_screen.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/alert_dialog.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
@@ -156,7 +158,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
           ),
           ListTileDrawer(
             contextText: 'Sobre',
-            onTap: () {},
+            onTap: () {
+              Routes().pushRoute(context, const AboutScreen());
+            },
             icon: const Icon(Icons.help),
           ),
           ListTileDrawer(
@@ -164,7 +168,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             onTap: () {
               alertDialogUser.showDialogUser(
                 context,
-                'Usuário será removido.!',
+                'Usuário será removido!',
                 'Deseja mesmo resetar usuário?\nIsso deletará todo o progresso já feito.',
                 TextButton(
                   onPressed: () {
@@ -178,13 +182,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
                       },
                     );
                   },
-                  child: const Text('Sim'),
+                  child: Text('Sim', style: AppTheme.customTextStyle2(color: Colors.indigo),),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Cancelar'),
+                  child: Text('Cancelar', style: AppTheme.customTextStyle2(color: Colors.indigo),),
                 ),
               );
             },
