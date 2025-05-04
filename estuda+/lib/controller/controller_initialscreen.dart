@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class ControllerInitialscreen {
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-
+// Método responsável por verificar se o usuário já está registrado
+// e retorna um booleano para o controller
   Future<void> isRegistered(BuildContext context, Function(bool?) hasStatus,
       Function(String) onError) async {
     try {

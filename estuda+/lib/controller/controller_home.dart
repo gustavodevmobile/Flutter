@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 
 class ControllerHome {
   Service service = Service();
-  
+
   List<String> disciplines = [];
 
+// Método responsável por buscar as disciplinas
+// e retorna uma lista de disciplinas
   void fetchDisciplines(Function(List<String> disciplines) onSuccess,
       Function(String) onError) async {
     try {
-      disciplines = await service.getDisciplines((error){
+      disciplines = await service.getDisciplines((error) {
         onError(error);
       });
       onSuccess(disciplines);
@@ -20,13 +22,14 @@ class ControllerHome {
       onError('Não foi possível buscar as Disciplinas: $e');
     }
   }
-
-  void handleFetchDisciplines(BuildContext context, Function(String)onError) {
+// Método responsável por manipular o resultadosdo da busca das disciplinas
+// e retorna uma lista de disciplinas para mostrar na tela de disciplinas
+  void handleFetchDisciplines(BuildContext context, Function(String) onError) {
     showLoadingDialog(context, 'Buscando disciplinas...');
     fetchDisciplines((disciplines) {
       if (disciplines.isNotEmpty) {
         Navigator.pop(context);
-        Routes().popRoutes(
+        Routes().pushRoute(
           context,
           Discipline(disciplines: disciplines),
         );
@@ -36,9 +39,7 @@ class ControllerHome {
       }
     }, (error) {
       Navigator.pop(context);
-       onError(error);
+      onError(error);
     });
   }
-
-  
 }
