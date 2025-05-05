@@ -68,8 +68,7 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                           child: Visibility(
                             visible: value.showBoxSubjects,
                             child: MapSelectedSubjects(
-                              listMap: value.subjectsAndSchoolYearSelected
-                            ),
+                                listMap: value.subjectsAndSchoolYearSelected),
                           ),
                         ),
                   const Padding(
@@ -113,10 +112,11 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                           Colors.red,
                         );
                       } else {
-                        resultQuestionsCorrects =
-                            questionsCorrects.getResultQuestions(
-                                value.resultQuestionsCorrects,
-                                value.subjectsAndSchoolYearSelected);
+                        resultQuestionsCorrects = questionsCorrects
+                            .getResultQuestions(value.resultQuestionsCorrects,
+                                value.subjectsAndSchoolYearSelected, (error) {
+                          showSnackBarFeedback(context, error, Colors.red);
+                        });
                         Routes().pushRoute(
                             context,
                             PageQuestionsCorrects(

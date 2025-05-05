@@ -15,67 +15,107 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:flutter/foundation.dart';
 
+// Classe Service responsável por fazer as requisições HTTP para o servidor
+// e manipular os dados recebidos. Ela contém métodos para buscar disciplinas, questões por disciplina, questões por ano escolar e assuntos relacionados às questões.
+/// A classe também possui métodos para filtrar questões com base em critérios específicos, como disciplina, ano escolar e assunto. Além disso, ela utiliza o pacote http para fazer as requisições e o pacote dotenv para gerenciar variáveis de ambiente.
+
+// Nesta classe faz 2 chamadas externas para o servidor, sendo elas:
+//// 1 - getDisciplines: busca as disciplinas disponíveis no servidor.
+//// 2 - getQuestionsByDiscipline: busca as questões das disciplinas selecionadas.
+
 class Service {
   final String _questoesAll = dotenv.env['server']!;
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
-// busca os nomes das disciplinas das questões
-  Future<List<String>> getDisciplines(Function(String)onError) async {
+// Busca os nomes das disciplinas das questões
+  Future<List<String>> getDisciplines(Function(String) onError) async {
     List<String> listDisciplines = [];
-    http.Response response = await http.get(
+    http.Response response = await http
+        .get(
       Uri.parse('$_questoesAll/disciplinas'),
-    );
+    )
+        .timeout(const Duration(seconds: 20), onTimeout: () {
+      // Retorna uma resposta de timeout com status 408
+      return http.Response("Timeout", 408);
+    });
     try {
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
-        //print('Todas as disciplinas recebidas com sucesso');
         for (var dis in list) {
           listDisciplines.add(dis);
         }
+      } else if (response.statusCode == 408) {
+        onError('Tempo de espera excedido.\nTente novamente mais tarde.');
+      } else {
+        onError('Erro ao buscar disciplinas: ${response.statusCode}');
       }
-      //print('listDisciplines $listDisciplines');
     } catch (err) {
       onError('Erro ao buscar disciplinas: $err');
     }
     return listDisciplines..sort();
   }
 
-  // busca as questões por disciplinas
+  static List<ModelQuestions> processQuestions(List<dynamic> data) {
+    List<ModelQuestions> processedQuestions = [];
+    for (var question in data) {
+      Uint8List bytesImage =
+          Uint8List.fromList(question['image']['data'].cast<int>());
+      question['image'] = bytesImage;
+      processedQuestions.add(ModelQuestions.toMap(question));
+    }
+    return processedQuestions;
+  }
+
+  // Busca as questões por disciplinas
   Future<List<ModelQuestions>> getQuestionsByDiscipline(
       // recebe uma lista das disciplinas selecionadas
       List<String> disciplines,
-      BuildContext context ) async {
+      BuildContext context,
+      Function(String) onError,
+      Function(bool) isTimeout) async {
+    //List<ModelQuestions> resultIlates = [];
     List<ModelQuestions> questionsByDiscipline = [];
     // converte essa lista em json para ser enviado como parametro para rota
     var listDisciplinesJson = jsonEncode(disciplines);
-    http.Response response = await http.get(
+    http.Response response = await http
+        .get(
       Uri.parse('$_questoesAll/questoes/$listDisciplinesJson'),
-    );
+    )
+        .timeout(const Duration(seconds: 100), onTimeout: () {
+      isTimeout(true);
+      return http.Response("Timeout", 408);
+    });
     try {
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
-        print('Todas as questões recebidas com sucesso');
+        //print('Todas as questões recebidas com sucesso');
 
+        // processa as questões recebidas do servidor em um isolate
+        questionsByDiscipline =
+            await compute<List<dynamic>, List<ModelQuestions>>(
+                Service.processQuestions, list);
         // faz a busca dos ids das questões já respodidas.
         List<String> listIdsAnswereds = await sharedPreferences.recoverIds(
             StorageSharedPreferences.keyIdsAnswereds,
             (error) => showSnackBarFeedback(context, error, Colors.red));
 
         // converte a imagem de bytes para um Uint8List
-        for (var question in list) {
-          Uint8List bytesImage =
-              Uint8List.fromList(question['image']['data'].cast<int>());
-          question['image'] = bytesImage;
-          questionsByDiscipline.add(ModelQuestions.toMap(question));
-        }
+        // for (var question in list) {
+        //   Uint8List bytesImage =
+        //       Uint8List.fromList(question['image']['data'].cast<int>());
+        //   question['image'] = bytesImage;
+        //   questionsByDiscipline.add(ModelQuestions.toMap(question));
+        // }
 
-       
         // retira as questões que ja foram respodidas pelos ids das questões respondidas.
         for (var id in listIdsAnswereds) {
           questionsByDiscipline.removeWhere((el) => el.id == id);
         }
-
-        
+      } else if (response.statusCode == 408) {
+        onError(
+            'Tempo limite de resposta excedido.\nTente novamente mais tarde.');
+      } else {
+        onError('Erro ao buscar questões: ${response.statusCode}');
       }
     } catch (err) {
       print('Erro ao buscar questões por disciplina: $err');
@@ -84,11 +124,11 @@ class Service {
     return questionsByDiscipline;
   }
 
-  // BUSCA AS QUESTÕES POR ANO DAS QUESTÕES SELECIONADAS POR DISCIPLINA
-  List<ModelQuestions> getQuestionsBySchoolYear(
-      List<String> schoolYear, List<ModelQuestions> questionsByDiscipline) {
+  // Filtra as questões por ano escolar das disciplinas selecionadas.
+  List<ModelQuestions> getQuestionsBySchoolYear(List<String> schoolYear,
+      List<ModelQuestions> questionsByDiscipline, Function(String) onError) {
     List<ModelQuestions> questionsBySchoolYear = [];
-    
+
     try {
       if (questionsByDiscipline.isNotEmpty) {
         for (var questions in questionsByDiscipline) {
@@ -99,16 +139,15 @@ class Service {
           }
         }
       }
-      
     } catch (error) {
-      print('Erro ao buscar questões por ano: $error');
+      onError('Erro ao buscar questões por ano: $error');
     }
     return questionsBySchoolYear;
   }
 
-// BUSCA A DISCIPLINA, O ANO E O ASSUNTO DAS QUESTÕES OBTIDAS POR ANO SELECIONADO
-  List<Map<String, dynamic>> getSubjectsBySchoolYears(
-      List<String> years, List<ModelQuestions> questionsByDisciplines) {
+// Filtra o nome da disciplina, ano escolar e assunto das questões selecionadas.
+  List<Map<String, dynamic>> getSubjectsBySchoolYears(List<String> years,
+      List<ModelQuestions> questionsByDisciplines, Function(String) onError) {
     List<Map<String, dynamic>> schoolYearAndSubjects = [];
     Map<String, dynamic> mapYearAndSubject = {};
     List<Map<String, dynamic>> result = [];
@@ -135,16 +174,16 @@ class Service {
       }
       //print('schoolYearAndSubjects $schoolYearAndSubjects');
     } catch (err) {
-      print('Falha na busca dos dados: $err');
+      onError('Falha na busca dos dados: $err');
     }
     return schoolYearAndSubjects;
   }
 
-  // BUSCA AS QUESTÕES POR DISCIPLINA, ANO E ASSUNTO QUE FORAM SELECIONADAS
-  // NAS TELAS ANTERIORES
+  // filtra as questões com base no método getSubjectsBySchoolYears
   List<ModelQuestions> getQuestionsAllBySubjectsAndSchoolYear(
       List<Map<String, dynamic>> listMapSubjectsAndSchoolYear,
-      List<ModelQuestions> questionsBySchoolYear) {
+      List<ModelQuestions> questionsBySchoolYear,
+      Function(String) onError) {
     List<ModelQuestions> resultQuestionsBySubjectsAndSchoolYear = [];
 
     try {
@@ -159,13 +198,10 @@ class Service {
             }
           }
         }
-       
       }
     } catch (err) {
-      print('Erro ao buscar questões: $err');
+      onError('Erro ao buscar questões: $err');
     }
     return resultQuestionsBySubjectsAndSchoolYear;
   }
-
-
 }

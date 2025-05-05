@@ -33,8 +33,10 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
       builder: (context, valueGlobal, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Respondidas incorretamente',
-                style: AppTheme.customTextStyle(fontSize: screenWidth * 0.035),),
+            title: Text(
+              'Respondidas incorretamente',
+              style: AppTheme.customTextStyle(fontSize: screenWidth * 0.035),
+            ),
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {
@@ -53,8 +55,11 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                 shrinkWrap: true,
                 children: [
                   Center(
-                    child: Text('Assuntos selecionados:',
-                        style: AppTheme.customTextStyle(fontWeight: true, fontSize: screenWidth * 0.04),),
+                    child: Text(
+                      'Assuntos selecionados:',
+                      style: AppTheme.customTextStyle(
+                          fontWeight: true, fontSize: screenWidth * 0.04),
+                    ),
                   ),
                   valueGlobal.subjectsAndSchoolYearSelected.isEmpty
                       ? const NeverSubjectsSelected()
@@ -78,7 +83,8 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
                     child: Text('Selecione a disciplina e o assunto:',
-                        style: AppTheme.customTextStyle(fontWeight: true, fontSize: screenWidth * 0.03)),
+                        style: AppTheme.customTextStyle(
+                            fontWeight: true, fontSize: screenWidth * 0.03)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -107,17 +113,19 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                           Colors.red,
                         );
                       } else {
-                        resultQuestionsIncorrects =
-                            questionsIncorrects.getResultQuestions(
+                        resultQuestionsIncorrects = questionsIncorrects
+                            .getResultQuestions(
                                 valueGlobal.resultQuestionsIncorrects,
-                                valueGlobal.subjectsAndSchoolYearSelected);
+                                valueGlobal.subjectsAndSchoolYearSelected,
+                                (error) {
+                          showSnackBarFeedback(context, error, Colors.red);
+                        });
                         Routes().pushRoute(
                           context,
                           PageQuestionsIncorrects(
                             resultQuestions: resultQuestionsIncorrects,
                           ),
                         );
-                        
                       }
                     },
                     child: const ButtonNext(textContent: 'Mostrar questões'),

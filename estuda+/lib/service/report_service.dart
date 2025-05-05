@@ -38,21 +38,27 @@ class ReportService {
     String date =
         '${dateNow.day.toString().padLeft(2, '0')}.${dateNow.month.toString().padLeft(2, '0')}.${dateNow.year}';
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse('$server/report'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'userName': user.userName,
-          'birthDate': user.birthDate,
-          'schoolYear': user.schoolYear,
-          'amountAnswered': amountAnswered,
-          'reportDataCorrects': reportDataCorrects,
-          'amountCorrects': amountCorrects,
-          'reportDataIncorrects': reportDataIncorrects,
-          'amountIncorrects': amountIncorrects,
-          'email': email, // Adiciona o e-mail ao corpo da requisição
-        }),
-      );
+        body: jsonEncode(
+          {
+            'userName': user.userName,
+            'birthDate': user.birthDate,
+            'schoolYear': user.schoolYear,
+            'amountAnswered': amountAnswered,
+            'reportDataCorrects': reportDataCorrects,
+            'amountCorrects': amountCorrects,
+            'reportDataIncorrects': reportDataIncorrects,
+            'amountIncorrects': amountIncorrects,
+            'email': email, // Adiciona o e-mail ao corpo da requisição
+          },
+        ),
+      )
+          .timeout(const Duration(seconds: 20), onTimeout: () {
+        return http.Response("Timeout", 408);
+      });
       // print('reportDataCorrects $reportDataCorrects');
 
       if (response.statusCode == 200) {
@@ -68,6 +74,8 @@ class ReportService {
         });
 
         onSuccess('Relatório enviado e salvo com sucesso!');
+      } else if (response.statusCode == 408) {
+        onError('Tempo de espera excedido.\nTente novamente mais tarde.');
       } else {
         onError('Erro ao enviar relatório, ${response.statusCode}');
       }

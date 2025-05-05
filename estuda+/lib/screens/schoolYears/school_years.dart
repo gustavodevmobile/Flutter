@@ -156,10 +156,14 @@ class _SchoolYearsState extends State<SchoolYears> {
                 schoolYears.sort();
                 List<ModelQuestions> questionsBySchoolYear =
                     service.getQuestionsBySchoolYear(
-                        schoolYears, widget.questionsByDisciplines);
+                        schoolYears, widget.questionsByDisciplines, (error){
+                          showSnackBarFeedback(context, error, Colors.red);
+                        });
                 List<Map<String, dynamic>> schoolYearAndSubject =
                     service.getSubjectsBySchoolYears(
-                        schoolYears, widget.questionsByDisciplines);
+                        schoolYears, widget.questionsByDisciplines, (error){
+                          showSnackBarFeedback(context, error, Colors.red);
+                        });
                 Routes().pushRoute(
                     context,
                     Subjects(

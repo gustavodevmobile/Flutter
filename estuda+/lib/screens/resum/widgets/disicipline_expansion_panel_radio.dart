@@ -2,6 +2,7 @@ import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +46,9 @@ class _DisiciplineExpansionPanelRadioState
                 listMap.value = questions.showSubjectsAndSchoolyearInDiscipline(
                   widget.discipline[index],
                   widget.resultQuestions,
+                  (error) {
+                    showSnackBarFeedback(context, error, Colors.red);
+                  },
                 );
                 //valueGlobal.subjectsAndSchoolYearSelected.clear();
               }
@@ -105,7 +109,8 @@ class _DisiciplineExpansionPanelRadioState
                               child: ListTile(
                                 minTileHeight: 10,
                                 title: Text(value[index]['subjects'],
-                                    style: AppTheme.customTextStyle(fontWeight: true)),
+                                    style: AppTheme.customTextStyle(
+                                        fontWeight: true)),
                                 trailing: Text(value[index]['schoolYear'],
                                     style: AppTheme.customTextStyle(
                                         color: Colors.amber, fontWeight: true)),

@@ -25,11 +25,6 @@ class Subjects extends StatefulWidget {
       required this.schoolYear,
       required this.schoolYearAndSubject,
       super.key});
-
-  //final bool backButton = false;
-  //final double shadowBox = 10;
-  //final Color colorShadow = Colors.black87;
-
   @override
   State<Subjects> createState() => _SubjectsState();
 }
@@ -58,7 +53,8 @@ class _SubjectsState extends State<Subjects> {
                 )),
             title: Text(
               'Disciplina / Ano escolar / Assunto',
-              style: GoogleFonts.aboreto(fontSize: screenWidth * 0.03, color: Colors.white),
+              style: GoogleFonts.aboreto(
+                  fontSize: screenWidth * 0.03, color: Colors.white),
             ),
           ),
           body: Background(
@@ -185,17 +181,18 @@ class _SubjectsState extends State<Subjects> {
                     Colors.blue,
                   );
                 } else {
-                  List<ModelQuestions> questions =
-                      service.getQuestionsAllBySubjectsAndSchoolYear(
+                  List<ModelQuestions> questions = service
+                      .getQuestionsAllBySubjectsAndSchoolYear(
                           listMapSubjectsAndSchoolYear,
-                          widget.questionsBySchoolYear);
+                          widget.questionsBySchoolYear, (error) {
+                    showSnackBarFeedback(context, error, Colors.red);
+                  });
                   Routes().pushRoute(
                       context,
                       PageQuestionsBySchoolYear(
                         questions: questions,
                       ));
-                  // Método que atualiza o estado do box da alternativa, que nenhuma questão foi respondida.
-                  //value.answered(false);
+
                   // Método que atualiza o estado no box onde mostra "questão ja respondida", passando false para fecha-lo;
                   value.openBoxAlreadyAnswereds(false);
                 }

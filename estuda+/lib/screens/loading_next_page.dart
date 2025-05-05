@@ -1,19 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:estudamais/controller/controller_loading_next_page.dart';
 import 'package:estudamais/controller/controller_report_resum.dart';
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
-import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
-import 'package:estudamais/screens/home/home.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/widgets/loading.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class LoadingNextPage extends StatefulWidget {
@@ -38,32 +33,13 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
   ControllerLoadingNextPage controllerLoadingNextPage =
       ControllerLoadingNextPage();
 
-  TextStyle textStyle = GoogleFonts.aboreto(
-    fontSize: 12,
-    fontWeight: FontWeight.bold,
-    color: Colors.indigo,
-  );
+  TextStyle textStyle = AppTheme.customTextStyle(
+      fontWeight: true, color: Colors.indigo, fontSize: 13.0);
 
-  late final StreamController controller = StreamController(
-    onListen: () {
-      if (mounted) {
-        controller
-            .addStream(controllerLoadingNextPage.processDatas(
-                context, widget.msgFeedbasck, mounted, (msgFeedback) {
-          msgLoading.value = msgFeedback;
-        }))
-            .whenComplete(() {
-          controller.close();
-          if (mounted) {
-            controllerLoadingNextPage.toHomeScreen(context);
-          }
-        });
-      }
-    },
-    onCancel: () {
-      controller.close();
-    },
-  );
+  late final StreamController controller = controllerLoadingNextPage
+      .streamProccess(mounted, widget.msgFeedbasck, context, (msgFeedback) {
+    msgLoading.value = msgFeedback;
+  });
 
   @override
   void dispose() {
@@ -83,13 +59,13 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
               stream: controller.stream,
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasError) {
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
                   return const Text(
                       'Algo saiu errado, tente novamente mais tarde');
-                  //showSnackBar(context, 'deu ruim', Colors.red);
                 } else {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
+                      //print('none');
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -98,6 +74,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                         ],
                       );
                     case ConnectionState.waiting:
+                      //print('waiting');
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -106,6 +83,7 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                         ],
                       );
                     case ConnectionState.active:
+                      //print('active');
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -114,7 +92,24 @@ class _LoadingNextPageState extends State<LoadingNextPage> {
                         ],
                       );
                     case ConnectionState.done:
-                      return Text('Pronto!', style: textStyle);
+                      if (Provider.of<GlobalProviders>(listen: false, context)
+                          .isTimeOut) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Loading(),
+                            Text('Tempo excedido!', style: textStyle),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Loading(),
+                            Text('Pronto!', style: textStyle),
+                          ],
+                        );
+                      }
                   }
                 }
               },

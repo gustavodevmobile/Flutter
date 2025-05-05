@@ -29,52 +29,51 @@ class BoxResum extends StatelessWidget {
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
-              width: 60,
-              height: 60,
-              child: image,
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: SizedBox(
+                width: 60,
+                height: 60,
+                child: image,
+              ),
             ),
+            const Spacer(),
+            Text(
+              value,
+              style: AppTheme.customTextStyle(
+                fontSize: screenWidth * 0.08,
+                fontWeight: true,
+                color: Colors.black87,
+              ),
+            ),
+            const Spacer(),
             SizedBox(
-              width: screenWidth * 0.55,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
                 children: [
                   Text(
-                    value,
+                    'Respostas',
                     style: AppTheme.customTextStyle(
-                      fontSize: screenWidth * 0.06,
-                      fontWeight: true,
+                      fontSize: 10,
                       color: Colors.black87,
                     ),
                   ),
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Respostas',
-                          style: AppTheme.customTextStyle(
-                            fontSize: 10,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            description,
-                            style: AppTheme.customTextStyle(
-                                fontSize: screenWidth * 0.04,
-                                color: Colors.black87,
-                                fontWeight: true),
-                          ),
-                        ),
-                      ],
+                 
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      description,
+                      style: AppTheme.customTextStyle(
+                          fontSize: screenWidth * 0.04,
+                          color: Colors.black87,
+                          fontWeight: true),
                     ),
                   ),
                 ],
               ),
             ),
+            const Spacer(),
             textButton
           ],
         ),

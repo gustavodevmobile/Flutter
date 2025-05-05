@@ -7,13 +7,11 @@ class ServiceFeedbacks {
   final String server = dotenv.env['server']!;
 
   // This method sends feedback about failures in the app.
-  Future<void> sendFeedbackFailures(
-      String id,
-      List<String> feedbackOptions,
-      Function(String) onSuccess,
-      Function(String) onError) async {
+  Future<void> sendFeedbackFailures(String id, List<String> feedbackOptions,
+      Function(String) onSuccess, Function(String) onError) async {
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse('$server/feedback'),
         headers: {
           'Content-Type': 'application/json',
@@ -23,9 +21,17 @@ class ServiceFeedbacks {
               'Foi reportado o(s) seguinte(s) erro(s) na questão id nº $id:',
           'descriptions': feedbackOptions,
         }),
+      )
+          .timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          return http.Response("Timeout", 408);
+        },
       );
       if (response.statusCode == 200) {
         onSuccess(response.body);
+      } else if (response.statusCode == 408) {
+        onError('Tempo de espera excedido.\nTente novamente mais tarde.');
       } else {
         onError('Erro ao enviar feedback de falhas: ${response.statusCode}');
       }
@@ -35,12 +41,11 @@ class ServiceFeedbacks {
   }
 
   // This method sends feedback about the app itself.
-  Future<void> sendFeedbackApp(
-      String message,
-      Function(String) onSuccess,
+  Future<void> sendFeedbackApp(String message, Function(String) onSuccess,
       Function(String) onError) async {
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse('$server/feedback-app'),
         headers: {
           'Content-Type': 'application/json',
@@ -48,9 +53,17 @@ class ServiceFeedbacks {
         body: jsonEncode({
           'message': message,
         }),
+      )
+          .timeout(
+        const Duration(seconds: 3),
+        onTimeout: () {
+          return http.Response("Timeout", 408);
+        },
       );
       if (response.statusCode == 200) {
         onSuccess(response.body);
+      } else if (response.statusCode == 408) {
+        onError('Tempo de espera excedido.\nTente novamente mais tarde.');
       } else {
         onError('Erro ao enviar feedback do app: ${response.statusCode}');
       }

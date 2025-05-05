@@ -45,6 +45,7 @@ class FeedbackModalState extends State<FeedbackModal> {
       showLoadingDialog(context, 'Enviando feedback...');
       // Envia o feedback para o controller
       await feedbackController.sendFeedbackFailures(
+        
         widget.questionId,
         selectedOptions,
         (success) {

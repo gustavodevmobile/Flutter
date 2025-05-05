@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:estudamais/controller/controller_report_resum.dart';
+import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
+import 'package:estudamais/screens/initial_screen.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
@@ -21,24 +23,16 @@ class ControllerLoadingNextPage {
       ServiceResumQuestions();
   Service service = Service();
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
-  ValueNotifier<String> msgLoading = ValueNotifier<String>('Buscando dados...');
+  //ValueNotifier<String> msgLoading = ValueNotifier<String>('Buscando dados...');
   ControllerReportResum controllerReportResum = ControllerReportResum();
   List<String> idsAnswereds = [];
   List<String> idsCorrects = [];
   List<String> idsIncorrects = [];
   List<ModelQuestions> corrects = [];
   List<ModelQuestions> incorrects = [];
+  bool shouldCancel = false; // Variável de controle para cancelar o fluxo
 
-  //final StreamController<String> _streamController = StreamController<String>();
-
-  // Stream<String> get stream => _streamController.stream;
-  // Sink<String> get sink => _streamController.sink;
-
-  // void dispose() {
-  //   _streamController.close();
-  // }
-
-  void toHomeScreen(
+  toHomeScreen(
     BuildContext context,
   ) {
 // atualiza a quantidade de questões respondidas atraves do provider
@@ -56,12 +50,24 @@ class ControllerLoadingNextPage {
     // passa o returno do método counterDisciplineIncorrects para atualizar na home as disciplinas respondidas corretamente
     Provider.of<GlobalProviders>(listen: false, context)
         .disciplinesAnsweredsCorrects(
-            questionsCorrectsAndIncorrects.counterDiscipline(corrects));
+      questionsCorrectsAndIncorrects.counterDiscipline(
+        corrects,
+        (error) {
+          showSnackBarFeedback(context, error, Colors.red);
+        },
+      ),
+    );
 
     // passa o returno do método counterDisciplineIncorrects para atualizar na home as disciplinas respondidas incorretamente
     Provider.of<GlobalProviders>(listen: false, context)
         .disciplinesAnsweredsIncorrects(
-            questionsCorrectsAndIncorrects.counterDiscipline(incorrects));
+      questionsCorrectsAndIncorrects.counterDiscipline(
+        incorrects,
+        (error) {
+          showSnackBarFeedback(context, error, Colors.red);
+        },
+      ),
+    );
 
     // obtém todas as questões respondidas corretamente
     Provider.of<GlobalProviders>(listen: false, context)
@@ -93,7 +99,7 @@ class ControllerLoadingNextPage {
       showSnackBarFeedback(context, error, Colors.red);
     });
 
-    Navigator.push(
+    return Navigator.push(
       context,
       PageTransition(
         type: PageTransitionType.fade,
@@ -103,21 +109,19 @@ class ControllerLoadingNextPage {
     );
   }
 
-  // void timeOut(BuildContext context, bool mounted) {
-  //   final scaffoldMessenger = ScaffoldMessenger.of(context);
-  //   scaffoldMessenger.showSnackBar(
-  //     SnackBar(
-  //       content: Text(
-  //         'Tempo de conexão excedido, tente novamente mais tarde',
-  //         style: AppTheme.customTextStyle2(color: Colors.white),
-  //       ),
-  //       backgroundColor: Colors.red,
-  //     ),
-  //   );
-  //   if (mounted) {
-  //     Navigator.pop(context);
-  //   }
-  // }
+  //  Este médodo mostra o snackbar de erro quando o tempo de espera é excedido
+  //  e o usuário não está mais na tela de loading.
+  void timeOut(ScaffoldMessengerState scaffoldMessenger, String msg) {
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          msg,
+          style: AppTheme.customTextStyle2(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
 
   Future fetchAnsweredsIds(
       ScaffoldMessengerState scaffoldMessenger,
@@ -167,16 +171,12 @@ class ControllerLoadingNextPage {
       Function(List<String>) listIds,
       Function(String) onError,
       Function(bool) isExpired) async {
-    msgFeedback('questões $msg...');
+    msgFeedback('$msg...');
     List<String> listJson = [];
     List<String> ids = [];
     try {
       listJson = await sharedPreferences
-          .recoverIds(
-              keyId,
-              (error) => print(
-                  error) //showSnackBarFeedback(context, error, Colors.red),
-              )
+          .recoverIds(keyId, (error) => timeOut(scaffoldMessenger, error))
           .timeout(
         const Duration(seconds: 10),
         onTimeout: () {
@@ -207,46 +207,35 @@ class ControllerLoadingNextPage {
   }
 
   Future fetchQuestions(
-      ScaffoldMessengerState scaffoldMessenger,
-      Function(String) msgFeedback,
-      List<String> listIds,
-      Function(List<ModelQuestions>) questionsResult,
-      Function(String) onError,
-      Function(bool) isExpired) async {
-    msgFeedback('questões corretas...');
+    String textFeedback, // 'corretas' ou 'incorretas'
+    ScaffoldMessengerState scaffoldMessenger, //
+    Function(String) msgFeedback, // mensagem de feedback
+    List<String> listIds, // lista de ids das questões corretas ou incorretas
+    Function(List<ModelQuestions>)
+        questionsResult, // função que recebe as questões corretas ou incorretas
+    Function(String) onError, // função de erro
+    Function(bool) isExpired, // função que indica se a requisição expirou
+  ) async {
+    msgFeedback('$textFeedback...');
     List<ModelQuestions> questions = [];
     try {
       questions =
-          await questionsCorrectsAndIncorrects.getQuestions(listIds, (error) {
-        //showSnackBarFeedback(context, error, Colors.red);
-      }).timeout(
-        const Duration(seconds: 20),
-        onTimeout: () {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(
-                'Tempo de conexão excedido, tente novamente mais tarde',
-                style: AppTheme.customTextStyle2(color: Colors.white),
-              ),
-              backgroundColor: Colors.red,
-            ),
-          );
-          isExpired(true);
-          return onError(
-            'Tempo de espera excedido, tente novamente mais tarde',
-          );
-        },
-      );
+          await questionsCorrectsAndIncorrects.getQuestionsAnswereds(listIds, (error) {
+        timeOut(scaffoldMessenger, error);
+      }, (timeExpired) {
+        isExpired(timeExpired);
+      });
       questionsResult(questions);
     } catch (e) {
       onError('Algo deu errado em buscar questões corretas: $e ');
     }
   }
 
-  Stream processDatas(BuildContext context, String msgFeedbasck, bool mounted,
-      Function(String) msgFeedback) async* {
+  Stream processDatas(BuildContext context, String textFeedback, bool mounted,
+      Function(String) msgFeedback, StreamController streamController) async* {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    //final navigator = Navigator.of(context);
+    Provider.of<GlobalProviders>(context, listen: false).timeOut(false);
+
     yield await fetchAnsweredsIds(
       scaffoldMessenger,
       (msgFeedbasck) {
@@ -256,81 +245,125 @@ class ControllerLoadingNextPage {
         idsAnswereds = answeredsIds;
       },
       (onError) {
-        msgLoading.value = onError;
+        msgFeedback(onError);
       },
       (isExpired) {
         if (mounted) {
           Navigator.pop(context);
         }
+        shouldCancel = true; // Define que o fluxo deve ser cancelado
+        //streamController.close();
       },
     );
+    if (shouldCancel) {
+      print(
+          'cancelou o fluxo 0'); // Fecha o StreamController se o fluxo foi cancelado
+      streamController.close();
+      return;
+    }
+
     yield await fetchIds(
-      'corretas',
+      '$textFeedback ids corretas',
       StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
       scaffoldMessenger,
-      (msgFeedbasck) {
-        msgFeedback(msgFeedbasck);
+      (feedback) {
+        msgFeedback(feedback);
       },
       (listIds) {
         idsCorrects = listIds;
       },
       (onError) {
-        msgLoading.value = onError;
+        msgFeedback(onError);
       },
       (isExpired) {
         if (mounted) {
           Navigator.pop(context);
         }
+        shouldCancel = true; // Define que o fluxo deve ser cancelado
       },
     );
+    if (shouldCancel) {
+      print(
+          'cancelou o fluxo'); // Fecha o StreamController se o fluxo foi cancelado
+      streamController.close();
+      return;
+    }
+
     yield await fetchIds(
-      'incorretas',
+      '$textFeedback ids incorretas',
       StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
       scaffoldMessenger,
-      (msgFeedbasck) {
-        msgFeedback(msgFeedbasck);
+      (feedback) {
+        msgFeedback(feedback);
       },
       (listIds) {
         idsIncorrects = listIds;
       },
       (onError) {
-        msgLoading.value = onError;
+        msgFeedback(onError);
       },
       (isExpired) {
         if (mounted) {
           Navigator.pop(context);
         }
+        shouldCancel = true; // Define que o fluxo deve ser cancelado
       },
     );
+    if (shouldCancel) {
+      print(
+          'cancelou o fluxo'); // Fecha o StreamController se o fluxo foi cancelado
+      streamController.close();
+      return;
+    }
+
     yield await fetchQuestions(
+      '$textFeedback questões corretas', // envia mensagem para ser mostrara no loading
       scaffoldMessenger,
-      (msgFeedbasck) {
-        msgFeedback(msgFeedbasck);
+      (feedback) {
+        msgFeedback(feedback); // recebe a mensagem de feedback no loading e envia a ao fluxo para ser mostrada no loading.
       },
       idsCorrects,
       (questions) {
-        corrects = questions;
+        corrects = questions; // atribui as questões corretas à variável corrects
       },
       (onError) {
-        msgLoading.value = onError;
+        msgFeedback(onError);
       },
       (isExpired) {
-        if (mounted) {
-          Navigator.pop(context);
-        }
+        // Se a requisição expirar, mostra uma mensagem no loading Tempo Excedido.
+        Provider.of<GlobalProviders>(context, listen: false).timeOut(true);
+        // espera 2 segundos para ir para a tela ScreenInitial
+        Future.delayed(
+          const Duration(seconds: 2),
+          () {
+            if (context.mounted) {
+              Routes().popRoutes(
+                context,
+                const ScreenInitial(),
+              );
+            }
+          },
+        );
+        shouldCancel = true; // Define que o fluxo deve ser cancelado
       },
     );
+    if (shouldCancel) {
+      streamController.close(); // Fecha o StreamController 
+      return;
+    }
+    print('fluxo 4');
     yield await fetchQuestions(
+      '$textFeedback questões incorretas',
       scaffoldMessenger,
-      (msgFeedbasck) {
-        msgFeedback(msgFeedbasck);
+      (feedback) {
+        msgFeedback(feedback);
       },
       idsIncorrects,
       (questions) {
         incorrects = questions;
       },
       (onError) {
-        msgLoading.value = onError;
+        msgFeedback(onError);
       },
       (isExpired) {
         if (mounted) {
@@ -338,28 +371,47 @@ class ControllerLoadingNextPage {
         }
       },
     );
+    print('concluiu os fluxos');
+    streamController.close(); // Fecha o StreamController após o processamento
   }
 
-//  StreamController streamProccess(bool mounted, String msgFeedbasck, BuildContext context) {
-//   late final StreamController streamController;
-//   return streamController = StreamController(
-//       onListen: () {
-//         if (mounted) {
-//           streamController.addStream(
-//             processDatas(
-//               context,
-//               msgFeedbasck,
-//               mounted,
-//               (msgFeedback) {
-//                 msgLoading.value = msgFeedback;
-//               },
-//             ),
-//           );
-//         }
-//       },
-//       onCancel: () {
-//         streamController.close();
-//       },
-//     );
- //}
+  StreamController streamProccess(bool mounted, String textFeedback,
+      BuildContext context, Function(String) msgFeedback) {
+    final StreamController streamController = StreamController();
+
+    streamController.onListen = () {
+      processDatas(
+        context,
+        textFeedback,
+        mounted,
+        (msg) {
+          msgFeedback(msg);
+        },
+        streamController,
+      ).listen(
+        (event) {
+          streamController.add(event);
+        },
+        onError: (error) {
+          print('Erro no fluxo: $error');
+          streamController.addError(error);
+          streamController.close(); // Fecha o fluxo em caso de erro
+        },
+        onDone: () {
+          print(shouldCancel);
+          print('Fluxo concluído');
+          if (context.mounted && !shouldCancel) {
+            toHomeScreen(context);
+          }
+          streamController.close();
+        },
+        cancelOnError: true,
+      );
+    };
+    streamController.onCancel = () {
+      streamController.close();
+    };
+
+    return streamController;
+  }
 }
