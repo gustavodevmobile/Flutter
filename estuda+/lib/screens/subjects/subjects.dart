@@ -1,12 +1,9 @@
 import 'package:estudamais/controller/routes.dart';
-import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/screens/home/home.dart';
-import 'package:estudamais/screens/screen_questions/screen_questions.dart';
 import 'package:estudamais/widgets/animated_button_retangulare.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/list_selected_scrollable.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/service/service.dart';
@@ -15,13 +12,12 @@ import 'package:provider/provider.dart';
 
 class Subjects extends StatefulWidget {
   final List<String> disciplines;
-  final List<ModelQuestions> questionsBySchoolYear;
+
   final List<String> schoolYear;
   final List<Map<String, dynamic>> schoolYearAndSubject;
 
   const Subjects(
       {required this.disciplines,
-      required this.questionsBySchoolYear,
       required this.schoolYear,
       required this.schoolYearAndSubject,
       super.key});
@@ -174,28 +170,28 @@ class _SubjectsState extends State<Subjects> {
               FloatingActionButtonLocation.miniCenterFloat,
           floatingActionButton: GestureDetector(
               onTap: () {
-                if (listMapSubjectsAndSchoolYear.isEmpty) {
-                  showSnackBarFeedback(
-                    context,
-                    'Selecione o(s) assunto(s) para concluir.',
-                    Colors.blue,
-                  );
-                } else {
-                  List<ModelQuestions> questions = service
-                      .getQuestionsAllBySubjectsAndSchoolYear(
-                          listMapSubjectsAndSchoolYear,
-                          widget.questionsBySchoolYear, (error) {
-                    showSnackBarFeedback(context, error, Colors.red);
-                  });
-                  Routes().pushRoute(
-                      context,
-                      PageQuestionsBySchoolYear(
-                        questions: questions,
-                      ));
+                // if (listMapSubjectsAndSchoolYear.isEmpty) {
+                //   showSnackBarFeedback(
+                //     context,
+                //     'Selecione o(s) assunto(s) para concluir.',
+                //     Colors.blue,
+                //   );
+                // } else {
+                //   List<ModelQuestions> questions = service
+                //       .getQuestionsAllBySubjectsAndSchoolYear(
+                //           listMapSubjectsAndSchoolYear,
+                //           widget.questionsBySchoolYear, (error) {
+                //     showSnackBarFeedback(context, error, Colors.red);
+                //   });
+                //   Routes().pushRoute(
+                //       context,
+                //       PageQuestionsBySchoolYear(
+                //         questions: questions,
+                //       ));
 
-                  // Método que atualiza o estado no box onde mostra "questão ja respondida", passando false para fecha-lo;
-                  value.openBoxAlreadyAnswereds(false);
-                }
+                //   // Método que atualiza o estado no box onde mostra "questão ja respondida", passando false para fecha-lo;
+                //   value.openBoxAlreadyAnswereds(false);
+                // }
               },
               child: const ButtonNext(
                 textContent: 'Responder',

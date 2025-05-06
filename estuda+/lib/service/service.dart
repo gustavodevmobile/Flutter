@@ -10,7 +10,6 @@ import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 //import 'package:dio/dio.dart';
-import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:flutter/foundation.dart';
@@ -52,77 +51,166 @@ class Service {
     } catch (err) {
       onError('Erro ao buscar disciplinas: $err');
     }
+    print('Disciplinas recebidas com sucesso: $listDisciplines');
     return listDisciplines..sort();
   }
 
-  static List<ModelQuestions> processQuestions(List<dynamic> data) {
-    List<ModelQuestions> processedQuestions = [];
-    for (var question in data) {
-      Uint8List bytesImage =
-          Uint8List.fromList(question['image']['data'].cast<int>());
-      question['image'] = bytesImage;
-      processedQuestions.add(ModelQuestions.toMap(question));
+  // static List<ModelQuestions> processQuestions(List<dynamic> data) {
+  //   List<ModelQuestions> processedQuestions = [];
+  //   for (var question in data) {
+  //     Uint8List bytesImage =
+  //         Uint8List.fromList(question['image']['data'].cast<int>());
+  //     question['image'] = bytesImage;
+  //     processedQuestions.add(ModelQuestions.toMap(question));
+  //   }
+  //   return processedQuestions;
+  // }
+
+  Future<List<String>> fetchSchoolYearByDisciplines(
+      List<String> disciplines, Function(String) onError) async {
+    List<String> schoolYear = [];
+    // final body = jsonEncode({
+    //   'disciplines': disciplines.map((d) => Uri.encodeComponent(d)).toList(),
+    // });
+    try {
+      http.Response response = await http
+          .post(
+        Uri.parse('$_questoesAll/disciplines/schoolyear'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'disciplines': disciplines,
+        }),
+      )
+          .timeout(const Duration(seconds: 20), onTimeout: () {
+        // Retorna uma resposta de timeout com status 408
+        return http.Response("Timeout", 408);
+      });
+
+      if (response.statusCode == 200) {
+        var list = await json.decode(response.body);
+
+        for (var year in list) {
+          schoolYear.add(year);
+        }
+      } else if (response.statusCode == 408) {
+        onError('Tempo de espera excedido.\nTente novamente mais tarde.');
+      } else {
+        onError('Erro ao buscar disciplinas: ${response.statusCode}');
+      }
+    } catch (e) {
+      onError('Erro ao buscar disciplinas: $e');
     }
-    return processedQuestions;
+    return schoolYear..sort();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchSubjectsByDisciplineAndSchoolYear(
+      List<String> disciplines,
+      List<String> schoolYear,
+      Function(String) onError) async {
+    List<Map<String, dynamic>> listSubjects = [];
+
+    final body = jsonEncode({
+      'disciplines': disciplines,
+      'schoolYear': schoolYear,
+    });
+    try {
+      http.Response response = await http
+          .post(Uri.parse('$_questoesAll/disciplines/schoolyears/subjects'),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: body
+              // jsonEncode({
+              //   'disciplines': disciplines,
+              //   'schoolYear': schoolYear,
+              // }),
+              )
+          .timeout(const Duration(seconds: 20), onTimeout: () {
+        // Retorna uma resposta de timeout com status 408
+        return http.Response("Timeout", 408);
+      });
+      print('Requisição: $body');
+      print('Resposta: ${response.body}');
+      if (response.statusCode == 200) {
+        var list = await json.decode(response.body);
+        for (var el in list) {
+          listSubjects.add(el);
+        }
+      } else if (response.statusCode == 408) {
+        onError('Tempo de espera excedido.\nTente novamente mais tarde.');
+      } else {
+        onError(
+            'Erro ao buscar assuntos por disciplina e ano escolar: ${response.statusCode}');
+      }
+    } catch (e) {
+      onError('Erro ao buscar assuntos por disciplina e ano escolar: $e');
+    }
+    for (var el in listSubjects) {
+      print('${el['discipline']}, ${el['schoolYear']}, ${el['subject']}');
+    }
+   
+    return listSubjects;
   }
 
   // Busca as questões por disciplinas
-  Future<List<ModelQuestions>> getQuestionsByDiscipline(
-      // recebe uma lista das disciplinas selecionadas
-      List<String> disciplines,
-      BuildContext context,
-      Function(String) onError,
-      Function(bool) isTimeout) async {
-    //List<ModelQuestions> resultIlates = [];
-    List<ModelQuestions> questionsByDiscipline = [];
-    // converte essa lista em json para ser enviado como parametro para rota
-    var listDisciplinesJson = jsonEncode(disciplines);
-    http.Response response = await http
-        .get(
-      Uri.parse('$_questoesAll/questoes/$listDisciplinesJson'),
-    )
-        .timeout(const Duration(seconds: 100), onTimeout: () {
-      isTimeout(true);
-      return http.Response("Timeout", 408);
-    });
-    try {
-      if (response.statusCode == 200) {
-        var list = await json.decode(response.body);
-        //print('Todas as questões recebidas com sucesso');
+  // Future<List<ModelQuestions>> getQuestionsByDiscipline(
+  //     // recebe uma lista das disciplinas selecionadas
+  //     List<String> disciplines,
+  //     BuildContext context,
+  //     Function(String) onError,
+  //     Function(bool) isTimeout) async {
+  //   //List<ModelQuestions> resultIlates = [];
+  //   List<ModelQuestions> questionsByDiscipline = [];
+  //   // converte essa lista em json para ser enviado como parametro para rota
+  //   var listDisciplinesJson = jsonEncode(disciplines);
+  //   http.Response response = await http
+  //       .get(
+  //     Uri.parse('$_questoesAll/questoes/$listDisciplinesJson'),
+  //   )
+  //       .timeout(const Duration(seconds: 100), onTimeout: () {
+  //     isTimeout(true);
+  //     return http.Response("Timeout", 408);
+  //   });
+  //   try {
+  //     if (response.statusCode == 200) {
+  //       var list = await json.decode(response.body);
+  //       //print('Todas as questões recebidas com sucesso');
 
-        // processa as questões recebidas do servidor em um isolate
-        questionsByDiscipline =
-            await compute<List<dynamic>, List<ModelQuestions>>(
-                Service.processQuestions, list);
-        // faz a busca dos ids das questões já respodidas.
-        List<String> listIdsAnswereds = await sharedPreferences.recoverIds(
-            StorageSharedPreferences.keyIdsAnswereds,
-            (error) => showSnackBarFeedback(context, error, Colors.red));
+  //       // processa as questões recebidas do servidor em um isolate
+  //       // questionsByDiscipline =
+  //       //     await compute<List<dynamic>, List<ModelQuestions>>(
+  //       //         Service.processQuestions, list);
+  //       // faz a busca dos ids das questões já respodidas.
+  //       List<String> listIdsAnswereds = await sharedPreferences.recoverIds(
+  //           StorageSharedPreferences.keyIdsAnswereds,
+  //           (error) => showSnackBarFeedback(context, error, Colors.red));
 
-        // converte a imagem de bytes para um Uint8List
-        // for (var question in list) {
-        //   Uint8List bytesImage =
-        //       Uint8List.fromList(question['image']['data'].cast<int>());
-        //   question['image'] = bytesImage;
-        //   questionsByDiscipline.add(ModelQuestions.toMap(question));
-        // }
+  //       //converte a imagem de bytes para um Uint8List
+  //       for (var question in list) {
+  //         Uint8List bytesImage =
+  //             Uint8List.fromList(question['image']['data'].cast<int>());
+  //         question['image'] = bytesImage;
+  //         questionsByDiscipline.add(ModelQuestions.toMap(question));
+  //       }
 
-        // retira as questões que ja foram respodidas pelos ids das questões respondidas.
-        for (var id in listIdsAnswereds) {
-          questionsByDiscipline.removeWhere((el) => el.id == id);
-        }
-      } else if (response.statusCode == 408) {
-        onError(
-            'Tempo limite de resposta excedido.\nTente novamente mais tarde.');
-      } else {
-        onError('Erro ao buscar questões: ${response.statusCode}');
-      }
-    } catch (err) {
-      print('Erro ao buscar questões por disciplina: $err');
-    }
+  //       // retira as questões que ja foram respodidas pelos ids das questões respondidas.
+  //       for (var id in listIdsAnswereds) {
+  //         questionsByDiscipline.removeWhere((el) => el.id == id);
+  //       }
+  //     } else if (response.statusCode == 408) {
+  //       onError(
+  //           'Tempo limite de resposta excedido.\nTente novamente mais tarde.');
+  //     } else {
+  //       onError('Erro ao buscar questões: ${response.statusCode}');
+  //     }
+  //   } catch (err) {
+  //     print('Erro ao buscar questões por disciplina: $err');
+  //   }
 
-    return questionsByDiscipline;
-  }
+  //   return questionsByDiscipline;
+  // }
 
   // Filtra as questões por ano escolar das disciplinas selecionadas.
   List<ModelQuestions> getQuestionsBySchoolYear(List<String> schoolYear,

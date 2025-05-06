@@ -6,7 +6,6 @@ import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/theme/app_theme.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/widgets/loading.dart';
 import 'package:provider/provider.dart';

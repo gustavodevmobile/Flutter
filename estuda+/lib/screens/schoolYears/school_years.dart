@@ -15,23 +15,16 @@ import 'package:provider/provider.dart';
 //import 'package:progress_button/progress_button.dart';
 
 class SchoolYears extends StatefulWidget {
-  final List<ModelQuestions> questionsByDisciplines;
   final List<String> disciplines;
   final List<String> schoolYears;
   const SchoolYears(
-      {required this.questionsByDisciplines,
-      required this.disciplines,
-      required this.schoolYears,
-      super.key});
+      {required this.disciplines, required this.schoolYears, super.key});
 
   @override
   State<SchoolYears> createState() => _SchoolYearsState();
 }
 
 class _SchoolYearsState extends State<SchoolYears> {
-  Color? colorFindError;
-  String? textFindError;
-  Service service = Service();
   List<String> schoolYears = [];
 
   @override
@@ -127,10 +120,10 @@ class _SchoolYearsState extends State<SchoolYears> {
                           () {
                             if (value.actionBtnCircle) {
                               schoolYears.add(widget.schoolYears[index]);
-                              print(schoolYears);
+                              //print(schoolYears);
                             } else {
                               schoolYears.remove(widget.schoolYears[index]);
-                              print(schoolYears);
+                              //print(schoolYears);
                             }
                           },
                         );
@@ -154,24 +147,27 @@ class _SchoolYearsState extends State<SchoolYears> {
                 );
               } else {
                 schoolYears.sort();
-                List<ModelQuestions> questionsBySchoolYear =
-                    service.getQuestionsBySchoolYear(
-                        schoolYears, widget.questionsByDisciplines, (error){
-                          showSnackBarFeedback(context, error, Colors.red);
-                        });
-                List<Map<String, dynamic>> schoolYearAndSubject =
-                    service.getSubjectsBySchoolYears(
-                        schoolYears, widget.questionsByDisciplines, (error){
-                          showSnackBarFeedback(context, error, Colors.red);
-                        });
-                Routes().pushRoute(
-                    context,
-                    Subjects(
-                      disciplines: widget.disciplines,
-                      questionsBySchoolYear: questionsBySchoolYear,
-                      schoolYear: schoolYears,
-                      schoolYearAndSubject: schoolYearAndSubject,
-                    ));
+                print(schoolYears);
+                Service().fetchSubjectsByDisciplineAndSchoolYear(
+                    widget.disciplines, schoolYears, (onError) {});
+                // List<ModelQuestions> questionsBySchoolYear =
+                //     service.getQuestionsBySchoolYear(
+                //         schoolYears, widget.questionsByDisciplines, (error){
+                //           showSnackBarFeedback(context, error, Colors.red);
+                //         });
+                // List<Map<String, dynamic>> schoolYearAndSubject =
+                //     service.getSubjectsBySchoolYears(
+                //         schoolYears, widget.questionsByDisciplines, (error){
+                //           showSnackBarFeedback(context, error, Colors.red);
+                //         });
+                // Routes().pushRoute(
+                //     context,
+                //     Subjects(
+                //       disciplines: widget.disciplines,
+                //       questionsBySchoolYear: questionsBySchoolYear,
+                //       schoolYear: schoolYears,
+                //       schoolYearAndSubject: schoolYearAndSubject,
+                //     ));
               }
             },
             child: const ButtonNext(textContent: 'Próximo')),

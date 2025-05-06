@@ -5,6 +5,7 @@ import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:provider/provider.dart';
@@ -89,9 +90,13 @@ class _DisciplineState extends State<Discipline> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
           onTap: () async {
-            if (!mounted) return;
-            controllerDisciplines.handlerFetchQuestionsByDiscipline(
-                context, disciplinesSelecteds);
+            if (disciplinesSelecteds.isEmpty) {
+              showSnackBarFeedback(context,
+                  'Selecione uma disciplina para continuar.', Colors.blue);
+            } else {
+              controllerDisciplines.handlerFetchQuestionsByDiscipline(
+                  context, disciplinesSelecteds);
+            }
           },
           child: const ButtonNext(
             textContent: 'Buscar Questões',
