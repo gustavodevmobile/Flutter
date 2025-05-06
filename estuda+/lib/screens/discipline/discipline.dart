@@ -2,9 +2,11 @@ import 'package:estudamais/controller/controller_disciplines.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/discipline/widget/discipline_list.dart';
 import 'package:estudamais/screens/home/home.dart';
+import 'package:estudamais/screens/schoolYears/school_years.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
+import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -94,8 +96,30 @@ class _DisciplineState extends State<Discipline> {
               showSnackBarFeedback(context,
                   'Selecione uma disciplina para continuar.', Colors.blue);
             } else {
-              controllerDisciplines.handlerFetchQuestionsByDiscipline(
-                  context, disciplinesSelecteds);
+              showLoadingDialog(context, 'Buscando questões...');
+              controllerDisciplines.handlerFetchSchoolYear(
+                  context, disciplinesSelecteds, (schoolYearResult) {
+                if (schoolYearResult.isEmpty) {
+                  showSnackBarFeedback(
+                      context,
+                      'Todas as questões desta disciplina já foram respondidas',
+                      Colors.blue);
+                } else {
+                  schoolYearResult.sort();
+                  // Chama Dialog de loading
+                  closeLoadingOpen(context);
+                  Routes().pushRoute(
+                    context,
+                    SchoolYears(
+                      disciplines: disciplinesSelecteds,
+                      schoolYears: schoolYearResult,
+                    ),
+                  );
+                }
+              }, (error) {
+                closeLoadingOpen(context);
+                showSnackBarFeedback(context, error, Colors.red);
+              });
             }
           },
           child: const ButtonNext(

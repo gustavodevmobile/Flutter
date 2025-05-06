@@ -195,6 +195,7 @@ class ControllerLoadingNextPage {
           );
         },
       );
+      print('listJson $listJson');
       for (var json in listJson) {
         Map<String, dynamic> map = jsonDecode(json);
         ids.add(map['id']);
@@ -219,8 +220,8 @@ class ControllerLoadingNextPage {
     msgFeedback('$textFeedback...');
     List<ModelQuestions> questions = [];
     try {
-      questions =
-          await questionsCorrectsAndIncorrects.getQuestionsAnswereds(listIds, (error) {
+      questions = await questionsCorrectsAndIncorrects
+          .getQuestionsAnswereds(listIds, (error) {
         timeOut(scaffoldMessenger, error);
       }, (timeExpired) {
         isExpired(timeExpired);
@@ -320,11 +321,13 @@ class ControllerLoadingNextPage {
       '$textFeedback questões corretas', // envia mensagem para ser mostrara no loading
       scaffoldMessenger,
       (feedback) {
-        msgFeedback(feedback); // recebe a mensagem de feedback no loading e envia a ao fluxo para ser mostrada no loading.
+        msgFeedback(
+            feedback); // recebe a mensagem de feedback no loading e envia a ao fluxo para ser mostrada no loading.
       },
       idsCorrects,
       (questions) {
-        corrects = questions; // atribui as questões corretas à variável corrects
+        corrects =
+            questions; // atribui as questões corretas à variável corrects
       },
       (onError) {
         msgFeedback(onError);
@@ -348,7 +351,7 @@ class ControllerLoadingNextPage {
       },
     );
     if (shouldCancel) {
-      streamController.close(); // Fecha o StreamController 
+      streamController.close(); // Fecha o StreamController
       return;
     }
     print('fluxo 4');

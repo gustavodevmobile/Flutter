@@ -72,7 +72,7 @@ class _AnimatedButtonRetangulareState extends State<AnimatedButtonRectangular>
                         // posição do botão abaixa em 2
                         buttonDown = 2;
                         // cor da sombra muda pra branco
-                        shadowColor = Colors.amber;
+                        shadowColor = Colors.white;
 
                         // chama a função que faz a consulta por disciplica passando value.
                         widget.onTap();

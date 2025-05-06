@@ -1,9 +1,13 @@
+import 'package:estudamais/controller/controller_subjects.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/screens/home/home.dart';
+import 'package:estudamais/screens/screen_questions/screen_questions.dart';
 import 'package:estudamais/widgets/animated_button_retangulare.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/list_selected_scrollable.dart';
+import 'package:estudamais/widgets/show_loading_dialog.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/service/service.dart';
@@ -12,7 +16,6 @@ import 'package:provider/provider.dart';
 
 class Subjects extends StatefulWidget {
   final List<String> disciplines;
-
   final List<String> schoolYear;
   final List<Map<String, dynamic>> schoolYearAndSubject;
 
@@ -30,6 +33,13 @@ class _SubjectsState extends State<Subjects> {
   final ScrollController scrollControllerSubjects = ScrollController();
   List<Map<String, dynamic>> listMapSubjectsAndSchoolYear = [];
   Map<String, dynamic> mapSubjectsAndSchoolYear = {};
+  ControllerSubjects controllerSubjects = ControllerSubjects();
+
+  @override
+  void dispose() {
+    scrollControllerSubjects.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,19 +131,18 @@ class _SubjectsState extends State<Subjects> {
                           itemBuilder: (context, int index) {
                             return AnimatedButtonRectangular(
                               title: widget.schoolYearAndSubject[index]
-                                  ['subjects'],
+                                  ['subject'],
                               onTap: () {
                                 if (value.actionBtnRetangulare) {
                                   mapSubjectsAndSchoolYear = {
                                     'disciplines':
                                         widget.schoolYearAndSubject[index]
-                                            ['disciplines'],
+                                            ['discipline'],
                                     'schoolYear':
                                         widget.schoolYearAndSubject[index]
                                             ['schoolYear'],
-                                    'subjects':
-                                        widget.schoolYearAndSubject[index]
-                                            ['subjects'],
+                                    'subjects': widget
+                                        .schoolYearAndSubject[index]['subject'],
                                   };
                                   listMapSubjectsAndSchoolYear
                                       .add(mapSubjectsAndSchoolYear);
@@ -153,7 +162,7 @@ class _SubjectsState extends State<Subjects> {
                                 }
                               },
                               leading: widget.schoolYearAndSubject[index]
-                                  ['disciplines'],
+                                  ['discipline'],
                               tralling: widget.schoolYearAndSubject[index]
                                   ['schoolYear'],
                             );
@@ -169,33 +178,37 @@ class _SubjectsState extends State<Subjects> {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.miniCenterFloat,
           floatingActionButton: GestureDetector(
-              onTap: () {
-                // if (listMapSubjectsAndSchoolYear.isEmpty) {
-                //   showSnackBarFeedback(
-                //     context,
-                //     'Selecione o(s) assunto(s) para concluir.',
-                //     Colors.blue,
-                //   );
-                // } else {
-                //   List<ModelQuestions> questions = service
-                //       .getQuestionsAllBySubjectsAndSchoolYear(
-                //           listMapSubjectsAndSchoolYear,
-                //           widget.questionsBySchoolYear, (error) {
-                //     showSnackBarFeedback(context, error, Colors.red);
-                //   });
-                //   Routes().pushRoute(
-                //       context,
-                //       PageQuestionsBySchoolYear(
-                //         questions: questions,
-                //       ));
-
-                //   // Método que atualiza o estado no box onde mostra "questão ja respondida", passando false para fecha-lo;
-                //   value.openBoxAlreadyAnswereds(false);
-                // }
-              },
-              child: const ButtonNext(
-                textContent: 'Responder',
-              )),
+            onTap: () {
+              if (listMapSubjectsAndSchoolYear.isEmpty) {
+                showSnackBarFeedback(context,
+                    'Selecione o(s) assunto(s) desejado(s).', Colors.blue);
+              } else {
+                showLoadingDialog(context, 'Buscando questões...');
+                // Chama o método handlerFetchQuestions do controller
+                controllerSubjects.handlerFetchQuestions(
+                  listMapSubjectsAndSchoolYear,
+                  (questionsResult) {
+                    if (questionsResult.isNotEmpty) {
+                      // Fecha o loading dialog
+                      closeLoadingOpen(context);
+                      Routes().pushRoute(
+                          context,
+                          PageQuestionsBySchoolYear(
+                              questions: questionsResult));
+                    }
+                  },
+                  (error) {
+                    // Fecha o loading dialog
+                    closeLoadingOpen(context);
+                    showSnackBarFeedback(context, error, Colors.red);
+                  },
+                );
+              }
+            },
+            child: const ButtonNext(
+              textContent: 'Responder',
+            ),
+          ),
         );
       },
     );

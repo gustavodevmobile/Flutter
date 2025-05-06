@@ -1,3 +1,4 @@
+import 'package:estudamais/controller/controller_schoolyear.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/screens/home/home.dart';
@@ -7,6 +8,7 @@ import 'package:estudamais/service/service.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/list_selected_scrollable.dart';
+import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,7 +27,8 @@ class SchoolYears extends StatefulWidget {
 }
 
 class _SchoolYearsState extends State<SchoolYears> {
-  List<String> schoolYears = [];
+  List<String> selectedSchoolYears = [];
+  final ControllerSchoolyear controllerSchoolyear = ControllerSchoolyear();
 
   @override
   Widget build(BuildContext context) {
@@ -119,10 +122,12 @@ class _SchoolYearsState extends State<SchoolYears> {
                           21,
                           () {
                             if (value.actionBtnCircle) {
-                              schoolYears.add(widget.schoolYears[index]);
+                              selectedSchoolYears
+                                  .add(widget.schoolYears[index]);
                               //print(schoolYears);
                             } else {
-                              schoolYears.remove(widget.schoolYears[index]);
+                              selectedSchoolYears
+                                  .remove(widget.schoolYears[index]);
                               //print(schoolYears);
                             }
                           },
@@ -139,35 +144,46 @@ class _SchoolYearsState extends State<SchoolYears> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: GestureDetector(
             onTap: () {
-              if (schoolYears.isEmpty) {
+              if (selectedSchoolYears.isEmpty) {
                 showSnackBarFeedback(
                   context,
                   'Selecione o ano escolar para continuar.',
                   Colors.blue,
                 );
               } else {
-                schoolYears.sort();
-                print(schoolYears);
-                Service().fetchSubjectsByDisciplineAndSchoolYear(
-                    widget.disciplines, schoolYears, (onError) {});
-                // List<ModelQuestions> questionsBySchoolYear =
-                //     service.getQuestionsBySchoolYear(
-                //         schoolYears, widget.questionsByDisciplines, (error){
-                //           showSnackBarFeedback(context, error, Colors.red);
-                //         });
-                // List<Map<String, dynamic>> schoolYearAndSubject =
-                //     service.getSubjectsBySchoolYears(
-                //         schoolYears, widget.questionsByDisciplines, (error){
-                //           showSnackBarFeedback(context, error, Colors.red);
-                //         });
-                // Routes().pushRoute(
-                //     context,
-                //     Subjects(
-                //       disciplines: widget.disciplines,
-                //       questionsBySchoolYear: questionsBySchoolYear,
-                //       schoolYear: schoolYears,
-                //       schoolYearAndSubject: schoolYearAndSubject,
-                //     ));
+                selectedSchoolYears.sort();
+                // Chama Dialog de loading
+                showLoadingDialog(context, 'Buscando questões...');
+                controllerSchoolyear.handlerFetchSubjects(
+                  widget.disciplines,
+                  selectedSchoolYears,
+                  (response) {
+                    if (response.isNotEmpty) {
+                      // Fecha o loading dialog se tiver aerto
+                      closeLoadingOpen(context);
+                      Routes().pushRoute(
+                        context,
+                        Subjects(
+                          disciplines: widget.disciplines,
+                          schoolYear: selectedSchoolYears,
+                          schoolYearAndSubject: response,
+                        ),
+                      );
+                    } else {
+                      showSnackBarFeedback(
+                        context,
+                        'Nenhum assunto encontrado',
+                        Colors.red,
+                      );
+
+                      //closeLoadingOpen(context);
+                    }
+                  },
+                  (error) {
+                    showSnackBarFeedback(context, error, Colors.red);
+                    closeLoadingOpen(context); // Fecha o loading dialog
+                  },
+                );
               }
             },
             child: const ButtonNext(textContent: 'Próximo')),

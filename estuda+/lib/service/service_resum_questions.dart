@@ -36,7 +36,7 @@ class ServiceResumQuestions {
         onError('Erro ao buscar questões respondidas: ${response.statusCode}');
       }
     } catch (e) {
-      onError('Erro ao buscar resumo de questões: $e');
+      onError('Erro ao buscar resumo de questões: getQuestionsAnswereds $e');
       print(e);
     }
     return resultQuestions;
@@ -59,24 +59,26 @@ class ServiceResumQuestions {
   }
 
   // faz a consulta das questões corretas pelo mapYearAndSubjectSelected
-  List<ModelQuestions> getResultQuestions(
-      List<ModelQuestions> resultQuestions,
-      List<dynamic> mapYearAndSubjectSelected,
-      Function(String) onError) {
-    List<ModelQuestions> resultQuestions = [];
+  List<ModelQuestions> getResultQuestions(List<ModelQuestions> resultQuestions,
+      List<dynamic> mapYearAndSubjectSelected, Function(String) onError) {
+    List<ModelQuestions> result = [];
+    
     try {
       for (var question in resultQuestions) {
         for (var res in mapYearAndSubjectSelected) {
           if (question.subject == res['subjects'] &&
               question.schoolYear == res['schoolYear']) {
-            resultQuestions.add(question);
+            result.add(question);
           }
         }
       }
     } catch (e) {
       onError('Erro ao buscar questões por assunto: $e');
+      
     }
-    return resultQuestions;
+    print('Resultado: $result');
+
+    return result;
   }
 
   // Manda a disciplina e todas as questões corretas
@@ -114,6 +116,7 @@ class ServiceResumQuestions {
       }
     } catch (e) {
       onError('Erro ao buscar assuntos e ano escolar: $e');
+     
     }
     return mapListSubAndYear;
   }

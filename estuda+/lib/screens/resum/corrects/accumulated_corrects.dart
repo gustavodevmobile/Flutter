@@ -112,11 +112,14 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                           Colors.red,
                         );
                       } else {
+                        print('value.resultQuestionsCorrects ${value.resultQuestionsCorrects}');
                         resultQuestionsCorrects = questionsCorrects
                             .getResultQuestions(value.resultQuestionsCorrects,
                                 value.subjectsAndSchoolYearSelected, (error) {
                           showSnackBarFeedback(context, error, Colors.red);
                         });
+                        print(
+                            'Resultado das questões corretas: $resultQuestionsCorrects');
                         Routes().pushRoute(
                             context,
                             PageQuestionsCorrects(
