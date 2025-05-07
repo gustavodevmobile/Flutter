@@ -99,14 +99,7 @@ class ControllerLoadingNextPage {
       showSnackBarFeedback(context, error, Colors.red);
     });
 
-    return Navigator.push(
-      context,
-      PageTransition(
-        type: PageTransitionType.fade,
-        duration: const Duration(seconds: 1),
-        child: const HomeScreen(),
-      ),
-    );
+    return Routes().pushFade(context, const HomeScreen());
   }
 
   //  Este médodo mostra o snackbar de erro quando o tempo de espera é excedido
@@ -121,6 +114,75 @@ class ControllerLoadingNextPage {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  // Este método busca as questões corretas e incorretas, utilizando o método getQuestionsAnswereds da classe ServiceResumQuestions.
+  Future fetchQuestions(
+    String textFeedback, // 'corretas' ou 'incorretas'
+    ScaffoldMessengerState scaffoldMessenger, //
+    Function(String) msgFeedback, // mensagem de feedback
+    List<String>
+        listIds, // recebe lista de ids das questões corretas ou incorretas
+    Function(List<ModelQuestions>)
+        questionsResult, // função que recebe as questões corretas ou incorretas
+    Function(String) onError, // função de erro
+    Function(bool) isExpired, // função que indica se a requisição expirou
+  ) async {
+    Map<String, dynamic> result = {};
+    msgFeedback('$textFeedback...');
+
+    try {
+      result = await questionsCorrectsAndIncorrects
+          .getQuestionsAnswereds(listIds, (error) {
+        timeOut(scaffoldMessenger, error);
+      }, (timeExpired) {
+        isExpired(timeExpired);
+      });
+
+      List<String> keysIds = [
+       // StorageSharedPreferences.keyIdsAnswereds,
+        StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
+        StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum
+      ];
+
+      // if (result['missingIds'].isNotEmpty) {
+      //   for (var key in keysIds) {
+      //     await sharedPreferences.removeId(
+      //       key,
+      //       idsToMap: result['missingIds'],
+      //       (erro) {
+      //         onError(erro);
+      //         print('Erro ao remover ids: $erro');
+      //       },
+      //     );
+      //   }
+      // }
+
+      await sharedPreferences.removeById(
+          key:  StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
+          data: result['missingIds'],
+        );
+      // for (var key in keysIds) {
+      //   await sharedPreferences.removeById(
+      //     key: key,
+      //     data: result['missingIds'],
+      //   );
+      // }
+      //  await sharedPreferences.removeId(
+      //     StorageSharedPreferences.keyIdsAnswereds,
+      //     idsToRemove: result['missingIds'],
+      //     (erro) {
+      //       onError(erro);
+      //       print(
+      //           'Erro ao remover ids: $erro'); //showSnackBarFeedback(context, erro, Colors.red);
+      //     },
+      //   );
+      //}
+
+      questionsResult(result['questions']);
+    } catch (e) {
+      onError('Algo deu errado em buscar questões corretas: $e ');
+    }
   }
 
   Future fetchAnsweredsIds(
@@ -204,31 +266,6 @@ class ControllerLoadingNextPage {
       listIds(ids);
     } catch (e) {
       onError('Algo deu errado em buscar ids das questões corretas: $e ');
-    }
-  }
-
-  Future fetchQuestions(
-    String textFeedback, // 'corretas' ou 'incorretas'
-    ScaffoldMessengerState scaffoldMessenger, //
-    Function(String) msgFeedback, // mensagem de feedback
-    List<String> listIds, // lista de ids das questões corretas ou incorretas
-    Function(List<ModelQuestions>)
-        questionsResult, // função que recebe as questões corretas ou incorretas
-    Function(String) onError, // função de erro
-    Function(bool) isExpired, // função que indica se a requisição expirou
-  ) async {
-    msgFeedback('$textFeedback...');
-    List<ModelQuestions> questions = [];
-    try {
-      questions = await questionsCorrectsAndIncorrects
-          .getQuestionsAnswereds(listIds, (error) {
-        timeOut(scaffoldMessenger, error);
-      }, (timeExpired) {
-        isExpired(timeExpired);
-      });
-      questionsResult(questions);
-    } catch (e) {
-      onError('Algo deu errado em buscar questões corretas: $e ');
     }
   }
 
@@ -354,7 +391,7 @@ class ControllerLoadingNextPage {
       streamController.close(); // Fecha o StreamController
       return;
     }
-    print('fluxo 4');
+
     yield await fetchQuestions(
       '$textFeedback questões incorretas',
       scaffoldMessenger,
@@ -369,12 +406,23 @@ class ControllerLoadingNextPage {
         msgFeedback(onError);
       },
       (isExpired) {
-        if (mounted) {
-          Navigator.pop(context);
-        }
+        // Se a requisição expirar, mostra uma mensagem no loading Tempo Excedido.
+        Provider.of<GlobalProviders>(context, listen: false).timeOut(true);
+        // espera 2 segundos para ir para a tela ScreenInitial
+        Future.delayed(
+          const Duration(seconds: 2),
+          () {
+            if (context.mounted) {
+              Routes().popRoutes(
+                context,
+                const ScreenInitial(),
+              );
+            }
+          },
+        );
       },
     );
-    print('concluiu os fluxos');
+
     streamController.close(); // Fecha o StreamController após o processamento
   }
 
@@ -401,8 +449,6 @@ class ControllerLoadingNextPage {
           streamController.close(); // Fecha o fluxo em caso de erro
         },
         onDone: () {
-          print(shouldCancel);
-          print('Fluxo concluído');
           if (context.mounted && !shouldCancel) {
             toHomeScreen(context);
           }

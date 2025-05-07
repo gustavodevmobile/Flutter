@@ -200,7 +200,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           ListTileDrawer(
             contextText: 'Sair',
             onTap: () {
-              Routes().pushRoute(context, const ScreenInitial());
+              Routes().popRoutes(context, const ScreenInitial());
             },
             icon: const Icon(Icons.exit_to_app),
           ),

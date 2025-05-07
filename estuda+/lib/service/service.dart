@@ -6,8 +6,6 @@
 
 import 'dart:convert';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 //import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

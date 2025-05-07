@@ -1,10 +1,8 @@
 import 'package:estudamais/controller/controller_schoolyear.dart';
 import 'package:estudamais/controller/routes.dart';
-import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/schoolYears/widgets/animated_button_circle.dart';
 import 'package:estudamais/screens/subjects/subjects.dart';
-import 'package:estudamais/service/service.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:estudamais/widgets/list_selected_scrollable.dart';

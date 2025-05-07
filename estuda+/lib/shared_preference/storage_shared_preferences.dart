@@ -119,6 +119,7 @@ class StorageSharedPreferences {
       return [];
       //onError('Erro ao buscar ids. O resultado retornou nulo');
     }
+    //print('Ids recuperados: $result');
     return result;
   }
 
@@ -160,6 +161,79 @@ class StorageSharedPreferences {
     prefsAsync.remove(key);
     print('$key deletados com sucesso');
   }
+
+  // Future<List<String>> removeId(
+  //   String key,
+  //   Function(String) onError, {
+  //   List<String>? idsToRemove,
+  //   List<Map<String, dynamic>>? idsToMap,
+  // }) async {
+  //   List<String> idsRemoved = [];
+  //   print('Removendo IDs do SharedPreferences...{ $idsToRemove ?? $idsToMap} ');
+  //   try {
+  //     // Recupera a lista de IDs armazenada no SharedPreferences
+  //     final storedIds = await prefsAsync.getStringList(key) ?? [];
+  //     print('IDs armazenados: $storedIds');
+
+  //     // Remove os IDs que estão na lista `idsToRemove`
+  //     if (idsToRemove != null) {
+  //       storedIds.removeWhere((id) => idsToRemove.contains(id));
+  //     }
+
+  //     // Remove os IDs que estão no mapa `idsToMap`
+  //     if (idsToMap != null) {
+  //       storedIds.removeWhere((id) => idsToMap.contains(id));
+  //     }
+
+  //     idsRemoved = List<String>.from(storedIds);
+
+  //     // Atualiza o SharedPreferences com a lista filtrada
+  //     await prefsAsync.setStringList(key, storedIds);
+
+  //     print('IDs atualizados: $storedIds');
+  //   } catch (e) {
+  //     print('Erro ao remover IDs do SharedPreferences: $e');
+  //   }
+
+  //   // Retorna a lista atualizada
+  //   return idsRemoved;
+  // }
+  Future<void> removeById({
+  required String key,
+  required dynamic data, // Pode ser List<String> ou Map<String, dynamic>
+  Function(String)? onError,
+  Function(String)? onSuccess,
+}) async {
+  try {
+    // Recupera a lista armazenada no SharedPreferences
+    List<String> storedItems = await prefsAsync.getStringList(key) ?? [];
+
+    // Verifica o tipo do argumento `data`
+    if (data is List<String>) {
+      // Caso seja uma lista de strings, remove os IDs correspondentes
+      storedItems.removeWhere((id) => data.contains(id));
+    } else if (data is Map<String, dynamic>) {
+      // Caso seja um mapa, remove pelo campo 'id'
+      storedItems.removeWhere((item) {
+        final map = jsonDecode(item) as Map<String, dynamic>;
+        return map['id'] == data['id'];
+      });
+    } else {
+      throw Exception('Tipo de dado inválido. Use List<String> ou Map<String, dynamic>.');
+    }
+
+    // Atualiza o SharedPreferences com a lista filtrada
+    await prefsAsync.setStringList(key, storedItems);
+
+    // Callback de sucesso
+    onSuccess?.call('Item(s) removido(s) com sucesso!');
+    print('Item(s) removido(s) com sucesso!');
+  } catch (e) {
+    // Callback de erro
+    onError?.call('Erro ao remover item(s): $e');
+    print('Erro ao remover item(s): $e');
+  }
+}
 
   void deleteListIds(Function(String) onSuccess, Function(String) onError) {
     try {
@@ -255,8 +329,8 @@ class StorageSharedPreferences {
         .toList();
   }
 
-  void removeReportHistory(String id, Function(String)onSuccess, Function(String)onError) async {
-   
+  void removeReportHistory(
+      String id, Function(String) onSuccess, Function(String) onError) async {
     try {
       List<String> history =
           await prefsAsync.getStringList('reportHistory') ?? [];
@@ -270,7 +344,6 @@ class StorageSharedPreferences {
     } catch (e) {
       onError('Erro ao remover relatório: $e');
     }
-   
   }
 
   //Método que salva o email para envio de resumo
