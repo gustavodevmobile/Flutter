@@ -154,12 +154,14 @@ class _SubjectsState extends State<Subjects> {
                                                 ['schoolYear'] &&
                                         el['subjects'] ==
                                             widget.schoolYearAndSubject[index]
-                                                ['subjects'] &&
+                                                ['subject'] &&
                                         el['disciplines'] ==
                                             widget.schoolYearAndSubject[index]
-                                                ['disciplines'],
+                                                ['discipline'],
                                   );
                                 }
+                                print(
+                                    'listMapSubjectsAndSchoolYear $listMapSubjectsAndSchoolYear');
                               },
                               leading: widget.schoolYearAndSubject[index]
                                   ['discipline'],

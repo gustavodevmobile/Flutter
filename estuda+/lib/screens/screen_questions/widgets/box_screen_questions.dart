@@ -235,7 +235,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                   widget.textButtonExit ??
                       TextButton(
                         onPressed: () {
-                          Routes().pushFade(
+                          Routes().pushFadeRemoveAll(
                             context,
                             const LoadingNextPage(msgFeedbasck: 'Atualizando'),
                           );

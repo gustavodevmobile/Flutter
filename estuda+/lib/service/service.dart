@@ -49,7 +49,6 @@ class Service {
     } catch (err) {
       onError('Erro ao buscar disciplinas: $err');
     }
-    print('Disciplinas recebidas com sucesso: $listDisciplines');
     return listDisciplines..sort();
   }
 
@@ -66,7 +65,6 @@ class Service {
 
   Future<List<Map<String, dynamic>>> fetchSchoolYearByDisciplines(
       List<String> disciplines, Function(String) onError) async {
-    List<String> ids = [];
     List<Map<String, dynamic>> idsAndschoolYear = [];
     // final body = jsonEncode({
     //   'disciplines': disciplines.map((d) => Uri.encodeComponent(d)).toList(),
@@ -89,7 +87,6 @@ class Service {
 
       if (response.statusCode == 200) {
         var list = await json.decode(response.body);
-        print('list: $list');
 
         for (var obj in list) {
           idsAndschoolYear.add(obj);
@@ -145,7 +142,7 @@ class Service {
     } catch (e) {
       onError('Erro ao buscar assuntos por disciplina e ano escolar: $e');
     }
-    print('Assuntos recebidos com sucesso: $listSubjects');
+    //print('Assuntos recebidos com sucesso: $listSubjects');
 
     return listSubjects;
   }
@@ -188,7 +185,7 @@ class Service {
           // Adiciona o objeto convertido à lista de questões e converte os dados para uma lista de ModelQuestions
           questions.add(ModelQuestions.toMap(question));
         }
-        print('questions: $questions');
+       // print('questions: $questions');
       } else if (response.statusCode == 408) {
         onError('Tempo de espera excedido. Tente novamente mais tarde.');
       } else {

@@ -13,7 +13,6 @@ import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 /// This class is used to manage the loading state of the next page in the app.
@@ -30,6 +29,7 @@ class ControllerLoadingNextPage {
   List<String> idsIncorrects = [];
   List<ModelQuestions> corrects = [];
   List<ModelQuestions> incorrects = [];
+  List<String> missingsIds = [];
   bool shouldCancel = false; // Variável de controle para cancelar o fluxo
 
   toHomeScreen(
@@ -98,7 +98,7 @@ class ControllerLoadingNextPage {
     }, (error) {
       showSnackBarFeedback(context, error, Colors.red);
     });
-
+    updateIdsMissingsDb(context);
     return Routes().pushFade(context, const HomeScreen());
   }
 
@@ -114,6 +114,72 @@ class ControllerLoadingNextPage {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  /// Este método atualiza os ids que estão faltando no banco de dados, removendo-os
+  /// e atualizando as quantidades de questões respondidas corretamente e incorretamente
+  /// através do provider.
+  Future<void> updateIdsMissingsDb(BuildContext context) async {
+    print('missingsIds $missingsIds');
+    if (missingsIds.isNotEmpty) {
+      List<String> keysIds = [
+        StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
+        StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum
+      ];
+      final missingQuestionsMessage =
+          'As seguintes questões com os respectivos Id(s) foram removidas: ${missingsIds.join(", ")}';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            missingQuestionsMessage,
+            style: AppTheme.customTextStyle2(color: Colors.white),
+          ),
+          backgroundColor: Colors.orange,
+          duration: const Duration(seconds: 8),
+        ),
+      );
+      for (var key in keysIds) {
+        await sharedPreferences.removeId(
+          key,
+          missingsIds,
+          isDecode: true,
+        );
+      }
+      await sharedPreferences.removeId(
+          StorageSharedPreferences.keyIdsAnswereds, missingsIds,
+          isDecode: false);
+
+      List<String> idsAnswerds = await sharedPreferences
+          .recoverIds(StorageSharedPreferences.keyIdsAnswereds, (error) {
+        print(error);
+      });
+
+      List<String> idsCorrects = await sharedPreferences.recoverIds(
+          StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
+          (error) {
+        print(error);
+      });
+
+      List<String> idsIncorrects = await sharedPreferences.recoverIds(
+          StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
+          (error) {
+        print(error);
+      });
+
+      if (context.mounted) {
+        // atualiza a quantidade de questões respondidas atraves do provider
+        Provider.of<GlobalProviders>(listen: false, context)
+            .answeredsAmount(idsAnswerds.length.toString());
+
+        // atualiza a quantidade de questões respondidas corretamente atraves do provider
+        Provider.of<GlobalProviders>(listen: false, context)
+            .answeredsCorrects(idsCorrects.length.toString());
+
+        // atualiza a quantidade de questões respondidas incorretamente atraves do provider
+        Provider.of<GlobalProviders>(listen: false, context)
+            .answeredsIncorrects(idsIncorrects.length.toString());
+      }
+    }
   }
 
   // Este método busca as questões corretas e incorretas, utilizando o método getQuestionsAnswereds da classe ServiceResumQuestions.
@@ -139,45 +205,10 @@ class ControllerLoadingNextPage {
         isExpired(timeExpired);
       });
 
-      List<String> keysIds = [
-       // StorageSharedPreferences.keyIdsAnswereds,
-        StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
-        StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum
-      ];
-
-      // if (result['missingIds'].isNotEmpty) {
-      //   for (var key in keysIds) {
-      //     await sharedPreferences.removeId(
-      //       key,
-      //       idsToMap: result['missingIds'],
-      //       (erro) {
-      //         onError(erro);
-      //         print('Erro ao remover ids: $erro');
-      //       },
-      //     );
-      //   }
-      // }
-
-      await sharedPreferences.removeById(
-          key:  StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
-          data: result['missingIds'],
-        );
-      // for (var key in keysIds) {
-      //   await sharedPreferences.removeById(
-      //     key: key,
-      //     data: result['missingIds'],
-      //   );
-      // }
-      //  await sharedPreferences.removeId(
-      //     StorageSharedPreferences.keyIdsAnswereds,
-      //     idsToRemove: result['missingIds'],
-      //     (erro) {
-      //       onError(erro);
-      //       print(
-      //           'Erro ao remover ids: $erro'); //showSnackBarFeedback(context, erro, Colors.red);
-      //     },
-      //   );
-      //}
+      if (result['missingIds'].isNotEmpty) {
+        missingsIds = result['missingIds'];
+        print('passou aqui');
+      }
 
       questionsResult(result['questions']);
     } catch (e) {
@@ -257,7 +288,7 @@ class ControllerLoadingNextPage {
           );
         },
       );
-      print('listJson $listJson');
+
       for (var json in listJson) {
         Map<String, dynamic> map = jsonDecode(json);
         ids.add(map['id']);
@@ -444,7 +475,6 @@ class ControllerLoadingNextPage {
           streamController.add(event);
         },
         onError: (error) {
-          print('Erro no fluxo: $error');
           streamController.addError(error);
           streamController.close(); // Fecha o fluxo em caso de erro
         },

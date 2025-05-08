@@ -5,14 +5,16 @@ import 'package:page_transition/page_transition.dart';
 class Routes {
   // Método que mostra próxima página e remove as demais da pilha
   void popRoutes(BuildContext context, Widget widget) {
-    Navigator.pushAndRemoveUntil(
-      context,
-      PageTransition(
-          type: PageTransitionType.rightToLeft,
-          duration: const Duration(milliseconds: 500),
-          child: widget),
-      (route) => false,
-    );
+    if (Navigator.canPop(context)) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500),
+            child: widget),
+        (route) => false,
+      );
+    }
   }
 
   void pushRoute(BuildContext context, Widget widget) {
@@ -35,5 +37,19 @@ class Routes {
         child: widget,
       ),
     );
+  }
+
+  void pushFadeRemoveAll(BuildContext context, Widget widget) {
+    if (Navigator.canPop(context)) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+          type: PageTransitionType.fade,
+          duration: const Duration(seconds: 1),
+          child: widget,
+        ),
+        (route) => false,
+      );
+    }
   }
 }

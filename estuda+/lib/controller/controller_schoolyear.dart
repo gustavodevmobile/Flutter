@@ -57,6 +57,8 @@ class ControllerSchoolyear {
           return !answeredIds.contains(subject['id'].toString());
         }).toList();
 
+        print('Assuntos filtrados: $filteredList');
+
         Set<String> listSet = {};
         // Cria uma Objeto sem os ids
         for (var obj in filteredList) {
@@ -77,7 +79,7 @@ class ControllerSchoolyear {
         listSubjects.sort((a, b) {
           return a['schoolYear'].compareTo(b['schoolYear']);
         });
-
+        //print('listSubjects: $listSubjects');
         response(listSubjects);
       } else {
         onError('Nenhum assunto encontrado: handlerFetchSubjects');
