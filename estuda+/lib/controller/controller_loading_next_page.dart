@@ -24,14 +24,17 @@ class ControllerLoadingNextPage {
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
   //ValueNotifier<String> msgLoading = ValueNotifier<String>('Buscando dados...');
   ControllerReportResum controllerReportResum = ControllerReportResum();
-  List<String> idsAnswereds = [];
-  List<String> idsCorrects = [];
-  List<String> idsIncorrects = [];
-  List<ModelQuestions> corrects = [];
-  List<ModelQuestions> incorrects = [];
-  List<String> missingsIds = [];
+  List<String> idsAnswereds = []; // Lista de ids das questões respondidas
+  List<String> idsCorrects = []; // Lista de ids das questões corretas
+  List<String> idsIncorrects = []; // Lista de ids das questões incorretas
+  List<ModelQuestions> corrects = []; // Lista de questões corretas
+  List<ModelQuestions> incorrects = []; // Lista de questões incorretas
+  List<String> missingsIds = []; // Lista de ids que estão faltando no banco de dados
   bool shouldCancel = false; // Variável de controle para cancelar o fluxo
-
+  
+  // Método faz a atualização dos dados na homescreen como questões respondidas, corretas e incorretas.
+  // e atualia o dashbord com as informações das questões respondidas corretamente  e incorretamente.
+  // Ele também chama o método que atualiza os ids que estão faltando no banco de dados, caso alguma questão foi removida do banco de dados.
   toHomeScreen(
     BuildContext context,
   ) {
@@ -126,28 +129,28 @@ class ControllerLoadingNextPage {
         StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
         StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum
       ];
-      final missingQuestionsMessage =
-          'As seguintes questões com os respectivos Id(s) foram removidas: ${missingsIds.join(", ")}';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            missingQuestionsMessage,
-            style: AppTheme.customTextStyle2(color: Colors.white),
-          ),
-          backgroundColor: Colors.orange,
-          duration: const Duration(seconds: 8),
-        ),
-      );
+
       for (var key in keysIds) {
         await sharedPreferences.removeId(
           key,
           missingsIds,
           isDecode: true,
+          onSuccess: (success) {
+            if (success) {
+              showSnackBarFeedback(
+                  context,
+                  'Houve questão que foi removida do banco de dados',
+                  Colors.orange,
+                  duration: const Duration(seconds: 8));
+            }
+          },
         );
       }
       await sharedPreferences.removeId(
-          StorageSharedPreferences.keyIdsAnswereds, missingsIds,
-          isDecode: false);
+        StorageSharedPreferences.keyIdsAnswereds,
+        missingsIds,
+        isDecode: false,
+      );
 
       List<String> idsAnswerds = await sharedPreferences
           .recoverIds(StorageSharedPreferences.keyIdsAnswereds, (error) {
@@ -182,7 +185,7 @@ class ControllerLoadingNextPage {
     }
   }
 
-  // Este método busca as questões corretas e incorretas, utilizando o método getQuestionsAnswereds da classe ServiceResumQuestions.
+  // Este método busca as questões corretas e incorretas atravesdos ids, utilizando o método getQuestionsAnswereds da classe ServiceResumQuestions.
   Future fetchQuestions(
     String textFeedback, // 'corretas' ou 'incorretas'
     ScaffoldMessengerState scaffoldMessenger, //
@@ -207,7 +210,6 @@ class ControllerLoadingNextPage {
 
       if (result['missingIds'].isNotEmpty) {
         missingsIds = result['missingIds'];
-        print('passou aqui');
       }
 
       questionsResult(result['questions']);
@@ -216,6 +218,8 @@ class ControllerLoadingNextPage {
     }
   }
 
+  /// Este método busca os ids das questões respondidas, utilizando o método recoverIds da classe StorageSharedPreferences.
+  /// Ele recebe uma função de feedback, uma função de erro e uma função que indica se a requisição expirou.
   Future fetchAnsweredsIds(
       ScaffoldMessengerState scaffoldMessenger,
       Function(String) msgFeedback,
@@ -256,6 +260,8 @@ class ControllerLoadingNextPage {
     }
   }
 
+  /// Este método busca os ids das questões corretas e incorretas, utilizando o método recoverIds da classe StorageSharedPreferences.
+  /// Ele recebe uma função de feedback, uma função de erro e uma função que indica se a requisição expirou.
   Future fetchIds(
       String msg,
       String keyId,
@@ -288,7 +294,7 @@ class ControllerLoadingNextPage {
           );
         },
       );
-
+      
       for (var json in listJson) {
         Map<String, dynamic> map = jsonDecode(json);
         ids.add(map['id']);
@@ -300,11 +306,13 @@ class ControllerLoadingNextPage {
     }
   }
 
+  /// Este método processa todos os métodos de buscas
   Stream processDatas(BuildContext context, String textFeedback, bool mounted,
       Function(String) msgFeedback, StreamController streamController) async* {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     Provider.of<GlobalProviders>(context, listen: false).timeOut(false);
 
+    // Busca os ids das questões respondidas
     yield await fetchAnsweredsIds(
       scaffoldMessenger,
       (msgFeedbasck) {
@@ -331,6 +339,7 @@ class ControllerLoadingNextPage {
       return;
     }
 
+    //Busca os ids das questões corretas
     yield await fetchIds(
       '$textFeedback ids corretas',
       StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
@@ -357,7 +366,7 @@ class ControllerLoadingNextPage {
       streamController.close();
       return;
     }
-
+    // Busca os ids das questões incorretas
     yield await fetchIds(
       '$textFeedback ids incorretas',
       StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
@@ -384,7 +393,7 @@ class ControllerLoadingNextPage {
       streamController.close();
       return;
     }
-
+// Busca as questões corretas atraves dos ids corretos
     yield await fetchQuestions(
       '$textFeedback questões corretas', // envia mensagem para ser mostrara no loading
       scaffoldMessenger,
@@ -422,7 +431,7 @@ class ControllerLoadingNextPage {
       streamController.close(); // Fecha o StreamController
       return;
     }
-
+// Busca as questões incorretas atraves dos ids incorretos
     yield await fetchQuestions(
       '$textFeedback questões incorretas',
       scaffoldMessenger,
@@ -456,7 +465,10 @@ class ControllerLoadingNextPage {
 
     streamController.close(); // Fecha o StreamController após o processamento
   }
-
+  // Este método cria um StreamController que gerencia o fluxo de dados
+  /// e chama o método processDatas para processar os dados.
+  /// Ele também lida com o cancelamento do fluxo em caso de erro.
+  /// O método processDatas é responsável por buscar os dados necessários e emitir eventos para o StreamController.
   StreamController streamProccess(bool mounted, String textFeedback,
       BuildContext context, Function(String) msgFeedback) {
     final StreamController streamController = StreamController();

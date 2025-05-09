@@ -3,14 +3,15 @@ import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 
-// Classe resposnsável por fazer o controller na busca das disciplinas na screen discipline
+// Classe resposnsável por fazer o controller na busca dos anos escolares por disciplina selecionada.
+// Ela é responsável por manipular os dados e fazer a comunicação entre a view e o service.
 class ControllerDisciplines {
   Service service = Service();
   Set<String> disciplinesContent = {};
   bool isExpiredTimeout = false;
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
-// Método responsável por buscar os anos escolares por disciplina selecionada
+// Método responsável por buscar os anos escolares por disciplina selecionada, atraves do service.fetchSchoolYearByDisciplines e retornar uma lista de Map<String, dynamic> com os anos escolares.
   Future<List<Map<String, dynamic>>> fetchSchoolYearByDiscipline(
       List<String> listDisciplines,
       BuildContext context,

@@ -23,7 +23,6 @@ class PageQuestionsBySchoolYear extends StatefulWidget {
 class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
   Service service = Service();
   final controller = PageController();
-  ValueNotifier<String> discipline = ValueNotifier<String>('');
 
   @override
   void dispose() {
@@ -37,7 +36,6 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
       appBar: AppBar(
         toolbarHeight: 5,
         automaticallyImplyLeading: false,
-        
       ),
       body: Consumer<GlobalProviders>(
         builder: (context, value, child) {
