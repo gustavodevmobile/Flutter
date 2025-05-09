@@ -54,6 +54,14 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
                     widget.questions[index].answer,
                     index,
                     widget.questions[index].id.toString(),
+                    widget.questions[index].question,
+                    [
+                      widget.questions[index].alternativeA,
+                      widget.questions[index].alternativeB,
+                      widget.questions[index].alternativeC,
+                      widget.questions[index].alternativeD
+                    ],
+                    widget.questions[index].image,
                   ),
                   boxAlternativesB: BoxAlternatives(
                     widget.questions[index].alternativeB,
@@ -61,6 +69,14 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
                     widget.questions[index].answer,
                     index,
                     widget.questions[index].id.toString(),
+                    widget.questions[index].question,
+                    [
+                      widget.questions[index].alternativeA,
+                      widget.questions[index].alternativeB,
+                      widget.questions[index].alternativeC,
+                      widget.questions[index].alternativeD
+                    ],
+                    widget.questions[index].image,
                   ),
                   boxAlternativesC: BoxAlternatives(
                     widget.questions[index].alternativeC,
@@ -68,6 +84,14 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
                     widget.questions[index].answer,
                     index,
                     widget.questions[index].id.toString(),
+                    widget.questions[index].question,
+                    [
+                      widget.questions[index].alternativeA,
+                      widget.questions[index].alternativeB,
+                      widget.questions[index].alternativeC,
+                      widget.questions[index].alternativeD
+                    ],
+                    widget.questions[index].image,
                   ),
                   boxAlternativesD: BoxAlternatives(
                     widget.questions[index].alternativeD,
@@ -75,6 +99,14 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
                     widget.questions[index].answer,
                     index,
                     widget.questions[index].id.toString(),
+                    widget.questions[index].question,
+                    [
+                      widget.questions[index].alternativeA,
+                      widget.questions[index].alternativeB,
+                      widget.questions[index].alternativeC,
+                      widget.questions[index].alternativeD
+                    ],
+                    widget.questions[index].image,
                   ),
                   controller: controller,
                   indexQuestion: index,

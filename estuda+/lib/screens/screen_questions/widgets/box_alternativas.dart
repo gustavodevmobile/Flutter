@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:estudamais/controller/controller_explanation.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_questions.dart';
@@ -10,9 +13,19 @@ class BoxAlternatives extends StatefulWidget {
   final String response;
   final int indexQuestion;
   final String idQuestion;
+  final String question;
+  final List<String> alternatives;
+  final Uint8List? image;
 
-  const BoxAlternatives(this.alternative, this.option, this.response,
-      this.indexQuestion, this.idQuestion,
+  const BoxAlternatives(
+      this.alternative,
+      this.option,
+      this.response,
+      this.indexQuestion,
+      this.idQuestion,
+      this.question,
+      this.alternatives,
+      this.image,
       {super.key});
 
   @override
@@ -21,6 +34,8 @@ class BoxAlternatives extends StatefulWidget {
 
 class _BoxAlternativesState extends State<BoxAlternatives> {
   final ControllerQuestions controllerQuestions = ControllerQuestions();
+  final ExplanationQuestionsController explanationQuestionsController =
+      ExplanationQuestionsController();
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +93,25 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                       ),
                     ),
                     onTap: () {
+                      explanationQuestionsController.handleExplainQuestion(
+                        question: widget.question,
+                        alternatives: widget.alternatives,
+                        image: widget.image,
+                        onSuccess: (explanation) {
+                          print('Explicação: $explanation');
+                          // value.openBoxExplanation(explanation, context);
+                        },
+                        onError: (error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(error),
+                            ),
+                          );
+                        },
+                      );
+                      print("Alternativas: ${widget.alternatives}");
+                      print('Questão: ${widget.question}');
+
                       if (!ControllerQuestions.isAnswered) {
                         setState(() {
                           controllerQuestions.isCorrect(
