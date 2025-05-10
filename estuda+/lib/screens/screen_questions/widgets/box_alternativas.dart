@@ -97,10 +97,7 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                         question: widget.question,
                         alternatives: widget.alternatives,
                         image: widget.image,
-                        onSuccess: (explanation) {
-                          print('Explicação: $explanation');
-                          // value.openBoxExplanation(explanation, context);
-                        },
+                        onSuccess: (explanation) {},
                         onError: (error) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -109,8 +106,6 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                           );
                         },
                       );
-                      print("Alternativas: ${widget.alternatives}");
-                      print('Questão: ${widget.question}');
 
                       if (!ControllerQuestions.isAnswered) {
                         setState(() {

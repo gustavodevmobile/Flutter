@@ -13,23 +13,28 @@ class ExplanationQuestionsService {
   }) async {
     try {
       // Monta o corpo da requisição
-      final Map<String, dynamic> body = {
-        'question': question,
-        'alternatives': alternatives,
-      };
+      // final Map<String, dynamic> body = {
+      //   'question': question,
+      //   'alternatives': alternatives,
+      // };
+
+      String body =
+          "Explique a questão: $question. As alternativas são: ${alternatives.join(', ')} e responda com a alternativa correta.";
 
       // Adiciona a imagem ao corpo, se existir
-      if (image != null) {
-        body['image'] = base64Encode(image); // Converte a imagem para Base64
-      }
+      // if (image != null) {
+      //   body['image'] = base64Encode(image); // Converte a imagem para Base64
+      // }
 
-      // Faz a requisição POST
+      print('Corpo da requisição: $body');
       final response = await http.post(
         Uri.parse('$baseUrl/explain-question'),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(body),
+        body: jsonEncode({
+          'question': body,
+        }),
       );
 
       // Verifica o status da resposta
