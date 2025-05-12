@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:estudamais/controller/controller_explanation.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -93,32 +95,25 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                       ),
                     ),
                     onTap: () {
-                      // explanationQuestionsController.handleExplainQuestion(
-                      //   question: widget.question,
-                      //   alternatives: widget.alternatives,
-                      //   image: widget.image,
-                      //   onSuccess: (explanation) {},
-                      //   onError: (error) {
-                      //     ScaffoldMessenger.of(context).showSnackBar(
-                      //       SnackBar(
-                      //         content: Text(error),
-                      //       ),
-                      //     );
-                      //   },
-                      // );
-
-                      if (!ControllerQuestions.isAnswered) {
-                        setState(() {
-                          controllerQuestions.isCorrect(
-                            widget.response.trim(),
-                            widget.alternative.trim(),
-                            context,
-                            widget.idQuestion,
-                          );
-                        });
-                      } else {
-                        value.openBoxAlreadyAnswereds(true);
-                      }
+                      controllerQuestions.answered(widget.idQuestion,
+                          StorageSharedPreferences.keyIdsAnswereds,
+                          (isAnswered) {
+                        if (!isAnswered) {
+                          setState(() {
+                            controllerQuestions.isCorrect(
+                              widget.response.trim(),
+                              widget.alternative.trim(),
+                              context,
+                              widget.idQuestion,
+                            );
+                          });
+                        } else {
+                          showSnackBarFeedback(context,
+                              'Ops, essa você já respondeu', Colors.orange);
+                        }
+                      }, (error) {
+                        showSnackBarFeedback(context, error, Colors.red);
+                      });
                     },
                   ),
                 ),

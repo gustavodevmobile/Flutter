@@ -65,18 +65,9 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
       Uint8List string = widget.image;
       bytesImageString = utf8.decode(string);
     }
-    ControllerQuestions.isAnswered = false;
+
     super.initState();
   }
-
-  // void nextQuestion() {
-  //   widget.controller.nextPage(
-  //     duration: const Duration(milliseconds: 700),
-  //     curve: Curves.ease,
-  //   );
-  //   Provider.of<GlobalProviders>(listen: false, context)
-  //       .openBoxAlreadyAnswereds(false);
-  // }
 
   @override
   bool get wantKeepAlive => true;
@@ -167,22 +158,22 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                           endIndent: 10,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Center(
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            height: value.isAnsweredBox ? 30 : 0,
-                            child: Text(
-                              'Ops, essa você já respondeu!',
-                              style: TextStyle(
-                                  fontSize: screenWidth * 0.04,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color.fromARGB(255, 145, 18, 9)),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(bottom: 8.0),
+                      //   child: Center(
+                      //     child: AnimatedContainer(
+                      //       duration: const Duration(milliseconds: 300),
+                      //       height: value.isAnsweredBox ? 30 : 0,
+                      //       child: Text(
+                      //         'Ops, essa você já respondeu!',
+                      //         style: TextStyle(
+                      //             fontSize: screenWidth * 0.04,
+                      //             fontWeight: FontWeight.bold,
+                      //             color: const Color.fromARGB(255, 145, 18, 9)),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

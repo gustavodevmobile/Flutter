@@ -20,6 +20,8 @@ class StorageSharedPreferences {
   // Chave de confirmação se esta registrado
   static const String isRegister = 'isRegister';
 
+  static const String isAnsweredIncorrects = 'isAnsweredIncorrects';
+
   // instância de classe SharedPreferencesAsync
   SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
   final DateTime dateNow = DateTime.now();
@@ -124,7 +126,7 @@ class StorageSharedPreferences {
   }
 
 // Método responsável por remover id da lista salva localmente.
-  void removeIdsInList(String keyRemove, String id, String keyAdd,
+  Future<void> removeIdsInList(String keyRemove, String id, String keyAdd,
       BuildContext context, Function(String) onError) async {
     List<Map<String, dynamic>> listMap = [];
     List<String> listIds = [];
@@ -156,9 +158,9 @@ class StorageSharedPreferences {
     }
   }
 
-  void deleta(String key) {
+  Future<void> deleta(String key) async {
     //SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
-    prefsAsync.remove(key);
+    await prefsAsync.remove(key);
     print('$key deletados com sucesso');
   }
 
@@ -193,7 +195,7 @@ class StorageSharedPreferences {
         }
         // Salva os IDs restantes de volta no SharedPreferences
         await prefsAsync.setStringList(key, listIds);
-         onSuccess?.call(true);
+        onSuccess?.call(true);
       }
     } catch (e) {
       print('Erro ao remover IDs do SharedPreferences: $e');

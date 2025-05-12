@@ -5,6 +5,7 @@ import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/resum/widgets/never_subjects_selected.dart';
 import 'package:estudamais/screens/resum/incorrects/questions_incorrects.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
@@ -25,6 +26,8 @@ class AccumulatedIncorrects extends StatefulWidget {
 
 class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
   ServiceResumQuestions questionsIncorrects = ServiceResumQuestions();
+  StorageSharedPreferences storageSharedPreferences =
+      StorageSharedPreferences();
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +106,7 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       valueGlobal.openBoxAlreadyAnswereds(false);
                       List<ModelQuestions> resultQuestionsIncorrects = [];
                       if (valueGlobal.subjectsAndSchoolYearSelected.isEmpty) {
@@ -127,6 +130,9 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                           ),
                         );
                       }
+                      // Deleta a list de ids para controle de dupla resposta
+                      await storageSharedPreferences.deleta(
+                          StorageSharedPreferences.isAnsweredIncorrects);
                     },
                     child: const ButtonNext(textContent: 'Mostrar questões'),
                   ),

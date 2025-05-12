@@ -13,10 +13,38 @@ class ControllerQuestions {
   //Instância StorageSharedPreferences onde armazena os dados (ids) localmente.
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
-  static bool isAnswered = false;
+//Método que salva somente as questões que foram respondidas incorretamente para verificação na tentativa de duplas respostas.
+  Future<void> saveIdAnsweredsIncorrects(
+      String id, Function(String) onError) async {
+    try {
+      sharedPreferences
+          .saveIds(id, StorageSharedPreferences.isAnsweredIncorrects, (error) {
+        onError(error);
+      });
+    } catch (e) {
+      onError('Erro ao salvar o id da questão respondida incorretamente: $e');
+    }
+  }
+
+  // Método que verifica se a questão ja foi respondida.
+  Future<void> answered(String id, String key, Function(bool) isAnswered,
+      Function(String) onError) async {
+    try {
+      List<String> listIds = await sharedPreferences.recoverIds(key, (error) {
+        onError(error);
+      });
+      if (listIds.contains(id)) {
+        isAnswered(true);
+      } else {
+        isAnswered(false);
+      }
+    } catch (e) {
+      onError('Erro ao verificar se questão já foi respondida: $e');
+    }
+  }
 
 // Método responsável por recuperar as questões respodidas incorretamente, fazendo a lógica de remover o id dos ids incorretos e salvar o id correspondente nos ids corretos.
-  void recoverQuestionsIncorrects(
+  Future<void> recoverQuestionsIncorrects(
       // Recebe a resposta da alternativa
       String response,
       // Recebe a alternativa selecionada
@@ -24,7 +52,7 @@ class ControllerQuestions {
       // Recebe o contexto
       BuildContext context,
       // Id da questão
-      String idQuestion) {
+      String idQuestion) async {
     if (response == alternative) {
       // muda a cor do box alternativa para verde
       corAlternativa = Colors.green;
@@ -34,7 +62,7 @@ class ControllerQuestions {
       //2º Remove o id da questão correspondente da lista recebida dos ids incorretos.
       //3º Salva o id da questão correspondente nos ids corretos.
       //4º Salva a lista dos ids incorretos, sem o id da questão correspondente.
-      sharedPreferences.removeIdsInList(
+      await sharedPreferences.removeIdsInList(
         // Chave dos ids incorretos
         StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
         // Id da questão.
@@ -44,31 +72,31 @@ class ControllerQuestions {
         context,
         (error) => showSnackBarFeedback(context, error, Colors.red),
       );
-      // pega a quantidade de ids incorretos;
-      int amountIncorrects = int.parse(
-          Provider.of<GlobalProviders>(listen: false, context)
-              .incorrectsCurrents);
-      // decrementa 1
-      amountIncorrects--;
-      // atualiza na pointsAndErrors a quantidade de erros;
-      Provider.of<GlobalProviders>(listen: false, context)
-          .answeredsIncorrects(amountIncorrects.toString());
 
-      // pega a quantidade de ids corretos;
-      int amountCorrects = int.parse(
-          Provider.of<GlobalProviders>(listen: false, context)
-              .correctsCurrents);
-      // acrescenta + 1 na quantidade de acertos;
-      amountCorrects++;
-      // atualiza na pointsAndErrors a quantidade de acertos;
-      Provider.of<GlobalProviders>(listen: false, context)
-          .answeredsCorrects(amountCorrects.toString());
-      isAnswered = true;
+      if (context.mounted) {
+        // pega a quantidade de ids incorretos;
+        int amountIncorrects = int.parse(
+            Provider.of<GlobalProviders>(listen: false, context)
+                .incorrectsCurrents);
+        // decrementa 1
+        amountIncorrects--;
+        // atualiza na pointsAndErrors a quantidade de erros;
+        Provider.of<GlobalProviders>(listen: false, context)
+            .answeredsIncorrects(amountIncorrects.toString());
+
+        // pega a quantidade de ids corretos;
+        int amountCorrects = int.parse(
+            Provider.of<GlobalProviders>(listen: false, context)
+                .correctsCurrents);
+        // acrescenta + 1 na quantidade de acertos;
+        amountCorrects++;
+        // atualiza na pointsAndErrors a quantidade de acertos;
+        Provider.of<GlobalProviders>(listen: false, context)
+            .answeredsCorrects(amountCorrects.toString());
+      }
     } else {
       // Se errar, nada muda.
       corAlternativa = Colors.red;
-
-      isAnswered = true;
     }
   }
 
@@ -104,10 +132,9 @@ class ControllerQuestions {
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsCorrects(amountCorrects.toString());
       // Se não...
-      isAnswered = true;
 
       // salva o id e data da questão em ids respondidos corretamente;
-      sharedPreferences.saveIdsAndDateResum(idQuestion,
+      await sharedPreferences.saveIdsAndDateResum(idQuestion,
           StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
           (onError) {
         showSnackBarFeedback(context, onError, Colors.red);
@@ -125,10 +152,9 @@ class ControllerQuestions {
       // atualiza na pointAndAErrors a quantidade de erros;
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsIncorrects(amountIncorrects.toString());
-      isAnswered = true;
 
       // salva o id e data da questão em ids respondidos incorretamente;
-      sharedPreferences.saveIdsAndDateResum(idQuestion,
+      await sharedPreferences.saveIdsAndDateResum(idQuestion,
           StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
           (onError) {
         showSnackBarFeedback(context, onError, Colors.red);

@@ -1,4 +1,6 @@
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
+import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -74,20 +76,31 @@ class _BoxAlternativesIncorrectsState extends State<BoxAlternativesIncorrects> {
                       ),
                     ),
                     onTap: () async {
-                      if (!ControllerQuestions.isAnswered) {
-                        setState(
-                          () {
-                            controllerQuestions.recoverQuestionsIncorrects(
-                              widget.response.trim(),
-                              widget.alternative.trim(),
-                              context,
-                              widget.idQuestion,
-                            );
-                          },
-                        );
-                      } else {
-                        value.openBoxAlreadyAnswereds(true);
-                      }
+                      controllerQuestions.saveIdAnsweredsIncorrects(
+                          widget.idQuestion, (error) {
+                        showSnackBarFeedback(context, error, Colors.red);
+                      });
+                      controllerQuestions.answered(widget.idQuestion,
+                          StorageSharedPreferences.isAnsweredIncorrects,
+                          (isAnswered) {
+                        if (!isAnswered) {
+                          setState(
+                            () {
+                              controllerQuestions.recoverQuestionsIncorrects(
+                                widget.response.trim(),
+                                widget.alternative.trim(),
+                                context,
+                                widget.idQuestion,
+                              );
+                            },
+                          );
+                        } else {
+                          showSnackBarFeedback(context,
+                              'Ops, essa você já respondeu!', Colors.orange);
+                        }
+                      }, (onError) {
+                        showSnackBarFeedback(context, onError, Colors.red);
+                      });
                     },
                   ),
                 ),
