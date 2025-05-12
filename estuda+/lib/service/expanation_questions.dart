@@ -12,19 +12,19 @@ class ExplanationQuestionsService {
     Uint8List? image, // Imagem opcional
   }) async {
     try {
-      // Monta o corpo da requisição
-      // final Map<String, dynamic> body = {
-      //   'question': question,
-      //   'alternatives': alternatives,
-      // };
+      //Monta o corpo da requisição
+      final Map<String, dynamic> body = {
+        'question': question,
+        'alternatives': alternatives,
+      };
 
-      String body =
-          "Explique a questão: $question. As alternativas são: ${alternatives.join(', ')} e responda com a alternativa correta.";
+      // String body =
+      //     "Explique a questão: $question. As alternativas são: ${alternatives.join(', ')} e responda com a alternativa correta.";
 
-      // Adiciona a imagem ao corpo, se existir
-      // if (image != null) {
-      //   body['image'] = base64Encode(image); // Converte a imagem para Base64
-      // }
+      //Adiciona a imagem ao corpo, se existir
+      if (image != null) {
+        body['image'] = base64Encode(image); // Converte a imagem para Base64
+      }
 
       print('Corpo da requisição: $body');
       final response = await http.post(
@@ -32,9 +32,7 @@ class ExplanationQuestionsService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({
-          'question': body,
-        }),
+        body: jsonEncode(body),
       );
 
       // Verifica o status da resposta

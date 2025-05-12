@@ -93,19 +93,19 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                       ),
                     ),
                     onTap: () {
-                      explanationQuestionsController.handleExplainQuestion(
-                        question: widget.question,
-                        alternatives: widget.alternatives,
-                        image: widget.image,
-                        onSuccess: (explanation) {},
-                        onError: (error) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(error),
-                            ),
-                          );
-                        },
-                      );
+                      // explanationQuestionsController.handleExplainQuestion(
+                      //   question: widget.question,
+                      //   alternatives: widget.alternatives,
+                      //   image: widget.image,
+                      //   onSuccess: (explanation) {},
+                      //   onError: (error) {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(
+                      //         content: Text(error),
+                      //       ),
+                      //     );
+                      //   },
+                      // );
 
                       if (!ControllerQuestions.isAnswered) {
                         setState(() {
