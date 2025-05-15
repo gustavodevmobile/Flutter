@@ -25,6 +25,7 @@ class GlobalProviders extends ChangeNotifier {
   List<ReportResum> reportsIncorrects = [];
   bool isMenuOpen = false;
   bool isTimeOut = false;
+  bool isExplainable = false;
 
   // Método responsável por atualizar o estado em abrir e fechar o AnimatedContainer caso a questão ja tenha sido respondida.
   void openBoxAlreadyAnswereds(bool value) {
@@ -110,6 +111,12 @@ class GlobalProviders extends ChangeNotifier {
   // Método responsável por habilitar e desabilitar a mensagem Tempo Excedido ou Pronto!
   void timeOut(bool value) {
     isTimeOut = value;
+    notifyListeners();
+  }
+
+  // Método responsável por habilitar a Explicação da questão
+  void explainable(bool value) {
+    isExplainable = value;
     notifyListeners();
   }
 }

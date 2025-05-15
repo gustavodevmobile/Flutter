@@ -14,7 +14,7 @@ class ModelQuestions {
   String alternativeB;
   String alternativeC;
   String alternativeD;
-  bool answered = false;
+  String? explanation;
 
   ModelQuestions({
     required this.id,
@@ -29,6 +29,7 @@ class ModelQuestions {
     required this.alternativeB,
     required this.alternativeC,
     required this.alternativeD,
+    required this.explanation,
   });
 // Método que converte Map<String<dynamic>> para ModelQuestions
   ModelQuestions.toMap(
@@ -44,5 +45,6 @@ class ModelQuestions {
         alternativeA = ask['alternativeA'],
         alternativeB = ask['alternativeB'],
         alternativeC = ask['alternativeC'],
-        alternativeD = ask['alternativeD'];
+        alternativeD = ask['alternativeD'],
+        explanation = ask['explanation'];
 }

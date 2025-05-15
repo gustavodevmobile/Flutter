@@ -92,6 +92,7 @@ class _PageQuestionsIncorrectsState extends State<PageQuestionsIncorrects> {
                       widget.resultQuestions[index].elementarySchool,
                   schoolYear: widget.resultQuestions[index].schoolYear,
                   correctsAndIncorrects: const PointsAndErrors(),
+                  explanation: widget.resultQuestions[index].explanation,
                 );
               },
             ),

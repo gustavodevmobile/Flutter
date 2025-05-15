@@ -85,7 +85,7 @@ class _PageQuestionsCorrectsState extends State<PageQuestionsCorrects> {
                       widget.resultQuestions[index].elementarySchool,
                   schoolYear: widget.resultQuestions[index].schoolYear,
                   correctsAndIncorrects: const PointsAndErrors(),
-
+                  explanation: widget.resultQuestions[index].explanation,
                   btnNextQuestion: ElevatedButton(
                     onPressed: () {
                       controller.nextPage(

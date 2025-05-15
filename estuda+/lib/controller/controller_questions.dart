@@ -93,6 +93,9 @@ class ControllerQuestions {
         // atualiza na pointsAndErrors a quantidade de acertos;
         Provider.of<GlobalProviders>(listen: false, context)
             .answeredsCorrects(amountCorrects.toString());
+
+        // Habilita a área de explicação.
+        Provider.of<GlobalProviders>(listen: false, context).explainable(true);
       }
     } else {
       // Se errar, nada muda.
@@ -128,6 +131,10 @@ class ControllerQuestions {
               .correctsCurrents);
       // acrescenta + 1 na quantidade de acertos;
       amountCorrects++;
+
+      // atualiza o estado para exibir o box de explicação;
+      Provider.of<GlobalProviders>(listen: false, context).explainable(true);
+
       // atualiza na pointsAndErrors a quantidade de acertos;
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsCorrects(amountCorrects.toString());
@@ -167,7 +174,7 @@ class ControllerQuestions {
       duration: const Duration(milliseconds: 700),
       curve: Curves.ease,
     );
-    Provider.of<GlobalProviders>(listen: false, context)
-        .openBoxAlreadyAnswereds(false);
+    // Fecha o a área da explicação da questão.
+    Provider.of<GlobalProviders>(listen: false, context).explainable(false);
   }
 }

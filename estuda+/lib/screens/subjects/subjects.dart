@@ -206,6 +206,8 @@ class _SubjectsState extends State<Subjects> {
                   },
                 );
               }
+              // Fecha o a área da explicação da questão.
+              value.explainable(false);
             },
             child: const ButtonNext(
               textContent: 'Responder',

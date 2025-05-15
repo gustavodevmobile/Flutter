@@ -121,7 +121,7 @@ class StorageSharedPreferences {
       return [];
       //onError('Erro ao buscar ids. O resultado retornou nulo');
     }
-    print('Ids recuperados: $result');
+    //print('Ids recuperados: $result');
     return result;
   }
 
@@ -161,7 +161,7 @@ class StorageSharedPreferences {
   Future<void> deleta(String key) async {
     //SharedPreferencesAsync prefsAsync = SharedPreferencesAsync();
     await prefsAsync.remove(key);
-    print('$key deletados com sucesso');
+    //print('$key deletados com sucesso');
   }
 
   Future<void> removeId(String key, List<String> idsToRemove,
@@ -173,7 +173,7 @@ class StorageSharedPreferences {
       if (!isDecode) {
         final storedIds = await prefsAsync.getStringList(key) ?? [];
         storedIds.removeWhere((storedId) => idsToRemove.contains(storedId));
-        print('ids removidos: $storedIds');
+        //print('ids removidos: $storedIds');
         await prefsAsync.setStringList(key, storedIds);
         onSuccess?.call(true);
       }

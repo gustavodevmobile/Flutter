@@ -33,7 +33,7 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(
-      builder: (context, valueGlobal, child) {
+      builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -64,15 +64,15 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                           fontWeight: true, fontSize: screenWidth * 0.04),
                     ),
                   ),
-                  valueGlobal.subjectsAndSchoolYearSelected.isEmpty
+                  value.subjectsAndSchoolYearSelected.isEmpty
                       ? const NeverSubjectsSelected()
                       : AnimatedSize(
                           duration: const Duration(milliseconds: 400),
                           child: Visibility(
-                            visible: valueGlobal.showBoxSubjects,
+                            visible: value.showBoxSubjects,
                             child: MapSelectedSubjects(
                               listMap:
-                                  valueGlobal.subjectsAndSchoolYearSelected,
+                                  value.subjectsAndSchoolYearSelected,
                             ),
                           ),
                         ),
@@ -93,8 +93,8 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                     padding: const EdgeInsets.all(8.0),
                     child: DisiciplineExpansionPanelRadio(
                       discipline: questionsIncorrects.getDisciplineOfQuestions(
-                          valueGlobal.resultQuestionsIncorrects),
-                      resultQuestions: valueGlobal.resultQuestionsIncorrects,
+                          value.resultQuestionsIncorrects),
+                      resultQuestions: value.resultQuestionsIncorrects,
                       activitySubjectsAndSchoolYearCorrects: false,
                       activitySubjectsAndSchoolYearIncorrects: true,
                     ),
@@ -107,9 +107,9 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      valueGlobal.openBoxAlreadyAnswereds(false);
+                      value.openBoxAlreadyAnswereds(false);
                       List<ModelQuestions> resultQuestionsIncorrects = [];
-                      if (valueGlobal.subjectsAndSchoolYearSelected.isEmpty) {
+                      if (value.subjectsAndSchoolYearSelected.isEmpty) {
                         showSnackBarFeedback(
                           context,
                           'Selecione a disciplina e o assunto para continuar.',
@@ -118,8 +118,8 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                       } else {
                         resultQuestionsIncorrects = questionsIncorrects
                             .getResultQuestions(
-                                valueGlobal.resultQuestionsIncorrects,
-                                valueGlobal.subjectsAndSchoolYearSelected,
+                                value.resultQuestionsIncorrects,
+                                value.subjectsAndSchoolYearSelected,
                                 (error) {
                           showSnackBarFeedback(context, error, Colors.red);
                         });
@@ -133,6 +133,7 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                       // Deleta a list de ids para controle de dupla resposta
                       await storageSharedPreferences.deleta(
                           StorageSharedPreferences.isAnsweredIncorrects);
+                          value.explainable(false);
                     },
                     child: const ButtonNext(textContent: 'Mostrar questões'),
                   ),

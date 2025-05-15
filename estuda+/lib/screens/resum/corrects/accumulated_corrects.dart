@@ -126,6 +126,7 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                               resultQuestions: resultQuestionsCorrects,
                             ));
                       }
+                      value.explainable(true);
                     },
                     child: const ButtonNext(textContent: 'Mostrar questões'),
                   ),

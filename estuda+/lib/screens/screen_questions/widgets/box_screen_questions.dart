@@ -29,6 +29,7 @@ class ScreenQuestions extends StatefulWidget {
   final Widget? textButtonJump;
   final ElevatedButton? btnNextQuestion;
   final TextButton? textButtonExit;
+  final String? explanation;
 
   const ScreenQuestions(
       {required this.boxQuestions,
@@ -48,6 +49,7 @@ class ScreenQuestions extends StatefulWidget {
       this.textButtonJump,
       this.btnNextQuestion,
       this.textButtonExit,
+      this.explanation,
       super.key});
 
   @override
@@ -158,22 +160,30 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                           endIndent: 10,
                         ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(bottom: 8.0),
-                      //   child: Center(
-                      //     child: AnimatedContainer(
-                      //       duration: const Duration(milliseconds: 300),
-                      //       height: value.isAnsweredBox ? 30 : 0,
-                      //       child: Text(
-                      //         'Ops, essa você já respondeu!',
-                      //         style: TextStyle(
-                      //             fontSize: screenWidth * 0.04,
-                      //             fontWeight: FontWeight.bold,
-                      //             color: const Color.fromARGB(255, 145, 18, 9)),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      widget.explanation != null && value.isExplainable
+                          ? Column(
+                            children: [
+                              Text(
+                                'Explicação',
+                                style: AppTheme.customTextStyle2(
+                                  fontSize: 18,
+                                  color: Colors.indigo,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 600),
+                                    child: Text(widget.explanation ?? '',
+                                        style: AppTheme.customTextStyle2(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        )),
+                                  ),
+                              ),
+                            ],
+                          )
+                          : const SizedBox.shrink(),
                     ],
                   ),
                 ),

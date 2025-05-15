@@ -25,7 +25,6 @@ class ServiceResumQuestions {
       });
       if (response.statusCode == 200) {
         var responseData = await json.decode(response.body);
-        print('Resposta ids: ${responseData['missingIds']}');
 
         if (responseData['missingIds'] != null) {
           missingIds = List<String>.from(responseData['missingIds'].map((id) {
