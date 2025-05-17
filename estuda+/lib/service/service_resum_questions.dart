@@ -23,9 +23,11 @@ class ServiceResumQuestions {
         timeExpired(true);
         return http.Response('Timeout', 408);
       });
+
+      print('Resposta: ${response.statusCode}');
       if (response.statusCode == 200) {
         var responseData = await json.decode(response.body);
-
+        //print('Resposta: $responseData');
         if (responseData['missingIds'] != null) {
           missingIds = List<String>.from(responseData['missingIds'].map((id) {
             return id.toString();
