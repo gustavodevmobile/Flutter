@@ -94,7 +94,10 @@ class _ScreenInitialState extends State<ScreenInitial> {
                             child: const Text('Sim')),
                         TextButton(
                           onPressed: () {
-                            const LoadingNextPage(msgFeedbasck: 'Busca');
+                            Routes().pushRoute(
+                              context,
+                              const LoadingNextPage(msgFeedbasck: 'Buscando'),
+                            );
                           },
                           child: const Text('Não'),
                         ),
