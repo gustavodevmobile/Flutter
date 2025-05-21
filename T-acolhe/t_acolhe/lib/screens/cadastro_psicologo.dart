@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:t_acolhe/controller/cadastro_abordagem_especialidade_controller.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
 
@@ -26,14 +27,20 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
       TextEditingController();
   final TextEditingController _valorConsultaController =
       TextEditingController();
-  String? _tipoProfissional;
-  String? _genero;
+  final TextEditingController _abordagemController = TextEditingController();
+  final TextEditingController _especialidadeController =
+      TextEditingController();
+  List<String> _especialidades = [];
   final CadastroController _cadastroController = CadastroController();
+  final CadastroAbordagemEspecialidadeController
+      _abordagemEspecialidadeController =
+      CadastroAbordagemEspecialidadeController();
   bool _loading = false;
   bool _showImagePicker = false;
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
   String? cnpj;
+  String? _genero;
 
   // Exibe um SnackBar para feedback ao usuário
   void showSnackBar(String message, {Color? backgroundColor}) {
@@ -112,7 +119,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(
-                            labelText: 'Nome',
+                            labelText: 'Nome*',
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                           validator: (value) {
@@ -126,7 +133,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         TextFormField(
                           controller: _emailController,
                           decoration: const InputDecoration(
-                            labelText: 'E-mail',
+                            labelText: 'E-mail*',
                             prefixIcon: Icon(Icons.email_outlined),
                           ),
                           validator: (value) {
@@ -145,13 +152,14 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         TextFormField(
                           controller: _passwordController,
                           decoration: const InputDecoration(
-                            labelText: 'Senha',
+                            labelText: 'Senha*',
                             prefixIcon: Icon(Icons.lock_outline),
                           ),
                           obscureText: true,
                           validator: (value) {
-                            if (value == null || value.length < 6)
+                            if (value == null || value.length < 6) {
                               return 'Senha deve ter pelo menos 6 caracteres';
+                            }
                             return null;
                           },
                         ),
@@ -160,7 +168,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         TextFormField(
                           controller: _bioController,
                           decoration: const InputDecoration(
-                            labelText: 'Bio',
+                            labelText: 'Biografia',
                             prefixIcon: Icon(Icons.info_outline),
                           ),
                           maxLines: 2,
@@ -170,16 +178,18 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         TextFormField(
                           controller: _cpfController,
                           decoration: const InputDecoration(
-                            labelText: 'CPF',
+                            labelText: 'CPF*',
                             prefixIcon: Icon(Icons.badge_outlined),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty)
+                            if (value == null || value.isEmpty) {
                               return 'CPF obrigatório';
+                            }
                             final cpfRegex = RegExp(
                                 r'^([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{11})$');
-                            if (!cpfRegex.hasMatch(value))
+                            if (!cpfRegex.hasMatch(value)) {
                               return 'CPF inválido';
+                            }
                             return null;
                           },
                           keyboardType: TextInputType.number,
@@ -204,37 +214,13 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           },
                           keyboardType: TextInputType.number,
                         ),
-                        // const SizedBox(height: 16),
-                        // // Campo Tipo Profissional
-                        // DropdownButtonFormField<String>(
-                        //   value: _tipoProfissional,
-                        //   decoration: const InputDecoration(
-                        //     labelText: 'Tipo Profissional',
-                        //     prefixIcon: Icon(Icons.work_outline),
-                        //   ),
-                        //   items: const [
-                        //     DropdownMenuItem(
-                        //         value: 'Psicologia', child: Text('Psicologia')),
-                        //     DropdownMenuItem(
-                        //         value: 'Psicanálista',
-                        //         child: Text('Psicanálista')),
-                        //     DropdownMenuItem(
-                        //         value: 'Outro', child: Text('Outro')),
-                        //   ],
-                        //   onChanged: (value) =>
-                        //       setState(() => _tipoProfissional = value),
-                        //   validator: (value) {
-                        //     if (value == null || value.isEmpty)
-                        //       return 'Selecione o tipo profissional';
-                        //     return null;
-                        //   },
-                        // ),
+
                         const SizedBox(height: 16),
                         // Campo Registro Profissional
                         TextFormField(
                           controller: _registroProfissionalController,
                           decoration: const InputDecoration(
-                            labelText: 'Registro Profissional',
+                            labelText: 'CRP*',
                             prefixIcon: Icon(Icons.assignment_ind_outlined),
                           ),
                           validator: (value) {
@@ -245,12 +231,85 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-
+                        // Campo Abordagem Principal
+                        TextFormField(
+                          controller: _abordagemController,
+                          decoration: const InputDecoration(
+                            labelText: 'Abordagem Principal*',
+                            prefixIcon: Icon(Icons.psychology_alt_outlined),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Abordagem obrigatória';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Especialidade (adiciona à lista)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _especialidadeController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Especialidade(s)',
+                                  prefixIcon: Icon(Icons.star_outline),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              tooltip: 'Adicionar Especialidade',
+                              onPressed: () {
+                                FocusScope.of(context).unfocus();
+                                final text =
+                                    _especialidadeController.text.trim();
+                                if (text.isNotEmpty &&
+                                    !_especialidades.contains(text)) {
+                                  setState(() {
+                                    _especialidades.add(text);
+                                    _especialidadeController.clear();
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        // Lista de especialidades adicionadas
+                        if (_especialidades.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: _especialidades
+                                  .map((esp) => Row(
+                                        children: [
+                                          const Icon(Icons.check,
+                                              color: Colors.green, size: 20),
+                                          const SizedBox(width: 6),
+                                          Expanded(child: Text(esp)),
+                                          IconButton(
+                                            icon: const Icon(Icons.close,
+                                                color: Colors.red, size: 20),
+                                            tooltip: 'Remover',
+                                            onPressed: () {
+                                              setState(() {
+                                                _especialidades.remove(esp);
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        const SizedBox(height: 16),
                         // Campo Gênero
                         DropdownButtonFormField<String>(
                           value: _genero,
                           decoration: const InputDecoration(
-                            labelText: 'Gênero',
+                            labelText: 'Gênero*',
                             prefixIcon: Icon(Icons.transgender),
                           ),
                           items: const [
@@ -273,6 +332,27 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             return null;
                           },
                         ),
+                        const SizedBox(height: 16),
+                        // Campo Valor da Consulta
+                        TextFormField(
+                          controller: _valorConsultaController,
+                          decoration: const InputDecoration(
+                            labelText: 'Valor da Consulta (R\$)*',
+                            prefixIcon: Icon(Icons.attach_money_outlined),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Informe o valor da consulta';
+                            }
+                            final valor =
+                                double.tryParse(value.replaceAll(',', '.'));
+                            if (valor == null || valor <= 0) {
+                              return 'Valor inválido';
+                            }
+                            return null;
+                          },
+                          keyboardType: TextInputType.number,
+                        ),
 
                         // Botão para mostrar/esconder área de imagem
                         Row(
@@ -288,7 +368,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                 },
                                 child: Text(_showImagePicker
                                     ? 'Ocultar imagem'
-                                    : 'Enviar imagem'),
+                                    : 'Foto do perfil*'),
                               ),
                             ),
                           ],
@@ -330,27 +410,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                               ),
                             ],
                           ),
-                        //const SizedBox(height: 16),
-                        // Campo Valor da Consulta
-                        //const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _valorConsultaController,
-                          decoration: const InputDecoration(
-                            labelText: 'Valor da Consulta (R\$)',
-                            prefixIcon: Icon(Icons.attach_money_outlined),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty)
-                              return 'Informe o valor da consulta';
-                            final valor =
-                                double.tryParse(value.replaceAll(',', '.'));
-                            if (valor == null || valor <= 0)
-                              return 'Valor inválido';
-                            return null;
-                          },
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(height: 32),
+
                         // Botão de cadastro
                         SizedBox(
                           width: double.infinity,
@@ -377,6 +437,25 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                       }
                                       setState(() => _loading = true);
                                       try {
+                                        // Cadastro da abordagem principal
+                                        if (_abordagemController
+                                            .text.isNotEmpty) {
+                                          await _abordagemEspecialidadeController
+                                              .cadastrarAbordagem(
+                                                  _abordagemController.text
+                                                      .trim());
+                                        }
+                                        // Cadastro das especialidades
+                                        if (_especialidades.isEmpty) {
+                                          _especialidades = [];
+                                          await _abordagemEspecialidadeController
+                                              .cadastrarEspecialidades(
+                                                  _especialidades);
+                                        } else {
+                                          await _abordagemEspecialidadeController
+                                              .cadastrarAbordagem(
+                                                  _abordagemController.text);
+                                        }
                                         String fotoBase64 = '';
                                         if (_selectedImage != null) {
                                           final bytes = await _selectedImage!
@@ -398,8 +477,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                           crp: _registroProfissionalController
                                               .text
                                               .trim(),
-                                          tipoProfissional:
-                                              'Psicólogo',
+                                          tipoProfissional: 'Psicólogo',
                                           estaOnline: false,
                                           atendePlantao: false,
                                           valorConsulta: double.tryParse(
@@ -419,7 +497,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                           showSnackBar(
                                               'Profissional cadastrado com sucesso!',
                                               backgroundColor: Colors.green);
-                                          Navigator.pop(context);
+                                          //Navigator.pop(context);
                                         } else {
                                           showSnackBar(
                                               'Erro ao cadastrar: \n${response.body}',

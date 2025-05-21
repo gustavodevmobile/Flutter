@@ -144,7 +144,7 @@ class _InitialScreenState extends State<InitialScreen> {
                                       TextButton(
                                         onPressed: () {
                                           Navigator.pushNamed(
-                                              context, '/login_psicologo');
+                                              context, '/login_profissional');
                                         },
                                         child: const Text('Entrar'),
                                       ),
@@ -183,7 +183,7 @@ class _InitialScreenState extends State<InitialScreen> {
                                       TextButton(
                                         onPressed: () {
                                           Navigator.pushNamed(
-                                              context, '/login_psicanalista');
+                                              context, '/login_profissional');
                                         },
                                         child: const Text('Entrar'),
                                       ),

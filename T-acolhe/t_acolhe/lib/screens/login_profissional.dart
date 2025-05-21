@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_acolhe/controller/login_controller.dart';
 // Importe o controller de login se necessário
 // import 'package:t_acolhe/controller/login_controller.dart';
 
@@ -11,7 +12,7 @@ class LoginProfissionalScreen extends StatefulWidget {
 }
 
 class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
@@ -79,20 +80,20 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                         ),
                         const SizedBox(height: 24),
                         TextFormField(
-                          controller: _emailController,
+                          controller: _cpfController,
                           decoration: const InputDecoration(
-                            labelText: 'E-mail',
-                            prefixIcon: Icon(Icons.email_outlined),
+                            labelText: 'CPF',
+                            prefixIcon: Icon(Icons.badge_outlined),
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'E-mail obrigatório';
                             }
-                            final emailRegex =
-                                RegExp(r"^[\w-.]+@([\w-]+\.)+[\w-]{2,4}");
-                            if (!emailRegex.hasMatch(value)) {
-                              return 'E-mail inválido';
+                            final cpfRegex = RegExp(
+                                r'^([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{11})$');
+                            if (!cpfRegex.hasMatch(value)) {
+                              return 'CPF inválido';
                             }
                             return null;
                           },
@@ -129,32 +130,43 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                             onPressed: _loading
                                 ? null
                                 : () async {
+                                    // Remove o foco dos campos e recolhe o teclado
+                                    FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       setState(() => _loading = true);
                                       try {
+                                        ScaffoldMessengerState
+                                            scaffoldMessenger =
+                                            ScaffoldMessenger.of(context);
                                         // Substitua pelo controller real se necessário
-                                        // final response = await LoginController().loginProfissional(
-                                        //   email: _emailController.text,
-                                        //   senha: _passwordController.text,
-                                        // );
-                                        await Future.delayed(const Duration(
-                                            seconds: 1)); // Simulação
-                                        if (!mounted) return;
-                                        // if (response.statusCode == 200) {
-                                        showSnackBar(context,
-                                            'Login realizado com sucesso!',
-                                            backgroundColor: Colors.green);
-                                        // } else {
-                                        //   showSnackBar(context, response.body, backgroundColor: Colors.red);
-                                        // }
+                                        final response = await LoginController()
+                                            .loginProfissional(
+                                          cpf: _cpfController.text,
+                                          senha: _passwordController.text,
+                                        );
+                                        if (response.statusCode == 200) {
+                                          print(response.body);
+                                          scaffoldMessenger
+                                              .showSnackBar(SnackBar(
+                                            content: Text(response.body),
+                                            backgroundColor: Colors.green,
+                                          ));
+                                        } else {
+                                          scaffoldMessenger
+                                              .showSnackBar(SnackBar(
+                                            content: Text(response.body),
+                                            backgroundColor: Colors.red,
+                                          ));
+                                        }
                                       } catch (e) {
                                         if (!mounted) return;
                                         showSnackBar(
                                             context, 'Erro de conexão: $e',
                                             backgroundColor: Colors.red);
                                       } finally {
-                                        if (mounted)
+                                        if (mounted) {
                                           setState(() => _loading = false);
+                                        }
                                       }
                                     }
                                   },

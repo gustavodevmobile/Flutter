@@ -120,6 +120,7 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                                 : () async {
                                     ScaffoldMessengerState scaffoldMessenger =
                                         ScaffoldMessenger.of(context);
+                                        FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       setState(() => _loading = true);
                                       try {

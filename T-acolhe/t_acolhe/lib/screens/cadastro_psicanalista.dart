@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:t_acolhe/controller/cadastro_abordagem_especialidade_controller.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
 
@@ -22,6 +23,13 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   final TextEditingController _cnpjController = TextEditingController();
   final TextEditingController _valorConsultaController =
       TextEditingController();
+  final TextEditingController _abordagemController = TextEditingController();
+  final TextEditingController _especialidadeController =
+      TextEditingController();
+  final List<String> _especialidades = [];
+  final CadastroAbordagemEspecialidadeController
+      _abordagemEspecialidadeController =
+      CadastroAbordagemEspecialidadeController();
 
   String? _genero;
   final CadastroController _cadastroController = CadastroController();
@@ -32,6 +40,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   File? _declAnPessoalImage;
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
+  bool showCheck = false;
 
   void showSnackBar(String message, {Color? backgroundColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -155,7 +164,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         TextFormField(
                           controller: _bioController,
                           decoration: const InputDecoration(
-                            labelText: 'Bio',
+                            labelText: 'Biografia',
                             prefixIcon: Icon(Icons.info_outline),
                           ),
                           maxLines: 2,
@@ -225,6 +234,74 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
+                        // Campo Abordagem Principal
+                        TextFormField(
+                          controller: _abordagemController,
+                          decoration: const InputDecoration(
+                            labelText: 'Abordagem Principal',
+                            prefixIcon: Icon(Icons.psychology_alt_outlined),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Especialidade (adiciona à lista)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _especialidadeController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Especialidade(s)',
+                                  prefixIcon: Icon(Icons.star_outline),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              tooltip: 'Adicionar Especialidade',
+                              onPressed: () {
+                                FocusScope.of(context).unfocus();
+                                final text =
+                                    _especialidadeController.text.trim();
+                                if (text.isNotEmpty &&
+                                    !_especialidades.contains(text)) {
+                                  setState(() {
+                                    _especialidades.add(text);
+                                    _especialidadeController.clear();
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        // Lista de especialidades adicionadas
+                        if (_especialidades.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: _especialidades
+                                  .map((esp) => Row(
+                                        children: [
+                                          const Icon(Icons.check,
+                                              color: Colors.green, size: 20),
+                                          const SizedBox(width: 6),
+                                          Expanded(child: Text(esp)),
+                                          IconButton(
+                                            icon: const Icon(Icons.close,
+                                                color: Colors.red, size: 20),
+                                            tooltip: 'Remover',
+                                            onPressed: () {
+                                              setState(() {
+                                                _especialidades.remove(esp);
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        const SizedBox(height: 32),
                         // Campo obrigatório de imagem de perfil
                         Align(
                           alignment: Alignment.centerLeft,
@@ -261,6 +338,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         // Diploma Psicanalista
+
                         _buildImagePickerField(
                           label: 'Diploma de Psicanalista*',
                           image: _diplomaPsicanalistaImage,
@@ -271,7 +349,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         const SizedBox(height: 16),
                         // Declaração Sup. Clínica
                         _buildImagePickerField(
-                          label: 'Declaração Sup. Clínica*',
+                          label: 'Declaração Supervisão Clínica*',
                           image: _declSupClinicaImage,
                           onPick: (source) => _pickImage(
                               source, (file) => _declSupClinicaImage = file),
@@ -307,7 +385,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           },
                           keyboardType: TextInputType.number,
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
+
                         // Botão de cadastro
                         SizedBox(
                           width: double.infinity,
@@ -324,6 +403,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                             onPressed: _loading
                                 ? null
                                 : () async {
+                                    FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       if (_profileImage == null) {
                                         showSnackBar(
@@ -344,14 +424,15 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                       print(_valorConsultaController.text);
                                       try {
                                         String fotoBase64 = '';
-                                        String? diplomaBase64;
-                                        String? declSupClinicaBase64;
-                                        String? declAnPessoalBase64;
+                                        String diplomaBase64 = '';
+                                        String declSupClinicaBase64 = '';
+                                        String declAnPessoalBase64 = '';
                                         if (_profileImage != null) {
                                           final bytes = await _profileImage!
                                               .readAsBytes();
                                           fotoBase64 = base64Encode(bytes);
                                         }
+
                                         if (_diplomaPsicanalistaImage != null) {
                                           final bytes =
                                               await _diplomaPsicanalistaImage!
@@ -372,6 +453,9 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                           declAnPessoalBase64 =
                                               base64Encode(bytes);
                                         }
+                                        // Cadastra a abordagem
+
+                                        // Cadastra o profissional
                                         final profissional = Professional(
                                           name: _nameController.text.trim(),
                                           email: _emailController.text.trim(),
@@ -408,6 +492,12 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                           showSnackBar(
                                               'Psicanalista cadastrado com sucesso!',
                                               backgroundColor: Colors.green);
+                                          await _abordagemEspecialidadeController
+                                              .cadastrarEspecialidades(
+                                                  _especialidades);
+                                          await _abordagemEspecialidadeController
+                                              .cadastrarAbordagem(
+                                                  _abordagemController.text);
                                           if (context.mounted) {
                                             Navigator.pop(context);
                                           }
@@ -420,6 +510,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                         if (!mounted) return;
                                         showSnackBar('Erro de conexão: $e',
                                             backgroundColor: Colors.red);
+                                            print(e);
                                       } finally {
                                         if (mounted) {
                                           setState(() => _loading = false);

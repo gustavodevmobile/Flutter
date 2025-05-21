@@ -76,17 +76,4 @@ class CadastroController {
       rethrow;
     }
   }
-
-  Future<Professional?> getProfissionalById(String id) async {
-    try {
-      final response = await _apiService.getProfissionalById(id);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return Professional.fromJson(data);
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  }
 }

@@ -9,6 +9,7 @@ import 'screens/initial_screen.dart';
 
 void main() {
   runApp(const MyApp());
+  //ApiService().removerProfissionalPorCpf('12345678902');
 }
 
 class MyApp extends StatelessWidget {

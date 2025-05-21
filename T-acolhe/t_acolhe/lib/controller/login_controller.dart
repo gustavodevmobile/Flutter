@@ -16,12 +16,13 @@ class LoginController {
   }
 
   Future<Response> loginProfissional({
-    required String email,
+    required String cpf,
     required String senha,
   }) async {
     try {
-      return await _apiService.loginProfissional(email, senha);
+      return await _apiService.loginProfissional(cpf, senha);
     } on Exception catch (e) {
+      print('Erro ao fazer login: $e');
       rethrow;
     }
   }
