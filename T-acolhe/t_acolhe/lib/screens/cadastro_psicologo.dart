@@ -123,8 +123,9 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty)
+                            if (value == null || value.trim().isEmpty) {
                               return 'Nome obrigatório';
+                            }
                             return null;
                           },
                         ),
@@ -137,12 +138,14 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             prefixIcon: Icon(Icons.email_outlined),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty)
+                            if (value == null || value.trim().isEmpty) {
                               return 'E-mail obrigatório';
+                            }
                             final emailRegex =
                                 RegExp(r"^[\w-.]+@([\w-]+\.)+[\w-]{2,4}");
-                            if (!emailRegex.hasMatch(value))
+                            if (!emailRegex.hasMatch(value)) {
                               return 'E-mail inválido';
+                            }
                             return null;
                           },
                           keyboardType: TextInputType.emailAddress,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:t_acolhe/controller/cadastro_controller.dart';
 import 'package:t_acolhe/controller/login_controller.dart';
 
 class LoginUsuarioScreen extends StatefulWidget {
@@ -126,26 +125,28 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                                       try {
                                         final response = await LoginController()
                                             .loginUsuario(
-                                          email: _emailController.text,
-                                          senha: _passwordController.text,
+                                          _emailController.text,
+                                          _passwordController.text, (response){
+
+                                          }, (error){}
                                         );
-                                        if (response.statusCode == 200) {
-                                          scaffoldMessenger.showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  'Login realizado com sucesso!'),
-                                              backgroundColor: Colors.green,
-                                            ),
-                                          );
-                                          // Navegação após login pode ser feita aqui
-                                        } else {
-                                          scaffoldMessenger.showSnackBar(
-                                            SnackBar(
-                                              content: Text(response.body),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                        }
+                                        // if (response.statusCode == 200) {
+                                        //   scaffoldMessenger.showSnackBar(
+                                        //     SnackBar(
+                                        //       content: Text(
+                                        //           'Login realizado com sucesso!'),
+                                        //       backgroundColor: Colors.green,
+                                        //     ),
+                                        //   );
+                                        //   // Navegação após login pode ser feita aqui
+                                        // } else {
+                                        //   scaffoldMessenger.showSnackBar(
+                                        //     SnackBar(
+                                        //       content: Text(response.body),
+                                        //       backgroundColor: Colors.red,
+                                        //     ),
+                                        //   );
+                                        // }
                                       } catch (e) {
                                         scaffoldMessenger.showSnackBar(
                                           SnackBar(

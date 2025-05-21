@@ -50,7 +50,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
               padding: const EdgeInsets.all(24.0),
               child: Card(
                 elevation: 8,
-                color: Colors.white.withOpacity(0.95),
+                color: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24)),
                 child: Padding(
@@ -84,8 +84,9 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty)
+                            if (value == null || value.trim().isEmpty) {
                               return 'Nome obrigatório';
+                            }
                             return null;
                           },
                         ),
@@ -97,12 +98,14 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                             prefixIcon: Icon(Icons.email_outlined),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty)
+                            if (value == null || value.trim().isEmpty) {
                               return 'E-mail obrigatório';
+                            }
                             final emailRegex =
                                 RegExp(r"^[\w-.]+@([\w-]+\.)+[\w-]{2,4}");
-                            if (!emailRegex.hasMatch(value))
+                            if (!emailRegex.hasMatch(value)) {
                               return 'E-mail inválido';
+                            }
                             return null;
                           },
                           keyboardType: TextInputType.emailAddress,
@@ -116,8 +119,9 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                           ),
                           obscureText: true,
                           validator: (value) {
-                            if (value == null || value.length < 6)
+                            if (value == null || value.length < 6) {
                               return 'Senha deve ter pelo menos 6 caracteres';
+                            }
                             return null;
                           },
                         ),
@@ -129,12 +133,14 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                             prefixIcon: Icon(Icons.badge_outlined),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty)
+                            if (value == null || value.isEmpty) {
                               return 'CPF obrigatório';
+                            }
                             final cpfRegex = RegExp(
                                 r'^([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{11})$');
-                            if (!cpfRegex.hasMatch(value))
+                            if (!cpfRegex.hasMatch(value)) {
                               return 'CPF inválido';
+                            }
                             return null;
                           },
                           keyboardType: TextInputType.number,
@@ -156,8 +162,9 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                           ],
                           onChanged: (value) => setState(() => _gender = value),
                           validator: (value) {
-                            if (value == null || value.isEmpty)
+                            if (value == null || value.isEmpty) {
                               return 'Selecione o gênero';
+                            }
                             return null;
                           },
                         ),
@@ -206,8 +213,9 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                                         showSnackBar('Erro de conexão: $e',
                                             backgroundColor: Colors.red);
                                       } finally {
-                                        if (mounted)
+                                        if (mounted) {
                                           setState(() => _loading = false);
+                                        }
                                       }
                                     }
                                   },

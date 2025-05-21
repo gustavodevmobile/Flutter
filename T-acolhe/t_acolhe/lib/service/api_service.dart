@@ -15,8 +15,7 @@ class ApiService {
 
   Future<http.Response> cadastrarProfissional(Map<String, dynamic> data) async {
     final url = Uri.parse('$_baseUrl/profissional');
-    print(data['declAnPessoal']);
-    print(data['declSupClinica']);
+
     return await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

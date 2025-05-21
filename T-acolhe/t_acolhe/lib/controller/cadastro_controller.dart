@@ -1,7 +1,6 @@
 import '../service/api_service.dart';
 import 'package:http/http.dart';
 import '../models/professional.dart';
-import 'dart:convert';
 
 class CadastroController {
   final ApiService _apiService = ApiService();
@@ -58,16 +57,18 @@ class CadastroController {
     }
   }
 
-  Future<Response> loginUsuario({
-    required String email,
-    required String senha,
-  }) async {
-    try {
-      return await _apiService.loginUsuario(email, senha);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  
+
+  // Future<Response> loginUsuario({
+  //   required String email,
+  //   required String senha,
+  // }) async {
+  //   try {
+  //     return await _apiService.loginUsuario(email, senha);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<Response> cadastrarProfissionalModel(Professional profissional) async {
     try {

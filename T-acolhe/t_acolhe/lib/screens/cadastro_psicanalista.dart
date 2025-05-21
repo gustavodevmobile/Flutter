@@ -499,7 +499,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                               .cadastrarAbordagem(
                                                   _abordagemController.text);
                                           if (context.mounted) {
-                                            Navigator.pop(context);
+                                            //Navigator.pop(context);
                                           }
                                         } else {
                                           showSnackBar(

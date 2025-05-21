@@ -134,40 +134,15 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                     FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       setState(() => _loading = true);
-                                      try {
-                                        ScaffoldMessengerState
-                                            scaffoldMessenger =
-                                            ScaffoldMessenger.of(context);
-                                        // Substitua pelo controller real se necessário
-                                        final response = await LoginController()
-                                            .loginProfissional(
-                                          cpf: _cpfController.text,
-                                          senha: _passwordController.text,
-                                        );
-                                        if (response.statusCode == 200) {
-                                          print(response.body);
-                                          scaffoldMessenger
-                                              .showSnackBar(SnackBar(
-                                            content: Text(response.body),
-                                            backgroundColor: Colors.green,
-                                          ));
-                                        } else {
-                                          scaffoldMessenger
-                                              .showSnackBar(SnackBar(
-                                            content: Text(response.body),
-                                            backgroundColor: Colors.red,
-                                          ));
-                                        }
-                                      } catch (e) {
-                                        if (!mounted) return;
-                                        showSnackBar(
-                                            context, 'Erro de conexão: $e',
+                                      await LoginController().loginProfissional(
+                                          _cpfController.text,
+                                          _passwordController.text, (profissional) {
+                                        print(profissional.email);
+                                      }, (error) {
+                                        setState(() => _loading = false);
+                                        showSnackBar(context, error,
                                             backgroundColor: Colors.red);
-                                      } finally {
-                                        if (mounted) {
-                                          setState(() => _loading = false);
-                                        }
-                                      }
+                                      });
                                     }
                                   },
                             child: _loading
