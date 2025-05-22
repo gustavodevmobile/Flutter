@@ -2,18 +2,19 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:t_acolhe/models/professional.dart';
+import 'package:t_acolhe/models/usuario.dart';
 import 'package:t_acolhe/service/api_service.dart';
 
 class LoginController {
   final ApiService _apiService = ApiService();
 
-  Future<void> loginUsuario(String email, String senha, Function response,
-      Function(String) onError) async {
+  Future<void> loginUsuario(String email, String senha,
+      Function(Usuario) onSuccess, Function(String) onError) async {
     try {
       Response response = await _apiService.loginUsuario(email, senha);
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        //print(result['cpf']);
+        onSuccess(Usuario.fromJson(result));
       } else {
         onError('Erro ao fazer login: ${response.body}');
       }
@@ -28,12 +29,12 @@ class LoginController {
       Response response = await _apiService.loginProfissional(cpf, senha);
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        final professionalData = Professional.fromJson(result);
-        onSuccess(professionalData);
+        //onSuccess(Professional.fromJson(result));
       } else {
         onError('Erro ao fazer login: \\${response.body}');
       }
     } catch (e) {
+      print('Erro ao fazer login: $e');
       onError('Erro ao fazer login: $e');
     }
   }

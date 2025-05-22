@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:t_acolhe/controller/cadastro_abordagem_especialidade_controller.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class PsicanalistaFormScreen extends StatefulWidget {
   const PsicanalistaFormScreen({super.key});
@@ -26,6 +27,12 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   final TextEditingController _abordagemController = TextEditingController();
   final TextEditingController _especialidadeController =
       TextEditingController();
+  final TextEditingController _chavePixController = TextEditingController();
+  final TextEditingController _contaBancariaController =
+      TextEditingController();
+  final TextEditingController _agenciaController = TextEditingController();
+  final TextEditingController _bancoController = TextEditingController();
+  final TextEditingController _tipoContaController = TextEditingController();
   final List<String> _especialidades = [];
   final CadastroAbordagemEspecialidadeController
       _abordagemEspecialidadeController =
@@ -47,6 +54,16 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
       SnackBar(content: Text(message), backgroundColor: backgroundColor),
     );
   }
+
+  final cpfFormater = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
+
+  final cnpjFormater = MaskTextInputFormatter(
+    mask: '##.###.###/####-##',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
 
   Future<void> _pickImage(
       ImageSource source, void Function(File) setter) async {
@@ -115,7 +132,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(
-                            labelText: 'Nome*',
+                            labelText: 'Nome Completo*',
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                           validator: (value) {
@@ -172,9 +189,11 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _cpfController,
+                          inputFormatters: [cpfFormater],
                           decoration: const InputDecoration(
                             labelText: 'CPF*',
                             prefixIcon: Icon(Icons.badge_outlined),
+                            hintText: '000.000.000-00',
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -193,9 +212,11 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _cnpjController,
+                          inputFormatters: [cnpjFormater],
                           decoration: const InputDecoration(
                             labelText: 'CNPJ',
                             prefixIcon: Icon(Icons.business_outlined),
+                            hintText: '00.000.000/0000-00',
                           ),
                           validator: (_) {
                             if (_cnpjController.text.isNotEmpty) {
@@ -222,8 +243,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                 value: 'Masculino', child: Text('Masculino')),
                             DropdownMenuItem(
                                 value: 'Feminino', child: Text('Feminino')),
-                            DropdownMenuItem(
-                                value: 'Outro', child: Text('Outro')),
+                            
                           ],
                           onChanged: (value) => setState(() => _genero = value),
                           validator: (value) {
@@ -386,6 +406,51 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 16),
+                        // Campo Chave Pix
+                        TextFormField(
+                          controller: _chavePixController,
+                          decoration: const InputDecoration(
+                            labelText: 'Chave Pix',
+                            prefixIcon: Icon(Icons.pix),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Conta Bancária
+                        TextFormField(
+                          controller: _contaBancariaController,
+                          decoration: const InputDecoration(
+                            labelText: 'Conta Bancária',
+                            prefixIcon: Icon(Icons.account_balance),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Agência
+                        TextFormField(
+                          controller: _agenciaController,
+                          decoration: const InputDecoration(
+                            labelText: 'Agência',
+                            prefixIcon: Icon(Icons.confirmation_number),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Banco
+                        TextFormField(
+                          controller: _bancoController,
+                          decoration: const InputDecoration(
+                            labelText: 'Banco',
+                            prefixIcon: Icon(Icons.account_balance_wallet),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Tipo de Conta
+                        TextFormField(
+                          controller: _tipoContaController,
+                          decoration: const InputDecoration(
+                            labelText: 'Tipo de Conta',
+                            prefixIcon: Icon(Icons.credit_card),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
 
                         // Botão de cadastro
                         SizedBox(
@@ -481,6 +546,35 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                               0.0,
                                           genero: _genero ?? '',
                                           foto: fotoBase64,
+                                          chavePix: _chavePixController.text
+                                                  .trim()
+                                                  .isEmpty
+                                              ? null
+                                              : _chavePixController.text.trim(),
+                                          contaBancaria:
+                                              _contaBancariaController.text
+                                                      .trim()
+                                                      .isEmpty
+                                                  ? null
+                                                  : _contaBancariaController
+                                                      .text
+                                                      .trim(),
+                                          agencia: _agenciaController.text
+                                                  .trim()
+                                                  .isEmpty
+                                              ? null
+                                              : _agenciaController.text.trim(),
+                                          banco: _bancoController.text
+                                                  .trim()
+                                                  .isEmpty
+                                              ? null
+                                              : _bancoController.text.trim(),
+                                          tipoConta: _tipoContaController.text
+                                                  .trim()
+                                                  .isEmpty
+                                              ? null
+                                              : _tipoContaController.text
+                                                  .trim(),
                                         );
                                         final response =
                                             await _cadastroController
@@ -510,7 +604,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                         if (!mounted) return;
                                         showSnackBar('Erro de conexão: $e',
                                             backgroundColor: Colors.red);
-                                            print(e);
+                                        print(e);
                                       } finally {
                                         if (mounted) {
                                           setState(() => _loading = false);

@@ -6,6 +6,7 @@ class ApiService {
 
   Future<http.Response> cadastrarUsuario(Map<String, dynamic> data) async {
     final url = Uri.parse('$_baseUrl/usuario');
+    print('Datadd: {$data["dataNascimento"]}');
     return await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

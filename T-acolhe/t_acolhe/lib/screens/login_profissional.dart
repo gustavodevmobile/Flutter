@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:t_acolhe/controller/login_controller.dart';
 // Importe o controller de login se necessário
 // import 'package:t_acolhe/controller/login_controller.dart';
@@ -26,6 +27,11 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
       ),
     );
   }
+
+  final cpfFormater = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +87,11 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                         const SizedBox(height: 24),
                         TextFormField(
                           controller: _cpfController,
+                          inputFormatters: [cpfFormater],
                           decoration: const InputDecoration(
                             labelText: 'CPF',
                             prefixIcon: Icon(Icons.badge_outlined),
+                            hintText: '000.000.000-00',
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
@@ -136,8 +144,10 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                       setState(() => _loading = true);
                                       await LoginController().loginProfissional(
                                           _cpfController.text,
-                                          _passwordController.text, (profissional) {
-                                        print(profissional.email);
+                                          _passwordController.text,
+                                          (onSuccess) {
+                                        setState(() => _loading = false);
+                                        print(onSuccess.genero);
                                       }, (error) {
                                         setState(() => _loading = false);
                                         showSnackBar(context, error,

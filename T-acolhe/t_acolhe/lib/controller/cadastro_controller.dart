@@ -7,6 +7,7 @@ class CadastroController {
 
   Future<Response> cadastrarUsuario({
     required String nome,
+    required DateTime dataNascimento,
     required String email,
     required String senha,
     required String cpf,
@@ -14,14 +15,17 @@ class CadastroController {
   }) async {
     final data = {
       'nome': nome,
+      'dataNascimento': dataNascimento.toIso8601String(),
       'email': email,
       'senha': senha,
       'cpf': cpf,
       'genero': genero,
     };
+    print('Data: $dataNascimento');
     try {
       return await _apiService.cadastrarUsuario(data);
     } catch (e) {
+      print(e);
       rethrow;
     }
   }
@@ -53,6 +57,7 @@ class CadastroController {
     try {
       return await _apiService.cadastrarProfissional(data);
     } catch (e) {
+     
       rethrow;
     }
   }

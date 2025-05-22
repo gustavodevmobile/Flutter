@@ -17,6 +17,11 @@ class Professional {
   final String genero;
   final String foto;
   final DateTime? createdAt;
+  final String? chavePix;
+  final String? contaBancaria;
+  final String? agencia;
+  final String? banco;
+  final String? tipoConta;
 
   Professional({
     this.id,
@@ -37,32 +42,40 @@ class Professional {
     required this.genero,
     required this.foto,
     this.createdAt,
+    this.chavePix,
+    this.contaBancaria,
+    this.agencia,
+    this.banco,
+    this.tipoConta,
   });
 
   factory Professional.fromJson(Map<String, dynamic> json) {
     return Professional(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      passwordHash: json['password_hash'],
-      bio: json['bio'],
-      cpf: json['cpf'],
-      cnpj: json['cnpj'],
-      crp: json['crp'],
-      diplomaPsicanalista: json['diplomaPsicanalista'],
-      declSupClinica: json['declSupClinica'],
-      declAnPessoal: json['declAnPessoal'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      passwordHash: json['password_hash'] ?? '',
+      bio: json['bio'] ?? '',
+      cpf: json['cpf'] ?? '',
+      cnpj: json['cnpj'] ?? '',
+      crp: json['crp'] ?? '',
+      diplomaPsicanalista: json['diplomaPsicanalista'] ?? '',
+      declSupClinica: json['declSupClinica'] ?? '',
+      declAnPessoal: json['declAnPessoal'] ?? '',
       tipoProfissional: json['tipoProfissional'],
       estaOnline: json['estaOnline'] ?? false,
       atendePlantao: json['atendePlantao'] ?? false,
-      valorConsulta: (json['valorConsulta']),
-          // ? (json['valor_consulta'] as int).toDouble()
-          // : (json['valor_consulta'] as num).toDouble(),
-      genero: json['genero'],
-      foto: json['foto'],
+      valorConsulta: double.tryParse(json['valorConsulta'].toString()) ?? 0.0,
+      genero: json['genero'] ?? '',
+      foto: json['foto'] ?? '',
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : null,
+      chavePix: json['chavePix'] ?? '',
+      contaBancaria: json['contaBancaria'] ?? '',
+      agencia: json['agencia'] ?? '',
+      banco: json['banco'] ?? '',
+      tipoConta: json['tipoConta'] ?? '',
     );
   }
 
@@ -87,6 +100,11 @@ class Professional {
       'genero': genero,
       'foto': foto,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+      if (chavePix != null) 'chavePix': chavePix,
+      if (contaBancaria != null) 'contaBancaria': contaBancaria,
+      if (agencia != null) 'agencia': agencia,
+      if (banco != null) 'banco': banco,
+      if (tipoConta != null) 'tipoConta': tipoConta,
     };
   }
 }

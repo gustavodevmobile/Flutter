@@ -95,13 +95,15 @@ class _InitialScreenState extends State<InitialScreen> {
                             child: const Text('Sou Usuário'),
                           ),
                           AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 200),
+                            switchInCurve: Curves.easeIn,
+                            switchOutCurve: Curves.easeOut,
                             child: _expanded == 1
                                 ? Row(
                                     key: const ValueKey('usuario'),
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const SizedBox(width: 8),
+                                      //const SizedBox(width: 6),
                                       TextButton(
                                         onPressed: () {
                                           Navigator.pushNamed(

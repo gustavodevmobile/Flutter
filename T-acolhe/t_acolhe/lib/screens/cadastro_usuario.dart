@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controller/cadastro_controller.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class UsuarioFormScreen extends StatefulWidget {
   const UsuarioFormScreen({super.key});
@@ -11,6 +12,8 @@ class UsuarioFormScreen extends StatefulWidget {
 class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _dataNascimentoController =
+      TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
@@ -22,6 +25,55 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: backgroundColor),
     );
+  }
+
+  final _dataNascimentoFormatter = MaskTextInputFormatter(
+    mask: '##/##/####',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
+
+  final cpfFormater = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
+
+  bool isMaiorDeIdade(String dataNascimento) {
+    try {
+      // Extrai dia, mês e ano do formato dd/MM/yyyy
+      final partes = dataNascimento.split('/');
+      if (partes.length != 3) return false;
+      final dia = int.parse(partes[0]);
+      final mes = int.parse(partes[1]);
+      final ano = int.parse(partes[2]);
+
+      final nascimento = DateTime(ano, mes, dia);
+      final hoje = DateTime.now();
+
+      final idade = hoje.year -
+          nascimento.year -
+          ((hoje.month < nascimento.month ||
+                  (hoje.month == nascimento.month && hoje.day < nascimento.day))
+              ? 1
+              : 0);
+
+      return idade >= 18;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Função auxiliar para converter dd/MM/yyyy em DateTime
+  DateTime? parseData(String data) {
+    try {
+      final partes = data.split('/');
+      if (partes.length != 3) return null;
+      final dia = int.parse(partes[0]);
+      final mes = int.parse(partes[1]);
+      final ano = int.parse(partes[2]);
+      return DateTime(ano, mes, dia);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -80,7 +132,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(
-                            labelText: 'Nome',
+                            labelText: 'Nome*',
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                           validator: (value) {
@@ -91,10 +143,37 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
+                        // Campo Data de Nascimento
+                        TextFormField(
+                          controller: _dataNascimentoController,
+                          inputFormatters: [_dataNascimentoFormatter],
+                          decoration: const InputDecoration(
+                            labelText: 'Data de Nascimento*',
+                            prefixIcon: Icon(Icons.cake_outlined),
+                            hintText: 'dd/mm/aaaa*',
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Data de nascimento obrigatória';
+                            }
+                            final regex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+                            if (!regex.hasMatch(value)) {
+                              return 'Formato inválido (ex:(dd/mm/aaaa)';
+                            }
+                            // Verifica se é maior de idade
+                            if (!isMaiorDeIdade(value)) {
+                              return 'É necessário ter 18 anos ou mais';
+                            }
+                            return null;
+                          },
+                          keyboardType: TextInputType.datetime,
+                        ),
+                        const SizedBox(height: 16),
+
                         TextFormField(
                           controller: _emailController,
                           decoration: const InputDecoration(
-                            labelText: 'E-mail',
+                            labelText: 'E-mail*',
                             prefixIcon: Icon(Icons.email_outlined),
                           ),
                           validator: (value) {
@@ -114,7 +193,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                         TextFormField(
                           controller: _passwordController,
                           decoration: const InputDecoration(
-                            labelText: 'Senha',
+                            labelText: 'Senha*',
                             prefixIcon: Icon(Icons.lock_outline),
                           ),
                           obscureText: true,
@@ -128,9 +207,11 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _cpfController,
+                          inputFormatters: [cpfFormater],
                           decoration: const InputDecoration(
-                            labelText: 'CPF',
+                            labelText: 'CPF*',
                             prefixIcon: Icon(Icons.badge_outlined),
+                            hintText: '000.000.000-00*',
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -149,7 +230,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                         DropdownButtonFormField<String>(
                           value: _gender,
                           decoration: const InputDecoration(
-                            labelText: 'Gênero',
+                            labelText: 'Gênero*',
                             prefixIcon: Icon(Icons.transgender),
                           ),
                           items: const [
@@ -157,6 +238,25 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                                 value: 'Masculino', child: Text('Masculino')),
                             DropdownMenuItem(
                                 value: 'Feminino', child: Text('Feminino')),
+                            DropdownMenuItem(
+                                value: 'Não-binário',
+                                child: Text('Não-binário')),
+                            DropdownMenuItem(
+                                value: 'Homem trans',
+                                child: Text('Homem trans')),
+                            DropdownMenuItem(
+                                value: 'Mulher trans',
+                                child: Text('Mulher trans')),
+                            DropdownMenuItem(
+                                value: 'Agênero', child: Text('Agênero')),
+                            DropdownMenuItem(
+                                value: 'Gênero fluido',
+                                child: Text('Gênero fluido')),
+                            DropdownMenuItem(
+                                value: 'Bigênero', child: Text('Bigênero')),
+                            DropdownMenuItem(
+                                value: 'Prefiro não informar',
+                                child: Text('Prefiro não informar')),
                             DropdownMenuItem(
                                 value: 'Outro', child: Text('Outro')),
                           ],
@@ -191,6 +291,9 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                                             await _cadastroController
                                                 .cadastrarUsuario(
                                           nome: _nameController.text.trim(),
+                                          dataNascimento: parseData(
+                                              _dataNascimentoController.text
+                                                  .trim())!,
                                           email: _emailController.text.trim(),
                                           senha: _passwordController.text,
                                           cpf: _cpfController.text.trim(),

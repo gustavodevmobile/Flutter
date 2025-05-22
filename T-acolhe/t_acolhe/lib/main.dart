@@ -4,11 +4,12 @@ import 'package:t_acolhe/screens/login_profissional.dart';
 import 'package:t_acolhe/screens/login_usuario.dart';
 import 'package:t_acolhe/screens/cadastro_usuario.dart';
 import 'package:t_acolhe/screens/cadastro_psicologo.dart';
+import 'package:t_acolhe/service/api_service.dart';
 import 'screens/initial_screen.dart';
 
 void main() {
   runApp(const MyApp());
-  //ApiService().removerProfissionalPorCpf('12345678902');
+  //ApiService().removerProfissionalPorCpf('123.456.789-04');
 }
 
 class MyApp extends StatelessWidget {

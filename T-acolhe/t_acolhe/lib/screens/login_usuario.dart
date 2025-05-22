@@ -119,34 +119,26 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                                 : () async {
                                     ScaffoldMessengerState scaffoldMessenger =
                                         ScaffoldMessenger.of(context);
-                                        FocusScope.of(context).unfocus();
+                                    FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       setState(() => _loading = true);
                                       try {
-                                        final response = await LoginController()
-                                            .loginUsuario(
-                                          _emailController.text,
-                                          _passwordController.text, (response){
-
-                                          }, (error){}
+                                        await LoginController()
+                                            .loginUsuario(_emailController.text,
+                                                _passwordController.text,
+                                                (onSuccess) {
+                                          print(onSuccess.email);
+                                          setState(() => _loading = false);
+                                        }, (error) {
+                                          scaffoldMessenger.showSnackBar(
+                                          SnackBar(
+                                            content:
+                                                Text(error),
+                                            backgroundColor: Colors.red,
+                                          ),
                                         );
-                                        // if (response.statusCode == 200) {
-                                        //   scaffoldMessenger.showSnackBar(
-                                        //     SnackBar(
-                                        //       content: Text(
-                                        //           'Login realizado com sucesso!'),
-                                        //       backgroundColor: Colors.green,
-                                        //     ),
-                                        //   );
-                                        //   // Navegação após login pode ser feita aqui
-                                        // } else {
-                                        //   scaffoldMessenger.showSnackBar(
-                                        //     SnackBar(
-                                        //       content: Text(response.body),
-                                        //       backgroundColor: Colors.red,
-                                        //     ),
-                                        //   );
-                                        // }
+                                        });
+                                        
                                       } catch (e) {
                                         scaffoldMessenger.showSnackBar(
                                           SnackBar(
