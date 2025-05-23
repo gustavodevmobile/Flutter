@@ -82,4 +82,20 @@ class CadastroController {
       rethrow;
     }
   }
+
+  Future<Response> cadastrarAbordagem(String nome) async {
+    try {
+      return await _apiService.cadastrarAbordagem(nome);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> cadastrarEspecialidades(List<String> nomes) async {
+    try {
+      return await _apiService.cadastrarEspecialidades(nomes);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

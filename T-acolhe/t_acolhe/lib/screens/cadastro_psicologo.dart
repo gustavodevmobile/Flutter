@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:t_acolhe/controller/cadastro_abordagem_especialidade_controller.dart';
+import 'package:t_acolhe/controller/abordagem_especialidade_controller.dart';
+import 'package:t_acolhe/models/especialidade_abordagem.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -38,16 +39,21 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   final TextEditingController _bancoController = TextEditingController();
   final TextEditingController _tipoContaController = TextEditingController();
   List<String> _especialidades = [];
-  final CadastroController _cadastroController = CadastroController();
-  final CadastroAbordagemEspecialidadeController
-      _abordagemEspecialidadeController =
-      CadastroAbordagemEspecialidadeController();
-  bool _loading = false;
-  bool _showImagePicker = false;
-  File? _selectedImage;
-  final ImagePicker _picker = ImagePicker();
+  List<String> _abordagens = [];
+  List<Especialidade> _especialidadesDisponiveis = [];
   String? cnpj;
   String? _genero;
+  String? _abordagemSelecionada;
+  Especialidade? _especialidadeSelecionada;
+  final CadastroController _cadastroController = CadastroController();
+  final AbordagemEspecialidadeController _abordagemEspecialidadeController =
+      AbordagemEspecialidadeController();
+  bool _loading = false;
+  bool _showImagePicker = false;
+  bool _showNovaAbordagem = false;
+  bool _showNovaEspecialidade = false;
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
 
   // Exibe um SnackBar para feedback ao usuário
   void showSnackBar(String message, {Color? backgroundColor}) {
@@ -79,6 +85,28 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarAbordagensEspecialidades();
+  }
+
+  Future<void> _carregarAbordagensEspecialidades() async {
+    try {
+      final abordagens =
+          await _abordagemEspecialidadeController.buscarAbordagens();
+      final especialidades =
+          await _abordagemEspecialidadeController.buscarEspecialidades();
+      setState(() {
+        _abordagens = abordagens;
+        _especialidadesDisponiveis = especialidades;
+      });
+    } catch (e) {
+      showSnackBar('Erro ao carregar abordagens/especialidades',
+          backgroundColor: Colors.red);
     }
   }
 
@@ -137,11 +165,20 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
+                        Text(
+                          'Dados Pessoais',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         // Campo Nome
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(
-                            labelText: 'Nome Completo*',
+                            labelText: 'Nome',
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                           validator: (value) {
@@ -199,6 +236,66 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           maxLines: 2,
                         ),
                         const SizedBox(height: 16),
+                        // Campo Gênero
+                        DropdownButtonFormField<String>(
+                          value: _genero,
+                          decoration: const InputDecoration(
+                            labelText: 'Gênero*',
+                            prefixIcon: Icon(Icons.transgender),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                                value: 'Masculino', child: Text('Masculino')),
+                            DropdownMenuItem(
+                                value: 'Feminino', child: Text('Feminino')),
+                          ],
+                          onChanged: (value) {
+                            setState(() => _genero = value);
+                            print('Gênero selecionado: $_genero');
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Selecione o gênero';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Valor da Consulta
+                        TextFormField(
+                          controller: _valorConsultaController,
+                          decoration: const InputDecoration(
+                            labelText: 'Valor da Consulta (R\$)*',
+                            prefixIcon: Icon(Icons.attach_money_outlined),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Informe o valor da consulta';
+                            }
+                            final valor =
+                                double.tryParse(value.replaceAll(',', '.'));
+                            if (valor == null || valor <= 0) {
+                              return 'Valor inválido';
+                            }
+                            return null;
+                          },
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 16),
+                        Divider(
+                          color: themeColor,
+                          thickness: 2,
+                        ),
+                        Text(
+                          'Documentos Pessoais',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         // Campo CPF
                         TextFormField(
                           controller: _cpfController,
@@ -262,13 +359,34 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
+                        Divider(
+                          color: themeColor,
+                          thickness: 2,
+                        ),
+                        Text(
+                          'Abordagem e Especialidade',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         // Campo Abordagem Principal
-                        TextFormField(
-                          controller: _abordagemController,
+                        DropdownButtonFormField<String>(
+                          value: _abordagemSelecionada,
                           decoration: const InputDecoration(
                             labelText: 'Abordagem Principal*',
                             prefixIcon: Icon(Icons.psychology_alt_outlined),
                           ),
+                          items: _abordagens
+                              .map((abord) => DropdownMenuItem(
+                                    value: abord,
+                                    child: Text(abord),
+                                  ))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => _abordagemSelecionada = value),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Abordagem obrigatória';
@@ -276,170 +394,160 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
+
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: const Text('Adicionar nova abordagem'),
+                            onPressed: () => setState(
+                                () => _showNovaAbordagem = !_showNovaAbordagem),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              minimumSize: Size(0,
+                                  0), // opcional, para remover restrições mínimas
+                              tapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap, // opcional, para reduzir área de toque
+                            ),
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          height: _showNovaAbordagem ? 70 : 0,
+                          child: _showNovaAbordagem
+                              ? Row(
+                                  key: const ValueKey('novaAbordagem'),
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _abordagemController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Nova abordagem',
+                                          prefixIcon: Icon(
+                                            Icons.psychology_alt_outlined,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        const SizedBox(height: 8),
                         // Campo Especialidade (adiciona à lista)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: _especialidadeController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Especialidade(s)',
-                                  prefixIcon: Icon(Icons.star_outline),
-                                ),
-                              ),
+                        DropdownButtonFormField<Especialidade>(
+                          value: _especialidadeSelecionada,
+                          decoration: const InputDecoration(
+                            labelText: 'Especialidade(s)',
+                            prefixIcon: Icon(Icons.star_outline),
+                          ),
+                          items: _especialidadesDisponiveis
+                              .map((esp) => DropdownMenuItem(
+                                    value: esp,
+                                    child: Text(esp.nome),
+                                  ))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => _especialidadeSelecionada = value),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: const Text('Adicionar nova especialidade'),
+                            onPressed: () => setState(() =>
+                                _showNovaEspecialidade =
+                                    !_showNovaEspecialidade),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              minimumSize: Size(0,
+                                  0), // opcional, para remover restrições mínimas
+                              tapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap, // opcional, para reduzir área de toque
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              tooltip: 'Adicionar Especialidade',
-                              onPressed: () {
-                                FocusScope.of(context).unfocus();
-                                final text =
-                                    _especialidadeController.text.trim();
-                                if (text.isNotEmpty &&
-                                    !_especialidades.contains(text)) {
-                                  setState(() {
-                                    _especialidades.add(text);
-                                    _especialidadeController.clear();
-                                  });
-                                }
-                              },
-                            ),
-                          ],
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          height: _showNovaEspecialidade ? 70 : 0,
+                          child: _showNovaEspecialidade
+                              ? Row(
+                                  key: const ValueKey('novaEspecialidade'),
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _especialidadeController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Nova especialidade',
+                                          prefixIcon: Icon(Icons.star_outline),
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      tooltip: 'Adicionar Especialidade',
+                                      onPressed: () {
+                                        FocusScope.of(context).unfocus();
+                                        final text =
+                                            _especialidadeController.text;
+                                        if (text.isNotEmpty &&
+                                            !_especialidades.contains(text)) {
+                                          setState(() {
+                                            _especialidades.add(text);
+                                            _especialidadeSelecionada = null;
+                                          });
+                                        }
+                                        _especialidadeController.clear();
+                                      },
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                         ),
                         // Lista de especialidades adicionadas
                         if (_especialidades.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: _especialidades
-                                  .map((esp) => Row(
-                                        children: [
-                                          const Icon(Icons.check,
-                                              color: Colors.green, size: 20),
-                                          const SizedBox(width: 6),
-                                          Expanded(child: Text(esp)),
-                                          IconButton(
-                                            icon: const Icon(Icons.close,
-                                                color: Colors.red, size: 20),
-                                            tooltip: 'Remover',
-                                            onPressed: () {
-                                              setState(() {
-                                                _especialidades.remove(esp);
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                        const SizedBox(height: 16),
-                        // Campo Gênero
-                        DropdownButtonFormField<String>(
-                          value: _genero,
-                          decoration: const InputDecoration(
-                            labelText: 'Gênero*',
-                            prefixIcon: Icon(Icons.transgender),
-                          ),
-                          items: const [
-                            DropdownMenuItem(
-                                value: 'Masculino', child: Text('Masculino')),
-                            DropdownMenuItem(
-                                value: 'Feminino', child: Text('Feminino')),
-                          ],
-                          onChanged: (value) {
-                            setState(() => _genero = value);
-                            print('Gênero selecionado: $_genero');
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Selecione o gênero';
-                            }
-
-                            return null;
-                          },
+                          Text('Especialidades adicionadas:',
+                              style: TextStyle(fontSize: 16, color: blueColor)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _especialidades
+                              .map((esp) => Row(
+                                    children: [
+                                      const Icon(Icons.check,
+                                          color: Colors.green, size: 20),
+                                      const SizedBox(width: 6),
+                                      Expanded(child: Text(esp)),
+                                      IconButton(
+                                        icon: const Icon(Icons.close,
+                                            color: Colors.red, size: 20),
+                                        tooltip: 'Remover',
+                                        onPressed: () {
+                                          setState(() {
+                                            _especialidades.remove(esp);
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ))
+                              .toList(),
                         ),
                         const SizedBox(height: 16),
-                        // Campo Valor da Consulta
-                        TextFormField(
-                          controller: _valorConsultaController,
-                          decoration: const InputDecoration(
-                            labelText: 'Valor da Consulta (R\$)*',
-                            prefixIcon: Icon(Icons.attach_money_outlined),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Informe o valor da consulta';
-                            }
-                            final valor =
-                                double.tryParse(value.replaceAll(',', '.'));
-                            if (valor == null || valor <= 0) {
-                              return 'Valor inválido';
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.number,
+                        Divider(
+                          color: themeColor,
+                          thickness: 1,
                         ),
-
-                        // Botão para mostrar/esconder área de imagem
-                        Row(
-                          children: [
-                            Icon(Icons.image, color: themeColor),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _showImagePicker = !_showImagePicker;
-                                  });
-                                },
-                                child: Text(_showImagePicker
-                                    ? 'Ocultar imagem'
-                                    : 'Foto do perfil*'),
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (_showImagePicker)
-                          Column(
-                            children: [
-                              _selectedImage != null
-                                  ? CircleAvatar(
-                                      radius: 40,
-                                      backgroundImage:
-                                          FileImage(_selectedImage!),
-                                    )
-                                  : const CircleAvatar(
-                                      radius: 40,
-                                      backgroundColor: Color(0xFFE0E0E0),
-                                      child: Icon(Icons.person,
-                                          size: 40, color: Colors.grey),
-                                    ),
-                              //const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.photo_library,
-                                        color: themeColor),
-                                    tooltip: 'Selecionar da galeria',
-                                    onPressed: () =>
-                                        _pickImage(ImageSource.gallery),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.camera_alt,
-                                        color: blueColor),
-                                    tooltip: 'Tirar foto',
-                                    onPressed: () =>
-                                        _pickImage(ImageSource.camera),
-                                  ),
-                                ],
-                              ),
-                            ],
+                        Text(
+                          'Dados Bancários (opcional)',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
                           ),
-// Campo Chave Pix
+                        ),
+                        const SizedBox(height: 8),
+                        // Campo Chave Pix
                         TextFormField(
                           controller: _chavePixController,
                           decoration: const InputDecoration(
@@ -484,6 +592,62 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
+                        // Botão para mostrar/esconder área de imagem
+                        Row(
+                          children: [
+                            Icon(Icons.image, color: themeColor),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showImagePicker = !_showImagePicker;
+                                  });
+                                },
+                                child: Text(_showImagePicker
+                                    ? 'Ocultar imagem'
+                                    : 'Enviar foto para perfil*'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_showImagePicker)
+                          Column(
+                            children: [
+                              _selectedImage != null
+                                  ? CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage:
+                                          FileImage(_selectedImage!),
+                                    )
+                                  : const CircleAvatar(
+                                      radius: 40,
+                                      backgroundColor: Color(0xFFE0E0E0),
+                                      child: Icon(Icons.person,
+                                          size: 40, color: Colors.grey),
+                                    ),
+                              //const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.photo_library,
+                                        color: themeColor),
+                                    tooltip: 'Selecionar da galeria',
+                                    onPressed: () =>
+                                        _pickImage(ImageSource.gallery),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.camera_alt,
+                                        color: blueColor),
+                                    tooltip: 'Tirar foto',
+                                    onPressed: () =>
+                                        _pickImage(ImageSource.camera),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         // Botão de cadastro
                         SizedBox(
                           width: double.infinity,
@@ -513,21 +677,25 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         // Cadastro da abordagem principal
                                         if (_abordagemController
                                             .text.isNotEmpty) {
-                                          await _abordagemEspecialidadeController
+                                          await _cadastroController
                                               .cadastrarAbordagem(
                                                   _abordagemController.text
                                                       .trim());
+                                        } else {
+                                          await _cadastroController
+                                              .cadastrarAbordagem(
+                                                  _abordagemSelecionada!);
                                         }
                                         // Cadastro das especialidades
                                         if (_especialidades.isEmpty) {
                                           _especialidades = [];
-                                          await _abordagemEspecialidadeController
+                                          await _cadastroController
                                               .cadastrarEspecialidades(
                                                   _especialidades);
                                         } else {
-                                          await _abordagemEspecialidadeController
-                                              .cadastrarAbordagem(
-                                                  _abordagemController.text);
+                                          await _cadastroController
+                                              .cadastrarEspecialidades(
+                                                  _especialidades);
                                         }
                                         String fotoBase64 = '';
                                         if (_selectedImage != null) {

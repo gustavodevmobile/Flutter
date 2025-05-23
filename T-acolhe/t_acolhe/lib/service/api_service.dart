@@ -16,7 +16,6 @@ class ApiService {
 
   Future<http.Response> cadastrarProfissional(Map<String, dynamic> data) async {
     final url = Uri.parse('$_baseUrl/profissional');
-
     return await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -46,6 +45,16 @@ class ApiService {
 
   Future<http.Response> getProfissionalById(String id) async {
     final url = Uri.parse('$_baseUrl/profissional/$id');
+    return await http.get(url);
+  }
+
+  Future<http.Response> getAbordagens() async {
+    final url = Uri.parse('$_baseUrl/abordagens');
+    return await http.get(url);
+  }
+
+  Future<http.Response> getEspecialidades() async {
+    final url = Uri.parse('$_baseUrl/especialidades');
     return await http.get(url);
   }
 

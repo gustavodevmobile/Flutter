@@ -6,10 +6,11 @@ import 'package:t_acolhe/screens/cadastro_usuario.dart';
 import 'package:t_acolhe/screens/cadastro_psicologo.dart';
 import 'package:t_acolhe/service/api_service.dart';
 import 'screens/initial_screen.dart';
+import 'package:t_acolhe/screens/dashboard_usuario.dart';
 
 void main() {
   runApp(const MyApp());
-  //ApiService().removerProfissionalPorCpf('123.456.789-04');
+  ApiService().getAbordagens();
 }
 
 class MyApp extends StatelessWidget {
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
         '/cadastro_usuario': (context) => const UsuarioFormScreen(),
         '/cadastro_psicologo': (context) => const PsicologoFormScreen(),
         '/cadastro_psicanalista': (context) => const PsicanalistaFormScreen(),
+        '/dashboard_usuario': (context) => const DashboardUsuarioScreen(),
       },
     );
   }

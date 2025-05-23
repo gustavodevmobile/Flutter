@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:t_acolhe/controller/cadastro_abordagem_especialidade_controller.dart';
+import 'package:t_acolhe/controller/abordagem_especialidade_controller.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -33,10 +33,9 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   final TextEditingController _agenciaController = TextEditingController();
   final TextEditingController _bancoController = TextEditingController();
   final TextEditingController _tipoContaController = TextEditingController();
-  final List<String> _especialidades = [];
-  final CadastroAbordagemEspecialidadeController
-      _abordagemEspecialidadeController =
-      CadastroAbordagemEspecialidadeController();
+  List<String> _especialidades = [];
+  final AbordagemEspecialidadeController _abordagemEspecialidadeController =
+      AbordagemEspecialidadeController();
 
   String? _genero;
   final CadastroController _cadastroController = CadastroController();
@@ -48,6 +47,34 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
   bool showCheck = false;
+  List<String> _especialidadesDisponiveis = [];
+  List<String> _abordagens = [];
+  String? _abordagemSelecionada;
+  String? _especialidadeSelecionada;
+  bool _showNovaAbordagem = false;
+  bool _showNovaEspecialidade = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarAbordagensEspecialidades();
+  }
+
+  Future<void> _carregarAbordagensEspecialidades() async {
+    try {
+      final abordagens =
+          await _abordagemEspecialidadeController.buscarAbordagens();
+      final especialidades =
+          await _abordagemEspecialidadeController.buscarEspecialidades();
+      setState(() {
+        _abordagens = abordagens;
+        //_especialidadesDisponiveis = especialidades;
+      });
+    } catch (e) {
+      showSnackBar('Erro ao carregar abordagens/especialidades',
+          backgroundColor: Colors.red);
+    }
+  }
 
   void showSnackBar(String message, {Color? backgroundColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -243,7 +270,6 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                 value: 'Masculino', child: Text('Masculino')),
                             DropdownMenuItem(
                                 value: 'Feminino', child: Text('Feminino')),
-                            
                           ],
                           onChanged: (value) => setState(() => _genero = value),
                           validator: (value) {
@@ -255,72 +281,180 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         // Campo Abordagem Principal
-                        TextFormField(
-                          controller: _abordagemController,
-                          decoration: const InputDecoration(
-                            labelText: 'Abordagem Principal',
-                            prefixIcon: Icon(Icons.psychology_alt_outlined),
+                        Divider(
+                          color: themeColor,
+                          thickness: 2,
+                        ),
+                        Text(
+                          'Abordagem e Especialidade',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
+                        // Campo Abordagem Principal
+                        DropdownButtonFormField<String>(
+                          value: _abordagemSelecionada,
+                          decoration: const InputDecoration(
+                            labelText: 'Abordagem Principal*',
+                            prefixIcon: Icon(Icons.psychology_alt_outlined),
+                          ),
+                          items: _abordagens
+                              .map((abord) => DropdownMenuItem(
+                                    value: abord,
+                                    child: Text(abord),
+                                  ))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => _abordagemSelecionada = value),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Abordagem obrigatória';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: const Text('Adicionar nova abordagem'),
+                            onPressed: () => setState(
+                                () => _showNovaAbordagem = !_showNovaAbordagem),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              minimumSize: Size(0,
+                                  0), // opcional, para remover restrições mínimas
+                              tapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap, // opcional, para reduzir área de toque
+                            ),
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          height: _showNovaAbordagem ? 70 : 0,
+                          child: _showNovaAbordagem
+                              ? Row(
+                                  key: const ValueKey('novaAbordagem'),
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _abordagemController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Nova abordagem',
+                                          prefixIcon: Icon(
+                                            Icons.psychology_alt_outlined,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        const SizedBox(height: 8),
                         // Campo Especialidade (adiciona à lista)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: _especialidadeController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Especialidade(s)',
-                                  prefixIcon: Icon(Icons.star_outline),
-                                ),
-                              ),
+                        DropdownButtonFormField<String>(
+                          value: _especialidadeSelecionada,
+                          decoration: const InputDecoration(
+                            labelText: 'Especialidade(s)',
+                            prefixIcon: Icon(Icons.star_outline),
+                          ),
+                          items: _especialidadesDisponiveis
+                              .map((esp) => DropdownMenuItem(
+                                    value: esp,
+                                    child: Text(esp),
+                                  ))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => _especialidadeSelecionada = value),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: const Text('Adicionar nova especialidade'),
+                            onPressed: () => setState(() =>
+                                _showNovaEspecialidade =
+                                    !_showNovaEspecialidade),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              minimumSize: Size(0,
+                                  0), // opcional, para remover restrições mínimas
+                              tapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap, // opcional, para reduzir área de toque
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              tooltip: 'Adicionar Especialidade',
-                              onPressed: () {
-                                FocusScope.of(context).unfocus();
-                                final text =
-                                    _especialidadeController.text.trim();
-                                if (text.isNotEmpty &&
-                                    !_especialidades.contains(text)) {
-                                  setState(() {
-                                    _especialidades.add(text);
-                                    _especialidadeController.clear();
-                                  });
-                                }
-                              },
-                            ),
-                          ],
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          height: _showNovaEspecialidade ? 70 : 0,
+                          child: _showNovaEspecialidade
+                              ? Row(
+                                  key: const ValueKey('novaEspecialidade'),
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _especialidadeController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Nova especialidade',
+                                          prefixIcon: Icon(Icons.star_outline),
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      tooltip: 'Adicionar Especialidade',
+                                      onPressed: () {
+                                        FocusScope.of(context).unfocus();
+                                        final text =
+                                            _especialidadeController.text;
+                                        if (text.isNotEmpty &&
+                                            !_especialidades.contains(text)) {
+                                          setState(() {
+                                            _especialidades.add(text);
+                                            _especialidadeSelecionada = null;
+                                          });
+                                        }
+                                        _especialidadeController.clear();
+                                      },
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                         ),
                         // Lista de especialidades adicionadas
                         if (_especialidades.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: _especialidades
-                                  .map((esp) => Row(
-                                        children: [
-                                          const Icon(Icons.check,
-                                              color: Colors.green, size: 20),
-                                          const SizedBox(width: 6),
-                                          Expanded(child: Text(esp)),
-                                          IconButton(
-                                            icon: const Icon(Icons.close,
-                                                color: Colors.red, size: 20),
-                                            tooltip: 'Remover',
-                                            onPressed: () {
-                                              setState(() {
-                                                _especialidades.remove(esp);
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
+                          Text('Especialidades adicionadas:',
+                              style: TextStyle(fontSize: 16, color: blueColor)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _especialidades
+                              .map((esp) => Row(
+                                    children: [
+                                      const Icon(Icons.check,
+                                          color: Colors.green, size: 20),
+                                      const SizedBox(width: 6),
+                                      Expanded(child: Text(esp)),
+                                      IconButton(
+                                        icon: const Icon(Icons.close,
+                                            color: Colors.red, size: 20),
+                                        tooltip: 'Remover',
+                                        onPressed: () {
+                                          setState(() {
+                                            _especialidades.remove(esp);
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ))
+                              .toList(),
+                        ),
                         const SizedBox(height: 32),
                         // Campo obrigatório de imagem de perfil
                         Align(
@@ -586,12 +720,31 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                           showSnackBar(
                                               'Psicanalista cadastrado com sucesso!',
                                               backgroundColor: Colors.green);
-                                          await _abordagemEspecialidadeController
-                                              .cadastrarEspecialidades(
-                                                  _especialidades);
-                                          await _abordagemEspecialidadeController
-                                              .cadastrarAbordagem(
-                                                  _abordagemController.text);
+
+                                          // Cadastro das especialidades
+                                          if (_especialidades.isEmpty) {
+                                            _especialidades = [];
+                                            await _cadastroController
+                                                .cadastrarEspecialidades(
+                                                    _especialidades);
+                                          } else {
+                                            await _cadastroController
+                                                .cadastrarEspecialidades(
+                                                    _especialidades);
+                                          }
+
+                                          // Cadastro da abordagem
+                                          if (_abordagemController
+                                              .text.isNotEmpty) {
+                                            await _cadastroController
+                                                .cadastrarAbordagem(
+                                                    _abordagemController.text
+                                                        .trim());
+                                          } else {
+                                            await _cadastroController
+                                                .cadastrarAbordagem(
+                                                    _abordagemSelecionada!);
+                                          }
                                           if (context.mounted) {
                                             //Navigator.pop(context);
                                           }
