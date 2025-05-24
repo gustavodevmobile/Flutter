@@ -10,7 +10,7 @@ import 'package:t_acolhe/screens/dashboard_usuario.dart';
 
 void main() {
   runApp(const MyApp());
-  ApiService().getAbordagens();
+  //ApiService().getAbordagens();
 }
 
 class MyApp extends StatelessWidget {

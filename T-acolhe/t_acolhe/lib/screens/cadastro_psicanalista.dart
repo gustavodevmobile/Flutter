@@ -67,7 +67,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
       final especialidades =
           await _abordagemEspecialidadeController.buscarEspecialidades();
       setState(() {
-        _abordagens = abordagens;
+        //_abordagens = abordagens;
         //_especialidadesDisponiveis = especialidades;
       });
     } catch (e) {

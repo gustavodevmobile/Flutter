@@ -39,11 +39,11 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   final TextEditingController _bancoController = TextEditingController();
   final TextEditingController _tipoContaController = TextEditingController();
   List<String> _especialidades = [];
-  List<String> _abordagens = [];
+  List<Abordagem> _abordagens = [];
   List<Especialidade> _especialidadesDisponiveis = [];
   String? cnpj;
   String? _genero;
-  String? _abordagemSelecionada;
+  Abordagem? _abordagemSelecionada;
   Especialidade? _especialidadeSelecionada;
   final CadastroController _cadastroController = CadastroController();
   final AbordagemEspecialidadeController _abordagemEspecialidadeController =
@@ -373,7 +373,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         ),
                         const SizedBox(height: 8),
                         // Campo Abordagem Principal
-                        DropdownButtonFormField<String>(
+                        DropdownButtonFormField<Abordagem>(
                           value: _abordagemSelecionada,
                           decoration: const InputDecoration(
                             labelText: 'Abordagem Principal*',
@@ -382,13 +382,13 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           items: _abordagens
                               .map((abord) => DropdownMenuItem(
                                     value: abord,
-                                    child: Text(abord),
+                                    child: Text(abord.nome),
                                   ))
                               .toList(),
                           onChanged: (value) =>
                               setState(() => _abordagemSelecionada = value),
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null) {
                               return 'Abordagem obrigatória';
                             }
                             return null;
@@ -684,8 +684,9 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         } else {
                                           await _cadastroController
                                               .cadastrarAbordagem(
-                                                  _abordagemSelecionada!);
+                                                  _abordagemSelecionada!.id);
                                         }
+                                        
                                         // Cadastro das especialidades
                                         if (_especialidades.isEmpty) {
                                           _especialidades = [];
