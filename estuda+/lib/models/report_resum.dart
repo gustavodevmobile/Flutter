@@ -4,6 +4,7 @@ class ReportResum {
   final String subject;
   final String date;
   final String hours;
+  final String timeResponse;
 
   const ReportResum({
     required this.schoolYear,
@@ -11,14 +12,14 @@ class ReportResum {
     required this.subject,
     required this.date,
     required this.hours,
+    required this.timeResponse,
   });
-
-  
 
   ReportResum.toMap(Map<String, dynamic> map)
       : schoolYear = map['schoolYear'],
         discipline = map['discipline'],
         subject = map['subject'],
         date = map['date'],
-        hours = map['hours'];
+        hours = map['hours'],
+        timeResponse = map['timeResponse'];
 }

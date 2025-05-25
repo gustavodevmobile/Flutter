@@ -3,6 +3,7 @@ import 'package:estudamais/models/user.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/button_next.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({super.key});
@@ -18,6 +19,17 @@ class _RegisterUserState extends State<RegisterUser> {
   final schoolYearController = TextEditingController();
   //AlertDialogUser alertDialogUser = AlertDialogUser();
   ControllerRegister controllerRegister = ControllerRegister();
+
+  final birthDate = MaskTextInputFormatter(
+    mask: '##/##/####',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
+
+  final schoolYear = MaskTextInputFormatter(
+    mask: '#º ano',
+    //filter: {"#": RegExp(r'[0-9]')},
+    //autoCompleto: true;
+  );
 
   @override
   void initState() {
@@ -88,6 +100,7 @@ class _RegisterUserState extends State<RegisterUser> {
 
                 TextFormField(
                   controller: birthDateController,
+                  inputFormatters: [birthDate],
                   decoration: const InputDecoration(
                       //hintText: 'Data de nascimento',
                       labelText: 'Data de nascimento',
@@ -100,6 +113,7 @@ class _RegisterUserState extends State<RegisterUser> {
                 
                 TextFormField(
                   controller: schoolYearController,
+                  inputFormatters: [schoolYear],
                   decoration: const InputDecoration(
                     labelText: 'Ano Escolar',
                     helperText: ('Ex. 1º ano, 2º ano, etc'),
@@ -107,6 +121,14 @@ class _RegisterUserState extends State<RegisterUser> {
                   ),
                   validator: controllerRegister.validateSchoolYear,
                   keyboardType: TextInputType.text,
+                  onChanged: (value) {
+                    if (value.length == 1 && int.tryParse(value) != null) {
+                      schoolYearController.text = '$valueº ano';
+                      schoolYearController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: schoolYearController.text.length),
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(height: 20),
                 GestureDetector(

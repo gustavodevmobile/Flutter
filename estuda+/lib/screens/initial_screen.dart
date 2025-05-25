@@ -52,9 +52,9 @@ class _ScreenInitialState extends State<ScreenInitial> {
                           Navigator.pop(context);
                           Routes().pushRoute(
                             context,
-                            
+                            //const HomeScreen()
                             const LoadingNextPage(
-                              msgFeedbasck: 'Buscando',
+                              msgFeedback: 'Carregando informações...',
                             ),
                           );
                         } else {
@@ -96,11 +96,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
                             child: const Text('Sim')),
                         TextButton(
                           onPressed: () {
-                            Routes().pushRoute(
-                              context,
-                              const HomeScreen()
-                              //const LoadingNextPage(msgFeedbasck: 'Buscando'),
-                            );
+                            const LoadingNextPage(msgFeedback: 'Iniciando...');
                           },
                           child: const Text('Não'),
                         ),

@@ -130,10 +130,7 @@ class _AccumulatedIncorrectsState extends State<AccumulatedIncorrects> {
                           ),
                         );
                       }
-                      // Deleta a list de ids para controle de dupla resposta
-                      await storageSharedPreferences.deleta(
-                          StorageSharedPreferences.isAnsweredIncorrects);
-                          value.explainable(false);
+                     
                     },
                     child: const ButtonNext(textContent: 'Mostrar questões'),
                   ),

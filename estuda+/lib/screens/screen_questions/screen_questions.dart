@@ -62,7 +62,9 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
                     elementarySchool: widget.questions[index].elementarySchool,
                     schoolYear: widget.questions[index].schoolYear,
                     correctsAndIncorrects: const PointsAndErrors(),
-                    explanation: widget.questions[index].explanation);
+                    explanation: widget.questions[index].explanation,
+                    isRecoveryMode: false,
+                    isCorrectMode: false,);
               },
             ),
           );

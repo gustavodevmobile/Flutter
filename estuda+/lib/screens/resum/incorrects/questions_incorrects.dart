@@ -1,6 +1,5 @@
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/models/model_questions.dart';
-import 'package:estudamais/screens/resum/incorrects/widgets/box_alternatives_incorrects.dart';
 import 'package:estudamais/screens/screen_questions/widgets/points_Errors.dart';
 import 'package:estudamais/widgets/background.dart';
 
@@ -68,6 +67,8 @@ class _PageQuestionsIncorrectsState extends State<PageQuestionsIncorrects> {
                   schoolYear: widget.resultQuestions[index].schoolYear,
                   correctsAndIncorrects: const PointsAndErrors(),
                   explanation: widget.resultQuestions[index].explanation,
+                  isRecoveryMode: true,
+                  isCorrectMode: false,
                 );
               },
             ),

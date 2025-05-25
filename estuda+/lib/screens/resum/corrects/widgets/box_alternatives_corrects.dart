@@ -65,13 +65,13 @@ class _BoxAlternativesCorrectsState extends State<BoxAlternativesCorrects> {
                             color: Colors.white),
                         child: Text(
                           widget.option,
-                          style: AppTheme.customTextStyle2(color: Colors.black87, fontSize: 25),
+                          style: AppTheme.customTextStyle2(
+                              color: Colors.black87, fontSize: 25),
                         ),
                       ),
-                      title: Text(
-                        widget.alternative,
-                        style: AppTheme.customTextStyle2(color: Colors.indigo, fontSize: 18)
-                      ),
+                      title: Text(widget.alternative,
+                          style: AppTheme.customTextStyle2(
+                              color: Colors.indigo, fontSize: 18)),
                     ),
                   ),
                 ),

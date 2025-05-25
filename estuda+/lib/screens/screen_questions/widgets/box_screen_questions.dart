@@ -6,6 +6,7 @@ import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
+import 'package:estudamais/screens/resum/corrects/widgets/box_alternatives_corrects.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_alternativas.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/feedback_modal.dart';
@@ -39,6 +40,8 @@ class ScreenQuestions extends StatefulWidget {
   final ElevatedButton? btnNextQuestion;
   final TextButton? textButtonExit;
   final String? explanation;
+  final bool isRecoveryMode;
+  final bool isCorrectMode;
 
   const ScreenQuestions(
       {required this.boxQuestions,
@@ -62,6 +65,8 @@ class ScreenQuestions extends StatefulWidget {
       this.btnNextQuestion,
       this.textButtonExit,
       this.explanation,
+      required this.isRecoveryMode,
+      required this.isCorrectMode,
       super.key});
 
   @override
@@ -133,10 +138,11 @@ class ScreenQuestionsState extends State<ScreenQuestions>
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(1, 3),
-                            blurRadius: 1,
-                            spreadRadius: 1)
+                          color: Colors.black26,
+                          offset: Offset(1, 2),
+                          blurRadius: 0.6,
+                          spreadRadius: 0.6,
+                        )
                       ]),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -154,11 +160,6 @@ class ScreenQuestionsState extends State<ScreenQuestions>
                                 color: Colors.indigo,
                               ),
                             ),
-                            Text(formatTime(elapsedSeconds),
-                                style: AppTheme.customTextStyle2(
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                )),
                             widget.correctsAndIncorrects
                           ],
                         ),
@@ -193,18 +194,97 @@ class ScreenQuestionsState extends State<ScreenQuestions>
                           child: bytesImageString == 'sem imagem'
                               ? const SizedBox.shrink()
                               : ImageQuestion(image: widget.image)),
-                      BoxAlternatives(widget.alternativeA, 'A', widget.response,
-                          widget.image, widget.questionAnswered,
-                          onAnswered: stopTimer),
-                      BoxAlternatives(widget.alternativeB, 'B', widget.response,
-                          widget.image, widget.questionAnswered,
-                          onAnswered: stopTimer),
-                      BoxAlternatives(widget.alternativeC, 'C', widget.response,
-                          widget.image, widget.questionAnswered,
-                          onAnswered: stopTimer),
-                      BoxAlternatives(widget.alternativeD, 'D', widget.response,
-                          widget.image, widget.questionAnswered,
-                          onAnswered: stopTimer),
+                      widget.isCorrectMode
+                          ? BoxAlternativesCorrects(
+                              widget.alternativeA,
+                              'A',
+                              widget.response,
+                            )
+                          : BoxAlternatives(
+                              widget.alternativeA,
+                              'A',
+                              widget.response,
+                              widget.id,
+                              widget.image,
+                              widget.questionAnswered,
+                              widget.isRecoveryMode,
+                              formatTime(elapsedSeconds),
+                              onAnswered: stopTimer),
+                      widget.isCorrectMode
+                          ? BoxAlternativesCorrects(
+                              widget.alternativeB,
+                              'B',
+                              widget.response,
+                            )
+                          : BoxAlternatives(
+                              widget.alternativeB,
+                              'B',
+                              widget.response,
+                              widget.id,
+                              widget.image,
+                              widget.questionAnswered,
+                              widget.isRecoveryMode,
+                              formatTime(elapsedSeconds),
+                              onAnswered: stopTimer),
+                      widget.isCorrectMode
+                          ? BoxAlternativesCorrects(
+                              widget.alternativeC,
+                              'C',
+                              widget.response,
+                            )
+                          : BoxAlternatives(
+                              widget.alternativeC,
+                              'C',
+                              widget.response,
+                              widget.id,
+                              widget.image,
+                              widget.questionAnswered,
+                              widget.isRecoveryMode,
+                              formatTime(elapsedSeconds),
+                              onAnswered: stopTimer),
+                      widget.isCorrectMode
+                          ? BoxAlternativesCorrects(
+                              widget.alternativeD,
+                              'D',
+                              widget.response,
+                            )
+                          : BoxAlternatives(
+                              widget.alternativeD,
+                              'D',
+                              widget.response,
+                              widget.id,
+                              widget.image,
+                              widget.questionAnswered,
+                              widget.isRecoveryMode,
+                              formatTime(elapsedSeconds),
+                              onAnswered: stopTimer),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                      !widget.isCorrectMode
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(197, 172, 172, 172),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: const [
+                                  BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(1, 2),
+                                      blurRadius: 0.6,
+                                      spreadRadius: 0.6)
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 2.0),
+                                child: Text(formatTime(elapsedSeconds),
+                                    style: AppTheme.customTextStyle2(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    )),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
                       const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Divider(
@@ -278,6 +358,7 @@ class ScreenQuestionsState extends State<ScreenQuestions>
                   widget.btnNextQuestion ??
                       ElevatedButton(
                         onPressed: () {
+                          //stopTimer();
                           controllerQuestions.nextQuestion(
                               widget.controller, context);
                         },
@@ -290,10 +371,12 @@ class ScreenQuestionsState extends State<ScreenQuestions>
                   widget.textButtonExit ??
                       TextButton(
                         onPressed: () {
+                          stopTimer();
                           Routes().pushFadeRemoveAll(
                             context,
-                            const HomeScreen()
-                            //const LoadingNextPage(msgFeedbasck: 'Atualizando'),
+                            const LoadingNextPage(
+                              msgFeedback: 'Atualizando...',
+                            ),
                           );
                         },
                         child: Text(

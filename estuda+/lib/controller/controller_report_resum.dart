@@ -10,39 +10,28 @@ import 'package:flutter/material.dart';
 class ControllerReportResum {
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
 
-  Future<void> reportCorrectsQuestions(
+  Future<void> reportPerformance(
       List<ModelQuestions> questions,
-      String key,
       BuildContext context,
-      Function(List<ReportResum>) reportCorrects,
+      Function(List<ReportResum>) report,
       Function(String) onError) async {
     List<ReportResum> listReportResum = [];
     try {
-      List<String> listDateAndHours =
-          await sharedPreferences.recoverIds(key, (error) {
-        showSnackBarFeedback(context, error, Colors.red);
-      });
-      List<Map<String, dynamic>> listMapIdsAndDates = [];
-      for (var elements in listDateAndHours) {
-        listMapIdsAndDates.add(jsonDecode(elements));
+      for (var question in questions) {
+        listReportResum.add(
+          ReportResum(
+            schoolYear: question.schoolYear,
+            discipline: question.discipline,
+            subject: question.subject,
+            date: question.dateResponse!,
+            hours: question.hourResponse!,
+            timeResponse: question.timeResponse!,
+          ),
+        );
       }
-
-      for (var dates in listMapIdsAndDates) {
-        for (var question in questions) {
-          if (dates['id'] == question.id) {
-            listReportResum.add(ReportResum(
-              schoolYear: question.schoolYear,
-              discipline: question.discipline,
-              subject: question.subject,
-              date: dates['date'],
-              hours: dates['hours'],
-            ));
-          }
-        }
-      }
-      reportCorrects(listReportResum);
-    } on Exception {
-      onError('Erro ao criar resumo de questões para envio de relatório');
+      report(listReportResum);
+    } catch (e) {
+      onError('Erro ao criar resumo de questões para envio de relatório: $e');
     }
   }
 
@@ -55,6 +44,7 @@ class ControllerReportResum {
         'subject': report.subject,
         'date': report.date,
         'hours': report.hours,
+        'timeResponse': report.timeResponse,
       };
     }).toList();
   }
@@ -77,11 +67,11 @@ class ControllerReportResum {
       String amountCorrects,
       List<ReportResum> listReportResumIncorrects,
       String amountIncorrects,
-      String email,
       BuildContext context,
       Function(String) onError,
       String amountAnswered) async {
     ReportService reportService = ReportService();
+
     final List<Map<String, dynamic>> reportDataCorrects =
         convertReportResumToMap(listReportResumCorrects);
 
@@ -93,14 +83,8 @@ class ControllerReportResum {
     });
 
     try {
-      await reportService.sendReport(
-          user,
-          amountAnswered,
-          reportDataCorrects,
-          amountCorrects,
-          reportDataIncorrects,
-          amountIncorrects,
-          email, (onSuccess) {
+      await reportService.sendReport(user, amountAnswered, reportDataCorrects,
+          amountCorrects, reportDataIncorrects, amountIncorrects, (onSuccess) {
         showSnackBarFeedback(context, onSuccess, Colors.green);
         Navigator.pop(context);
       }, (onError) {
@@ -109,9 +93,6 @@ class ControllerReportResum {
       });
     } catch (e) {
       onError('Erro ao enviar relatório ao servidor: $e');
-      
     }
   }
-
-  
 }

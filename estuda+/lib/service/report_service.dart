@@ -31,7 +31,8 @@ class ReportService {
     String amountCorrects,
     List<Map<String, dynamic>> reportDataIncorrects,
     String amountIncorrects,
-    String email,
+    //String email,
+    //String timeResponse,
     Function(String) onSuccess,
     Function(String) onError,
   ) async {
@@ -52,7 +53,8 @@ class ReportService {
             'amountCorrects': amountCorrects,
             'reportDataIncorrects': reportDataIncorrects,
             'amountIncorrects': amountIncorrects,
-            'email': email, // Adiciona o e-mail ao corpo da requisição
+            //'email': email, 
+            //'time': timeResponse// Adiciona o e-mail ao corpo da requisição
           },
         ),
       )

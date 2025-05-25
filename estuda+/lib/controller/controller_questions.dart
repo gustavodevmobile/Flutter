@@ -2,7 +2,6 @@ import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,30 +9,17 @@ import 'package:provider/provider.dart';
 class ControllerQuestions {
 //Cor do box alternative
   Color corAlternativa = Colors.white;
-  // Altura do container onde mostra questão ja respondida.
-  double heightBoxIsAnswered = 0;
+
   //Instância StorageSharedPreferences onde armazena os dados (ids) localmente.
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
   StorageSqflite storageSqflite = StorageSqflite();
 
-//Método que salva somente as questões que foram respondidas incorretamente para verificação na tentativa de duplas respostas.
-  Future<void> saveIdAnsweredsIncorrects(
-      String id, Function(String) onError) async {
-    try {
-      sharedPreferences
-          .saveIds(id, StorageSharedPreferences.isAnsweredIncorrects, (error) {
-        onError(error);
-      });
-    } catch (e) {
-      onError('Erro ao salvar o id da questão respondida incorretamente: $e');
-    }
-  }
-
   // Método que verifica se a questão ja foi respondida.
-  Future<void> answered(String id, String key, Function(bool) isAnswered,
-      Function(String) onError) async {
+  Future<void> answered(
+      String id, Function(bool) isAnswered, Function(String) onError) async {
     try {
-      List<String> listIds = await sharedPreferences.recoverIds(key, (error) {
+      List<String> listIds = await sharedPreferences
+          .recoverIds(StorageSharedPreferences.idsRecoveryIncorrects, (error) {
         onError(error);
       });
       if (listIds.contains(id)) {
@@ -55,26 +41,28 @@ class ControllerQuestions {
       // Recebe o contexto
       BuildContext context,
       // Id da questão
-      String idQuestion) async {
+      String idQuestion,
+      ModelQuestions question,
+      String timeResponse) async {
+    List<String> values = [];
+    values.add(idQuestion);
+
+    // salva o id da questão respondida incorretamente
+    await sharedPreferences.saveIdsList(
+        StorageSharedPreferences.idsRecoveryIncorrects, values, (onError) {
+      print(onError);
+    });
     if (response == alternative) {
       // muda a cor do box alternativa para verde
       corAlternativa = Colors.green;
 
-      // Este método salva o id da questão em ids respondidos corretamente ao chamar o método que faz:
-      //1º Recebe a chave do ids incorretos, id da questão e chave do ids corretos.
-      //2º Remove o id da questão correspondente da lista recebida dos ids incorretos.
-      //3º Salva o id da questão correspondente nos ids corretos.
-      //4º Salva a lista dos ids incorretos, sem o id da questão correspondente.
-      // await sharedPreferences.removeIdsInList(
-      //   // Chave dos ids incorretos
-      //   StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
-      //   // Id da questão.
-      //   idQuestion,
-      //   // Chave dos ids corretos
-      //   StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
-      //   context,
-      //   (error) => showSnackBarFeedback(context, error, Colors.red),
-      // );
+      // Salva a questão na tabela das corretas
+      await storageSqflite.insertQuestion(
+          question, StorageSqflite.tableQuestionsCorrects, timeResponse);
+
+      // Remove a questão da tabela das incorretas
+      await storageSqflite.deleteQuestion(
+          idQuestion, StorageSqflite.tableQuestionsIncorrects);
 
       if (context.mounted) {
         // pega a quantidade de ids incorretos;
@@ -119,6 +107,7 @@ class ControllerQuestions {
     String timeAnswered,
   ) async {
     if (response == alternative) {
+      // Se a questão já foi respondida, não faz nada.
       storageSqflite.insertQuestion(
           question, 'questions_corrects', timeAnswered);
       // muda a cor do box alternativa para verde
@@ -128,7 +117,7 @@ class ControllerQuestions {
       int amountCorrects = int.parse(
           Provider.of<GlobalProviders>(listen: false, context)
               .correctsCurrents);
-      // acrescenta + 1 na quantidade de acertos;
+      //acrescenta + 1 na quantidade de acertos;
       amountCorrects++;
 
       // atualiza o estado para exibir o box de explicação;
@@ -150,7 +139,7 @@ class ControllerQuestions {
               .incorrectsCurrents);
       //acrescenta + 1 na quantidade de erros
       amountIncorrects++;
-      // atualiza na pointAndAErrors a quantidade de erros;
+      // // atualiza na pointAndAErrors a quantidade de erros;
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsIncorrects(amountIncorrects.toString());
     }

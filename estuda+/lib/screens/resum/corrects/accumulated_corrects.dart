@@ -2,8 +2,8 @@ import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/home.dart';
-import 'package:estudamais/screens/resum/widgets/never_subjects_selected.dart';
 import 'package:estudamais/screens/resum/corrects/questions_corrects.dart';
+import 'package:estudamais/screens/resum/widgets/never_subjects_selected.dart';
 import 'package:estudamais/service/service_resum_questions.dart';
 import 'package:estudamais/theme/app_theme.dart';
 
@@ -112,7 +112,8 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                           Colors.red,
                         );
                       } else {
-                        print('value.resultQuestionsCorrects ${value.resultQuestionsCorrects}');
+                        print(
+                            'value.resultQuestionsCorrects ${value.resultQuestionsCorrects}');
                         resultQuestionsCorrects = questionsCorrects
                             .getResultQuestions(value.resultQuestionsCorrects,
                                 value.subjectsAndSchoolYearSelected, (error) {
@@ -120,11 +121,11 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                         });
                         print(
                             'Resultado das questões corretas: $resultQuestionsCorrects');
-                        // Routes().pushRoute(
-                        //     context,
-                        //     PageQuestionsCorrects(
-                        //       resultQuestions: resultQuestionsCorrects,
-                        //     ));
+                        Routes().pushRoute(
+                            context,
+                            PageQuestionsCorrects(
+                              questions: resultQuestionsCorrects,
+                            ));
                       }
                       value.explainable(true);
                     },

@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:estudamais/service/service.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
 
 /// Classe responsável por fazer o controller na busca dos assuntos com disciplinas e anos na screen subjects
 class ControllerSchoolyear {
   Service service = Service();
   Set<String> disciplinesContent = {};
   bool isExpiredTimeout = false;
-  StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+  StorageSqflite storageSqflite = StorageSqflite();
 
 //Método responsável por buscar os assuntos... por disciplinas e ao anos selecionada
   Future<List<Map<String, dynamic>>> fetchSubjects(List<String> listDisciplines,
@@ -44,12 +45,15 @@ class ControllerSchoolyear {
       });
       if (listMapSubjects.isNotEmpty) {
         // Recupera os IDs das questões já respondidas do SharedPreferences
-        List<String> answeredIds = await sharedPreferences.recoverIds(
-          StorageSharedPreferences.keyIdsAnswereds,
-          (error) => onError('Erro ao recuperar IDs respondidos : $error'),
-        );
+        List<String> answeredCorrectsIds = await storageSqflite
+            .getSavedQuestionIds(StorageSqflite.tableQuestionsCorrects);
 
-        print('IDs respondidos: $answeredIds');
+        // Recupera os IDs das questões já respondidas incorretamente do SharedPreferences
+        List<String> answeredIncorrectsIds = await storageSqflite
+            .getSavedQuestionIds(StorageSqflite.tableQuestionsIncorrects);
+
+        // Junta os IDs respondidos corretamente e incorretamente
+        List<String> answeredIds = answeredIncorrectsIds + answeredCorrectsIds;
 
         // Filtra os assuntos removendo os que já foram respondidos
         filteredList = listMapSubjects.where((subject) {

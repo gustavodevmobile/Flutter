@@ -4,6 +4,7 @@ import 'package:estudamais/screens/home/widgets/menu_drawer.dart';
 import 'package:estudamais/screens/resum/corrects/accumulated_corrects.dart';
 import 'package:estudamais/screens/resum/incorrects/accumulated_incorrects.dart';
 import 'package:estudamais/screens/home/widgets/dashbord_displice.dart';
+import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:estudamais/widgets/button_next.dart';
@@ -13,6 +14,7 @@ import 'package:lottie/lottie.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/widgets/box_resum.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -131,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Incorretas',
                     Lottie.asset('./assets/lotties/alert.json'),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (valueProvider
                             .resultQuestionsIncorrects.isNotEmpty) {
                           routes.pushRoute(
@@ -142,6 +144,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           valueProvider.subjectsAndSchoolYearSelected.clear();
                           //Fecha onde mostra os assuntos selecionados.
                           valueProvider.showSubjects(false);
+
+                          await StorageSharedPreferences().deleta(
+                              StorageSharedPreferences.idsRecoveryIncorrects);
                         } else {
                           showSnackBarFeedback(
                             context,

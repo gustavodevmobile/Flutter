@@ -1,5 +1,5 @@
 import 'package:estudamais/service/service.dart';
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +9,8 @@ class ControllerDisciplines {
   Service service = Service();
   Set<String> disciplinesContent = {};
   bool isExpiredTimeout = false;
-  StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+  //StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+  StorageSqflite storageSqflite = StorageSqflite();
 
 // Método responsável por buscar os anos escolares por disciplina selecionada, atraves do service.fetchSchoolYearByDisciplines e retornar uma lista de Map<String, dynamic> com os anos escolares.
   Future<List<Map<String, dynamic>>> fetchSchoolYearByDiscipline(
@@ -25,7 +26,6 @@ class ControllerDisciplines {
     } catch (e) {
       onError('Erro ao buscar anos escolares: fetchSchoolYearByDiscipline $e');
     }
-
     return listSchoolYears;
   }
 
@@ -44,12 +44,18 @@ class ControllerDisciplines {
       });
       if (idsAndSchooYear.isNotEmpty) {
         // Recupera os IDs das questões já respondidas do SharedPreferences
-        List<String> answeredIds = await sharedPreferences.recoverIds(
-          StorageSharedPreferences.keyIdsAnswereds,
-          (error) => onError('Erro ao recuperar IDs respondidos : $error'),
-        );
-        
-      // Filtra os anos escolares removendo os que já foram respondidos
+        List<String> answeredCorrectsIds = await storageSqflite
+            .getSavedQuestionIds(StorageSqflite.tableQuestionsCorrects);
+
+        // Recupera os IDs das questões já respondidas incorretamente do SharedPreferences
+        List<String> answeredIncorrectsIds = await storageSqflite
+            .getSavedQuestionIds(StorageSqflite.tableQuestionsIncorrects);
+
+        // Junta os IDs respondidos corretamente e incorretamente
+        List<String> answeredIds = answeredIncorrectsIds + answeredCorrectsIds;
+        print('IDs respondidos: $answeredIds');
+
+        // Filtra os anos escolares removendo os que já foram respondidos
         filteredList = idsAndSchooYear.where((subject) {
           // Verifica se o ID do assunto não está na lista de IDs respondidos
           return !answeredIds.contains(subject['id'].toString());

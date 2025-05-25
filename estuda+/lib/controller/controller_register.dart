@@ -38,7 +38,7 @@ class ControllerRegister {
     if (value == null || value.isEmpty) {
       return 'Por favor, insira seu ano escolar';
     }
-    RegExp regex = RegExp(r'^[1-9]° ano$');
+    RegExp regex = RegExp(r'^[1-9]º ano$');
     if (!regex.hasMatch(value)) {
       return 'Insira um formato válido. Ex 1° ano, 2° ano, etc';
     }
@@ -66,10 +66,11 @@ class ControllerRegister {
 
       await storageSharedPreferences.saveUser(user, (onSuccess) {
         showSnackBarFeedback(context, onSuccess, Colors.green);
-        Routes().pushRoute(context, const HomeScreen());
-        //const LoadingNextPage(msgFeedbasck: 'Inserindo'));
+        Routes().pushRoute(context, const LoadingNextPage(msgFeedback: 'Inicializando...'));
       }, (onError) {
         showSnackBarFeedback(context, onError, Colors.red);
+      }).then((_) {
+       
       });
     }
   }
@@ -98,8 +99,7 @@ class ControllerRegister {
           );
           Routes().pushRoute(
             context,
-            const HomeScreen(),
-            //const LoadingNextPage(msgFeedbasck: 'Iniciando'),
+            const LoadingNextPage(msgFeedback: 'Inicializando...'),
           ); // Fecha o diálogo
           // Adicione a lógica para "Confirmar" aqui
         },

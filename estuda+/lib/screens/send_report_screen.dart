@@ -31,7 +31,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
   String savedEmail = ''; // E-mail salvo
   List<String> listSavedEmails = []; // Lista de e-mails salvos
   String? selectedEmail; // E-mail selecionado no dropdown
-  final GlobalKey<CustomDropdownState> dropdownKey = GlobalKey();
+  //final GlobalKey<CustomDropdownState> dropdownKey = GlobalKey();
 
   Future<List<Map<String, dynamic>>>? future =
       StorageSharedPreferences().getReportHistory();
@@ -56,17 +56,17 @@ class _SendReportScreenState extends State<SendReportScreen> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    storageSharedPreferences.getSavedEmail((error) {
-      showSnackBarFeedback(context, error, Colors.red);
-    }).then((list) {
-      setState(() {
-        listSavedEmails = list;
-      });
-    });
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   storageSharedPreferences.getSavedEmail((error) {
+  //     showSnackBarFeedback(context, error, Colors.red);
+  //   }).then((list) {
+  //     setState(() {
+  //       listSavedEmails = list;
+  //     });
+  //   });
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -81,13 +81,6 @@ class _SendReportScreenState extends State<SendReportScreen> {
           leading: IconButton(
               // fecha o dropdown menu se estiver aberto
               onPressed: () {
-                if (value.isMenuOpen) {
-                  value.closeDropdownMenu(false);
-                  dropdownKey.currentState?.closeMenu();
-                }
-
-                //dropdownKey.currentState?.overlayEntry?.remove();
-                //dropdownKey.currentState?.overlayEntry = null;
                 Routes().popRoutes(
                   context,
                   const HomeScreen(),
@@ -110,110 +103,25 @@ class _SendReportScreenState extends State<SendReportScreen> {
             child: ListView(
               shrinkWrap: true,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 8.0,
-                  ),
-                  child: Text(
-                    'Emails salvos:',
-                    style: AppTheme.customTextStyle2(color: Colors.indigo),
-                  ),
-                ),
-                CustomDropdown(
-                  key: dropdownKey,
-                  items: listSavedEmails,
-                  onItemSelected: (value) {
-                    setState(() {
-                      selectedEmail = value;
-                      emailController.text = selectedEmail!;
-                    });
-                  },
-                ),
-                const SizedBox(height: 18),
-                TextField(
-                  controller: emailController,
-                  focusNode: emailFocusNode,
-                  decoration: const InputDecoration(
-                    labelText: 'E-mail do destinatário',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: SizedBox(
-                    height: 30,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Checkbox(
-                          value: isEmailSaved,
-                          onChanged: (value) {
-                            setState(() {
-                              isEmailSaved = value ?? false;
-                            });
-
-                            if (isEmailSaved) {
-                              // Hábilita salvar o e-mail no SharedPreferences
-                              savedEmail = emailController.text.trim();
-                            } else {
-                              savedEmail = '';
-                            }
-                          },
-                        ),
-                        Text(
-                          'Salvar e-mail',
-                          style: AppTheme.customTextStyle2(
-                              color: Colors.black, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 GestureDetector(
                     onTap: () async {
-                      emailFocusNode.unfocus();
-                      final email = emailController.text.trim();
-                      if (email.isNotEmpty) {
-                        showLoadingDialog(context, 'Enviando...');
-                        controller.sendReportToBackend(
-                            value.reportsCorrects,
-                            value.reportsCorrects.length.toString(),
-                            value.reportsIncorrects,
-                            value.reportsIncorrects.length.toString(),
-                            email,
-                            context, (onError) {
-                          showSnackBarFeedback(context, onError, Colors.orange);
-                        }, value.answeredsCurrents).then((_) {
-                          setState(() {
-                            // atualiaza a lista de resumos enviados
-                            future =
-                                storageSharedPreferences.getReportHistory();
-                            // atualiza a lista de emails salvos
-                            storageSharedPreferences.getSavedEmail((error) {
-                              showSnackBarFeedback(context, error, Colors.red);
-                            }).then((list) {
-                              setState(() {
-                                listSavedEmails = list;
-                              });
-                            });
-                            isEmailSaved = false;
-                          });
+                      showLoadingDialog(context, 'Enviando...');
+                      controller.sendReportToBackend(
+                          value.reportsCorrects,
+                          value.reportsCorrects.length.toString(),
+                          value.reportsIncorrects,
+                          value.reportsIncorrects.length.toString(),
+                          context, (onError) {
+                        showSnackBarFeedback(context, onError, Colors.red);
+                      }, value.answeredsCurrents).then((_) {
+                        setState(() {
+                          // atualiaza a lista de resumos enviados
+                          future = storageSharedPreferences.getReportHistory();
                         });
-                        if (isEmailSaved) {
-                          storageSharedPreferences.savedEmail(email, (onError) {
-                            showSnackBarFeedback(context, onError, Colors.red);
-                          });
-                        }
-                      } else {
-                        showSnackBarFeedback(
-                            context, 'Insira um e-mail válido.', Colors.orange);
-                      }
-                      emailController.clear();
+                      });
                     },
                     child: const ButtonNext(
-                      textContent: 'Enviar Resumo',
+                      textContent: 'Gerar resumo em PDF',
                       fontSize: 15,
                       height: 35,
                     )),
@@ -226,7 +134,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    'Resumos Enviados',
+                    'Resumos Gerados',
                     style: AppTheme.customTextStyle(
                         color: Colors.indigo, fontWeight: true),
                   ),
@@ -245,7 +153,7 @@ class _SendReportScreenState extends State<SendReportScreen> {
                       );
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
-                        child: Text('Nenhum relatório encontrado.'),
+                        child: Text('Nenhum resumo gerado.'),
                       );
                     } else {
                       final reports = snapshot.data!;
@@ -275,7 +183,8 @@ class _SendReportScreenState extends State<SendReportScreen> {
                                   report['id'], (onSuccess) {
                                 scaffoldMessenger.showSnackBar(
                                   SnackBar(
-                                    content: Text(onSuccess, style: AppTheme.customTextStyle2()),
+                                    content: Text(onSuccess,
+                                        style: AppTheme.customTextStyle2()),
                                     backgroundColor: Colors.green,
                                     duration: const Duration(seconds: 2),
                                   ),
@@ -283,7 +192,8 @@ class _SendReportScreenState extends State<SendReportScreen> {
                               }, (onError) {
                                 scaffoldMessenger.showSnackBar(
                                   SnackBar(
-                                    content: Text(onError, style: AppTheme.customTextStyle2()),
+                                    content: Text(onError,
+                                        style: AppTheme.customTextStyle2()),
                                     backgroundColor: Colors.red,
                                     duration: const Duration(seconds: 2),
                                   ),

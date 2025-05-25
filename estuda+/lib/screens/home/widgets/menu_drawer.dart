@@ -10,6 +10,7 @@ import 'package:estudamais/screens/resum/corrects/accumulated_corrects.dart';
 import 'package:estudamais/screens/resum/incorrects/accumulated_incorrects.dart';
 import 'package:estudamais/screens/send_report_screen.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
+import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/alert_dialog.dart';
 import 'package:estudamais/widgets/listTile_drawer.dart';
@@ -171,24 +172,34 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 'Usuário será removido!',
                 'Deseja mesmo resetar usuário?\nIsso deletará todo o progresso já feito.',
                 TextButton(
-                  onPressed: () {
-                    sharedPreferences.deleteListIds(
-                      (onSuccess) {
-                        Routes().pushFade(context, const ScreenInitial());
-                        showSnackBarFeedback(context, onSuccess, Colors.green);
-                      },
-                      (onError) {
-                        showSnackBarFeedback(context, onError, Colors.red);
-                      },
-                    );
+                  onPressed: () async {
+                    sharedPreferences.deleteListIds((error) {
+                      if (!mounted) return;
+                      showSnackBarFeedback(context, error, Colors.green);
+                    });
+
+                    await StorageSqflite().clearTable((success) {
+                      if (!mounted) return;
+
+                      showSnackBarFeedback(context, success, Colors.green);
+
+                      Routes()
+                          .pushFadeRemoveAll(context, const ScreenInitial());
+                    }, (error) {});
                   },
-                  child: Text('Sim', style: AppTheme.customTextStyle2(color: Colors.indigo),),
+                  child: Text(
+                    'Sim',
+                    style: AppTheme.customTextStyle2(color: Colors.indigo),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancelar', style: AppTheme.customTextStyle2(color: Colors.indigo),),
+                  child: Text(
+                    'Cancelar',
+                    style: AppTheme.customTextStyle2(color: Colors.indigo),
+                  ),
                 ),
               );
             },

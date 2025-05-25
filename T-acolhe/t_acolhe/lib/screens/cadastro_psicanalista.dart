@@ -47,8 +47,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
   bool showCheck = false;
-  List<String> _especialidadesDisponiveis = [];
-  List<String> _abordagens = [];
+  final List<String> _especialidadesDisponiveis = [];
+  final List<String> _abordagens = [];
   String? _abordagemSelecionada;
   String? _especialidadeSelecionada;
   bool _showNovaAbordagem = false;

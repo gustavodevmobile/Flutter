@@ -7,7 +7,7 @@ class BoxQuestions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String formattedQuestion = question.replaceAll('\\n', '\n');
+    //final String formattedQuestion = question.replaceAll('\\n', '\n');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Container(

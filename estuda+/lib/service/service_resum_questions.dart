@@ -10,50 +10,50 @@ class ServiceResumQuestions {
   List<Map<String, dynamic>> mapYearAndSubjectSelected = [];
 
 // Método responsável por buscar as questões respondidas corretamente e incorretamente, recebe uma lista de ids das questões respondidas, uma função de erro e uma função para verificar se o tempo de conexão expirou. Retorna uma lista de ModelQuestions com as questões respondidas.
-  Future<Map<String, dynamic>> getQuestionsAnswereds(List<String> listIds,
-      Function(String) onError, Function(bool) timeExpired) async {
-    List<ModelQuestions> resultQuestions = [];
-    List<String> missingIds = [];
-    try {
-      http.Response response = await http
-          .get(
-        Uri.parse('$_questoesAll/questao/$listIds'),
-      )
-          .timeout(const Duration(seconds: 200), onTimeout: () {
-        timeExpired(true);
-        return http.Response('Timeout', 408);
-      });
+  // Future<Map<String, dynamic>> getQuestionsAnswereds(List<String> listIds,
+  //     Function(String) onError, Function(bool) timeExpired) async {
+  //   List<ModelQuestions> resultQuestions = [];
+  //   List<String> missingIds = [];
+  //   try {
+  //     http.Response response = await http
+  //         .get(
+  //       Uri.parse('$_questoesAll/questao/$listIds'),
+  //     )
+  //         .timeout(const Duration(seconds: 200), onTimeout: () {
+  //       timeExpired(true);
+  //       return http.Response('Timeout', 408);
+  //     });
 
-      print('Resposta: ${response.statusCode}');
-      if (response.statusCode == 200) {
-        var responseData = await json.decode(response.body);
-        //print('Resposta: $responseData');
-        if (responseData['missingIds'] != null) {
-          missingIds = List<String>.from(responseData['missingIds'].map((id) {
-            return id.toString();
-          }).toList());
-        }
+  //     print('Resposta: ${response.statusCode}');
+  //     if (response.statusCode == 200) {
+  //       var responseData = await json.decode(response.body);
+  //       //print('Resposta: $responseData');
+  //       if (responseData['missingIds'] != null) {
+  //         missingIds = List<String>.from(responseData['missingIds'].map((id) {
+  //           return id.toString();
+  //         }).toList());
+  //       }
 
-        for (var question in responseData['questions']) {
-          Uint8List bytesImage =
-              Uint8List.fromList(question['image']['data'].cast<int>());
-          question['image'] = bytesImage;
-          resultQuestions.add(ModelQuestions.toModelQuestions(question));
-        }
-      } else if (response.statusCode == 408) {
-        onError('Tempo de espera excedido.\nTente novamente mais tarde.');
-      } else {
-        onError('Erro ao buscar questões respondidas: ${response.statusCode}');
-      }
-    } catch (e) {
-      onError('Erro ao buscar resumo de questões: getQuestionsAnswereds $e');
-      print(e);
-    }
-    return {
-      'questions': resultQuestions,
-      'missingIds': missingIds,
-    };
-  }
+  //       for (var question in responseData['questions']) {
+  //         Uint8List bytesImage =
+  //             Uint8List.fromList(question['image']['data'].cast<int>());
+  //         question['image'] = bytesImage;
+  //         resultQuestions.add(ModelQuestions.toModelQuestions(question));
+  //       }
+  //     } else if (response.statusCode == 408) {
+  //       onError('Tempo de espera excedido.\nTente novamente mais tarde.');
+  //     } else {
+  //       onError('Erro ao buscar questões respondidas: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     onError('Erro ao buscar resumo de questões: getQuestionsAnswereds $e');
+  //     print(e);
+  //   }
+  //   return {
+  //     'questions': resultQuestions,
+  //     'missingIds': missingIds,
+  //   };
+  // }
 
 //Método responsável por buscar as disciplinas das questões respondidas, retorna uma lista de disciplinas sem repetição.
   List<String> getDisciplineOfQuestions(List<ModelQuestions> resultQuestions) {
