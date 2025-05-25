@@ -38,7 +38,7 @@ class ServiceResumQuestions {
           Uint8List bytesImage =
               Uint8List.fromList(question['image']['data'].cast<int>());
           question['image'] = bytesImage;
-          resultQuestions.add(ModelQuestions.toMap(question));
+          resultQuestions.add(ModelQuestions.toModelQuestions(question));
         }
       } else if (response.statusCode == 408) {
         onError('Tempo de espera excedido.\nTente novamente mais tarde.');
@@ -133,7 +133,7 @@ class ServiceResumQuestions {
 
 // contador das disciplinas respondidas
   List<Map<String, dynamic>> counterDiscipline(
-      List<ModelQuestions> resultQuestions, Function(String) onError) {
+      List<ModelQuestions> resultQuestions) {
     List<Map<String, dynamic>> listAmountAnswered = [];
 
     List<String> portugues = [];
@@ -170,7 +170,7 @@ class ServiceResumQuestions {
         {'discipline': 'Ciências', 'amount': ciencias.length}
       ];
     } catch (e) {
-      onError('Erro ao contar disciplinas respondidas: $e');
+      print('Erro ao contar disciplinas respondidas: $e');
     }
     return listAmountAnswered;
   }

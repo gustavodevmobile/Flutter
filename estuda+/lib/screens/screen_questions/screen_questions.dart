@@ -3,9 +3,7 @@ import 'package:estudamais/screens/screen_questions/widgets/points_Errors.dart';
 import 'package:estudamais/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:estudamais/providers/global_providers.dart';
-
 import 'package:estudamais/service/service.dart';
-import 'package:estudamais/screens/screen_questions/widgets/box_alternativas.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_questions.dart';
 
 import 'package:estudamais/screens/screen_questions/widgets/box_screen_questions.dart';
@@ -46,78 +44,25 @@ class _PageQuestionsBySchoolYearState extends State<PageQuestionsBySchoolYear> {
               itemCount: widget.questions.length,
               itemBuilder: (context, index) {
                 return ScreenQuestions(
-                  boxQuestions: BoxQuestions(widget.questions[index].question),
-                  image: widget.questions[index].image,
-                  boxAlternativesA: BoxAlternatives(
-                    widget.questions[index].alternativeA,
-                    'A',
-                    widget.questions[index].answer,
-                    index,
-                    widget.questions[index].id.toString(),
-                    widget.questions[index].question,
-                    [
-                      widget.questions[index].alternativeA,
-                      widget.questions[index].alternativeB,
-                      widget.questions[index].alternativeC,
-                      widget.questions[index].alternativeD
-                    ],
-                    widget.questions[index].image,
-                  ),
-                  boxAlternativesB: BoxAlternatives(
-                    widget.questions[index].alternativeB,
-                    'B',
-                    widget.questions[index].answer,
-                    index,
-                    widget.questions[index].id.toString(),
-                    widget.questions[index].question,
-                    [
-                      widget.questions[index].alternativeA,
-                      widget.questions[index].alternativeB,
-                      widget.questions[index].alternativeC,
-                      widget.questions[index].alternativeD
-                    ],
-                    widget.questions[index].image,
-                  ),
-                  boxAlternativesC: BoxAlternatives(
-                    widget.questions[index].alternativeC,
-                    'C',
-                    widget.questions[index].answer,
-                    index,
-                    widget.questions[index].id.toString(),
-                    widget.questions[index].question,
-                    [
-                      widget.questions[index].alternativeA,
-                      widget.questions[index].alternativeB,
-                      widget.questions[index].alternativeC,
-                      widget.questions[index].alternativeD
-                    ],
-                    widget.questions[index].image,
-                  ),
-                  boxAlternativesD: BoxAlternatives(
-                    widget.questions[index].alternativeD,
-                    'D',
-                    widget.questions[index].answer,
-                    index,
-                    widget.questions[index].id.toString(),
-                    widget.questions[index].question,
-                    [
-                      widget.questions[index].alternativeA,
-                      widget.questions[index].alternativeB,
-                      widget.questions[index].alternativeC,
-                      widget.questions[index].alternativeD
-                    ],
-                    widget.questions[index].image,
-                  ),
-                  controller: controller,
-                  indexQuestion: index,
-                  discipline: widget.questions[index].discipline,
-                  subject: widget.questions[index].subject,
-                  id: widget.questions[index].id.toString(),
-                  elementarySchool: widget.questions[index].elementarySchool,
-                  schoolYear: widget.questions[index].schoolYear,
-                  correctsAndIncorrects: const PointsAndErrors(),
-                  explanation: widget.questions[index].explanation
-                );
+                    boxQuestions:
+                        BoxQuestions(widget.questions[index].question),
+                    image: widget.questions[index].image,
+                    alternativeA: widget.questions[index].alternativeA,
+                    alternativeB: widget.questions[index].alternativeB,
+                    alternativeC: widget.questions[index].alternativeC,
+                    alternativeD: widget.questions[index].alternativeD,
+                    response: widget.questions[index].answer,
+                    question: widget.questions[index].question,
+                    questionAnswered: widget.questions[index],
+                    controller: controller,
+                    indexQuestion: index,
+                    discipline: widget.questions[index].discipline,
+                    subject: widget.questions[index].subject,
+                    id: widget.questions[index].id.toString(),
+                    elementarySchool: widget.questions[index].elementarySchool,
+                    schoolYear: widget.questions[index].schoolYear,
+                    correctsAndIncorrects: const PointsAndErrors(),
+                    explanation: widget.questions[index].explanation);
               },
             ),
           );

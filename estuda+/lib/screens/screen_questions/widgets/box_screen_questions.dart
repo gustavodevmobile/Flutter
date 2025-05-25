@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/controller/routes.dart';
+import 'package:estudamais/models/model_questions.dart';
+import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
+import 'package:estudamais/screens/screen_questions/widgets/box_alternativas.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/feedback_modal.dart';
 import 'package:estudamais/widgets/image_question.dart';
@@ -13,11 +17,16 @@ import 'package:provider/provider.dart';
 
 class ScreenQuestions extends StatefulWidget {
   final Widget boxQuestions;
+
   final Uint8List image;
-  final Widget boxAlternativesA;
-  final Widget boxAlternativesB;
-  final Widget boxAlternativesC;
-  final Widget boxAlternativesD;
+  final String alternativeA;
+  final String alternativeB;
+  final String alternativeC;
+  final String alternativeD;
+  final String response;
+  final String question;
+  final ModelQuestions questionAnswered;
+
   final PageController controller;
   final int indexQuestion;
   final String discipline;
@@ -34,10 +43,13 @@ class ScreenQuestions extends StatefulWidget {
   const ScreenQuestions(
       {required this.boxQuestions,
       required this.image,
-      required this.boxAlternativesA,
-      required this.boxAlternativesB,
-      required this.boxAlternativesC,
-      required this.boxAlternativesD,
+      required this.alternativeA,
+      required this.alternativeB,
+      required this.alternativeC,
+      required this.alternativeD,
+      required this.response,
+      required this.question,
+      required this.questionAnswered,
       required this.controller,
       required this.indexQuestion,
       required this.discipline,
@@ -53,22 +65,51 @@ class ScreenQuestions extends StatefulWidget {
       super.key});
 
   @override
-  State<ScreenQuestions> createState() => _ScreenQuestionsState();
+  State<ScreenQuestions> createState() => ScreenQuestionsState();
 }
 
-class _ScreenQuestionsState extends State<ScreenQuestions>
+class ScreenQuestionsState extends State<ScreenQuestions>
     with AutomaticKeepAliveClientMixin {
   String bytesImageString = '';
   ControllerQuestions controllerQuestions = ControllerQuestions();
+  final Stopwatch stopwatch = Stopwatch();
+  Timer? timer;
+  int elapsedSeconds = 0;
 
   @override
   void initState() {
+    super.initState();
     if (widget.image.length <= 10) {
       Uint8List string = widget.image;
       bytesImageString = utf8.decode(string);
     }
+    stopwatch.start();
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() {
+        elapsedSeconds = stopwatch.elapsed.inSeconds;
+      });
+    });
+  }
 
-    super.initState();
+  @override
+  void dispose() {
+    timer?.cancel();
+    stopwatch.stop();
+    super.dispose();
+  }
+
+  String stopTimer() {
+    timer?.cancel();
+    stopwatch.stop();
+    elapsedSeconds = stopwatch.elapsed.inSeconds;
+    return formatTime(elapsedSeconds);
+  }
+
+  String formatTime(int seconds) {
+    final h = (seconds ~/ 3600).toString().padLeft(2, '0');
+    final m = ((seconds % 3600) ~/ 60).toString().padLeft(2, '0');
+    final s = (seconds % 60).toString().padLeft(2, '0');
+    return '$h:$m:$s';
   }
 
   @override
@@ -77,7 +118,7 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    double screenWidth = MediaQuery.of(context).size.width;
+    //double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<GlobalProviders>(
       builder: (context, value, child) {
         return ListView(
@@ -113,6 +154,11 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                                 color: Colors.indigo,
                               ),
                             ),
+                            Text(formatTime(elapsedSeconds),
+                                style: AppTheme.customTextStyle2(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                )),
                             widget.correctsAndIncorrects
                           ],
                         ),
@@ -147,10 +193,18 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                           child: bytesImageString == 'sem imagem'
                               ? const SizedBox.shrink()
                               : ImageQuestion(image: widget.image)),
-                      widget.boxAlternativesA,
-                      widget.boxAlternativesB,
-                      widget.boxAlternativesC,
-                      widget.boxAlternativesD,
+                      BoxAlternatives(widget.alternativeA, 'A', widget.response,
+                          widget.image, widget.questionAnswered,
+                          onAnswered: stopTimer),
+                      BoxAlternatives(widget.alternativeB, 'B', widget.response,
+                          widget.image, widget.questionAnswered,
+                          onAnswered: stopTimer),
+                      BoxAlternatives(widget.alternativeC, 'C', widget.response,
+                          widget.image, widget.questionAnswered,
+                          onAnswered: stopTimer),
+                      BoxAlternatives(widget.alternativeD, 'D', widget.response,
+                          widget.image, widget.questionAnswered,
+                          onAnswered: stopTimer),
                       const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Divider(
@@ -162,17 +216,17 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                       ),
                       widget.explanation != null && value.isExplainable
                           ? Column(
-                            children: [
-                              Text(
-                                'Explicação',
-                                style: AppTheme.customTextStyle2(
-                                  fontSize: 18,
-                                  color: Colors.indigo,
+                              children: [
+                                Text(
+                                  'Explicação',
+                                  style: AppTheme.customTextStyle2(
+                                    fontSize: 18,
+                                    color: Colors.indigo,
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: AnimatedContainer(
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 600),
                                     child: Text(widget.explanation ?? '',
                                         style: AppTheme.customTextStyle2(
@@ -180,9 +234,9 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                                           color: Colors.black,
                                         )),
                                   ),
-                              ),
-                            ],
-                          )
+                                ),
+                              ],
+                            )
                           : const SizedBox.shrink(),
                     ],
                   ),
@@ -238,7 +292,8 @@ class _ScreenQuestionsState extends State<ScreenQuestions>
                         onPressed: () {
                           Routes().pushFadeRemoveAll(
                             context,
-                            const LoadingNextPage(msgFeedbasck: 'Atualizando'),
+                            const HomeScreen()
+                            //const LoadingNextPage(msgFeedbasck: 'Atualizando'),
                           );
                         },
                         child: Text(

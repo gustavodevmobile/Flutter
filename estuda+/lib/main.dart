@@ -1,3 +1,4 @@
+import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:estudamais/providers/global_providers.dart';
@@ -17,6 +18,9 @@ void main() async {
       child: const MyApp(),
     ),
   );
+
+  //StorageSqflite().resetDatabase();
+  //StorageSqflite().deleteQuestion('223');
 }
 
 class MyApp extends StatelessWidget {

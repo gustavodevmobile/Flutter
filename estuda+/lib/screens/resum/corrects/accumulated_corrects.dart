@@ -120,11 +120,11 @@ class _AccumulatedCorrectsState extends State<AccumulatedCorrects> {
                         });
                         print(
                             'Resultado das questões corretas: $resultQuestionsCorrects');
-                        Routes().pushRoute(
-                            context,
-                            PageQuestionsCorrects(
-                              resultQuestions: resultQuestionsCorrects,
-                            ));
+                        // Routes().pushRoute(
+                        //     context,
+                        //     PageQuestionsCorrects(
+                        //       resultQuestions: resultQuestionsCorrects,
+                        //     ));
                       }
                       value.explainable(true);
                     },

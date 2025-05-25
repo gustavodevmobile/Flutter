@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:estudamais/controller/controller_explanation.dart';
+import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
@@ -13,22 +14,22 @@ class BoxAlternatives extends StatefulWidget {
   final String alternative;
   final String option;
   final String response;
-  final int indexQuestion;
-  final String idQuestion;
-  final String question;
-  final List<String> alternatives;
+  //final int indexQuestion;
+  //final String idQuestion;
+  //final String question;
+  //final List<String> alternatives;
   final Uint8List? image;
+  final ModelQuestions questionAnswered;
+  final Function() onAnswered;
 
   const BoxAlternatives(
       this.alternative,
       this.option,
       this.response,
-      this.indexQuestion,
-      this.idQuestion,
-      this.question,
-      this.alternatives,
       this.image,
-      {super.key});
+      this.questionAnswered,
+      {super.key,
+      required this.onAnswered});
 
   @override
   State<BoxAlternatives> createState() => _BoxAlternativesState();
@@ -36,8 +37,6 @@ class BoxAlternatives extends StatefulWidget {
 
 class _BoxAlternativesState extends State<BoxAlternatives> {
   final ControllerQuestions controllerQuestions = ControllerQuestions();
-  final ExplanationQuestionsController explanationQuestionsController =
-      ExplanationQuestionsController();
 
   @override
   Widget build(BuildContext context) {
@@ -95,24 +94,13 @@ class _BoxAlternativesState extends State<BoxAlternatives> {
                       ),
                     ),
                     onTap: () {
-                      controllerQuestions.answered(widget.idQuestion,
-                          StorageSharedPreferences.keyIdsAnswereds,
-                          (isAnswered) {
-                        if (!isAnswered) {
-                          setState(() {
-                            controllerQuestions.isCorrect(
-                              widget.response.trim(),
-                              widget.alternative.trim(),
-                              context,
-                              widget.idQuestion,
-                            );
-                          });
-                        } else {
-                          showSnackBarFeedback(context,
-                              'Ops, essa você já respondeu', Colors.orange);
-                        }
-                      }, (error) {
-                        showSnackBarFeedback(context, error, Colors.red);
+                      setState(() {
+                        controllerQuestions.isCorrect(
+                            widget.response.trim(),
+                            widget.alternative.trim(),
+                            context,
+                            widget.questionAnswered,
+                            widget.onAnswered());
                       });
                     },
                   ),

@@ -183,7 +183,7 @@ class Service {
           question['image'] = bytesImage;
 
           // Adiciona o objeto convertido à lista de questões e converte os dados para uma lista de ModelQuestions
-          questions.add(ModelQuestions.toMap(question));
+          questions.add(ModelQuestions.toModelQuestions(question));
         }
        // print('questions: $questions');
       } else if (response.statusCode == 408) {

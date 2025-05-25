@@ -1,5 +1,6 @@
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/user.dart';
+import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/alert_dialog.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
@@ -65,8 +66,8 @@ class ControllerRegister {
 
       await storageSharedPreferences.saveUser(user, (onSuccess) {
         showSnackBarFeedback(context, onSuccess, Colors.green);
-        Routes().pushRoute(
-            context, const LoadingNextPage(msgFeedbasck: 'Inserindo'));
+        Routes().pushRoute(context, const HomeScreen());
+        //const LoadingNextPage(msgFeedbasck: 'Inserindo'));
       }, (onError) {
         showSnackBarFeedback(context, onError, Colors.red);
       });
@@ -97,7 +98,8 @@ class ControllerRegister {
           );
           Routes().pushRoute(
             context,
-            const LoadingNextPage(msgFeedbasck: 'Iniciando'),
+            const HomeScreen(),
+            //const LoadingNextPage(msgFeedbasck: 'Iniciando'),
           ); // Fecha o diálogo
           // Adicione a lógica para "Confirmar" aqui
         },

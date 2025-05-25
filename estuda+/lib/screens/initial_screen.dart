@@ -2,6 +2,7 @@
 import 'package:estudamais/controller/connection.dart';
 import 'package:estudamais/controller/controller_initialscreen.dart';
 import 'package:estudamais/controller/routes.dart';
+import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/register/register.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/button_next.dart';
@@ -51,6 +52,7 @@ class _ScreenInitialState extends State<ScreenInitial> {
                           Navigator.pop(context);
                           Routes().pushRoute(
                             context,
+                            
                             const LoadingNextPage(
                               msgFeedbasck: 'Buscando',
                             ),
@@ -96,7 +98,8 @@ class _ScreenInitialState extends State<ScreenInitial> {
                           onPressed: () {
                             Routes().pushRoute(
                               context,
-                              const LoadingNextPage(msgFeedbasck: 'Buscando'),
+                              const HomeScreen()
+                              //const LoadingNextPage(msgFeedbasck: 'Buscando'),
                             );
                           },
                           child: const Text('Não'),

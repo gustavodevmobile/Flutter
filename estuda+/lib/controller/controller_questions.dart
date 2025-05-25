@@ -1,5 +1,7 @@
+import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/providers/global_providers.dart';
+import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ class ControllerQuestions {
   double heightBoxIsAnswered = 0;
   //Instância StorageSharedPreferences onde armazena os dados (ids) localmente.
   StorageSharedPreferences sharedPreferences = StorageSharedPreferences();
+  StorageSqflite storageSqflite = StorageSqflite();
 
 //Método que salva somente as questões que foram respondidas incorretamente para verificação na tentativa de duplas respostas.
   Future<void> saveIdAnsweredsIncorrects(
@@ -62,16 +65,16 @@ class ControllerQuestions {
       //2º Remove o id da questão correspondente da lista recebida dos ids incorretos.
       //3º Salva o id da questão correspondente nos ids corretos.
       //4º Salva a lista dos ids incorretos, sem o id da questão correspondente.
-      await sharedPreferences.removeIdsInList(
-        // Chave dos ids incorretos
-        StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
-        // Id da questão.
-        idQuestion,
-        // Chave dos ids corretos
-        StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
-        context,
-        (error) => showSnackBarFeedback(context, error, Colors.red),
-      );
+      // await sharedPreferences.removeIdsInList(
+      //   // Chave dos ids incorretos
+      //   StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
+      //   // Id da questão.
+      //   idQuestion,
+      //   // Chave dos ids corretos
+      //   StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
+      //   context,
+      //   (error) => showSnackBarFeedback(context, error, Colors.red),
+      // );
 
       if (context.mounted) {
         // pega a quantidade de ids incorretos;
@@ -112,16 +115,12 @@ class ControllerQuestions {
     String alternative,
     // Recebe o contexto;
     BuildContext context,
-    // Id da questão
-    String idQuestion,
+    ModelQuestions question,
+    String timeAnswered,
   ) async {
-    // Salva os ids de todas as questões respodidas.
-    sharedPreferences
-        .saveIds(idQuestion, StorageSharedPreferences.keyIdsAnswereds, (error) {
-      showSnackBarFeedback(context, error, Colors.red);
-    });
-    // Verifica alternativa escolhida x resposta correta
     if (response == alternative) {
+      storageSqflite.insertQuestion(
+          question, 'questions_corrects', timeAnswered);
       // muda a cor do box alternativa para verde
       corAlternativa = Colors.green;
 
@@ -139,14 +138,9 @@ class ControllerQuestions {
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsCorrects(amountCorrects.toString());
       // Se não...
-
-      // salva o id e data da questão em ids respondidos corretamente;
-      await sharedPreferences.saveIdsAndDateResum(idQuestion,
-          StorageSharedPreferences.keyIdsAndDateAnsweredsCorrectsResum,
-          (onError) {
-        showSnackBarFeedback(context, onError, Colors.red);
-      });
     } else {
+      storageSqflite.insertQuestion(
+          question, 'questions_incorrects', timeAnswered);
       // muda a cor da alternativa para vermelho;
       corAlternativa = Colors.red;
 
@@ -159,13 +153,6 @@ class ControllerQuestions {
       // atualiza na pointAndAErrors a quantidade de erros;
       Provider.of<GlobalProviders>(listen: false, context)
           .answeredsIncorrects(amountIncorrects.toString());
-
-      // salva o id e data da questão em ids respondidos incorretamente;
-      await sharedPreferences.saveIdsAndDateResum(idQuestion,
-          StorageSharedPreferences.keyIdsAndDateAnsweredsIncorrectsResum,
-          (onError) {
-        showSnackBarFeedback(context, onError, Colors.red);
-      });
     }
   }
 
