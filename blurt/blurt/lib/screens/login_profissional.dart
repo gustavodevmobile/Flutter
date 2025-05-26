@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:t_acolhe/controller/login_controller.dart';
+import 'package:blurt/controller/login_controller.dart';
 // Importe o controller de login se necessário
 // import 'package:t_acolhe/controller/login_controller.dart';
 
@@ -41,7 +41,12 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
       appBar: AppBar(
         title: const Text('Login Profissional'),
         centerTitle: true,
-        elevation: 0,
+        elevation: 3,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Container(
         width: double.infinity,

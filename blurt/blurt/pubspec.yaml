@@ -1,4 +1,4 @@
-name: t_acolhe
+name: blurt
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -61,7 +61,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/image/195e7eed-4690-470b-bddf-d91da4a7623f.png
+    - assets/image/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:t_acolhe/screens/cadastro_psicanalista.dart';
-import 'package:t_acolhe/screens/login_profissional.dart';
-import 'package:t_acolhe/screens/login_usuario.dart';
-import 'package:t_acolhe/screens/cadastro_usuario.dart';
-import 'package:t_acolhe/screens/cadastro_psicologo.dart';
+import 'package:blurt/screens/cadastro_psicanalista.dart';
+import 'package:blurt/screens/login_profissional.dart';
+import 'package:blurt/screens/login_usuario.dart';
+import 'package:blurt/screens/cadastro_usuario.dart';
+import 'package:blurt/screens/cadastro_psicologo.dart';
 import 'screens/initial_screen.dart';
-import 'package:t_acolhe/screens/dashboard_usuario.dart';
+import 'package:blurt/screens/dashboard_usuario.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Blurt - Acolhimento e Terapia Online',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

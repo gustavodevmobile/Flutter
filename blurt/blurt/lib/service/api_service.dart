@@ -58,6 +58,11 @@ class ApiService {
     return await http.get(url);
   }
 
+  Future<http.Response> getTemasClinicos() async {
+    final url = Uri.parse('$_baseUrl/temas-clinicos');
+    return await http.get(url);
+  }
+
   Future<http.Response> removerProfissionalPorCpf(String cpf) async {
     final url = Uri.parse('$_baseUrl/remove-profissional');
     print(cpf);

@@ -84,7 +84,12 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
       appBar: AppBar(
         title: const Text('Cadastro Usuário'),
         centerTitle: true,
-        elevation: 0,
+        elevation: 3,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Container(
         width: double.infinity,

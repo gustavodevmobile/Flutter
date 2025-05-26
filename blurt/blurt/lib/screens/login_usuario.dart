@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:t_acolhe/controller/login_controller.dart';
+import 'package:blurt/controller/login_controller.dart';
 
 class LoginUsuarioScreen extends StatefulWidget {
   const LoginUsuarioScreen({super.key});
@@ -22,7 +22,12 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
       appBar: AppBar(
         title: const Text('Login Usuário'),
         centerTitle: true,
-        elevation: 0,
+        elevation: 3,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Container(
         width: double.infinity,
@@ -39,7 +44,7 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Card(
-                elevation: 8,
+                elevation: 3,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 child: Padding(
@@ -123,22 +128,20 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                                     if (_formKey.currentState!.validate()) {
                                       setState(() => _loading = true);
                                       try {
-                                        await LoginController()
-                                            .loginUsuario(_emailController.text,
-                                                _passwordController.text,
-                                                (onSuccess) {
+                                        await LoginController().loginUsuario(
+                                            _emailController.text,
+                                            _passwordController.text,
+                                            (onSuccess) {
                                           print(onSuccess.email);
                                           setState(() => _loading = false);
                                         }, (error) {
                                           scaffoldMessenger.showSnackBar(
-                                          SnackBar(
-                                            content:
-                                                Text(error),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
+                                            SnackBar(
+                                              content: Text(error),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
                                         });
-                                        
                                       } catch (e) {
                                         scaffoldMessenger.showSnackBar(
                                           SnackBar(

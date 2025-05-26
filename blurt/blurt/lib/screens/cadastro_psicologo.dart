@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:t_acolhe/controller/abordagem_especialidade_controller.dart';
-import 'package:t_acolhe/models/especialidade_abordagem.dart';
+import 'package:blurt/controller/abordagem_especialidade_controller.dart';
+import 'package:blurt/models/especialidade_abordagem.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -32,6 +32,8 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   final TextEditingController _abordagemController = TextEditingController();
   final TextEditingController _especialidadeController =
       TextEditingController();
+      final TextEditingController _temaClinicoController =
+      TextEditingController();
   final TextEditingController _chavePixController = TextEditingController();
   final TextEditingController _contaBancariaController =
       TextEditingController();
@@ -40,11 +42,13 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   final TextEditingController _tipoContaController = TextEditingController();
   List<String> _especialidades = [];
   List<Abordagem> _abordagens = [];
+  List<TemasClinicos> _temasClinicos = [];
   List<Especialidade> _especialidadesDisponiveis = [];
   String? cnpj;
   String? _genero;
   Abordagem? _abordagemSelecionada;
   Especialidade? _especialidadeSelecionada;
+  TemasClinicos? _temaClinicoSelecionado;
   final CadastroController _cadastroController = CadastroController();
   final AbordagemEspecialidadeController _abordagemEspecialidadeController =
       AbordagemEspecialidadeController();
@@ -52,6 +56,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   bool _showImagePicker = false;
   bool _showNovaAbordagem = false;
   bool _showNovaEspecialidade = false;
+  bool _showTemasClinicos = false;
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -94,15 +99,27 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
     _carregarAbordagensEspecialidades();
   }
 
+  String capitalize(String s) {
+    if (s.isEmpty) return s;
+    return s[0].toUpperCase() + s.substring(1);
+  }
+
   Future<void> _carregarAbordagensEspecialidades() async {
     try {
       final abordagens =
           await _abordagemEspecialidadeController.buscarAbordagens();
       final especialidades =
           await _abordagemEspecialidadeController.buscarEspecialidades();
+      final temasClinicos =
+          await _abordagemEspecialidadeController.buscarTemasClinicos();
       setState(() {
-        _abordagens = abordagens;
+        _abordagens = abordagens
+            .map((a) => Abordagem(id: a.id, nome: capitalize(a.nome)))
+            .toList();
         _especialidadesDisponiveis = especialidades;
+        _temasClinicos = temasClinicos
+            .map((t) => TemasClinicos(id: t.id, nome: capitalize(t.nome)))
+            .toList();
       });
     } catch (e) {
       showSnackBar('Erro ao carregar abordagens/especialidades',
@@ -116,9 +133,14 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
     final blueColor = const Color(0xFF4F8FCB);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cadastro Profissional'),
+        title: const Text('Cadastro Psicólogo'),
         centerTitle: true,
-        elevation: 0,
+        elevation: 3,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Container(
         width: double.infinity,
@@ -133,7 +155,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(18.0),
               child: Card(
                 elevation: 8,
                 color: const Color.fromARGB(170, 255, 255, 255),
@@ -141,7 +163,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                     borderRadius: BorderRadius.circular(24)),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -149,12 +171,12 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                       children: [
                         // Logo do app
                         Image.asset(
-                          'assets/image/195e7eed-4690-470b-bddf-d91da4a7623f.png',
-                          width: 90,
-                          height: 90,
+                          'assets/image/logotipoBlurt2.png',
+                          width: 200,
+                          height: 200,
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 16),
+                        //const SizedBox(height: 16),
                         // Título
                         Text(
                           'Profissional Psicólogo',
@@ -364,35 +386,39 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           thickness: 2,
                         ),
                         Text(
-                          'Abordagem e Especialidade',
+                          'Abordagem, Especialidade e Temas Clínicos',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: blueColor,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 24),
                         // Campo Abordagem Principal
-                        DropdownButtonFormField<Abordagem>(
-                          value: _abordagemSelecionada,
-                          decoration: const InputDecoration(
-                            labelText: 'Abordagem Principal*',
-                            prefixIcon: Icon(Icons.psychology_alt_outlined),
+                        SizedBox(
+                          width: double.infinity,
+                          child: DropdownButtonFormField<Abordagem>(
+                            value: _abordagemSelecionada,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Abordagem Principal*',
+                              prefixIcon: Icon(Icons.psychology_alt_outlined),
+                            ),
+                            items: _abordagens
+                                .map((abord) => DropdownMenuItem(
+                                      value: abord,
+                                      child: Text(abord.nome),
+                                    ))
+                                .toList(),
+                            onChanged: (value) =>
+                                setState(() => _abordagemSelecionada = value),
+                            validator: (value) {
+                              if (value == null) {
+                                return 'Abordagem obrigatória';
+                              }
+                              return null;
+                            },
                           ),
-                          items: _abordagens
-                              .map((abord) => DropdownMenuItem(
-                                    value: abord,
-                                    child: Text(abord.nome),
-                                  ))
-                              .toList(),
-                          onChanged: (value) =>
-                              setState(() => _abordagemSelecionada = value),
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Abordagem obrigatória';
-                            }
-                            return null;
-                          },
                         ),
 
                         Align(
@@ -424,6 +450,73 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         controller: _abordagemController,
                                         decoration: const InputDecoration(
                                           labelText: 'Nova abordagem',
+                                          prefixIcon: Icon(
+                                            Icons.psychology_alt_outlined,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        // Lista de abordagens adicionadas
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: DropdownButtonFormField<TemasClinicos>(
+                            value: _temaClinicoSelecionado,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Temas Clínicos',
+                              prefixIcon: Icon(Icons.psychology_alt_outlined),
+                            ),
+                            items: _temasClinicos
+                                .map((abord) => DropdownMenuItem(
+                                      value: abord,
+                                      child: Text(abord.nome),
+                                    ))
+                                .toList(),
+                            onChanged: (value) =>
+                                setState(() => _temaClinicoSelecionado = value),
+                            validator: (value) {
+                              if (value == null) {
+                                return 'Abordagem obrigatória';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: const Text('Adicionar novo Tema Clínico'),
+                            onPressed: () => setState(
+                                () => _showTemasClinicos = !_showTemasClinicos),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              minimumSize: Size(0,
+                                  0), // opcional, para remover restrições mínimas
+                              tapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap, // opcional, para reduzir área de toque
+                            ),
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          height: _showTemasClinicos ? 70 : 0,
+                          child: _showTemasClinicos
+                              ? Row(
+                                  key: const ValueKey('novoTemaClinico'),
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _temaClinicoController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Novo Tema Clínico',
                                           prefixIcon: Icon(
                                             Icons.psychology_alt_outlined,
                                           ),
@@ -686,7 +779,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                               .cadastrarAbordagem(
                                                   _abordagemSelecionada!.id);
                                         }
-                                        
+
                                         // Cadastro das especialidades
                                         if (_especialidades.isEmpty) {
                                           _especialidades = [];

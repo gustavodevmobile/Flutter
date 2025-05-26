@@ -47,24 +47,14 @@ class _InitialScreenState extends State<InitialScreen> {
                 children: [
                   // Substituir o ícone pelo logo
                   Image.asset(
-                    'assets/image/195e7eed-4690-470b-bddf-d91da4a7623f.png',
-                    width: 100,
-                    height: 100,
+                    'assets/image/logotipoBlurt2.png', // Certifique-se de que o caminho está correto
+                    width: 220,
+                    height: 220,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 24),
+
                   Text(
-                    'T-Acolhe',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Bem-vindo ao seu espaço de acolhimento!',
+                    'Bem-vindo ao seu espaço de acolhimento e terapia!',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,
@@ -94,10 +84,10 @@ class _InitialScreenState extends State<InitialScreen> {
                             ),
                             child: const Text('Sou Usuário'),
                           ),
-                          AnimatedSwitcher(
+                          AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            switchInCurve: Curves.easeIn,
-                            switchOutCurve: Curves.easeOut,
+                            curve: Curves.easeInOut,
+                            height: _expanded == 1 ? 50 : 0,
                             child: _expanded == 1
                                 ? Row(
                                     key: const ValueKey('usuario'),
@@ -128,15 +118,17 @@ class _InitialScreenState extends State<InitialScreen> {
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 50),
                               textStyle: const TextStyle(fontSize: 18),
-                              backgroundColor:  blueColor,
+                              backgroundColor: blueColor,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
                             ),
                             child: const Text('Sou Psicólogo(a)'),
                           ),
-                          AnimatedSwitcher(
+                          AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            height: _expanded == 1 ? 50 : 0,
                             child: _expanded == 2
                                 ? Row(
                                     key: const ValueKey('profissional'),
@@ -152,8 +144,8 @@ class _InitialScreenState extends State<InitialScreen> {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          Navigator.pushNamed(context,
-                                              '/cadastro_psicologo');
+                                          Navigator.pushNamed(
+                                              context, '/cadastro_psicologo');
                                         },
                                         child: const Text('Cadastrar'),
                                       ),
@@ -167,7 +159,8 @@ class _InitialScreenState extends State<InitialScreen> {
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 50),
                               textStyle: const TextStyle(fontSize: 18),
-                               backgroundColor:  const Color.fromARGB(255, 98, 143, 185),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 98, 143, 185),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),

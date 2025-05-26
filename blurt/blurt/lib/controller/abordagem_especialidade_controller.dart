@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:t_acolhe/models/especialidade_abordagem.dart';
+import 'package:blurt/models/especialidade_abordagem.dart';
 
 import '../service/api_service.dart';
 
@@ -35,4 +35,21 @@ class AbordagemEspecialidadeController {
       throw Exception('Erro ao buscar especialidades');
     }
   }
+
+   Future<List<TemasClinicos>> buscarTemasClinicos() async {
+    final response = await _apiService.getTemasClinicos();
+    List<TemasClinicos> temasClinicos = [];
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      for (var item in data) {
+        final esp = TemasClinicos.fromJson(item);
+        temasClinicos.add(esp);
+      }
+      return temasClinicos;
+    } else {
+      throw Exception('Erro ao buscar especialidades');
+    }
+  }
+
+
 }

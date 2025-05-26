@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:t_acolhe/models/professional.dart';
-import 'package:t_acolhe/models/usuario.dart';
-import 'package:t_acolhe/service/api_service.dart';
+import 'package:blurt/models/professional.dart';
+import 'package:blurt/models/usuario.dart';
+import 'package:blurt/service/api_service.dart';
 
 class LoginController {
   final ApiService _apiService = ApiService();
