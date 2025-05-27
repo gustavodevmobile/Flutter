@@ -1,3 +1,5 @@
+import 'package:blurt/models/especialidade_abordagem.dart';
+
 import '../service/api_service.dart';
 import 'package:http/http.dart';
 import '../models/professional.dart';
@@ -57,12 +59,9 @@ class CadastroController {
     try {
       return await _apiService.cadastrarProfissional(data);
     } catch (e) {
-     
       rethrow;
     }
   }
-
-  
 
   // Future<Response> loginUsuario({
   //   required String email,
@@ -75,25 +74,108 @@ class CadastroController {
   //   }
   // }
 
-  Future<Response> cadastrarProfissionalModel(Professional profissional) async {
+  Future<Response> cadastrarProfissionalModel(
+    Professional profissional,
+    String abordagemPrincipalId, {
+    String? especialidadePrincipalId,
+    List<String>? abordagensUtilizadasIds,
+    List<String>? temasIds,
+    String? certificadoEspPrincipal,
+  }) async {
     try {
-      return await _apiService.cadastrarProfissional(profissional.toJson());
+      // abordagemPrincipalNome, // string obrigatória
+      //   abordagensUtilizadasIds = [],
+      //   especialidadePrincipalNome, // string opcional
+      //   especialidadesOutrasIds = [],
+      //   temasClinicosIds = [],
+      //   certificados = []
+      final data = profissional.toJson();
+      data['abordagemPrincipalId'] = abordagemPrincipalId;
+      if (especialidadePrincipalId != null) {
+        data['especialidadePrincipalId'] = especialidadePrincipalId;
+      }
+      if (abordagensUtilizadasIds != null) {
+        data['abordagensUtilizadasIds'] = abordagensUtilizadasIds;
+      }
+      if (temasIds != null) {
+        data['temasClinicosIds'] = temasIds;
+      }
+      if (certificadoEspPrincipal != null) {
+        data['certificadoEspecialidadePrincipal'] = certificadoEspPrincipal;
+      }
+      return await _apiService.cadastrarProfissional(data);
+    } catch (e) {
+      print('Erro ao cadastrar profissional: $e');
+      rethrow;
+    }
+  }
+
+  // Future<String> cadastrarAbordagemPrincipal(String nome) async {
+  //   try {
+  //     final response = await _apiService.cadastrarAbordagemPrincipal(nome);
+  //     if (response.statusCode == 200) {
+  //       return response.body; // Retorna o nome da abordagem cadastrada
+  //     } else {
+  //       throw Exception('Erro ao cadastrar abordagem: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
+  // Future<String> cadastrarAbordagensUtilizadas(String nome) async {
+  //   try {
+  //     final response = await _apiService.cadastrarAbordagensUtilizadas(nome);
+  //     if (response.statusCode == 200) {
+  //       return response.body; // Retorna o nome da abordagem cadastrada
+  //     } else {
+  //       throw Exception('Erro ao cadastrar abordagem: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
+  Future<String> cadastrarEspecialidadePrincipal(
+      String novaEspecialidade) async {
+    try {
+      final response =
+          await _apiService.cadastrarEspecialidadePrincipal(novaEspecialidade);
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw Exception(
+            'Erro ao cadastrar especialidades: ${response.statusCode}');
+      }
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<Response> cadastrarAbordagem(String nome) async {
+  Future<String> cadastrarEspecialidadeOutras(String novaEspecialidade) async {
     try {
-      return await _apiService.cadastrarAbordagem(nome);
+      final response =
+          await _apiService.cadastrarEspecialidadeOutras(novaEspecialidade);
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw Exception(
+            'Erro ao cadastrar especialidades: ${response.statusCode}');
+      }
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<Response> cadastrarEspecialidades(List<String> nomes) async {
+  Future<String> cadastrarTemasClinicos(String novoTema) async {
     try {
-      return await _apiService.cadastrarEspecialidades(nomes);
+      final response = await _apiService.cadastrarTemasClinicos(novoTema);
+      if (response.statusCode == 200) {
+        return response.body; // Retorna o nome do tema clínico cadastrado
+      } else {
+        throw Exception(
+            'Erro ao cadastrar tema clínico: ${response.statusCode}');
+      }
     } catch (e) {
       rethrow;
     }

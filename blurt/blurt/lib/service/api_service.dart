@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:blurt/models/especialidade_abordagem.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -16,6 +17,10 @@ class ApiService {
 
   Future<http.Response> cadastrarProfissional(Map<String, dynamic> data) async {
     final url = Uri.parse('$_baseUrl/profissional');
+    print('Data: ${data["abordagemPrincipalId"]}');
+    print('Data: ${data["especialidadePrincipalId"]}');
+   
+
     return await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -48,13 +53,23 @@ class ApiService {
     return await http.get(url);
   }
 
-  Future<http.Response> getAbordagens() async {
-    final url = Uri.parse('$_baseUrl/abordagens');
+  Future<http.Response> getAbordagemPrincipal() async {
+    final url = Uri.parse('$_baseUrl/abordagem-principal');
     return await http.get(url);
   }
 
-  Future<http.Response> getEspecialidades() async {
-    final url = Uri.parse('$_baseUrl/especialidades');
+  Future<http.Response> getAbordagensUtilizadas() async {
+    final url = Uri.parse('$_baseUrl/abordagens-utilizdas');
+    return await http.get(url);
+  }
+
+  Future<http.Response> getEspecialidadePrincipal() async {
+    final url = Uri.parse('$_baseUrl/especialidade-principal');
+    return await http.get(url);
+  }
+
+  Future<http.Response> getEspecialidadeOutras() async {
+    final url = Uri.parse('$_baseUrl/especialidade-outras');
     return await http.get(url);
   }
 
@@ -74,9 +89,29 @@ class ApiService {
     );
   }
 
-  Future<http.Response> cadastrarAbordagem(String nome) async {
-    final url = Uri.parse('$_baseUrl/abordagem');
-    final data = {'nome': nome};
+  // Future<http.Response> cadastrarAbordagensUtilizadas(String nome) async {
+  //   final url = Uri.parse('$_baseUrl/abordagens-utilizadas');
+  //   final data = {'nome': nome};
+  //   return await http.post(
+  //     url,
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode(data),
+  //   );
+  // }
+
+  // Future<http.Response> cadastrarAbordagemPrincipal(String nome) async {
+  //   final url = Uri.parse('$_baseUrl/abordagem-princpal');
+  //   final data = {'nome': nome};
+  //   return await http.post(
+  //     url,
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode(data),
+  //   );
+  // }
+
+  Future<http.Response> cadastrarEspecialidadeOutras(String nomes) async {
+    final url = Uri.parse('$_baseUrl/especialidade-outras');
+    final data = {'nomes': nomes};
     return await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -84,8 +119,18 @@ class ApiService {
     );
   }
 
-  Future<http.Response> cadastrarEspecialidades(List<String> nomes) async {
-    final url = Uri.parse('$_baseUrl/especialidades');
+  Future<http.Response> cadastrarEspecialidadePrincipal(String nomes) async {
+    final url = Uri.parse('$_baseUrl/especialidade-principal');
+    final data = {'nomes': nomes};
+    return await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+  }
+
+  Future<http.Response> cadastrarTemasClinicos(String nomes) async {
+    final url = Uri.parse('$_baseUrl/temas-clinicos');
     final data = {'nomes': nomes};
     return await http.post(
       url,

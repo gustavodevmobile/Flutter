@@ -1,6 +1,7 @@
 // Importações necessárias para funcionamento do cadastro e seleção de imagem
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:blurt/controller/abordagem_especialidade_controller.dart';
@@ -29,36 +30,53 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
       TextEditingController();
   final TextEditingController _valorConsultaController =
       TextEditingController();
-  final TextEditingController _abordagemController = TextEditingController();
-  final TextEditingController _especialidadeController =
+  final TextEditingController _novaAbordagemPrincipalController =
       TextEditingController();
-      final TextEditingController _temaClinicoController =
+  final TextEditingController _novaAbordagemUtilizadaController =
       TextEditingController();
+  final TextEditingController _novaEspecialidadePrincipalController =
+      TextEditingController();
+  final TextEditingController _novaOutrasEspecialidadesController =
+      TextEditingController();
+
+  final TextEditingController _temaClinicoController = TextEditingController();
   final TextEditingController _chavePixController = TextEditingController();
   final TextEditingController _contaBancariaController =
       TextEditingController();
   final TextEditingController _agenciaController = TextEditingController();
   final TextEditingController _bancoController = TextEditingController();
   final TextEditingController _tipoContaController = TextEditingController();
-  List<String> _especialidades = [];
+  final List<Especialidade> _especialidades = [];
+  final List<TemasClinicos> _temas = [];
   List<Abordagem> _abordagens = [];
+  //List<Abordagem> _abordagemPrincipalSelecionada = [];
+  List<Abordagem> _abordagensUtilizadasSelecionada = [];
   List<TemasClinicos> _temasClinicos = [];
   List<Especialidade> _especialidadesDisponiveis = [];
   String? cnpj;
   String? _genero;
   Abordagem? _abordagemSelecionada;
   Especialidade? _especialidadeSelecionada;
-  TemasClinicos? _temaClinicoSelecionado;
+  // TemasClinicos? _temaClinicoSelecionado;
   final CadastroController _cadastroController = CadastroController();
-  final AbordagemEspecialidadeController _abordagemEspecialidadeController =
-      AbordagemEspecialidadeController();
+  final AbordagemEspecialidadeTemasController
+      _abordagemEspecialidadeController =
+      AbordagemEspecialidadeTemasController();
   bool _loading = false;
   bool _showImagePicker = false;
-  bool _showNovaAbordagem = false;
-  bool _showNovaEspecialidade = false;
+  bool _showNovaAbordagemPrincipal = false;
+  bool _showNovaAbordagemUtilizada = false;
+  bool _showNovaOutraEspecialidade = false;
+  bool _showNovaEspecialidadePrincipal = false;
   bool _showTemasClinicos = false;
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
+  List<Especialidade> _especialidadesSelecionadas = [];
+  List<TemasClinicos> _temasClinicosSelecionados = [];
+
+  // Adicione variáveis para armazenar os arquivos de certificado
+  File? _certificadoEspecialidadePrincipal;
+  File? _certificadoOutraEspecialidade;
 
   // Exibe um SnackBar para feedback ao usuário
   void showSnackBar(String message, {Color? backgroundColor}) {
@@ -93,6 +111,25 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
     }
   }
 
+  // Função para selecionar certificado
+  Future<void> _pickCertificadoEspecialidadePrincipal() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _certificadoEspecialidadePrincipal = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _pickCertificadoOutraEspecialidade() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _certificadoOutraEspecialidade = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -107,16 +144,18 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   Future<void> _carregarAbordagensEspecialidades() async {
     try {
       final abordagens =
-          await _abordagemEspecialidadeController.buscarAbordagens();
-      final especialidades =
-          await _abordagemEspecialidadeController.buscarEspecialidades();
+          await _abordagemEspecialidadeController.buscarAbordagemPrincipal();
+      final especialidades = await _abordagemEspecialidadeController
+          .buscarEspecialidadePrincipal();
       final temasClinicos =
           await _abordagemEspecialidadeController.buscarTemasClinicos();
       setState(() {
         _abordagens = abordagens
             .map((a) => Abordagem(id: a.id, nome: capitalize(a.nome)))
             .toList();
-        _especialidadesDisponiveis = especialidades;
+        _especialidadesDisponiveis = especialidades
+            .map((e) => Especialidade(id: e.id, nome: capitalize(e.nome)))
+            .toList();
         _temasClinicos = temasClinicos
             .map((t) => TemasClinicos(id: t.id, nome: capitalize(t.nome)))
             .toList();
@@ -393,8 +432,9 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             color: blueColor,
                           ),
                         ),
-                        const SizedBox(height: 24),
+
                         // Campo Abordagem Principal
+                        const SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
                           child: DropdownButtonFormField<Abordagem>(
@@ -420,14 +460,15 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             },
                           ),
                         ),
-
                         Align(
                           alignment: Alignment.centerLeft,
                           child: TextButton.icon(
                             icon: const Icon(Icons.add_circle_outline),
-                            label: const Text('Adicionar nova abordagem'),
-                            onPressed: () => setState(
-                                () => _showNovaAbordagem = !_showNovaAbordagem),
+                            label: const Text(
+                                'Adicionar nova abordagem principal'),
+                            onPressed: () => setState(() =>
+                                _showNovaAbordagemPrincipal =
+                                    !_showNovaAbordagemPrincipal),
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 4),
                               minimumSize: Size(0,
@@ -440,54 +481,157 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeIn,
-                          height: _showNovaAbordagem ? 70 : 0,
-                          child: _showNovaAbordagem
-                              ? Row(
-                                  key: const ValueKey('novaAbordagem'),
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: _abordagemController,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Nova abordagem',
-                                          prefixIcon: Icon(
-                                            Icons.psychology_alt_outlined,
-                                          ),
-                                        ),
-                                      ),
+                          height: _showNovaAbordagemPrincipal ? 70 : 0,
+                          child: _showNovaAbordagemPrincipal
+                              ? TextFormField(
+                                  controller: _novaAbordagemPrincipalController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nova abordagem principal',
+                                    prefixIcon: Icon(
+                                      Icons.psychology_alt_outlined,
                                     ),
-                                  ],
+                                  ),
                                 )
                               : const SizedBox.shrink(),
                         ),
-                        // Lista de abordagens adicionadas
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: DropdownButtonFormField<TemasClinicos>(
-                            value: _temaClinicoSelecionado,
-                            isExpanded: true,
+                        // if (_showNovaAbordagemPrincipal &&
+                        //     _novaAbordagemPrincipalController
+                        //         .text.isNotEmpty) ...[
+                        //   const SizedBox(height: 8),
+                        //   Row(
+                        //     children: [
+                        //       const Icon(Icons.file_present,
+                        //           color: Colors.blueGrey),
+                        //       const SizedBox(width: 8),
+                        //       Expanded(
+                        //         child: Text(
+                        //           _certificadoEspecialidadePrincipal != null
+                        //               ? 'Certificado selecionado: ${_certificadoEspecialidadePrincipal!.path.split('/').last}'
+                        //               : 'Anexe o certificado da nova especialidade principal (obrigatório)',
+                        //           style: TextStyle(
+                        //               color:
+                        //                   _certificadoEspecialidadePrincipal ==
+                        //                           null
+                        //                       ? Colors.red
+                        //                       : Colors.black),
+                        //         ),
+                        //       ),
+                        //       IconButton(
+                        //         icon: const Icon(Icons.attach_file),
+                        //         onPressed:
+                        //             _pickCertificadoEspecialidadePrincipal,
+                        //         tooltip: 'Anexar certificado',
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ],
+
+                        // Campo de abordagens utilizadas
+                        const SizedBox(height: 24),
+                        InkWell(
+                          onTap: () async {
+                            await showMultiSelectDialog<Abordagem>(
+                              context: context,
+                              title: 'Selecione as abordagens utilizadas',
+                              items: _abordagens,
+                              selectedItems: _abordagensUtilizadasSelecionada,
+                              itemLabel: (t) => t.nome,
+                              onConfirm: (selecionados) {
+                                setState(() {
+                                  _abordagensUtilizadasSelecionada =
+                                      selecionados;
+                                });
+                              },
+                            );
+                          },
+                          child: InputDecorator(
+                            decoration: const InputDecoration(
+                              labelText: 'Abordagens Utilizadas',
+                              prefixIcon: Icon(Icons.psychology_alt_outlined),
+                            ),
+                            child: Text(
+                              _abordagensUtilizadasSelecionada.isEmpty
+                                  ? 'Selecione as abordagens utilizadas'
+                                  : _abordagensUtilizadasSelecionada
+                                      .map((t) => t.nome)
+                                      .join(', '),
+                              style: TextStyle(
+                                color: _abordagensUtilizadasSelecionada.isEmpty
+                                    ? Colors.grey
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: const Text(
+                                'Adicionar nova abordagem utilizada'),
+                            onPressed: () => setState(() =>
+                                _showNovaAbordagemUtilizada =
+                                    !_showNovaAbordagemUtilizada),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              minimumSize: Size(0,
+                                  0), // opcional, para remover restrições mínimas
+                              tapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap, // opcional, para reduzir área de toque
+                            ),
+                          ),
+                        ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          height: _showNovaAbordagemUtilizada ? 70 : 0,
+                          child: _showNovaAbordagemUtilizada
+                              ? TextFormField(
+                                  controller: _novaAbordagemUtilizadaController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nova Abordagem utilizada',
+                                    prefixIcon: Icon(Icons.star_outline),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+
+                        // Campo de Temas clínicos
+                        const SizedBox(height: 24),
+                        InkWell(
+                          onTap: () async {
+                            await showMultiSelectDialog<TemasClinicos>(
+                              context: context,
+                              title: 'Selecione os temas clínicos',
+                              items: _temasClinicos,
+                              selectedItems: _temasClinicosSelecionados,
+                              itemLabel: (t) => t.nome,
+                              onConfirm: (selecionados) {
+                                setState(() {
+                                  _temasClinicosSelecionados = selecionados;
+                                });
+                              },
+                            );
+                          },
+                          child: InputDecorator(
                             decoration: const InputDecoration(
                               labelText: 'Temas Clínicos',
                               prefixIcon: Icon(Icons.psychology_alt_outlined),
                             ),
-                            items: _temasClinicos
-                                .map((abord) => DropdownMenuItem(
-                                      value: abord,
-                                      child: Text(abord.nome),
-                                    ))
-                                .toList(),
-                            onChanged: (value) =>
-                                setState(() => _temaClinicoSelecionado = value),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Abordagem obrigatória';
-                              }
-                              return null;
-                            },
+                            child: Text(
+                              _temasClinicosSelecionados.isEmpty
+                                  ? 'Selecione os temas clínicos'
+                                  : _temasClinicosSelecionados
+                                      .map((t) => t.nome)
+                                      .join(', '),
+                              style: TextStyle(
+                                color: _temasClinicosSelecionados.isEmpty
+                                    ? Colors.grey
+                                    : Colors.black,
+                              ),
+                            ),
                           ),
                         ),
-
                         Align(
                           alignment: Alignment.centerLeft,
                           child: TextButton.icon(
@@ -509,40 +653,58 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           curve: Curves.easeIn,
                           height: _showTemasClinicos ? 70 : 0,
                           child: _showTemasClinicos
-                              ? Row(
-                                  key: const ValueKey('novoTemaClinico'),
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: _temaClinicoController,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Novo Tema Clínico',
-                                          prefixIcon: Icon(
-                                            Icons.psychology_alt_outlined,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              ? TextFormField(
+                                  controller: _temaClinicoController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Novo Tema Clínico',
+                                    prefixIcon: Icon(Icons.star_outline),
+                                  ),
                                 )
                               : const SizedBox.shrink(),
                         ),
-                        const SizedBox(height: 8),
-                        // Campo Especialidade (adiciona à lista)
-                        DropdownButtonFormField<Especialidade>(
-                          value: _especialidadeSelecionada,
-                          decoration: const InputDecoration(
-                            labelText: 'Especialidade(s)',
-                            prefixIcon: Icon(Icons.star_outline),
+
+                        // Campo de especialidade Principal
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: DropdownButtonFormField<Especialidade>(
+                                  value: _especialidadeSelecionada,
+                                  isExpanded: true,
+                                  decoration: InputDecoration(
+                                    labelText: 'Especialidade Principal*',
+                                    prefixIcon:
+                                        Icon(Icons.psychology_alt_outlined),
+                                  ),
+                                  items: _especialidadesDisponiveis
+                                      .map((esp) => DropdownMenuItem(
+                                            value: esp,
+                                            child: Text(esp.nome),
+                                          ))
+                                      .toList(),
+                                  onChanged: (value) => setState(
+                                      () => _especialidadeSelecionada = value),
+                                ),
+                              ),
+                              _especialidadeSelecionada == null
+                                  ? const SizedBox.shrink()
+                                  : IconButton(
+                                      icon: Icon(Icons.clear),
+                                      tooltip: 'Limpar seleção',
+                                      onPressed: () {
+                                        setState(() {
+                                          _especialidadeSelecionada = null;
+                                          _novaEspecialidadePrincipalController
+                                              .clear();
+                                          _certificadoEspecialidadePrincipal =
+                                              null;
+                                        });
+                                      },
+                                    ),
+                            ],
                           ),
-                          items: _especialidadesDisponiveis
-                              .map((esp) => DropdownMenuItem(
-                                    value: esp,
-                                    child: Text(esp.nome),
-                                  ))
-                              .toList(),
-                          onChanged: (value) =>
-                              setState(() => _especialidadeSelecionada = value),
                         ),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -550,8 +712,8 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             icon: const Icon(Icons.add_circle_outline),
                             label: const Text('Adicionar nova especialidade'),
                             onPressed: () => setState(() =>
-                                _showNovaEspecialidade =
-                                    !_showNovaEspecialidade),
+                                _showNovaEspecialidadePrincipal =
+                                    !_showNovaEspecialidadePrincipal),
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 4),
                               minimumSize: Size(0,
@@ -564,68 +726,46 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeIn,
-                          height: _showNovaEspecialidade ? 70 : 0,
-                          child: _showNovaEspecialidade
-                              ? Row(
-                                  key: const ValueKey('novaEspecialidade'),
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: _especialidadeController,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Nova especialidade',
-                                          prefixIcon: Icon(Icons.star_outline),
-                                        ),
-                                      ),
+                          height: _showNovaEspecialidadePrincipal ? 70 : 0,
+                          child: _showNovaEspecialidadePrincipal
+                              ? TextFormField(
+                                  controller:
+                                      _novaEspecialidadePrincipalController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nova abordagem',
+                                    prefixIcon: Icon(
+                                      Icons.psychology_alt_outlined,
                                     ),
-                                    IconButton(
-                                      icon: const Icon(Icons.add),
-                                      tooltip: 'Adicionar Especialidade',
-                                      onPressed: () {
-                                        FocusScope.of(context).unfocus();
-                                        final text =
-                                            _especialidadeController.text;
-                                        if (text.isNotEmpty &&
-                                            !_especialidades.contains(text)) {
-                                          setState(() {
-                                            _especialidades.add(text);
-                                            _especialidadeSelecionada = null;
-                                          });
-                                        }
-                                        _especialidadeController.clear();
-                                      },
-                                    ),
-                                  ],
+                                  ),
                                 )
                               : const SizedBox.shrink(),
                         ),
-                        // Lista de especialidades adicionadas
-                        if (_especialidades.isNotEmpty)
-                          Text('Especialidades adicionadas:',
-                              style: TextStyle(fontSize: 16, color: blueColor)),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: _especialidades
-                              .map((esp) => Row(
-                                    children: [
-                                      const Icon(Icons.check,
-                                          color: Colors.green, size: 20),
-                                      const SizedBox(width: 6),
-                                      Expanded(child: Text(esp)),
-                                      IconButton(
-                                        icon: const Icon(Icons.close,
-                                            color: Colors.red, size: 20),
-                                        tooltip: 'Remover',
-                                        onPressed: () {
-                                          setState(() {
-                                            _especialidades.remove(esp);
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ))
-                              .toList(),
-                        ),
+                        if (_especialidadeSelecionada != null ||
+                            _novaEspecialidadePrincipalController
+                                .text.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.file_present,
+                                  color: Colors.blueGrey),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _certificadoEspecialidadePrincipal != null
+                                      ? 'Certificado selecionado: ${_certificadoEspecialidadePrincipal!.path.split('/').last}'
+                                      : 'Anexe o certificado da especialidade principal',
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.attach_file),
+                                onPressed:
+                                    _pickCertificadoEspecialidadePrincipal,
+                                tooltip: 'Anexar certificado',
+                              ),
+                            ],
+                          ),
+                        ],
+
                         const SizedBox(height: 16),
                         Divider(
                           color: themeColor,
@@ -758,6 +898,27 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                 ? null
                                 : () async {
                                     if (_formKey.currentState!.validate()) {
+                                      // Validação dos certificados obrigatórios
+                                      if (_showNovaEspecialidadePrincipal &&
+                                          _novaEspecialidadePrincipalController
+                                              .text.isNotEmpty &&
+                                          _certificadoEspecialidadePrincipal ==
+                                              null) {
+                                        showSnackBar(
+                                            'Anexe o certificado da nova especialidade principal!',
+                                            backgroundColor: Colors.red);
+                                        return;
+                                      }
+                                      if (_showNovaOutraEspecialidade &&
+                                          _novaOutrasEspecialidadesController
+                                              .text.isNotEmpty &&
+                                          _certificadoOutraEspecialidade ==
+                                              null) {
+                                        showSnackBar(
+                                            'Anexe o certificado da nova outra especialidade!',
+                                            backgroundColor: Colors.red);
+                                        return;
+                                      }
                                       if (!_showImagePicker ||
                                           _selectedImage == null) {
                                         showSnackBar(
@@ -767,36 +928,113 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                       }
                                       setState(() => _loading = true);
                                       try {
-                                        // Cadastro da abordagem principal
-                                        if (_abordagemController
+                                        // 1. abordagem principal
+                                        String? abordagemPrincipal;
+                                        if (_novaAbordagemPrincipalController
                                             .text.isNotEmpty) {
-                                          await _cadastroController
-                                              .cadastrarAbordagem(
-                                                  _abordagemController.text
-                                                      .trim());
+                                          abordagemPrincipal =
+                                              _novaAbordagemPrincipalController
+                                                  .text;
                                         } else {
-                                          await _cadastroController
-                                              .cadastrarAbordagem(
-                                                  _abordagemSelecionada!.id);
+                                         if( _abordagemSelecionada != null) {
+                                            abordagemPrincipal =
+                                                _abordagemSelecionada!.id;
+                                          }
                                         }
 
-                                        // Cadastro das especialidades
-                                        if (_especialidades.isEmpty) {
-                                          _especialidades = [];
-                                          await _cadastroController
-                                              .cadastrarEspecialidades(
-                                                  _especialidades);
+                                        // 1. Cadastro da abordagens utilizadas
+
+                                        List<String> abordagensUtilizadasIds =
+                                            [];
+                                        if (_novaAbordagemUtilizadaController
+                                            .text.isNotEmpty) {
+                                          abordagensUtilizadasIds.add(
+                                              _novaAbordagemUtilizadaController
+                                                  .text);
+                                          if (_abordagensUtilizadasSelecionada
+                                                  .isNotEmpty &&
+                                              _novaAbordagemUtilizadaController
+                                                  .text.isNotEmpty) {
+                                            abordagensUtilizadasIds.add(
+                                                _abordagensUtilizadasSelecionada
+                                                    .map((e) => e.nome)
+                                                    .join(','));
+                                            abordagensUtilizadasIds.add(
+                                                _novaAbordagemUtilizadaController
+                                                    .text);
+                                          }
                                         } else {
-                                          await _cadastroController
-                                              .cadastrarEspecialidades(
-                                                  _especialidades);
+                                          abordagensUtilizadasIds.add(
+                                              _abordagensUtilizadasSelecionada
+                                                  .map((e) => e.nome)
+                                                  .join(','));
                                         }
+                                        // 2. Cadastro da especialidade principal
+                                        String? especialidadePrincipalId;
+                                        if (_novaEspecialidadePrincipalController
+                                            .text.isNotEmpty) {
+                                          especialidadePrincipalId =
+                                              _novaEspecialidadePrincipalController
+                                                  .text;
+                                        } else {
+                                          if (_especialidadeSelecionada !=
+                                              null) {
+                                            especialidadePrincipalId =
+                                                _especialidadeSelecionada!.id;
+                                          }
+                                        }
+
+                                        // 3. Cadastro dos temas clínicos
+                                        List<String> temasClinicosIds = [];
+                                        if (_temaClinicoController
+                                            .text.isNotEmpty) {
+                                          temasClinicosIds
+                                              .add(_temaClinicoController.text);
+                                        }
+                                        if (_temasClinicosSelecionados
+                                                .isNotEmpty &&
+                                            _temaClinicoController
+                                                .text.isNotEmpty) {
+                                          temasClinicosIds.add(
+                                              _temasClinicosSelecionados
+                                                  .map((e) => e.nome)
+                                                  .join(','));
+                                          temasClinicosIds
+                                              .add(_temaClinicoController.text);
+                                        } else {
+                                          temasClinicosIds.add(
+                                              _temasClinicosSelecionados
+                                                  .map((e) => e.nome)
+                                                  .join(','));
+                                        }
+
+                                        if (_especialidadeSelecionada != null) {
+                                          showSnackBar(
+                                              'Anexe o certificado da especialidade principal!',
+                                              backgroundColor: Colors.red);
+                                          return;
+                                        }
+
                                         String fotoBase64 = '';
                                         if (_selectedImage != null) {
                                           final bytes = await _selectedImage!
                                               .readAsBytes();
                                           fotoBase64 = base64Encode(bytes);
                                         }
+
+                                        // Conversão para base64 do certificado da especialidade principal
+                                        String certificadoEspPrincipalBase64 =
+                                            '';
+                                        if (_certificadoEspecialidadePrincipal !=
+                                            null) {
+                                          final bytes =
+                                              await _certificadoEspecialidadePrincipal!
+                                                  .readAsBytes();
+                                          certificadoEspPrincipalBase64 =
+                                              base64Encode(bytes);
+                                        }
+
+                                        // 4. Criação do objeto profissional
                                         final profissional = Professional(
                                           name: _nameController.text.trim(),
                                           email: _emailController.text.trim(),
@@ -854,7 +1092,16 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         final response =
                                             await _cadastroController
                                                 .cadastrarProfissionalModel(
-                                                    profissional);
+                                          profissional,
+                                          abordagemPrincipal ?? '',
+                                          especialidadePrincipalId:
+                                              especialidadePrincipalId,
+                                          abordagensUtilizadasIds:
+                                              abordagensUtilizadasIds,
+                                          temasIds: temasClinicosIds,
+                                          certificadoEspPrincipal:
+                                              certificadoEspPrincipalBase64,
+                                        );
                                         if (!mounted) return;
                                         if (response.statusCode == 200 ||
                                             response.statusCode == 201) {
@@ -867,8 +1114,11 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                               'Erro ao cadastrar: \n${response.body}',
                                               backgroundColor: Colors.red);
                                         }
+                                        print(
+                                            'Erro ao cadastrar: ${response.body}');
                                       } catch (e) {
                                         if (!mounted) return;
+                                        print(e);
                                         showSnackBar('Erro de conexão: $e',
                                             backgroundColor: Colors.red);
                                       } finally {
@@ -899,6 +1149,59 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> showMultiSelectDialog<T>({
+    required BuildContext context,
+    required String title,
+    required List<T> items,
+    required List<T> selectedItems,
+    required String Function(T) itemLabel,
+    required void Function(List<T>) onConfirm,
+  }) async {
+    final tempSelected = List<T>.from(selectedItems);
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: StatefulBuilder(
+              builder: (context, setStateDialog) {
+                return ListView(
+                  shrinkWrap: true,
+                  children: items.map((item) {
+                    return CheckboxListTile(
+                      value: tempSelected.contains(item),
+                      title: Text(itemLabel(item)),
+                      onChanged: (checked) {
+                        setStateDialog(() {
+                          if (checked == true) {
+                            tempSelected.add(item);
+                          } else {
+                            tempSelected.remove(item);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                onConfirm(List<T>.from(tempSelected));
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

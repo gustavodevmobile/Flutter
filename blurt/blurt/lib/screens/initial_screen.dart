@@ -126,9 +126,9 @@ class _InitialScreenState extends State<InitialScreen> {
                             child: const Text('Sou Psicólogo(a)'),
                           ),
                           AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 200),
                             curve: Curves.easeInOut,
-                            height: _expanded == 1 ? 50 : 0,
+                            height: _expanded == 2 ? 50 : 0,
                             child: _expanded == 2
                                 ? Row(
                                     key: const ValueKey('profissional'),
@@ -167,8 +167,10 @@ class _InitialScreenState extends State<InitialScreen> {
                             ),
                             child: const Text('Sou Psicanalista'),
                           ),
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            height: _expanded == 3 ? 50 : 0,
                             child: _expanded == 3
                                 ? Row(
                                     key: const ValueKey('profissional'),

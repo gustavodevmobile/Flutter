@@ -34,8 +34,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   final TextEditingController _bancoController = TextEditingController();
   final TextEditingController _tipoContaController = TextEditingController();
   List<String> _especialidades = [];
-  final AbordagemEspecialidadeController _abordagemEspecialidadeController =
-      AbordagemEspecialidadeController();
+  final AbordagemEspecialidadeTemasController _abordagemEspecialidadeController =
+      AbordagemEspecialidadeTemasController();
 
   String? _genero;
   final CadastroController _cadastroController = CadastroController();
@@ -51,8 +51,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   final List<String> _abordagens = [];
   String? _abordagemSelecionada;
   String? _especialidadeSelecionada;
-  bool _showNovaAbordagem = false;
-  bool _showNovaEspecialidade = false;
+  final bool _showNovaAbordagem = false;
+  final bool _showNovaEspecialidade = false;
 
   // @override
   // void initState() {
@@ -715,49 +715,23 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                               : _tipoContaController.text
                                                   .trim(),
                                         );
-                                        final response =
-                                            await _cadastroController
-                                                .cadastrarProfissionalModel(
-                                                    profissional);
-                                        if (!mounted) return;
-                                        if (response.statusCode == 200 ||
-                                            response.statusCode == 201) {
-                                          showSnackBar(
-                                              'Psicanalista cadastrado com sucesso!',
-                                              backgroundColor: Colors.green);
+                                        // final response =
+                                        //     await _cadastroController
+                                        //         .cadastrarProfissionalModel(
+                                        //             profissional);
+                                        // if (!mounted) return;
+                                        // if (response.statusCode == 200 ||
+                                        //     response.statusCode == 201) {
+                                        //   showSnackBar(
+                                        //       'Psicanalista cadastrado com sucesso!',
+                                        //       backgroundColor: Colors.green);
 
-                                          // Cadastro das especialidades
-                                          if (_especialidades.isEmpty) {
-                                            _especialidades = [];
-                                            await _cadastroController
-                                                .cadastrarEspecialidades(
-                                                    _especialidades);
-                                          } else {
-                                            await _cadastroController
-                                                .cadastrarEspecialidades(
-                                                    _especialidades);
-                                          }
-
-                                          // Cadastro da abordagem
-                                          if (_abordagemController
-                                              .text.isNotEmpty) {
-                                            await _cadastroController
-                                                .cadastrarAbordagem(
-                                                    _abordagemController.text
-                                                        .trim());
-                                          } else {
-                                            await _cadastroController
-                                                .cadastrarAbordagem(
-                                                    _abordagemSelecionada!);
-                                          }
-                                          if (context.mounted) {
-                                            //Navigator.pop(context);
-                                          }
-                                        } else {
-                                          showSnackBar(
-                                              'Erro ao cadastrar: \n${response.body}',
-                                              backgroundColor: Colors.red);
-                                        }
+                                          
+                                        // } else {
+                                        //   showSnackBar(
+                                        //       'Erro ao cadastrar: \n${response.body}',
+                                        //       backgroundColor: Colors.red);
+                                        // }
                                       } catch (e) {
                                         if (!mounted) return;
                                         showSnackBar('Erro de conexão: $e',
