@@ -66,12 +66,12 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   bool _showImagePicker = false;
   bool _showNovaAbordagemPrincipal = false;
   bool _showNovaAbordagemUtilizada = false;
-  bool _showNovaOutraEspecialidade = false;
+  final bool _showNovaOutraEspecialidade = false;
   bool _showNovaEspecialidadePrincipal = false;
   bool _showTemasClinicos = false;
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
-  List<Especialidade> _especialidadesSelecionadas = [];
+  final List<Especialidade> _especialidadesSelecionadas = [];
   List<TemasClinicos> _temasClinicosSelecionados = [];
 
   // Adicione variáveis para armazenar os arquivos de certificado
@@ -117,15 +117,6 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
     if (pickedFile != null) {
       setState(() {
         _certificadoEspecialidadePrincipal = File(pickedFile.path);
-      });
-    }
-  }
-
-  Future<void> _pickCertificadoOutraEspecialidade() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _certificadoOutraEspecialidade = File(pickedFile.path);
       });
     }
   }
@@ -494,37 +485,6 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                 )
                               : const SizedBox.shrink(),
                         ),
-                        // if (_showNovaAbordagemPrincipal &&
-                        //     _novaAbordagemPrincipalController
-                        //         .text.isNotEmpty) ...[
-                        //   const SizedBox(height: 8),
-                        //   Row(
-                        //     children: [
-                        //       const Icon(Icons.file_present,
-                        //           color: Colors.blueGrey),
-                        //       const SizedBox(width: 8),
-                        //       Expanded(
-                        //         child: Text(
-                        //           _certificadoEspecialidadePrincipal != null
-                        //               ? 'Certificado selecionado: ${_certificadoEspecialidadePrincipal!.path.split('/').last}'
-                        //               : 'Anexe o certificado da nova especialidade principal (obrigatório)',
-                        //           style: TextStyle(
-                        //               color:
-                        //                   _certificadoEspecialidadePrincipal ==
-                        //                           null
-                        //                       ? Colors.red
-                        //                       : Colors.black),
-                        //         ),
-                        //       ),
-                        //       IconButton(
-                        //         icon: const Icon(Icons.attach_file),
-                        //         onPressed:
-                        //             _pickCertificadoEspecialidadePrincipal,
-                        //         tooltip: 'Anexar certificado',
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ],
 
                         // Campo de abordagens utilizadas
                         const SizedBox(height: 24),
@@ -877,6 +837,16 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                     onPressed: () =>
                                         _pickImage(ImageSource.camera),
                                   ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    tooltip: 'Remover imagem',
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedImage = null;
+                                        _showImagePicker = false;
+                                      });
+                                    },
+                                  ),
                                 ],
                               ),
                             ],
@@ -936,9 +906,9 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                               _novaAbordagemPrincipalController
                                                   .text;
                                         } else {
-                                         if( _abordagemSelecionada != null) {
+                                          if (_abordagemSelecionada != null) {
                                             abordagemPrincipal =
-                                                _abordagemSelecionada!.id;
+                                                _abordagemSelecionada!.nome;
                                           }
                                         }
 
@@ -980,7 +950,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                           if (_especialidadeSelecionada !=
                                               null) {
                                             especialidadePrincipalId =
-                                                _especialidadeSelecionada!.id;
+                                                _especialidadeSelecionada!.nome;
                                           }
                                         }
 
@@ -1036,71 +1006,52 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
 
                                         // 4. Criação do objeto profissional
                                         final profissional = Professional(
-                                          name: _nameController.text.trim(),
-                                          email: _emailController.text.trim(),
-                                          passwordHash:
-                                              _passwordController.text,
-                                          bio: _bioController.text.trim(),
-                                          cpf: _cpfController.text.trim(),
-                                          cnpj: _cnpjController.text
-                                                  .trim()
-                                                  .isEmpty
-                                              ? null
-                                              : _cnpjController.text.trim(),
-                                          crp: _registroProfissionalController
-                                              .text
-                                              .trim(),
-                                          tipoProfissional: 'Psicólogo',
-                                          estaOnline: false,
-                                          atendePlantao: false,
-                                          valorConsulta: double.tryParse(
-                                                  _valorConsultaController.text
-                                                      .replaceAll(',', '.')) ??
-                                              0.0,
-                                          genero: _genero ?? '',
-                                          foto: fotoBase64,
-                                          chavePix: _chavePixController.text
-                                                  .trim()
-                                                  .isEmpty
-                                              ? null
-                                              : _chavePixController.text.trim(),
-                                          contaBancaria:
-                                              _contaBancariaController.text
-                                                      .trim()
-                                                      .isEmpty
-                                                  ? null
-                                                  : _contaBancariaController
-                                                      .text
-                                                      .trim(),
-                                          agencia: _agenciaController.text
-                                                  .trim()
-                                                  .isEmpty
-                                              ? null
-                                              : _agenciaController.text.trim(),
-                                          banco: _bancoController.text
-                                                  .trim()
-                                                  .isEmpty
-                                              ? null
-                                              : _bancoController.text.trim(),
-                                          tipoConta: _tipoContaController.text
-                                                  .trim()
-                                                  .isEmpty
-                                              ? null
-                                              : _tipoContaController.text
-                                                  .trim(),
-                                        );
+                                            name: _nameController.text.trim(),
+                                            email: _emailController.text.trim(),
+                                            passwordHash:
+                                                _passwordController.text,
+                                            bio: _bioController.text.trim(),
+                                            cpf: _cpfController.text.trim(),
+                                            cnpj: _cnpjController.text.trim().isEmpty
+                                                ? null
+                                                : _cnpjController.text.trim(),
+                                            crp: _registroProfissionalController.text
+                                                .trim(),
+                                            tipoProfissional: _genero == 'Masculino'
+                                                ? 'Psicólogo'
+                                                : 'Psicóloga',
+                                            estaOnline: false,
+                                            atendePlantao: false,
+                                            valorConsulta:
+                                                double.tryParse(_valorConsultaController.text.replaceAll(',', '.')) ??
+                                                    0.0,
+                                            genero: _genero ?? '',
+                                            foto: fotoBase64,
+                                            chavePix: _chavePixController.text.trim().isEmpty
+                                                ? null
+                                                : _chavePixController.text
+                                                    .trim(),
+                                            contaBancaria: _contaBancariaController.text.trim().isEmpty
+                                                ? null
+                                                : _contaBancariaController.text
+                                                    .trim(),
+                                            agencia: _agenciaController.text.trim().isEmpty
+                                                ? null
+                                                : _agenciaController.text
+                                                    .trim(),
+                                            banco: _bancoController.text.trim().isEmpty
+                                                ? null
+                                                : _bancoController.text.trim(),
+                                            tipoConta: _tipoContaController.text.trim().isEmpty ? null : _tipoContaController.text.trim(),
+                                            abordagemPrincipal: abordagemPrincipal,
+                                            abordagensUtilizadas: abordagensUtilizadasIds,
+                                            especialidadePrincipal: especialidadePrincipalId,
+                                            temasClinicos: temasClinicosIds,
+                                            certificadoEspecializacao: certificadoEspPrincipalBase64);
                                         final response =
                                             await _cadastroController
                                                 .cadastrarProfissionalModel(
                                           profissional,
-                                          abordagemPrincipal ?? '',
-                                          especialidadePrincipalId:
-                                              especialidadePrincipalId,
-                                          abordagensUtilizadasIds:
-                                              abordagensUtilizadasIds,
-                                          temasIds: temasClinicosIds,
-                                          certificadoEspPrincipal:
-                                              certificadoEspPrincipalBase64,
                                         );
                                         if (!mounted) return;
                                         if (response.statusCode == 200 ||

@@ -33,8 +33,9 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   final TextEditingController _agenciaController = TextEditingController();
   final TextEditingController _bancoController = TextEditingController();
   final TextEditingController _tipoContaController = TextEditingController();
-  List<String> _especialidades = [];
-  final AbordagemEspecialidadeTemasController _abordagemEspecialidadeController =
+  final List<String> _especialidades = [];
+  final AbordagemEspecialidadeTemasController
+      _abordagemEspecialidadeController =
       AbordagemEspecialidadeTemasController();
 
   String? _genero;
@@ -290,176 +291,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           color: themeColor,
                           thickness: 2,
                         ),
-                        // Text(
-                        //   'Abordagem e Especialidade',
-                        //   style: TextStyle(
-                        //     fontSize: 16,
-                        //     fontWeight: FontWeight.bold,
-                        //     color: blueColor,
-                        //   ),
-                        // ),
-                        // const SizedBox(height: 8),
-                        // // Campo Abordagem Principal
-                        // DropdownButtonFormField<String>(
-                        //   value: _abordagemSelecionada,
-                        //   decoration: const InputDecoration(
-                        //     labelText: 'Abordagem Principal*',
-                        //     prefixIcon: Icon(Icons.psychology_alt_outlined),
-                        //   ),
-                        //   items: _abordagens
-                        //       .map((abord) => DropdownMenuItem(
-                        //             value: abord,
-                        //             child: Text(abord),
-                        //           ))
-                        //       .toList(),
-                        //   onChanged: (value) =>
-                        //       setState(() => _abordagemSelecionada = value),
-                        //   validator: (value) {
-                        //     if (value == null || value.isEmpty) {
-                        //       return 'Abordagem obrigatória';
-                        //     }
-                        //     return null;
-                        //   },
-                        // ),
 
-                        // Align(
-                        //   alignment: Alignment.centerLeft,
-                        //   child: TextButton.icon(
-                        //     icon: const Icon(Icons.add_circle_outline),
-                        //     label: const Text('Adicionar nova abordagem'),
-                        //     onPressed: () => setState(
-                        //         () => _showNovaAbordagem = !_showNovaAbordagem),
-                        //     style: TextButton.styleFrom(
-                        //       padding: EdgeInsets.symmetric(vertical: 4),
-                        //       minimumSize: Size(0,
-                        //           0), // opcional, para remover restrições mínimas
-                        //       tapTargetSize: MaterialTapTargetSize
-                        //           .shrinkWrap, // opcional, para reduzir área de toque
-                        //     ),
-                        //   ),
-                        // ),
-                        // AnimatedContainer(
-                        //   duration: const Duration(milliseconds: 300),
-                        //   curve: Curves.easeIn,
-                        //   height: _showNovaAbordagem ? 70 : 0,
-                        //   child: _showNovaAbordagem
-                        //       ? Row(
-                        //           key: const ValueKey('novaAbordagem'),
-                        //           children: [
-                        //             Expanded(
-                        //               child: TextFormField(
-                        //                 controller: _abordagemController,
-                        //                 decoration: const InputDecoration(
-                        //                   labelText: 'Nova abordagem',
-                        //                   prefixIcon: Icon(
-                        //                     Icons.psychology_alt_outlined,
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ],
-                        //         )
-                        //       : const SizedBox.shrink(),
-                        // ),
-                        // const SizedBox(height: 8),
-                        // // Campo Especialidade (adiciona à lista)
-                        // DropdownButtonFormField<String>(
-                        //   value: _especialidadeSelecionada,
-                        //   decoration: const InputDecoration(
-                        //     labelText: 'Especialidade(s)',
-                        //     prefixIcon: Icon(Icons.star_outline),
-                        //   ),
-                        //   items: _especialidadesDisponiveis
-                        //       .map((esp) => DropdownMenuItem(
-                        //             value: esp,
-                        //             child: Text(esp),
-                        //           ))
-                        //       .toList(),
-                        //   onChanged: (value) =>
-                        //       setState(() => _especialidadeSelecionada = value),
-                        // ),
-                        // Align(
-                        //   alignment: Alignment.centerLeft,
-                        //   child: TextButton.icon(
-                        //     icon: const Icon(Icons.add_circle_outline),
-                        //     label: const Text('Adicionar nova especialidade'),
-                        //     onPressed: () => setState(() =>
-                        //         _showNovaEspecialidade =
-                        //             !_showNovaEspecialidade),
-                        //     style: TextButton.styleFrom(
-                        //       padding: EdgeInsets.symmetric(vertical: 4),
-                        //       minimumSize: Size(0,
-                        //           0), // opcional, para remover restrições mínimas
-                        //       tapTargetSize: MaterialTapTargetSize
-                        //           .shrinkWrap, // opcional, para reduzir área de toque
-                        //     ),
-                        //   ),
-                        // ),
-                        // AnimatedContainer(
-                        //   duration: const Duration(milliseconds: 300),
-                        //   curve: Curves.easeIn,
-                        //   height: _showNovaEspecialidade ? 70 : 0,
-                        //   child: _showNovaEspecialidade
-                        //       ? Row(
-                        //           key: const ValueKey('novaEspecialidade'),
-                        //           children: [
-                        //             Expanded(
-                        //               child: TextFormField(
-                        //                 controller: _especialidadeController,
-                        //                 decoration: const InputDecoration(
-                        //                   labelText: 'Nova especialidade',
-                        //                   prefixIcon: Icon(Icons.star_outline),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //             IconButton(
-                        //               icon: const Icon(Icons.add),
-                        //               tooltip: 'Adicionar Especialidade',
-                        //               onPressed: () {
-                        //                 FocusScope.of(context).unfocus();
-                        //                 final text =
-                        //                     _especialidadeController.text;
-                        //                 if (text.isNotEmpty &&
-                        //                     !_especialidades.contains(text)) {
-                        //                   setState(() {
-                        //                     _especialidades.add(text);
-                        //                     _especialidadeSelecionada = null;
-                        //                   });
-                        //                 }
-                        //                 _especialidadeController.clear();
-                        //               },
-                        //             ),
-                        //           ],
-                        //         )
-                        //       : const SizedBox.shrink(),
-                        // ),
-                        // // Lista de especialidades adicionadas
-                        // if (_especialidades.isNotEmpty)
-                        //   Text('Especialidades adicionadas:',
-                        //       style: TextStyle(fontSize: 16, color: blueColor)),
-                        // Column(
-                        //   crossAxisAlignment: CrossAxisAlignment.start,
-                        //   children: _especialidades
-                        //       .map((esp) => Row(
-                        //             children: [
-                        //               const Icon(Icons.check,
-                        //                   color: Colors.green, size: 20),
-                        //               const SizedBox(width: 6),
-                        //               Expanded(child: Text(esp)),
-                        //               IconButton(
-                        //                 icon: const Icon(Icons.close,
-                        //                     color: Colors.red, size: 20),
-                        //                 tooltip: 'Remover',
-                        //                 onPressed: () {
-                        //                   setState(() {
-                        //                     _especialidades.remove(esp);
-                        //                   });
-                        //                 },
-                        //               ),
-                        //             ],
-                        //           ))
-                        //       .toList(),
-                        // ),
                         const SizedBox(height: 16),
                         // Campo obrigatório de imagem de perfil
                         Align(
@@ -493,6 +325,15 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                               onPressed: () => _pickImage(ImageSource.camera,
                                   (file) => _profileImage = file),
                             ),
+                            IconButton(
+                              icon: Icon(Icons.clear, color: Colors.red),
+                              tooltip: 'Limpar seleção',
+                              onPressed: () {
+                                setState(() {
+                                  _profileImage = null;
+                                });
+                              },
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -504,6 +345,15 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           onPick: (source) => _pickImage(source,
                               (file) => _diplomaPsicanalistaImage = file),
                           showCheck: true,
+                          clearButton: IconButton(
+                            icon: Icon(Icons.clear, color: Colors.red),
+                            tooltip: 'Limpar seleção',
+                            onPressed: () {
+                              setState(() {
+                                _diplomaPsicanalistaImage = null;
+                              });
+                            },
+                          ),
                         ),
                         const SizedBox(height: 16),
                         // Declaração Sup. Clínica
@@ -513,6 +363,15 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           onPick: (source) => _pickImage(
                               source, (file) => _declSupClinicaImage = file),
                           showCheck: true,
+                          clearButton: IconButton(
+                            icon: Icon(Icons.clear, color: Colors.red),
+                            tooltip: 'Limpar seleção',
+                            onPressed: () {
+                              setState(() {
+                                _declSupClinicaImage = null;
+                              });
+                            },
+                          ),
                         ),
                         const SizedBox(height: 16),
                         // Declaração Análise Pessoal
@@ -522,6 +381,15 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           onPick: (source) => _pickImage(
                               source, (file) => _declAnPessoalImage = file),
                           showCheck: true,
+                          clearButton: IconButton(
+                            icon: Icon(Icons.clear, color: Colors.red),
+                            tooltip: 'Limpar seleção',
+                            onPressed: () {
+                              setState(() {
+                                _declAnPessoalImage = null;
+                              });
+                            },
+                          ),
                         ),
                         const SizedBox(height: 16),
                         // Campo Valor da Consulta
@@ -715,23 +583,21 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                               : _tipoContaController.text
                                                   .trim(),
                                         );
-                                        // final response =
-                                        //     await _cadastroController
-                                        //         .cadastrarProfissionalModel(
-                                        //             profissional);
-                                        // if (!mounted) return;
-                                        // if (response.statusCode == 200 ||
-                                        //     response.statusCode == 201) {
-                                        //   showSnackBar(
-                                        //       'Psicanalista cadastrado com sucesso!',
-                                        //       backgroundColor: Colors.green);
-
-                                          
-                                        // } else {
-                                        //   showSnackBar(
-                                        //       'Erro ao cadastrar: \n${response.body}',
-                                        //       backgroundColor: Colors.red);
-                                        // }
+                                        final response =
+                                            await _cadastroController
+                                                .cadastrarProfissionalModel(
+                                                    profissional);
+                                        if (!mounted) return;
+                                        if (response.statusCode == 200 ||
+                                            response.statusCode == 201) {
+                                          showSnackBar(
+                                              'Psicanalista cadastrado com sucesso!',
+                                              backgroundColor: Colors.green);
+                                        } else {
+                                          showSnackBar(
+                                              'Erro ao cadastrar: \n${response.body}',
+                                              backgroundColor: Colors.red);
+                                        }
                                       } catch (e) {
                                         if (!mounted) return;
                                         showSnackBar('Erro de conexão: $e',
@@ -773,6 +639,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
     required File? image,
     required void Function(ImageSource) onPick,
     bool showCheck = false,
+    Widget? clearButton,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -805,6 +672,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
               tooltip: 'Tirar foto',
               onPressed: () => onPick(ImageSource.camera),
             ),
+            if (clearButton != null) clearButton,
           ],
         ),
       ],

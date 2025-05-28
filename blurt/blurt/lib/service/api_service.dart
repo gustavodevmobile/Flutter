@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:blurt/models/especialidade_abordagem.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {

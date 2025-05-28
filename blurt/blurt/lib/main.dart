@@ -1,3 +1,8 @@
+import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/screens/atendimentos_profissional.dart';
+import 'package:blurt/screens/dashboard_profissional.dart';
+import 'package:blurt/screens/perfil_profissional.dart';
+import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/screens/cadastro_psicanalista.dart';
 import 'package:blurt/screens/login_profissional.dart';
@@ -6,9 +11,13 @@ import 'package:blurt/screens/cadastro_usuario.dart';
 import 'package:blurt/screens/cadastro_psicologo.dart';
 import 'screens/initial_screen.dart';
 import 'package:blurt/screens/dashboard_usuario.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (_) => ProfissionalProvider(),
+      child: const MyApp(),
+    ),);
   //ApiService().getAbordagens();
 }
 
@@ -24,10 +33,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF7AB0A3),
-          primary:   Color(0xFF4F8FCB),
+          primary: Color(0xFF4F8FCB),
         ),
         useMaterial3: true,
-        scaffoldBackgroundColor:  Color.fromARGB(255, 117, 177, 163),
+        scaffoldBackgroundColor: Color.fromARGB(255, 117, 177, 163),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF4F8FCB),
           foregroundColor: Colors.white,
@@ -35,8 +44,8 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.white),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(52),
-              bottomRight: Radius.circular(52),
+              bottomLeft: Radius.circular(32),
+              bottomRight: Radius.circular(32),
             ),
           ),
           elevation: 10,
@@ -68,6 +77,18 @@ class MyApp extends StatelessWidget {
         '/cadastro_psicologo': (context) => const PsicologoFormScreen(),
         '/cadastro_psicanalista': (context) => const PsicanalistaFormScreen(),
         '/dashboard_usuario': (context) => const DashboardUsuarioScreen(),
+        '/dashboard_profissional': (context) => const DashboardProfissionalScreen(),
+        '/editar_perfil_profissional': (context)=> const EditarPerfilProfissionalScreen(),
+        '/atendimento_profissional': (context)=> const AtendimentosProfissionalScreen(),
+        '/perfil_profissional':(context)=> const PerfilProfissionalScreen(profissional: {
+          'nome': 'Dr. João',
+          'abordagem': 'Psicólogo',
+          'fotoPerfil': 'https://example.com/foto.jpg',
+          'tipo': 'Psicólogo',
+          'abordagensUtilizadas': ['Cognitivo-Comportamental', 'Psicanálise'],
+          'especializacoes': ['Ansiedade', 'Depressão'],
+          'temasClinicos': ['Autoestima', 'Relacionamentos'],
+        }),
       },
     );
   }

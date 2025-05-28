@@ -1,6 +1,8 @@
+import 'package:blurt/controller/profissional_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:blurt/controller/login_controller.dart';
+import 'package:provider/provider.dart';
 // Importe o controller de login se necessário
 // import 'package:t_acolhe/controller/login_controller.dart';
 
@@ -75,12 +77,11 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Image.asset(
-                          'assets/image/195e7eed-4690-470b-bddf-d91da4a7623f.png',
-                          width: 70,
-                          height: 70,
+                          'assets/image/logotipoBlurt2.png',
+                          width: 180,
+                          height: 180,
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 16),
                         Text(
                           'Login Profissional',
                           style: TextStyle(
@@ -151,8 +152,12 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                           _cpfController.text,
                                           _passwordController.text,
                                           (onSuccess) {
+                                        Provider.of<ProfissionalProvider>(
+                                                context, listen: false)
+                                            .setProfissional(onSuccess);
                                         setState(() => _loading = false);
-                                        print(onSuccess.genero);
+                                        Navigator.pushNamed(
+                                            context, '/dashboard_profissional');
                                       }, (error) {
                                         setState(() => _loading = false);
                                         showSnackBar(context, error,

@@ -16,7 +16,7 @@ class LoginController {
         final result = jsonDecode(response.body);
         onSuccess(Usuario.fromJson(result));
       } else {
-        onError('Erro ao fazer login: ${response.body}');
+        onError(response.body);
       }
     } catch (e) {
       onError('Erro ao fazer login: $e');
@@ -29,12 +29,15 @@ class LoginController {
       Response response = await _apiService.loginProfissional(cpf, senha);
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        //onSuccess(Professional.fromJson(result));
+        print('Login Profissional: $result["name"]');
+        
+        onSuccess(Professional.fromJson(result));
       } else {
+        print(response.body);
         onError('Erro ao fazer login: \\${response.body}');
       }
     } catch (e) {
-      print('Erro ao fazer login: $e');
+      print('Erro ao fazer loginnnn: $e');
       onError('Erro ao fazer login: $e');
     }
   }

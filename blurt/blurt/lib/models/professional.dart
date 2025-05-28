@@ -22,6 +22,12 @@ class Professional {
   final String? agencia;
   final String? banco;
   final String? tipoConta;
+  final String? abordagemPrincipal;
+  final List<String>? abordagensUtilizadas;
+  final String? especialidadePrincipal;
+  final List<String>? especialidadesOutras;
+  final List<String>? temasClinicos;
+  final String? certificadoEspecializacao;
 
   Professional({
     this.id,
@@ -47,6 +53,12 @@ class Professional {
     this.agencia,
     this.banco,
     this.tipoConta,
+    this.abordagemPrincipal,
+    this.abordagensUtilizadas,
+    this.especialidadePrincipal,
+    this.especialidadesOutras,
+    this.temasClinicos,
+    this.certificadoEspecializacao,
   });
 
   factory Professional.fromJson(Map<String, dynamic> json) {
@@ -58,7 +70,7 @@ class Professional {
       bio: json['bio'] ?? '',
       cpf: json['cpf'] ?? '',
       cnpj: json['cnpj'] ?? '',
-      crp: json['crp'] ?? '',
+      crp: json['CRP'] ?? '',
       diplomaPsicanalista: json['diplomaPsicanalista'] ?? '',
       declSupClinica: json['declSupClinica'] ?? '',
       declAnPessoal: json['declAnPessoal'] ?? '',
@@ -76,6 +88,17 @@ class Professional {
       agencia: json['agencia'] ?? '',
       banco: json['banco'] ?? '',
       tipoConta: json['tipoConta'] ?? '',
+      abordagemPrincipal: json['abordagemPrincipal'],
+      abordagensUtilizadas: (json['abordagensUtilizadas'] as List?)
+          ?.map((e) => e.toString())
+          .toList(),
+      especialidadePrincipal: json['especialidadePrincipal'],
+      especialidadesOutras: (json['especialidadesOutras'] as List?)
+          ?.map((e) => e.toString())
+          .toList(),
+      temasClinicos:
+          (json['temasClinicos'] as List?)?.map((e) => e.toString()).toList(),
+      certificadoEspecializacao: json['certificadoEspecializacao'] ?? '',
     );
   }
 
@@ -105,6 +128,14 @@ class Professional {
       if (agencia != null) 'agencia': agencia,
       if (banco != null) 'banco': banco,
       if (tipoConta != null) 'tipoConta': tipoConta,
+      'abordagemPrincipal': abordagemPrincipal,
+      if (abordagensUtilizadas != null)
+        'abordagensUtilizadas': abordagensUtilizadas,
+      if (especialidadePrincipal != null)
+        'especialidadePrincipal': especialidadePrincipal,
+      if (temasClinicos != null) 'temasClinicos': temasClinicos,
+      if (especialidadesOutras != null)
+        'especialidadesOutras': especialidadesOutras,
     };
   }
 }

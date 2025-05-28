@@ -49,19 +49,19 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                     borderRadius: BorderRadius.circular(20)),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                      const EdgeInsets.symmetric(horizontal: 24, vertical:10),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Image.asset(
-                          'assets/image/195e7eed-4690-470b-bddf-d91da4a7623f.png',
-                          width: 70,
-                          height: 70,
+                          'assets/image/logotipoBlurt2.png',
+                          width: 200,
+                          height: 200,
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 16),
+                        //const SizedBox(height: 16),
                         Text(
                           'Bem-vindo de volta!',
                           style: TextStyle(
@@ -132,7 +132,8 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                                             _emailController.text,
                                             _passwordController.text,
                                             (onSuccess) {
-                                          print(onSuccess.email);
+                                          Navigator.pushNamed(
+                                              context, '/dashboard_usuario');
                                           setState(() => _loading = false);
                                         }, (error) {
                                           scaffoldMessenger.showSnackBar(
