@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -80,7 +81,7 @@ class _EditarPerfilProfissionalScreenState
               gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF7AB0A3), Color(0xFF4F8FCB)],
+            colors: [AppThemes.backgroundColor, AppThemes.primaryColor],
           )),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -147,77 +148,99 @@ class _EditarPerfilProfissionalScreenState
                         : Text(_cnpjController.text.isEmpty
                             ? 'Não informado'
                             : _cnpjController.text)),
-                _buildInfoRow('CRP', crp, null),
-                _buildInfoRow('Profissional', profissional, null),
+                _buildInfoRow(
+                    'CRP', value.profissional?.crp ?? 'Não infomado', null),
+                _buildInfoRow(
+                    'Profissional',
+                    value.profissional?.tipoProfissional ?? 'Não informado',
+                    null),
                 _buildEditableRow(
-                    'Valor Consulta',
-                    editandoValorConsulta,
-                    () => setState(
-                        () => editandoValorConsulta = !editandoValorConsulta),
-                    editandoValorConsulta
-                        ? _buildTextField(
-                            'Valor Consulta', _valorConsultaController,
-                            keyboardType: TextInputType.number)
-                        : Text(_valorConsultaController.text.isEmpty
-                            ? 'Não informado'
-                            : _valorConsultaController.text)),
-                _buildInfoRow('Gênero', genero, null),
+                  'Valor Consulta',
+                  editandoValorConsulta,
+                  () => setState(
+                      () => editandoValorConsulta = !editandoValorConsulta),
+                  editandoValorConsulta
+                      ? _buildTextField(
+                          'Valor Consulta', _valorConsultaController,
+                          keyboardType: TextInputType.number)
+                      : Text(value.profissional?.valorConsulta.toString() ??
+                          'Não informado'),
+                ),
+                _buildInfoRow('Gênero',
+                    value.profissional?.genero ?? 'Não informado', null),
                 Divider(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.white,
                   thickness: 1,
                 ),
                 Align(
-                    alignment: Alignment.center,
-                    child: Text('Métodos Clínicos',
-                        style: Theme.of(context).textTheme.titleMedium)),
-                _buildInfoRow('Abordagem Principal', abordagemPrincipal, null),
+                  alignment: Alignment.center,
+                  child: Text('Métodos Clínicos',
+                      style: Theme.of(context).textTheme.titleMedium),
+                ),
+                _buildInfoRow(
+                    'Abordagem Principal',
+                    value.profissional?.abordagemPrincipal ?? 'Não informada',
+                    null),
                 _buildEditableRow(
-                    'Especialidade Principal',
-                    editandoEspecialidadePrincipal,
-                    () => setState(() => editandoEspecialidadePrincipal =
-                        !editandoEspecialidadePrincipal),
-                    editandoEspecialidadePrincipal
-                        ? _buildDropdownField(
-                            'Especialidade Principal',
-                            especialidadePrincipal,
-                            (val) =>
-                                setState(() => especialidadePrincipal = val))
-                        : Text(especialidadePrincipal ?? 'Não informada')),
+                  'Abordagens Utilizadas',
+                  editandoAbordagensUtilizadas,
+                  () => setState(() => editandoAbordagensUtilizadas =
+                      !editandoAbordagensUtilizadas),
+                  editandoAbordagensUtilizadas
+                      ? _buildMultiSelectField(
+                          'Temas Clínicos',
+                          value.profissional?.abordagensUtilizadas ??
+                              ['Não informados'],
+                          (list) => setState(() => temasClinicos = list))
+                      : Text(
+                          (value.profissional?.abordagensUtilizadas == null ||
+                                  value.profissional!.abordagensUtilizadas!
+                                      .isEmpty)
+                              ? 'Não informados'
+                              : value.profissional!.abordagensUtilizadas!
+                                  .join(', '),
+                        ),
+                ),
                 _buildEditableRow(
-                    'Abordagens Utilizadas',
-                    editandoAbordagensUtilizadas,
-                    () => setState(() => editandoAbordagensUtilizadas =
-                        !editandoAbordagensUtilizadas),
-                    editandoAbordagensUtilizadas
-                        ? _buildMultiSelectField(
-                            'Abordagens Utilizadas',
-                            abordagensUtilizadas,
-                            (list) =>
-                                setState(() => abordagensUtilizadas = list))
-                        : Text(abordagensUtilizadas.isEmpty
-                            ? 'Não informadas'
-                            : abordagensUtilizadas.join(', '))),
+                  'Especialidade Principal',
+                  editandoEspecialidadePrincipal,
+                  () => setState(() => editandoEspecialidadePrincipal =
+                      !editandoEspecialidadePrincipal),
+                  editandoEspecialidadePrincipal
+                      ? _buildDropdownField(
+                          'Especialidade Principal',
+                          value.profissional?.especialidadePrincipal,
+                          (val) => setState(() =>
+                              value.profissional?.especialidadePrincipal = val))
+                      : Text(value.profissional?.especialidadePrincipal ??
+                          'Não informada'),
+                ),
                 _buildEditableRow(
                   'Temas Clínicos',
                   editandoTemasClinicos,
                   () => setState(
                       () => editandoTemasClinicos = !editandoTemasClinicos),
                   editandoTemasClinicos
-                      ? _buildMultiSelectField('Temas Clínicos', temasClinicos,
+                      ? _buildMultiSelectField(
+                          'Temas Clínicos',
+                          value.profissional?.temasClinicos ??
+                              ['Não informados'],
                           (list) => setState(() => temasClinicos = list))
                       : Text(
-                          temasClinicos.isEmpty
+                          (value.profissional?.temasClinicos == null ||
+                                  value.profissional!.temasClinicos!.isEmpty)
                               ? 'Não informados'
-                              : temasClinicos.join(', '),
+                              : value.profissional!.temasClinicos!.join(', '),
                         ),
                 ),
                 Divider(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.white,
                   thickness: 1,
                 ),
                 Align(
                   alignment: Alignment.center,
-                  child: Text('Dados Bancários'),
+                  child: Text('Dados Bancários',
+                      style: Theme.of(context).textTheme.titleMedium),
                 ),
                 _buildEditableRow(
                     'Chave Pix',
@@ -287,6 +310,14 @@ class _EditarPerfilProfissionalScreenState
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppThemes.backgroundColor,
+                      foregroundColor: AppThemes.textLightColor,
+                      textStyle: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
                     onPressed: () {
                       // Salvar alterações
                       setState(() {

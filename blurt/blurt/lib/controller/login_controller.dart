@@ -23,21 +23,56 @@ class LoginController {
     }
   }
 
-  Future<void> loginProfissional(String cpf, String senha,
-      Function(Professional) onSuccess, Function(String) onError) async {
+  Future<void> loginProfissional(
+    String cpf,
+    String senha,
+    Function(Professional) onSuccess,
+    Function(String) onError,
+  ) async {
     try {
       Response response = await _apiService.loginProfissional(cpf, senha);
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        print('Login Profissional: $result["name"]');
-        
+
+        // Função para capitalizar a primeira letra
+        String capitalize(String? s) {
+          if (s == null || s.isEmpty) return '';
+          return s[0].toUpperCase() + s.substring(1);
+        }
+
+        // Capitalizar abordagemPrincipal
+        if (result['abordagemPrincipal'] != null) {
+          result['abordagemPrincipal'] =
+              capitalize(result['abordagemPrincipal']);
+        }
+
+        // Capitalizar cada item de abordagensUtilizadas
+        if (result['abordagensUtilizadas'] is List) {
+          result['abordagensUtilizadas'] =
+              (result['abordagensUtilizadas'] as List)
+                  .map((e) => capitalize(e.toString()))
+                  .toList();
+        }
+
+        // Capitalizar especialidadePrincipal
+        if (result['especialidadePrincipal'] != null) {
+          result['especialidadePrincipal'] =
+              capitalize(result['especialidadePrincipal']);
+        }
+
+        // Capitalizar cada nome em temasClinicos (se for lista de objetos)
+        if (result['temasClinicos'] is List) {
+          result['temasClinicos'] =
+              (result['temasClinicos'] as List)
+                  .map((e) => capitalize(e.toString()))
+                  .toList();
+        }
+
         onSuccess(Professional.fromJson(result));
       } else {
-        print(response.body);
-        onError('Erro ao fazer login: \\${response.body}');
+        onError('Erro ao fazer login: ${response.body}');
       }
     } catch (e) {
-      print('Erro ao fazer loginnnn: $e');
       onError('Erro ao fazer login: $e');
     }
   }

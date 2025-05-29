@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:blurt/controller/abordagem_especialidade_controller.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -24,19 +23,12 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   final TextEditingController _cnpjController = TextEditingController();
   final TextEditingController _valorConsultaController =
       TextEditingController();
-  final TextEditingController _abordagemController = TextEditingController();
-  final TextEditingController _especialidadeController =
-      TextEditingController();
   final TextEditingController _chavePixController = TextEditingController();
   final TextEditingController _contaBancariaController =
       TextEditingController();
   final TextEditingController _agenciaController = TextEditingController();
   final TextEditingController _bancoController = TextEditingController();
   final TextEditingController _tipoContaController = TextEditingController();
-  final List<String> _especialidades = [];
-  final AbordagemEspecialidadeTemasController
-      _abordagemEspecialidadeController =
-      AbordagemEspecialidadeTemasController();
 
   String? _genero;
   final CadastroController _cadastroController = CadastroController();
@@ -46,36 +38,10 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   File? _declSupClinicaImage;
   File? _declAnPessoalImage;
   File? _profileImage;
+  File? _imagemDocumento;
+  File? _imagemSelfieComDoc;
   final ImagePicker _picker = ImagePicker();
-  bool showCheck = false;
-  final List<String> _especialidadesDisponiveis = [];
-  final List<String> _abordagens = [];
-  String? _abordagemSelecionada;
-  String? _especialidadeSelecionada;
-  final bool _showNovaAbordagem = false;
-  final bool _showNovaEspecialidade = false;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _carregarAbordagensEspecialidades();
-  // }
-
-  // Future<void> _carregarAbordagensEspecialidades() async {
-  //   try {
-  //     final abordagens =
-  //         await _abordagemEspecialidadeController.buscarAbordagens();
-  //     final especialidades =
-  //         await _abordagemEspecialidadeController.buscarEspecialidades();
-  //     setState(() {
-  //       //_abordagens = abordagens;
-  //       //_especialidadesDisponiveis = especialidades;
-  //     });
-  //   } catch (e) {
-  //     showSnackBar('Erro ao carregar abordagens/especialidades',
-  //         backgroundColor: Colors.red);
-  //   }
-  // }
+  //bool showCheck = false;
 
   void showSnackBar(String message, {Color? backgroundColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -337,6 +303,41 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
+                        // Campo Imagem Documento
+                        _buildImagePickerField(
+                          label: 'Documento com foto*',
+                          image: _imagemDocumento,
+                          onPick: (source) => _pickImage(source,
+                              (file) => _imagemDocumento = file),
+                          showCheck: true,
+                          clearButton: IconButton(
+                            icon: Icon(Icons.clear, color: Colors.red),
+                            tooltip: 'Limpar seleção',
+                            onPressed: () {
+                              setState(() {
+                                _imagemDocumento = null;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Campo Imagem Selfie com Documento
+                        _buildImagePickerField(
+                          label: 'Selfie com Documento*',
+                          image: _imagemSelfieComDoc,
+                          onPick: (source) => _pickImage(source,
+                              (file) => _imagemSelfieComDoc = file),
+                          showCheck: true,
+                          clearButton: IconButton(
+                            icon: Icon(Icons.clear, color: Colors.red),
+                            tooltip: 'Limpar seleção',
+                            onPressed: () {
+                              setState(() {
+                                _imagemSelfieComDoc = null;
+                              });
+                            },
+                          ),
+                        ),
                         // Diploma Psicanalista
 
                         _buildImagePickerField(
@@ -413,6 +414,14 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 16),
+                        Divider(
+                          color: themeColor,
+                          thickness: 2,
+                        ),
+                        Text('Dados Bancários',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: themeColor)),
                         // Campo Chave Pix
                         TextFormField(
                           controller: _chavePixController,
@@ -496,6 +505,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                       print(_valorConsultaController.text);
                                       try {
                                         String fotoBase64 = '';
+                                        String imagemDocumentoBase64 = '';
+                                        String imagemSelfieComDocBase64 = '';
                                         String diplomaBase64 = '';
                                         String declSupClinicaBase64 = '';
                                         String declAnPessoalBase64 = '';
@@ -503,6 +514,19 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                           final bytes = await _profileImage!
                                               .readAsBytes();
                                           fotoBase64 = base64Encode(bytes);
+                                        }
+                                        if (_imagemDocumento != null) {
+                                          final bytes =
+                                              await _imagemDocumento!.readAsBytes();
+                                          imagemDocumentoBase64 =
+                                              base64Encode(bytes);
+                                        }
+                                        if (_imagemSelfieComDoc != null) {
+                                          final bytes =
+                                              await _imagemSelfieComDoc!
+                                                  .readAsBytes();
+                                          imagemSelfieComDocBase64 =
+                                              base64Encode(bytes);
                                         }
 
                                         if (_diplomaPsicanalistaImage != null) {
@@ -553,6 +577,10 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                               0.0,
                                           genero: _genero ?? '',
                                           foto: fotoBase64,
+                                          imagemDocumento:
+                                              imagemDocumentoBase64,
+                                          imagemSelfieComDoc:
+                                              imagemSelfieComDocBase64,
                                           chavePix: _chavePixController.text
                                                   .trim()
                                                   .isEmpty
@@ -645,7 +673,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         Row(
           children: [
             showCheck
@@ -661,7 +689,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         radius: 32,
                         backgroundColor: Color(0xFFE0E0E0),
                         child: Icon(Icons.image, color: Colors.grey))),
-            const SizedBox(width: 16),
+            const SizedBox(width: 8),
             IconButton(
               icon: const Icon(Icons.photo_library),
               tooltip: 'Selecionar da galeria',

@@ -88,53 +88,9 @@ class ApiService {
     );
   }
 
-  // Future<http.Response> cadastrarAbordagensUtilizadas(String nome) async {
-  //   final url = Uri.parse('$_baseUrl/abordagens-utilizadas');
-  //   final data = {'nome': nome};
-  //   return await http.post(
-  //     url,
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: jsonEncode(data),
-  //   );
-  // }
+  
 
-  // Future<http.Response> cadastrarAbordagemPrincipal(String nome) async {
-  //   final url = Uri.parse('$_baseUrl/abordagem-princpal');
-  //   final data = {'nome': nome};
-  //   return await http.post(
-  //     url,
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: jsonEncode(data),
-  //   );
-  // }
-
-  Future<http.Response> cadastrarEspecialidadeOutras(String nomes) async {
-    final url = Uri.parse('$_baseUrl/especialidade-outras');
-    final data = {'nomes': nomes};
-    return await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-  }
-
-  Future<http.Response> cadastrarEspecialidadePrincipal(String nomes) async {
-    final url = Uri.parse('$_baseUrl/especialidade-principal');
-    final data = {'nomes': nomes};
-    return await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-  }
-
-  Future<http.Response> cadastrarTemasClinicos(String nomes) async {
-    final url = Uri.parse('$_baseUrl/temas-clinicos');
-    final data = {'nomes': nomes};
-    return await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-  }
+  
+  
+  
 }

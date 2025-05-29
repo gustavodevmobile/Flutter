@@ -1,8 +1,13 @@
 import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:blurt/controller/login_controller.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 // Importe o controller de login se necessário
 // import 'package:t_acolhe/controller/login_controller.dart';
 
@@ -19,6 +24,10 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
+  bool _showSelfieField = false;
+  File? _selfieImage;
+  String? _selfieBase64;
+  final ImagePicker _picker = ImagePicker();
 
   void showSnackBar(BuildContext context, String message,
       {Color? backgroundColor}) {
@@ -34,6 +43,19 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
     mask: '###.###.###-##',
     filter: {"#": RegExp(r'[0-9]')},
   );
+
+  Future<void> _pickSelfie() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _selfieImage = File(pickedFile.path);
+      });
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _selfieBase64 = base64Encode(bytes);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,25 +166,28 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                             onPressed: _loading
                                 ? null
                                 : () async {
-                                    // Remove o foco dos campos e recolhe o teclado
                                     FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       setState(() => _loading = true);
                                       await LoginController().loginProfissional(
-                                          _cpfController.text,
-                                          _passwordController.text,
-                                          (onSuccess) {
-                                        Provider.of<ProfissionalProvider>(
-                                                context, listen: false)
-                                            .setProfissional(onSuccess);
-                                        setState(() => _loading = false);
-                                        Navigator.pushNamed(
-                                            context, '/dashboard_profissional');
-                                      }, (error) {
-                                        setState(() => _loading = false);
-                                        showSnackBar(context, error,
-                                            backgroundColor: Colors.red);
-                                      });
+                                        _cpfController.text,
+                                        _passwordController.text,
+                                        (onSuccess) {
+                                          Provider.of<ProfissionalProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .setProfissional(onSuccess);
+                                          setState(() {
+                                            _loading = false;
+                                            _showSelfieField = true;
+                                          });
+                                        },
+                                        (error) {
+                                          setState(() => _loading = false);
+                                          showSnackBar(context, error,
+                                              backgroundColor: Colors.red);
+                                        },
+                                      );
                                     }
                                   },
                             child: _loading
@@ -187,6 +212,48 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                 },
                           child: const Text('Não tem conta? Cadastre-se'),
                         ),
+                        if (_showSelfieField) ...[
+                          const SizedBox(height: 24),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Selfie para validação:',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              _selfieImage != null
+                                  ? CircleAvatar(
+                                      radius: 32,
+                                      backgroundImage: FileImage(_selfieImage!),
+                                    )
+                                  : const CircleAvatar(
+                                      radius: 32,
+                                      backgroundColor: Color(0xFFE0E0E0),
+                                      child: Icon(Icons.person,
+                                          size: 32, color: Colors.grey),
+                                    ),
+                              const SizedBox(width: 16),
+                              ElevatedButton.icon(
+                                onPressed: _loading
+                                    ? null
+                                    : () async {
+                                        await _pickSelfie();
+                                        if (_selfieImage != null) {
+                                          Navigator.pushNamed(context,
+                                              '/dashboard_profissional');
+                                        }
+                                      },
+                                icon: const Icon(Icons.camera_alt, color: AppThemes.textLightColor,),
+                                label: const Text('Tirar Selfie'),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

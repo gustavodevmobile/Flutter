@@ -1,7 +1,6 @@
 // Importações necessárias para funcionamento do cadastro e seleção de imagem
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:blurt/controller/abordagem_especialidade_controller.dart';
@@ -64,14 +63,17 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
       AbordagemEspecialidadeTemasController();
   bool _loading = false;
   bool _showImagePicker = false;
+  bool _showImageDoc = false;
+  bool _showImageSelfieComDoc = false;
   bool _showNovaAbordagemPrincipal = false;
   bool _showNovaAbordagemUtilizada = false;
   final bool _showNovaOutraEspecialidade = false;
   bool _showNovaEspecialidadePrincipal = false;
   bool _showTemasClinicos = false;
   File? _selectedImage;
+  File? _selectedImageDoc;
+  File? _selectedImageSelfieComDoc;
   final ImagePicker _picker = ImagePicker();
-  final List<Especialidade> _especialidadesSelecionadas = [];
   List<TemasClinicos> _temasClinicosSelecionados = [];
 
   // Adicione variáveis para armazenar os arquivos de certificado
@@ -101,12 +103,30 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   );
 
   // Função para selecionar imagem da galeria ou câmera
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _pickImageProfile(ImageSource source) async {
     final pickedFile =
         await _picker.pickImage(source: source, imageQuality: 80);
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+  Future<void> _pickImageDoc(ImageSource source) async {
+    final pickedFile =
+        await _picker.pickImage(source: source, imageQuality: 80);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImageDoc = File(pickedFile.path);
+      });
+    }
+  }
+  Future<void> _pickImageSelfie(ImageSource source) async {
+    final pickedFile =
+        await _picker.pickImage(source: source, imageQuality: 80);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImageSelfieComDoc = File(pickedFile.path);
       });
     }
   }
@@ -828,14 +848,14 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         color: themeColor),
                                     tooltip: 'Selecionar da galeria',
                                     onPressed: () =>
-                                        _pickImage(ImageSource.gallery),
+                                        _pickImageProfile(ImageSource.gallery),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.camera_alt,
                                         color: blueColor),
                                     tooltip: 'Tirar foto',
                                     onPressed: () =>
-                                        _pickImage(ImageSource.camera),
+                                        _pickImageProfile(ImageSource.camera),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
@@ -844,6 +864,136 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                       setState(() {
                                         _selectedImage = null;
                                         _showImagePicker = false;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                          children: [
+                            Icon(Icons.image, color: themeColor),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showImageDoc = !_showImageDoc;
+                                  });
+                                },
+                                child: Text(_showImageDoc
+                                    ? 'Ocultar imagem'
+                                    : 'Enviar documento com foto*'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_showImageDoc)
+                          Column(
+                            children: [
+                              _selectedImageDoc != null
+                                  ? CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage:
+                                          FileImage(_selectedImageDoc!),
+                                    )
+                                  : const CircleAvatar(
+                                      radius: 40,
+                                      backgroundColor: Color(0xFFE0E0E0),
+                                      child: Icon(Icons.person,
+                                          size: 40, color: Colors.grey),
+                                    ),
+                              //const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.photo_library,
+                                        color: themeColor),
+                                    tooltip: 'Selecionar da galeria',
+                                    onPressed: () =>
+                                        _pickImageDoc(ImageSource.gallery),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.camera_alt,
+                                        color: blueColor),
+                                    tooltip: 'Tirar foto',
+                                    onPressed: () =>
+                                        _pickImageDoc(ImageSource.camera),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    tooltip: 'Remover imagem',
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedImageDoc = null;
+                                        _showImageDoc = false;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                          children: [
+                            Icon(Icons.image, color: themeColor),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showImageSelfieComDoc = !_showImageSelfieComDoc;
+                                  });
+                                },
+                                child: Text(_showImageSelfieComDoc
+                                    ? 'Ocultar imagem'
+                                    : 'Enviar selfie com documento*'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_showImageSelfieComDoc)
+                          Column(
+                            children: [
+                              _selectedImageSelfieComDoc != null
+                                  ? CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage:
+                                          FileImage(_selectedImageSelfieComDoc!),
+                                    )
+                                  : const CircleAvatar(
+                                      radius: 40,
+                                      backgroundColor: Color(0xFFE0E0E0),
+                                      child: Icon(Icons.person,
+                                          size: 40, color: Colors.grey),
+                                    ),
+                              //const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.photo_library,
+                                        color: themeColor),
+                                    tooltip: 'Selecionar da galeria',
+                                    onPressed: () =>
+                                        _pickImageSelfie(ImageSource.gallery),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.camera_alt,
+                                        color: blueColor),
+                                    tooltip: 'Tirar foto',
+                                    onPressed: () =>
+                                        _pickImageSelfie(ImageSource.camera),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    tooltip: 'Remover imagem',
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedImageSelfieComDoc = null;
+                                        _showImageSelfieComDoc = false;
                                       });
                                     },
                                   ),
@@ -893,6 +1043,20 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                           _selectedImage == null) {
                                         showSnackBar(
                                             'Selecione uma imagem para o perfil!',
+                                            backgroundColor: Colors.red);
+                                        return;
+                                      }
+                                      if (!_showImageDoc ||
+                                          _selectedImageDoc == null) {
+                                        showSnackBar(
+                                            'Documento com foto é obrigatória!',
+                                            backgroundColor: Colors.red);
+                                        return;
+                                      }
+                                      if (!_showImageSelfieComDoc ||
+                                          _selectedImageSelfieComDoc == null) {
+                                        showSnackBar(
+                                            'Selfie com documento com foto é obrigatória!',
                                             backgroundColor: Colors.red);
                                         return;
                                       }
@@ -1027,6 +1191,14 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                                     0.0,
                                             genero: _genero ?? '',
                                             foto: fotoBase64,
+                                            imagemDocumento: _selectedImageDoc != null
+                                                ? base64Encode(
+                                                    await _selectedImageDoc!.readAsBytes())
+                                                : '',
+                                            imagemSelfieComDoc: _selectedImageSelfieComDoc != null
+                                                ? base64Encode(
+                                                    await _selectedImageSelfieComDoc!.readAsBytes())
+                                                : '',
                                             chavePix: _chavePixController.text.trim().isEmpty
                                                 ? null
                                                 : _chavePixController.text

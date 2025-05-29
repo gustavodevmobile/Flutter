@@ -16,16 +16,17 @@ class Professional {
   final double valorConsulta;
   final String genero;
   final String foto;
+  final String? imagemDocumento;
+  final String imagemSelfieComDoc;
   final DateTime? createdAt;
   final String? chavePix;
   final String? contaBancaria;
   final String? agencia;
   final String? banco;
   final String? tipoConta;
-  final String? abordagemPrincipal;
+  String? abordagemPrincipal;
   final List<String>? abordagensUtilizadas;
-  final String? especialidadePrincipal;
-  final List<String>? especialidadesOutras;
+  String? especialidadePrincipal;
   final List<String>? temasClinicos;
   final String? certificadoEspecializacao;
 
@@ -47,6 +48,8 @@ class Professional {
     required this.valorConsulta,
     required this.genero,
     required this.foto,
+    this.imagemDocumento,
+    required this.imagemSelfieComDoc,
     this.createdAt,
     this.chavePix,
     this.contaBancaria,
@@ -56,7 +59,6 @@ class Professional {
     this.abordagemPrincipal,
     this.abordagensUtilizadas,
     this.especialidadePrincipal,
-    this.especialidadesOutras,
     this.temasClinicos,
     this.certificadoEspecializacao,
   });
@@ -80,6 +82,8 @@ class Professional {
       valorConsulta: double.tryParse(json['valorConsulta'].toString()) ?? 0.0,
       genero: json['genero'] ?? '',
       foto: json['foto'] ?? '',
+      imagemDocumento: json['imagemDocumento'] ?? '',
+      imagemSelfieComDoc: json['imagemSelfieComDoc'] ?? '',
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : null,
@@ -93,9 +97,6 @@ class Professional {
           ?.map((e) => e.toString())
           .toList(),
       especialidadePrincipal: json['especialidadePrincipal'],
-      especialidadesOutras: (json['especialidadesOutras'] as List?)
-          ?.map((e) => e.toString())
-          .toList(),
       temasClinicos:
           (json['temasClinicos'] as List?)?.map((e) => e.toString()).toList(),
       certificadoEspecializacao: json['certificadoEspecializacao'] ?? '',
@@ -122,6 +123,8 @@ class Professional {
       'valorConsulta': valorConsulta,
       'genero': genero,
       'foto': foto,
+      'imagemDocumento': imagemDocumento,
+      'imagemSelfieComDoc': imagemSelfieComDoc,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
       if (chavePix != null) 'chavePix': chavePix,
       if (contaBancaria != null) 'contaBancaria': contaBancaria,
@@ -134,8 +137,6 @@ class Professional {
       if (especialidadePrincipal != null)
         'especialidadePrincipal': especialidadePrincipal,
       if (temasClinicos != null) 'temasClinicos': temasClinicos,
-      if (especialidadesOutras != null)
-        'especialidadesOutras': especialidadesOutras,
     };
   }
 }
