@@ -14,7 +14,6 @@ import 'package:lottie/lottie.dart';
 import 'package:estudamais/providers/global_providers.dart';
 import 'package:estudamais/screens/home/widgets/box_resum.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

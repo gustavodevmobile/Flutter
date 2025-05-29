@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:estudamais/controller/controller_questions.dart';
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
-import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/screens/resum/corrects/widgets/box_alternatives_corrects.dart';
 import 'package:estudamais/screens/screen_questions/widgets/box_alternativas.dart';

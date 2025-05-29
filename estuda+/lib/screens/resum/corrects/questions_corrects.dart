@@ -1,7 +1,6 @@
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/screens/home/home.dart';
-import 'package:estudamais/screens/resum/corrects/widgets/box_alternatives_corrects.dart';
 import 'package:estudamais/screens/screen_questions/widgets/points_Errors.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/background.dart';

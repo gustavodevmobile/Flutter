@@ -1,6 +1,5 @@
 import 'package:estudamais/models/model_questions.dart';
 import 'package:estudamais/service/service.dart';
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
 
 class ControllerSubjects {

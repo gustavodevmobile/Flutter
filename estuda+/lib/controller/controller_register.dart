@@ -1,6 +1,5 @@
 import 'package:estudamais/controller/routes.dart';
 import 'package:estudamais/models/user.dart';
-import 'package:estudamais/screens/home/home.dart';
 import 'package:estudamais/screens/loading_next_page.dart';
 import 'package:estudamais/widgets/alert_dialog.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';

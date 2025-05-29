@@ -80,15 +80,7 @@ class MyApp extends StatelessWidget {
         '/dashboard_profissional': (context) => const DashboardProfissionalScreen(),
         '/editar_perfil_profissional': (context)=> const EditarPerfilProfissionalScreen(),
         '/atendimento_profissional': (context)=> const AtendimentosProfissionalScreen(),
-        '/perfil_profissional':(context)=> const PerfilProfissionalScreen(profissional: {
-          'nome': 'Dr. João',
-          'abordagem': 'Psicólogo',
-          'fotoPerfil': 'https://example.com/foto.jpg',
-          'tipo': 'Psicólogo',
-          'abordagensUtilizadas': ['Cognitivo-Comportamental', 'Psicanálise'],
-          'especializacoes': ['Ansiedade', 'Depressão'],
-          'temasClinicos': ['Autoestima', 'Relacionamentos'],
-        }),
+        '/perfil_profissional':(context)=> const PerfilProfissionalScreen(),
       },
     );
   }

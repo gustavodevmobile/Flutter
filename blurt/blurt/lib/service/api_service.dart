@@ -47,8 +47,8 @@ class ApiService {
     );
   }
 
-  Future<http.Response> getProfissionalById(String id) async {
-    final url = Uri.parse('$_baseUrl/profissional/$id');
+  Future<http.Response> getProfissionalOnline() async {
+    final url = Uri.parse('$_baseUrl/profissionais/online');
     return await http.get(url);
   }
 

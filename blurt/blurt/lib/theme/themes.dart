@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AppThemes {
   static const Color primaryColor = Color(0xFF4F8FCB);
@@ -29,4 +30,8 @@ class AppThemes {
           bodySmall: TextStyle(color: textColor),
         ),
       );
+
+  static String formatarValor(double valor) {
+    return 'R\$ ${NumberFormat("#,##0.00", "pt_BR").format(valor)}';
+  }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:blurt/controller/buscas_controller.dart';
 import 'package:http/http.dart';
 import 'package:blurt/models/professional.dart';
 import 'package:blurt/models/usuario.dart';
@@ -7,14 +8,15 @@ import 'package:blurt/service/api_service.dart';
 
 class LoginController {
   final ApiService _apiService = ApiService();
+  final BuscasController _buscas = BuscasController();
 
   Future<void> loginUsuario(String email, String senha,
-      Function(Usuario) onSuccess, Function(String) onError) async {
+      Function(Usuario) usuario, Function(String) onError) async {
     try {
       Response response = await _apiService.loginUsuario(email, senha);
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        onSuccess(Usuario.fromJson(result));
+        usuario(Usuario.fromJson(result));
       } else {
         onError(response.body);
       }
@@ -62,10 +64,9 @@ class LoginController {
 
         // Capitalizar cada nome em temasClinicos (se for lista de objetos)
         if (result['temasClinicos'] is List) {
-          result['temasClinicos'] =
-              (result['temasClinicos'] as List)
-                  .map((e) => capitalize(e.toString()))
-                  .toList();
+          result['temasClinicos'] = (result['temasClinicos'] as List)
+              .map((e) => capitalize(e.toString()))
+              .toList();
         }
 
         onSuccess(Professional.fromJson(result));

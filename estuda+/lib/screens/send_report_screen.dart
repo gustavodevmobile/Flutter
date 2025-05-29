@@ -6,7 +6,6 @@ import 'package:estudamais/screens/pdf_view.dart';
 import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/theme/app_theme.dart';
 import 'package:estudamais/widgets/button_next.dart';
-import 'package:estudamais/widgets/custom_dropdown.dart';
 import 'package:estudamais/widgets/show_loading_dialog.dart';
 import 'package:estudamais/widgets/show_snackbar_error.dart';
 import 'package:flutter/material.dart';

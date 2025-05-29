@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:estudamais/service/service.dart';
-import 'package:estudamais/shared_preference/storage_shared_preferences.dart';
 import 'package:estudamais/storage_sqllite/storage_sqflite.dart';
 
 /// Classe responsável por fazer o controller na busca dos assuntos com disciplinas e anos na screen subjects

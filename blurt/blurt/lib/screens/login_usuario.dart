@@ -1,5 +1,9 @@
+import 'package:blurt/controller/buscas_controller.dart';
+import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/models/professional.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/controller/login_controller.dart';
+import 'package:provider/provider.dart';
 
 class LoginUsuarioScreen extends StatefulWidget {
   const LoginUsuarioScreen({super.key});
@@ -11,6 +15,7 @@ class LoginUsuarioScreen extends StatefulWidget {
 class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final BuscasController _buscasController = BuscasController();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
 
@@ -49,7 +54,7 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                     borderRadius: BorderRadius.circular(20)),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical:10),
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -131,7 +136,25 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                                         await LoginController().loginUsuario(
                                             _emailController.text,
                                             _passwordController.text,
-                                            (onSuccess) {
+                                            (usuario) {
+                                          _buscasController
+                                              .getProfissionalOnline(
+                                                  (profissionais) {
+                                            Provider.of<ProfissionalProvider>(
+                                              context,
+                                              listen: false,
+                                            ).setProfissionaisOnline(
+                                                profissionais);
+                                            print(
+                                                'Profissionais online: ${profissionais.length}');
+                                          }, (onError) {
+                                            scaffoldMessenger.showSnackBar(
+                                              SnackBar(
+                                                content: Text(onError),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          });
                                           Navigator.pushNamed(
                                               context, '/dashboard_usuario');
                                           setState(() => _loading = false);

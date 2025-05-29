@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:estudamais/models/model_questions.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 
 class ServiceResumQuestions {
   final String _questoesAll = dotenv.env['server']!;

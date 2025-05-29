@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:estudamais/models/user.dart';
-import 'package:estudamais/widgets/show_snackbar_error.dart';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 

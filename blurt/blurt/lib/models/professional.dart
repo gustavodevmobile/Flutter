@@ -13,6 +13,7 @@ class Professional {
   final String tipoProfissional;
   final bool estaOnline;
   final bool atendePlantao;
+  final bool emAtendimento;
   final double valorConsulta;
   final String genero;
   final String foto;
@@ -45,6 +46,7 @@ class Professional {
     required this.tipoProfissional,
     this.estaOnline = false,
     this.atendePlantao = false,
+    this.emAtendimento = false,
     required this.valorConsulta,
     required this.genero,
     required this.foto,
@@ -79,6 +81,7 @@ class Professional {
       tipoProfissional: json['tipoProfissional'],
       estaOnline: json['estaOnline'] ?? false,
       atendePlantao: json['atendePlantao'] ?? false,
+      emAtendimento: json['emAtendimento'] ?? false,
       valorConsulta: double.tryParse(json['valorConsulta'].toString()) ?? 0.0,
       genero: json['genero'] ?? '',
       foto: json['foto'] ?? '',
@@ -92,11 +95,11 @@ class Professional {
       agencia: json['agencia'] ?? '',
       banco: json['banco'] ?? '',
       tipoConta: json['tipoConta'] ?? '',
-      abordagemPrincipal: json['abordagemPrincipal'],
+      abordagemPrincipal: json['abordagemPrincipal'] ?? '',
       abordagensUtilizadas: (json['abordagensUtilizadas'] as List?)
           ?.map((e) => e.toString())
           .toList(),
-      especialidadePrincipal: json['especialidadePrincipal'],
+      especialidadePrincipal: json['especialidadePrincipal'] ?? '',
       temasClinicos:
           (json['temasClinicos'] as List?)?.map((e) => e.toString()).toList(),
       certificadoEspecializacao: json['certificadoEspecializacao'] ?? '',
@@ -120,6 +123,7 @@ class Professional {
       'tipoProfissional': tipoProfissional,
       'estaOnline': estaOnline,
       'atendePlantao': atendePlantao,
+      'emAtedimento': emAtendimento,
       'valorConsulta': valorConsulta,
       'genero': genero,
       'foto': foto,
