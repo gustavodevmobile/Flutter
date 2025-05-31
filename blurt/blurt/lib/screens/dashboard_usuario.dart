@@ -108,20 +108,32 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                 ),
               ),
               actions: [
-                TextButton(
-                  onPressed: selecionados.isEmpty
-                      ? null
-                      : () {
-                          final escolhidos = selecionados
-                              .map((i) => '${emojis[i]['label']}')
-                              .join(', ');
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Você escolheu: $escolhidos')),
-                          );
-                        },
-                  child: const Text('Confirmar'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Não agora'),
+                    ),
+                    TextButton(
+                      onPressed: selecionados.isEmpty
+                          ? null
+                          : () {
+                              final escolhidos = selecionados
+                                  .map((i) => '${emojis[i]['label']}')
+                                  .join(', ');
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Você escolheu: $escolhidos')),
+                              );
+                            },
+                      child: const Text('Confirmar'),
+                    )
+                  ],
                 ),
               ],
             );
@@ -130,50 +142,6 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
       },
     );
   }
-
-  // void _showSentimentoDialog() async {
-  //   await showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: const Text('Como você está se sentindo hoje?'),
-  //         content: Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //           children: [
-  //             _emojiButton('😀', 'Feliz'),
-  //             _emojiButton('😐', 'Neutro'),
-  //             _emojiButton('😢', 'Triste'),
-  //             _emojiButton('😡', 'Irritado'),
-  //             _emojiButton('😱', 'Ansioso'),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // Widget _emojiButton(String emoji, String label) {
-  //   return Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     children: [
-  //       InkWell(
-  //         onTap: () {
-  //           Navigator.of(context).pop();
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text('Você escolheu: $label $emoji')),
-  //           );
-  //         },
-  //         child: Text(
-  //           emoji,
-  //           style: const TextStyle(fontSize: 36),
-  //         ),
-  //       ),
-  //       const SizedBox(height: 4),
-  //       Text(label, style: const TextStyle(fontSize: 12)),
-  //     ],
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -312,6 +280,12 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
+                  if(value.profissionaisOnline.isEmpty)
+                    Card(child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: const Text('Nenhum profissional online no momento.'),
+                    ))
+                  else
                   CardProdissional(
                     profOnline: value.profissionaisOnline,
                     scrollDirection: Axis.horizontal,
@@ -383,7 +357,7 @@ class CardProdissional extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              profOnline[index].name.toString(),
+                              profOnline[index].nome.toString(),
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),

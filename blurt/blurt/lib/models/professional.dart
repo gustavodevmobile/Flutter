@@ -1,8 +1,8 @@
 class Professional {
   final String? id;
-  final String name;
+  final String nome;
   final String email;
-  final String passwordHash;
+  final String senha;
   final String? bio;
   final String cpf;
   final String? cnpj;
@@ -33,9 +33,9 @@ class Professional {
 
   Professional({
     this.id,
-    required this.name,
+    required this.nome,
     required this.email,
-    required this.passwordHash,
+    required this.senha,
     this.bio,
     required this.cpf,
     this.cnpj,
@@ -68,9 +68,9 @@ class Professional {
   factory Professional.fromJson(Map<String, dynamic> json) {
     return Professional(
       id: json['id'] ?? '',
-      name: json['name'] ?? '',
+      nome: json['nome'] ?? '',
       email: json['email'] ?? '',
-      passwordHash: json['password_hash'] ?? '',
+      senha: json['senha'] ?? '',
       bio: json['bio'] ?? '',
       cpf: json['cpf'] ?? '',
       cnpj: json['cnpj'] ?? '',
@@ -109,9 +109,9 @@ class Professional {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'name': name,
+      'nome': nome,
       'email': email,
-      'passwordHash': passwordHash,
+      'senha': senha,
       if (bio != null) 'bio': bio,
       'cpf': cpf,
       if (cnpj != null) 'cnpj': cnpj,

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class PsicanalistaFormScreen extends StatefulWidget {
   const PsicanalistaFormScreen({super.key});
@@ -538,9 +537,9 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
 
                                         // Cadastra o profissional
                                         final profissional = Professional(
-                                          name: _nameController.text.trim(),
+                                          nome: _nameController.text.trim(),
                                           email: _emailController.text.trim(),
-                                          passwordHash:
+                                          senha:
                                               _passwordController.text,
                                           bio: _bioController.text.trim(),
                                           cpf: _cpfController.text.trim(),

@@ -16,8 +16,8 @@ class ApiService {
 
   Future<http.Response> cadastrarProfissional(Map<String, dynamic> data) async {
     final url = Uri.parse('$_baseUrl/profissional');
-    print('Data: ${data["abordagemPrincipalId"]}');
-    print('Data: ${data["especialidadePrincipalId"]}');
+    print('Data: ${data["abordagemPrincipal"]}');
+    print('Data: ${data["especialidadePrincipal"]}');
 
     return await http.post(
       url,
@@ -89,7 +89,7 @@ class ApiService {
 
   Future<http.Response> logoutProfissional(String id) async {
     final url = Uri.parse('$_baseUrl/profissional/logout');
-    final data = {'id':id};
+    final data = {'id': id};
     return await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

@@ -36,7 +36,7 @@ class PerfilProfissionalScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    value.profissional?.name ?? '',
+                    value.profissional?.nome ?? '',
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
@@ -86,8 +86,9 @@ class PerfilProfissionalScreen extends StatelessWidget {
                     const Text('Especialização Principal:',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
-                    value.profissional?.especialidadePrincipal != null &&
-                            value.profissional!.especialidadePrincipal!.isNotEmpty
+                    value.profissional?.especialidadePrincipal != null
+                        // &&
+                        //         value.profissional!.especialidadePrincipal!.isNotEmpty
                         ? Text(
                             value.profissional!.especialidadePrincipal!,
                             style: const TextStyle(fontSize: 16),
@@ -142,10 +143,9 @@ class PerfilProfissionalScreen extends StatelessWidget {
                       // Implementar solicitação de atendimento
                     },
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(200, 48),
-                      textStyle: const TextStyle(fontSize: 18),
-                      backgroundColor: AppThemes.secondaryColor
-                    ),
+                        minimumSize: const Size(200, 48),
+                        textStyle: const TextStyle(fontSize: 18),
+                        backgroundColor: AppThemes.secondaryColor),
                     child: const Text('Solicitar Atendimento'),
                   ),
                 ),

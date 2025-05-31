@@ -1,7 +1,6 @@
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import '../controller/cadastro_controller.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class UsuarioFormScreen extends StatefulWidget {
   const UsuarioFormScreen({super.key});

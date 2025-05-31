@@ -9,7 +9,6 @@ import 'package:blurt/controller/abordagem_especialidade_controller.dart';
 import 'package:blurt/models/especialidade_abordagem.dart';
 import '../controller/cadastro_controller.dart';
 import '../models/professional.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class PsicologoFormScreen extends StatefulWidget {
   const PsicologoFormScreen({super.key});
@@ -83,8 +82,6 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   File? _certificadoOutraEspecialidade;
 
   // Exibe um SnackBar para feedback ao usuário
-
-  
 
   // Função para selecionar imagem da galeria ou câmera
   // Future<void> _pickImageProfile(ImageSource source) async {
@@ -1162,10 +1159,9 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
 
                                         // 4. Criação do objeto profissional
                                         final profissional = Professional(
-                                            name: _nameController.text.trim(),
+                                            nome: _nameController.text.trim(),
                                             email: _emailController.text.trim(),
-                                            passwordHash:
-                                                _passwordController.text,
+                                            senha: _passwordController.text,
                                             bio: _bioController.text.trim(),
                                             cpf: _cpfController.text.trim(),
                                             cnpj: _cnpjController.text
@@ -1223,6 +1219,8 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                           }
                                         } else {
                                           if (context.mounted) {
+                                            print(
+                                                'Erro ao cadastrar: \n${response.body}');
                                             AppThemes.showSnackBar(context,
                                                 'Erro ao cadastrar: \n${response.body}',
                                                 backgroundColor: Colors.red);

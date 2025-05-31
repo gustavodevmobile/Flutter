@@ -23,7 +23,6 @@ class CadastroController {
       'cpf': cpf,
       'genero': genero,
     };
-    print('Data: $dataNascimento');
     try {
       return await _apiService.cadastrarUsuario(data);
     } catch (e) {
@@ -65,6 +64,7 @@ class CadastroController {
 
   Future<Response> cadastrarProfissionalModel(Professional profissional) async {
     try {
+      print('Cadastrando profissional: ${profissional.imagemSelfieComDoc}');
       final data = profissional.toJson();
       return await _apiService.cadastrarProfissional(data);
     } catch (e) {

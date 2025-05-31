@@ -32,7 +32,7 @@ class _DashboardProfissionalScreenState
     return Consumer<ProviderController>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Olá, ${value.profissional?.name ?? ''}'),
+          title: Text('Olá, ${value.profissional?.nome ?? ''}'),
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: IconButton(

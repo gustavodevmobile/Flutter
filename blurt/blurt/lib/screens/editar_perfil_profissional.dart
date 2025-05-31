@@ -17,6 +17,7 @@ class _EditarPerfilProfissionalScreenState
     extends State<EditarPerfilProfissionalScreen> {
   // Controladores de exemplo
   final _passwordController = TextEditingController();
+  final _passwordConfController = TextEditingController();
   final _bioController = TextEditingController();
   final _cnpjController = TextEditingController();
   final _diplomaPsicanalistaController = TextEditingController();
@@ -119,7 +120,7 @@ class _EditarPerfilProfissionalScreenState
                 Align(
                     alignment: Alignment.center, child: Text('Dados Pessoais')),
                 const SizedBox(height: 4.0),
-                _buildInfoRow('Nome', value.profissional?.name ?? '', null),
+                _buildInfoRow('Nome', value.profissional?.nome ?? '', null),
                 _buildInfoRow('E-mail', value.profissional?.email ?? '', null),
                 _buildEditableRow(
                     'Senha',
@@ -178,17 +179,17 @@ class _EditarPerfilProfissionalScreenState
                       style: Theme.of(context).textTheme.titleMedium),
                 ),
                 _buildInfoRow(
-                    'Abordagem Principal',
+                    'Abordagem principal',
                     value.profissional?.abordagemPrincipal ?? 'Não informada',
                     null),
                 _buildEditableRow(
-                  'Abordagens Utilizadas',
+                  'Abordagens utilizadas',
                   editandoAbordagensUtilizadas,
                   () => setState(() => editandoAbordagensUtilizadas =
                       !editandoAbordagensUtilizadas),
                   editandoAbordagensUtilizadas
                       ? _buildMultiSelectField(
-                          'Temas Clínicos',
+                          'Temas clínicos',
                           value.profissional?.abordagensUtilizadas ??
                               ['Não informados'],
                           (list) => setState(() => temasClinicos = list))
@@ -201,28 +202,19 @@ class _EditarPerfilProfissionalScreenState
                                   .join(', '),
                         ),
                 ),
+                _buildInfoRow(
+                    'Especialidade principal',
+                    value.profissional?.especialidadePrincipal ??
+                        'Não informada',
+                    null),
                 _buildEditableRow(
-                  'Especialidade Principal',
-                  editandoEspecialidadePrincipal,
-                  () => setState(() => editandoEspecialidadePrincipal =
-                      !editandoEspecialidadePrincipal),
-                  editandoEspecialidadePrincipal
-                      ? _buildDropdownField(
-                          'Especialidade Principal',
-                          value.profissional?.especialidadePrincipal,
-                          (val) => setState(() =>
-                              value.profissional?.especialidadePrincipal = val))
-                      : Text(value.profissional?.especialidadePrincipal ??
-                          'Não informada'),
-                ),
-                _buildEditableRow(
-                  'Temas Clínicos',
+                  'Temas clínicos',
                   editandoTemasClinicos,
                   () => setState(
                       () => editandoTemasClinicos = !editandoTemasClinicos),
                   editandoTemasClinicos
                       ? _buildMultiSelectField(
-                          'Temas Clínicos',
+                          'Temas clínicos',
                           value.profissional?.temasClinicos ??
                               ['Não informados'],
                           (list) => setState(() => temasClinicos = list))
@@ -410,30 +402,23 @@ class _EditarPerfilProfissionalScreenState
 
   Widget _buildPasswordField() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: TextFormField(
-        controller: _passwordController,
-        decoration: const InputDecoration(labelText: 'Senha'),
-        obscureText: true,
-      ),
-    );
-  }
-
-  Widget _buildDropdownField(
-      String label, String? value, ValueChanged<String?> onChanged) {
-    // Exemplo de opções mockadas
-    final opcoes = ['Especialidade 1', 'Especialidade 2', 'Especialidade 3'];
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(labelText: label),
-        items: opcoes
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
-        onChanged: onChanged,
-      ),
-    );
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: 'Nova Senha'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _passwordConfController,
+              decoration: const InputDecoration(labelText: 'Confirmar Senha'),
+              obscureText: true,
+            ),
+          ],
+        ));
   }
 
   Widget _buildMultiSelectField(
