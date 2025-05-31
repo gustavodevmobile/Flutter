@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/controller/login_controller.dart';
+import 'package:blurt/controller/provider_controller.dart';
+import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,15 +29,25 @@ class _DashboardProfissionalScreenState
     final int recibosEmitidos = 25;
     final double extratoGanhos = 2950.00;
 
-    return Consumer<ProfissionalProvider>(builder: (context, value, child) {
+    return Consumer<ProviderController>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Olá, ${value.profissional?.name ?? ''}'),
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+                await LoginController()
+                    .logoutProfissional(value.profissional!.id!, (onSuccess) {
+                  AppThemes.showSnackBar(context, onSuccess,
+                      backgroundColor: Colors.green);
+                  Provider.of<ProviderController>(context, listen: false)
+                      .clearProfissional();
+                  Navigator.pop(context);
+                }, (onError) {
+                  AppThemes.showSnackBar(context, onError,
+                      backgroundColor: Colors.red);
+                });
               },
               icon: Icon(Icons.arrow_back_ios)),
         ),
@@ -69,8 +81,9 @@ class _DashboardProfissionalScreenState
                             CircleAvatar(
                               radius: 48,
                               backgroundColor: Theme.of(context).primaryColor,
-                              backgroundImage: value.profissional?.foto != null 
-                                  ? MemoryImage(base64Decode(value.profissional!.foto))
+                              backgroundImage: value.profissional?.foto != null
+                                  ? MemoryImage(
+                                      base64Decode(value.profissional!.foto))
                                   : null,
                               child: value.profissional?.foto == null
                                   ? const Icon(Icons.person, size: 48)

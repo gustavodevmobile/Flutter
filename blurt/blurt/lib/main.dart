@@ -1,4 +1,4 @@
-import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/screens/atendimentos_profissional.dart';
 import 'package:blurt/screens/dashboard_profissional.dart';
 import 'package:blurt/screens/perfil_profissional.dart';
@@ -14,10 +14,12 @@ import 'package:blurt/screens/dashboard_usuario.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-      create: (_) => ProfissionalProvider(),
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ProviderController(),
       child: const MyApp(),
-    ),);
+    ),
+  );
   //ApiService().getAbordagens();
 }
 
@@ -77,10 +79,13 @@ class MyApp extends StatelessWidget {
         '/cadastro_psicologo': (context) => const PsicologoFormScreen(),
         '/cadastro_psicanalista': (context) => const PsicanalistaFormScreen(),
         '/dashboard_usuario': (context) => const DashboardUsuarioScreen(),
-        '/dashboard_profissional': (context) => const DashboardProfissionalScreen(),
-        '/editar_perfil_profissional': (context)=> const EditarPerfilProfissionalScreen(),
-        '/atendimento_profissional': (context)=> const AtendimentosProfissionalScreen(),
-        '/perfil_profissional':(context)=> const PerfilProfissionalScreen(),
+        '/dashboard_profissional': (context) =>
+            const DashboardProfissionalScreen(),
+        '/editar_perfil_profissional': (context) =>
+            const EditarPerfilProfissionalScreen(),
+        '/atendimento_profissional': (context) =>
+            const AtendimentosProfissionalScreen(),
+        '/perfil_profissional': (context) => const PerfilProfissionalScreen(),
       },
     );
   }

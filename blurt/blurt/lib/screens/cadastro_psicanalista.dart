@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../controller/cadastro_controller.dart';
@@ -42,22 +43,6 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
   File? _imagemSelfieComDoc;
   final ImagePicker _picker = ImagePicker();
   //bool showCheck = false;
-
-  void showSnackBar(String message, {Color? backgroundColor}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: backgroundColor),
-    );
-  }
-
-  final cpfFormater = MaskTextInputFormatter(
-    mask: '###.###.###-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-
-  final cnpjFormater = MaskTextInputFormatter(
-    mask: '##.###.###/####-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
 
   Future<void> _pickImage(
       ImageSource source, void Function(File) setter) async {
@@ -188,7 +173,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _cpfController,
-                          inputFormatters: [cpfFormater],
+                          inputFormatters: [AppThemes.cpfFormater],
                           decoration: const InputDecoration(
                             labelText: 'CPF*',
                             prefixIcon: Icon(Icons.badge_outlined),
@@ -211,7 +196,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _cnpjController,
-                          inputFormatters: [cnpjFormater],
+                          inputFormatters: [AppThemes.cnpjFormater],
                           decoration: const InputDecoration(
                             labelText: 'CNPJ',
                             prefixIcon: Icon(Icons.business_outlined),
@@ -307,8 +292,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         _buildImagePickerField(
                           label: 'Documento com foto*',
                           image: _imagemDocumento,
-                          onPick: (source) => _pickImage(source,
-                              (file) => _imagemDocumento = file),
+                          onPick: (source) => _pickImage(
+                              source, (file) => _imagemDocumento = file),
                           showCheck: true,
                           clearButton: IconButton(
                             icon: Icon(Icons.clear, color: Colors.red),
@@ -325,8 +310,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                         _buildImagePickerField(
                           label: 'Selfie com Documento*',
                           image: _imagemSelfieComDoc,
-                          onPick: (source) => _pickImage(source,
-                              (file) => _imagemSelfieComDoc = file),
+                          onPick: (source) => _pickImage(
+                              source, (file) => _imagemSelfieComDoc = file),
                           showCheck: true,
                           clearButton: IconButton(
                             icon: Icon(Icons.clear, color: Colors.red),
@@ -487,7 +472,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                     FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       if (_profileImage == null) {
-                                        showSnackBar(
+                                        AppThemes.showSnackBar(context,
                                             'Selecione uma foto de perfil!',
                                             backgroundColor: Colors.red);
                                         return;
@@ -495,7 +480,7 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                       if (_diplomaPsicanalistaImage == null ||
                                           _declSupClinicaImage == null ||
                                           _declAnPessoalImage == null) {
-                                        showSnackBar(
+                                        AppThemes.showSnackBar(context,
                                             'As declarações são obrigatórias!',
                                             backgroundColor: Colors.red);
                                         return;
@@ -516,8 +501,8 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                           fotoBase64 = base64Encode(bytes);
                                         }
                                         if (_imagemDocumento != null) {
-                                          final bytes =
-                                              await _imagemDocumento!.readAsBytes();
+                                          final bytes = await _imagemDocumento!
+                                              .readAsBytes();
                                           imagemDocumentoBase64 =
                                               base64Encode(bytes);
                                         }
@@ -618,19 +603,25 @@ class _PsicanalistaFormScreenState extends State<PsicanalistaFormScreen> {
                                         if (!mounted) return;
                                         if (response.statusCode == 200 ||
                                             response.statusCode == 201) {
-                                          showSnackBar(
-                                              'Psicanalista cadastrado com sucesso!',
-                                              backgroundColor: Colors.green);
+                                          if (context.mounted) {
+                                            AppThemes.showSnackBar(context,
+                                                'Psicanalista cadastrado com sucesso!',
+                                                backgroundColor: Colors.green);
+                                          }
                                         } else {
-                                          showSnackBar(
-                                              'Erro ao cadastrar: \n${response.body}',
-                                              backgroundColor: Colors.red);
+                                          if (context.mounted) {
+                                            AppThemes.showSnackBar(context,
+                                                'Erro ao cadastrar: \n${response.body}',
+                                                backgroundColor: Colors.red);
+                                          }
                                         }
                                       } catch (e) {
                                         if (!mounted) return;
-                                        showSnackBar('Erro de conexão: $e',
-                                            backgroundColor: Colors.red);
-                                        print(e);
+                                        if (context.mounted) {
+                                          AppThemes.showSnackBar(
+                                              context, 'Erro de conexão: $e',
+                                              backgroundColor: Colors.red);
+                                        }
                                       } finally {
                                         if (mounted) {
                                           setState(() => _loading = false);

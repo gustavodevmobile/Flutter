@@ -1,4 +1,4 @@
-import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -173,7 +173,7 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                         _cpfController.text,
                                         _passwordController.text,
                                         (onSuccess) {
-                                          Provider.of<ProfissionalProvider>(
+                                          Provider.of<ProviderController>(
                                                   context,
                                                   listen: false)
                                               .setProfissional(onSuccess);

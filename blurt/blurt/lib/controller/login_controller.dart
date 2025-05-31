@@ -25,6 +25,21 @@ class LoginController {
     }
   }
 
+  Future<void> logoutProfissional(
+      String id, Function(String) onSuccess, Function(String) onError) async {
+    print(id);
+    try {
+      Response response = await _apiService.logoutProfissional(id);
+      if (response.statusCode == 200) {
+        onSuccess(response.body);
+      } else {
+        onError(response.body);
+      }
+    } catch (e) {
+      onError('Erro ao fazer login: $e');
+    }
+  }
+
   Future<void> loginProfissional(
     String cpf,
     String senha,

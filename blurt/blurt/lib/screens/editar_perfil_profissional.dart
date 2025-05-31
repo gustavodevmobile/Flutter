@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +69,7 @@ class _EditarPerfilProfissionalScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProfissionalProvider>(builder: (context, value, child) {
+    return Consumer<ProviderController>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Perfil Profissional'),

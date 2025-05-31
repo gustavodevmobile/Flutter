@@ -1,3 +1,4 @@
+import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import '../controller/cadastro_controller.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -15,66 +16,12 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
   final TextEditingController _dataNascimentoController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _telefoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   String? _gender;
   final CadastroController _cadastroController = CadastroController();
   bool _loading = false;
-
-  void showSnackBar(String message, {Color? backgroundColor}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: backgroundColor),
-    );
-  }
-
-  final _dataNascimentoFormatter = MaskTextInputFormatter(
-    mask: '##/##/####',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-
-  final cpfFormater = MaskTextInputFormatter(
-    mask: '###.###.###-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-
-  bool isMaiorDeIdade(String dataNascimento) {
-    try {
-      // Extrai dia, mês e ano do formato dd/MM/yyyy
-      final partes = dataNascimento.split('/');
-      if (partes.length != 3) return false;
-      final dia = int.parse(partes[0]);
-      final mes = int.parse(partes[1]);
-      final ano = int.parse(partes[2]);
-
-      final nascimento = DateTime(ano, mes, dia);
-      final hoje = DateTime.now();
-
-      final idade = hoje.year -
-          nascimento.year -
-          ((hoje.month < nascimento.month ||
-                  (hoje.month == nascimento.month && hoje.day < nascimento.day))
-              ? 1
-              : 0);
-
-      return idade >= 18;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // Função auxiliar para converter dd/MM/yyyy em DateTime
-  DateTime? parseData(String data) {
-    try {
-      final partes = data.split('/');
-      if (partes.length != 3) return null;
-      final dia = int.parse(partes[0]);
-      final mes = int.parse(partes[1]);
-      final ano = int.parse(partes[2]);
-      return DateTime(ano, mes, dia);
-    } catch (e) {
-      return null;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,19 +59,19 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                     borderRadius: BorderRadius.circular(24)),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Image.asset(
-                          'assets/image/195e7eed-4690-470b-bddf-d91da4a7623f.png',
-                          width: 70,
-                          height: 70,
+                          'assets/image/logotipoBlurt2.png',
+                          width: 200,
+                          height: 200,
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 16),
+
                         Text(
                           'Crie sua conta',
                           style: TextStyle(
@@ -151,7 +98,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                         // Campo Data de Nascimento
                         TextFormField(
                           controller: _dataNascimentoController,
-                          inputFormatters: [_dataNascimentoFormatter],
+                          inputFormatters: [AppThemes.dataNascimentoFormatter],
                           decoration: const InputDecoration(
                             labelText: 'Data de Nascimento*',
                             prefixIcon: Icon(Icons.cake_outlined),
@@ -166,7 +113,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                               return 'Formato inválido (ex:(dd/mm/aaaa)';
                             }
                             // Verifica se é maior de idade
-                            if (!isMaiorDeIdade(value)) {
+                            if (!AppThemes.isMaiorDeIdade(value)) {
                               return 'É necessário ter 18 anos ou mais';
                             }
                             return null;
@@ -195,6 +142,17 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 16),
+
+                        TextFormField(
+                          controller: _telefoneController,
+                          inputFormatters: [AppThemes.telefoneFormatter],
+                          decoration: const InputDecoration(
+                            labelText: 'Telefone (opcional)',
+                            prefixIcon: Icon(Icons.email_outlined),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 16),
                         TextFormField(
                           controller: _passwordController,
                           decoration: const InputDecoration(
@@ -212,7 +170,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _cpfController,
-                          inputFormatters: [cpfFormater],
+                          inputFormatters: [AppThemes.cpfFormater],
                           decoration: const InputDecoration(
                             labelText: 'CPF*',
                             prefixIcon: Icon(Icons.badge_outlined),
@@ -284,7 +242,8 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                               textStyle: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                             onPressed: _loading
                                 ? null
@@ -296,10 +255,12 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                                             await _cadastroController
                                                 .cadastrarUsuario(
                                           nome: _nameController.text.trim(),
-                                          dataNascimento: parseData(
+                                          dataNascimento: AppThemes.parseData(
                                               _dataNascimentoController.text
                                                   .trim())!,
                                           email: _emailController.text.trim(),
+                                          telefone: _telefoneController.text
+                                              .trim(),
                                           senha: _passwordController.text,
                                           cpf: _cpfController.text.trim(),
                                           genero: _gender ?? '',
@@ -307,19 +268,25 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                                         if (!mounted) return;
                                         if (response.statusCode == 200 ||
                                             response.statusCode == 201) {
-                                          showSnackBar(
-                                              'Usuário cadastrado com sucesso!',
-                                              backgroundColor: Colors.green);
-                                          Navigator.pop(context);
+                                          if (context.mounted) {
+                                            AppThemes.showSnackBar(context,
+                                                'Usuário cadastrado com sucesso!',
+                                                backgroundColor: Colors.green);
+                                            Navigator.pop(context);
+                                          }
                                         } else {
-                                          showSnackBar(
-                                              'Erro ao cadastrar: \n${response.body}',
-                                              backgroundColor: Colors.red);
+                                          if (context.mounted) {
+                                            AppThemes.showSnackBar(context,
+                                                'Erro ao cadastrar: \n${response.body}',
+                                                backgroundColor: Colors.red);
+                                          }
                                         }
                                       } catch (e) {
-                                        if (!mounted) return;
-                                        showSnackBar('Erro de conexão: $e',
-                                            backgroundColor: Colors.red);
+                                        if (context.mounted) {
+                                          AppThemes.showSnackBar(
+                                              context, 'Erro de conexão: $e',
+                                              backgroundColor: Colors.red);
+                                        }
                                       } finally {
                                         if (mounted) {
                                           setState(() => _loading = false);

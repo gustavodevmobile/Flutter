@@ -2,6 +2,7 @@ class Usuario {
   final String? id;
   final String name;
   final String email;
+  final String? telefone;
   final String passwordHash;
   final String cpf;
   final String gender;
@@ -13,6 +14,7 @@ class Usuario {
     this.id,
     required this.name,
     required this.email,
+    this.telefone,
     required this.passwordHash,
     required this.cpf,
     required this.gender,
@@ -26,6 +28,7 @@ class Usuario {
       id: json['id'] as String?,
       name: json['name'] ?? '',
       email: json['email'] ?? '',
+      telefone: json['telefone'] as String?,
       passwordHash: json['passwordHash'] ?? '',
       cpf: json['cpf'] ?? '',
       gender: json['gender'] ?? '',
@@ -44,6 +47,7 @@ class Usuario {
       if (id != null) 'id': id,
       'name': name,
       'email': email,
+      if (telefone != null) 'telefone': telefone,
       'passwordHash': passwordHash,
       'cpf': cpf,
       'gender': gender,

@@ -1,6 +1,5 @@
 import 'package:blurt/controller/buscas_controller.dart';
-import 'package:blurt/controller/profissional_provider.dart';
-import 'package:blurt/models/professional.dart';
+import 'package:blurt/controller/provider_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/controller/login_controller.dart';
 import 'package:provider/provider.dart';
@@ -137,16 +136,18 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                                             _emailController.text,
                                             _passwordController.text,
                                             (usuario) {
+                                              // Provider.of<ProviderController>(
+                                              //   context,
+                                              //   listen: false, 
+                                              // ).setUsuario(usuario);
                                           _buscasController
                                               .getProfissionalOnline(
                                                   (profissionais) {
-                                            Provider.of<ProfissionalProvider>(
+                                            Provider.of<ProviderController>(
                                               context,
                                               listen: false,
                                             ).setProfissionaisOnline(
                                                 profissionais);
-                                            print(
-                                                'Profissionais online: ${profissionais.length}');
                                           }, (onError) {
                                             scaffoldMessenger.showSnackBar(
                                               SnackBar(

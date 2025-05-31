@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import 'package:blurt/controller/profissional_provider.dart';
+import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/models/professional.dart';
 import 'package:blurt/theme/themes.dart';
+import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,11 +25,159 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
   void initState() {
     super.initState();
     ultimaSessao = sessoes.isNotEmpty ? sessoes.first : null;
+    // Mostra o dialog assim que entrar no dashboard
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showSentimentoDialog();
+    });
   }
+
+  void _showSentimentoDialog() async {
+    final List<Map<String, String>> emojis = [
+      {'emoji': '😀', 'label': 'Feliz'},
+      {'emoji': '😐', 'label': 'Neutro'},
+      {'emoji': '😢', 'label': 'Triste'},
+      {'emoji': '😡', 'label': 'Irritado'},
+      {'emoji': '😱', 'label': 'Ansioso'},
+      {'emoji': '😴', 'label': 'Esgotado'},
+      {'emoji': '😭', 'label': 'Chateado'},
+    ];
+    List<int> selecionados = [];
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Como você está se sentindo hoje?'),
+              content: SizedBox(
+                width: 120,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (int i = 0; i < emojis.length; i++)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (selecionados.contains(i)) {
+                                selecionados.remove(i);
+                              } else if (selecionados.length < 3) {
+                                selecionados.add(i);
+                              }
+                            });
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: selecionados.contains(i)
+                                  ? AppThemes.primaryLightColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: selecionados.contains(i)
+                                    ? AppThemes.primaryLightColor
+                                    : Colors.grey.shade300,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  emojis[i]['emoji']!,
+                                  style: const TextStyle(fontSize: 32),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  emojis[i]['label']!,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                const Spacer(),
+                                if (selecionados.contains(i))
+                                  const Icon(Icons.check,
+                                      color: Colors.blue, size: 20),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: selecionados.isEmpty
+                      ? null
+                      : () {
+                          final escolhidos = selecionados
+                              .map((i) => '${emojis[i]['label']}')
+                              .join(', ');
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Você escolheu: $escolhidos')),
+                          );
+                        },
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // void _showSentimentoDialog() async {
+  //   await showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: const Text('Como você está se sentindo hoje?'),
+  //         content: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             _emojiButton('😀', 'Feliz'),
+  //             _emojiButton('😐', 'Neutro'),
+  //             _emojiButton('😢', 'Triste'),
+  //             _emojiButton('😡', 'Irritado'),
+  //             _emojiButton('😱', 'Ansioso'),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Widget _emojiButton(String emoji, String label) {
+  //   return Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       InkWell(
+  //         onTap: () {
+  //           Navigator.of(context).pop();
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(content: Text('Você escolheu: $label $emoji')),
+  //           );
+  //         },
+  //         child: Text(
+  //           emoji,
+  //           style: const TextStyle(fontSize: 36),
+  //         ),
+  //       ),
+  //       const SizedBox(height: 4),
+  //       Text(label, style: const TextStyle(fontSize: 12)),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProfissionalProvider>(builder: (context, value, child) {
+    return Consumer<ProviderController>(builder: (context, value, child) {
       return Scaffold(
         appBar: AppBar(
             title: const Text('Dashboard Usuário'),
@@ -140,7 +289,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                       textStyle: const TextStyle(fontSize: 18),
                     ),
                     onPressed: () {
-                      // Implementar lógica de atendimento imediato
+                      showQuestionarioPreAnalise(context);
                     },
                   ),
                   const SizedBox(height: 12),
@@ -199,7 +348,7 @@ class CardProdissional extends StatelessWidget {
           //final prof = profOnline[index];
           return GestureDetector(
             onTap: () {
-              Provider.of<ProfissionalProvider>(context, listen: false)
+              Provider.of<ProviderController>(context, listen: false)
                   .setProfissional(profOnline[index]);
               Navigator.pushNamed(
                 context,
@@ -215,19 +364,19 @@ class CardProdissional extends StatelessWidget {
                     child: Row(
                       children: [
                         const SizedBox(width: 12),
-                        if( profOnline[index].foto.isEmpty)
+                        if (profOnline[index].foto.isEmpty)
                           CircleAvatar(
                             radius: 25,
                             child: Icon(Icons.person, size: 40),
                           )
                         else
-                        CircleAvatar(
-                          radius: 25,
-                          child: Image.memory(
-                            base64Decode(profOnline[index].foto),
-                            fit: BoxFit.cover,
+                          CircleAvatar(
+                            radius: 25,
+                            child: Image.memory(
+                              base64Decode(profOnline[index].foto),
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
                         const SizedBox(width: 16),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

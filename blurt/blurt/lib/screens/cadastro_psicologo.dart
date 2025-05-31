@@ -1,6 +1,8 @@
 // Importações necessárias para funcionamento do cadastro e seleção de imagem
 import 'dart:convert';
 import 'dart:io';
+import 'package:blurt/theme/themes.dart';
+import 'package:blurt/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:blurt/controller/abordagem_especialidade_controller.dart';
@@ -81,55 +83,55 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   File? _certificadoOutraEspecialidade;
 
   // Exibe um SnackBar para feedback ao usuário
-  void showSnackBar(String message, {Color? backgroundColor}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: backgroundColor),
-    );
-  }
 
-  final crpFormater = MaskTextInputFormatter(
-    mask: '##/######',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-
-  final cpfFormater = MaskTextInputFormatter(
-    mask: '###.###.###-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-
-  final cnpjFormater = MaskTextInputFormatter(
-    mask: '##.###.###/####-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
+  
 
   // Função para selecionar imagem da galeria ou câmera
-  Future<void> _pickImageProfile(ImageSource source) async {
+  // Future<void> _pickImageProfile(ImageSource source) async {
+  //   final pickedFile =
+  //       await _picker.pickImage(source: source, imageQuality: 80);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _selectedImage = File(pickedFile.path);
+  //     });
+  //   }
+  // }
+
+  // Future<void> _pickImageDoc(ImageSource source) async {
+  //   final pickedFile =
+  //       await _picker.pickImage(source: source, imageQuality: 80);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _selectedImageDoc = File(pickedFile.path);
+  //     });
+  //   }
+  // }
+
+  Future<void> _pickImage(ImageSource source, String tipo) async {
     final pickedFile =
         await _picker.pickImage(source: source, imageQuality: 80);
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        if (tipo == 'perfil') {
+          _selectedImage = File(pickedFile.path);
+        } else if (tipo == 'doc') {
+          _selectedImageDoc = File(pickedFile.path);
+        } else if (tipo == 'selfie') {
+          _selectedImageSelfieComDoc = File(pickedFile.path);
+        }
       });
     }
   }
-  Future<void> _pickImageDoc(ImageSource source) async {
-    final pickedFile =
-        await _picker.pickImage(source: source, imageQuality: 80);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImageDoc = File(pickedFile.path);
-      });
-    }
-  }
-  Future<void> _pickImageSelfie(ImageSource source) async {
-    final pickedFile =
-        await _picker.pickImage(source: source, imageQuality: 80);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImageSelfieComDoc = File(pickedFile.path);
-      });
-    }
-  }
+
+  // Future<void> _pickImageSelfie(ImageSource source) async {
+  //   final pickedFile =
+  //       await _picker.pickImage(source: source, imageQuality: 80);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _selectedImageSelfieComDoc = File(pickedFile.path);
+  //     });
+  //   }
+  // }
 
   // Função para selecionar certificado
   Future<void> _pickCertificadoEspecialidadePrincipal() async {
@@ -147,11 +149,6 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
     _carregarAbordagensEspecialidades();
   }
 
-  String capitalize(String s) {
-    if (s.isEmpty) return s;
-    return s[0].toUpperCase() + s.substring(1);
-  }
-
   Future<void> _carregarAbordagensEspecialidades() async {
     try {
       final abordagens =
@@ -162,25 +159,28 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
           await _abordagemEspecialidadeController.buscarTemasClinicos();
       setState(() {
         _abordagens = abordagens
-            .map((a) => Abordagem(id: a.id, nome: capitalize(a.nome)))
+            .map((a) => Abordagem(id: a.id, nome: AppThemes.capitalize(a.nome)))
             .toList();
         _especialidadesDisponiveis = especialidades
-            .map((e) => Especialidade(id: e.id, nome: capitalize(e.nome)))
+            .map((e) =>
+                Especialidade(id: e.id, nome: AppThemes.capitalize(e.nome)))
             .toList();
         _temasClinicos = temasClinicos
-            .map((t) => TemasClinicos(id: t.id, nome: capitalize(t.nome)))
+            .map((t) =>
+                TemasClinicos(id: t.id, nome: AppThemes.capitalize(t.nome)))
             .toList();
       });
     } catch (e) {
-      showSnackBar('Erro ao carregar abordagens/especialidades',
-          backgroundColor: Colors.red);
+      if (mounted) {
+        AppThemes.showSnackBar(
+            context, 'Erro ao carregar abordagens/especialidades',
+            backgroundColor: Colors.red);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFF7AB0A3);
-    final blueColor = const Color(0xFF4F8FCB);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro Psicólogo'),
@@ -192,16 +192,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomRight,
-            colors: [themeColor, blueColor],
-          ),
-        ),
+      body: Background(
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
@@ -233,7 +224,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: blueColor,
+                            color: AppThemes.primaryColor,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -242,7 +233,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: blueColor,
+                            color: AppThemes.primaryColor,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -356,7 +347,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         Divider(
-                          color: themeColor,
+                          color: AppThemes.secondaryColor,
                           thickness: 2,
                         ),
                         Text(
@@ -364,14 +355,14 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: blueColor,
+                            color: AppThemes.primaryColor,
                           ),
                         ),
                         const SizedBox(height: 8),
                         // Campo CPF
                         TextFormField(
                           controller: _cpfController,
-                          inputFormatters: [cpfFormater],
+                          inputFormatters: [AppThemes.cpfFormater],
                           decoration: const InputDecoration(
                             labelText: 'CPF*',
                             prefixIcon: Icon(Icons.badge_outlined),
@@ -394,7 +385,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         // Campo CNPJ
                         TextFormField(
                           controller: _cnpjController,
-                          inputFormatters: [cnpjFormater],
+                          inputFormatters: [AppThemes.cnpjFormater],
                           decoration: const InputDecoration(
                             labelText: 'CNPJ',
                             prefixIcon: Icon(Icons.business_outlined),
@@ -417,7 +408,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         // Campo Registro Profissional
                         TextFormField(
                           controller: _registroProfissionalController,
-                          inputFormatters: [crpFormater],
+                          inputFormatters: [AppThemes.crpFormater],
                           decoration: const InputDecoration(
                             labelText: 'CRP*',
                             prefixIcon: Icon(Icons.assignment_ind_outlined),
@@ -432,7 +423,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         Divider(
-                          color: themeColor,
+                          color: AppThemes.secondaryColor,
                           thickness: 2,
                         ),
                         Text(
@@ -440,7 +431,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: blueColor,
+                            color: AppThemes.primaryColor,
                           ),
                         ),
 
@@ -748,7 +739,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
 
                         const SizedBox(height: 16),
                         Divider(
-                          color: themeColor,
+                          color: AppThemes.secondaryColor,
                           thickness: 1,
                         ),
                         Text(
@@ -756,7 +747,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: blueColor,
+                            color: AppThemes.primaryColor,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -808,7 +799,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                         // Botão para mostrar/esconder área de imagem
                         Row(
                           children: [
-                            Icon(Icons.image, color: themeColor),
+                            Icon(Icons.image, color: AppThemes.secondaryColor),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton(
@@ -845,17 +836,17 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                 children: [
                                   IconButton(
                                     icon: Icon(Icons.photo_library,
-                                        color: themeColor),
+                                        color: AppThemes.secondaryColor),
                                     tooltip: 'Selecionar da galeria',
-                                    onPressed: () =>
-                                        _pickImageProfile(ImageSource.gallery),
+                                    onPressed: () => _pickImage(
+                                        ImageSource.gallery, 'perfil'),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.camera_alt,
-                                        color: blueColor),
+                                        color: AppThemes.primaryColor),
                                     tooltip: 'Tirar foto',
-                                    onPressed: () =>
-                                        _pickImageProfile(ImageSource.camera),
+                                    onPressed: () => _pickImage(
+                                        ImageSource.camera, 'perfil'),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
@@ -871,9 +862,9 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                               ),
                             ],
                           ),
-                          Row(
+                        Row(
                           children: [
-                            Icon(Icons.image, color: themeColor),
+                            Icon(Icons.image, color: AppThemes.secondaryColor),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton(
@@ -910,17 +901,17 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                 children: [
                                   IconButton(
                                     icon: Icon(Icons.photo_library,
-                                        color: themeColor),
+                                        color: AppThemes.secondaryColor),
                                     tooltip: 'Selecionar da galeria',
                                     onPressed: () =>
-                                        _pickImageDoc(ImageSource.gallery),
+                                        _pickImage(ImageSource.gallery, 'doc'),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.camera_alt,
-                                        color: blueColor),
+                                        color: AppThemes.primaryColor),
                                     tooltip: 'Tirar foto',
                                     onPressed: () =>
-                                        _pickImageDoc(ImageSource.camera),
+                                        _pickImage(ImageSource.camera, 'doc'),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
@@ -936,15 +927,16 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                               ),
                             ],
                           ),
-                          Row(
+                        Row(
                           children: [
-                            Icon(Icons.image, color: themeColor),
+                            Icon(Icons.image, color: AppThemes.secondaryColor),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton(
                                 onPressed: () {
                                   setState(() {
-                                    _showImageSelfieComDoc = !_showImageSelfieComDoc;
+                                    _showImageSelfieComDoc =
+                                        !_showImageSelfieComDoc;
                                   });
                                 },
                                 child: Text(_showImageSelfieComDoc
@@ -960,8 +952,8 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                               _selectedImageSelfieComDoc != null
                                   ? CircleAvatar(
                                       radius: 40,
-                                      backgroundImage:
-                                          FileImage(_selectedImageSelfieComDoc!),
+                                      backgroundImage: FileImage(
+                                          _selectedImageSelfieComDoc!),
                                     )
                                   : const CircleAvatar(
                                       radius: 40,
@@ -975,17 +967,17 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                 children: [
                                   IconButton(
                                     icon: Icon(Icons.photo_library,
-                                        color: themeColor),
+                                        color: AppThemes.secondaryColor),
                                     tooltip: 'Selecionar da galeria',
-                                    onPressed: () =>
-                                        _pickImageSelfie(ImageSource.gallery),
+                                    onPressed: () => _pickImage(
+                                        ImageSource.gallery, 'selfie'),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.camera_alt,
-                                        color: blueColor),
+                                        color: AppThemes.primaryColor),
                                     tooltip: 'Tirar foto',
-                                    onPressed: () =>
-                                        _pickImageSelfie(ImageSource.camera),
+                                    onPressed: () => _pickImage(
+                                        ImageSource.camera, 'selfie'),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
@@ -1007,7 +999,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                           height: 48,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: themeColor,
+                              backgroundColor: AppThemes.secondaryColor,
                               foregroundColor: Colors.white,
                               textStyle: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
@@ -1024,7 +1016,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                               .text.isNotEmpty &&
                                           _certificadoEspecialidadePrincipal ==
                                               null) {
-                                        showSnackBar(
+                                        AppThemes.showSnackBar(context,
                                             'Anexe o certificado da nova especialidade principal!',
                                             backgroundColor: Colors.red);
                                         return;
@@ -1034,28 +1026,28 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                               .text.isNotEmpty &&
                                           _certificadoOutraEspecialidade ==
                                               null) {
-                                        showSnackBar(
+                                        AppThemes.showSnackBar(context,
                                             'Anexe o certificado da nova outra especialidade!',
                                             backgroundColor: Colors.red);
                                         return;
                                       }
                                       if (!_showImagePicker ||
                                           _selectedImage == null) {
-                                        showSnackBar(
+                                        AppThemes.showSnackBar(context,
                                             'Selecione uma imagem para o perfil!',
                                             backgroundColor: Colors.red);
                                         return;
                                       }
                                       if (!_showImageDoc ||
                                           _selectedImageDoc == null) {
-                                        showSnackBar(
+                                        AppThemes.showSnackBar(context,
                                             'Documento com foto é obrigatória!',
                                             backgroundColor: Colors.red);
                                         return;
                                       }
                                       if (!_showImageSelfieComDoc ||
                                           _selectedImageSelfieComDoc == null) {
-                                        showSnackBar(
+                                        AppThemes.showSnackBar(context,
                                             'Selfie com documento com foto é obrigatória!',
                                             backgroundColor: Colors.red);
                                         return;
@@ -1143,7 +1135,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         }
 
                                         if (_especialidadeSelecionada != null) {
-                                          showSnackBar(
+                                          AppThemes.showSnackBar(context,
                                               'Anexe o certificado da especialidade principal!',
                                               backgroundColor: Colors.red);
                                           return;
@@ -1176,14 +1168,18 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                                 _passwordController.text,
                                             bio: _bioController.text.trim(),
                                             cpf: _cpfController.text.trim(),
-                                            cnpj: _cnpjController.text.trim().isEmpty
+                                            cnpj: _cnpjController.text
+                                                    .trim()
+                                                    .isEmpty
                                                 ? null
                                                 : _cnpjController.text.trim(),
-                                            crp: _registroProfissionalController.text
+                                            crp: _registroProfissionalController
+                                                .text
                                                 .trim(),
-                                            tipoProfissional: _genero == 'Masculino'
-                                                ? 'Psicólogo'
-                                                : 'Psicóloga',
+                                            tipoProfissional:
+                                                _genero == 'Masculino'
+                                                    ? 'Psicólogo'
+                                                    : 'Psicóloga',
                                             estaOnline: false,
                                             atendePlantao: false,
                                             valorConsulta:
@@ -1191,29 +1187,20 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                                     0.0,
                                             genero: _genero ?? '',
                                             foto: fotoBase64,
-                                            imagemDocumento: _selectedImageDoc != null
-                                                ? base64Encode(
-                                                    await _selectedImageDoc!.readAsBytes())
-                                                : '',
-                                            imagemSelfieComDoc: _selectedImageSelfieComDoc != null
-                                                ? base64Encode(
-                                                    await _selectedImageSelfieComDoc!.readAsBytes())
-                                                : '',
-                                            chavePix: _chavePixController.text.trim().isEmpty
-                                                ? null
-                                                : _chavePixController.text
-                                                    .trim(),
-                                            contaBancaria: _contaBancariaController.text.trim().isEmpty
-                                                ? null
-                                                : _contaBancariaController.text
-                                                    .trim(),
-                                            agencia: _agenciaController.text.trim().isEmpty
-                                                ? null
-                                                : _agenciaController.text
-                                                    .trim(),
-                                            banco: _bancoController.text.trim().isEmpty
-                                                ? null
-                                                : _bancoController.text.trim(),
+                                            imagemDocumento:
+                                                _selectedImageDoc != null
+                                                    ? base64Encode(
+                                                        await _selectedImageDoc!
+                                                            .readAsBytes())
+                                                    : '',
+                                            imagemSelfieComDoc:
+                                                _selectedImageSelfieComDoc != null
+                                                    ? base64Encode(await _selectedImageSelfieComDoc!.readAsBytes())
+                                                    : '',
+                                            chavePix: _chavePixController.text.trim().isEmpty ? null : _chavePixController.text.trim(),
+                                            contaBancaria: _contaBancariaController.text.trim().isEmpty ? null : _contaBancariaController.text.trim(),
+                                            agencia: _agenciaController.text.trim().isEmpty ? null : _agenciaController.text.trim(),
+                                            banco: _bancoController.text.trim().isEmpty ? null : _bancoController.text.trim(),
                                             tipoConta: _tipoContaController.text.trim().isEmpty ? null : _tipoContaController.text.trim(),
                                             abordagemPrincipal: abordagemPrincipal,
                                             abordagensUtilizadas: abordagensUtilizadasIds,
@@ -1228,22 +1215,27 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         if (!mounted) return;
                                         if (response.statusCode == 200 ||
                                             response.statusCode == 201) {
-                                          showSnackBar(
-                                              'Profissional cadastrado com sucesso!',
-                                              backgroundColor: Colors.green);
-                                          //Navigator.pop(context);
+                                          if (context.mounted) {
+                                            AppThemes.showSnackBar(context,
+                                                'Profissional cadastrado com sucesso!',
+                                                backgroundColor: Colors.green);
+                                            //Navigator.pop(context);
+                                          }
                                         } else {
-                                          showSnackBar(
-                                              'Erro ao cadastrar: \n${response.body}',
-                                              backgroundColor: Colors.red);
+                                          if (context.mounted) {
+                                            AppThemes.showSnackBar(context,
+                                                'Erro ao cadastrar: \n${response.body}',
+                                                backgroundColor: Colors.red);
+                                          }
                                         }
-                                        print(
-                                            'Erro ao cadastrar: ${response.body}');
                                       } catch (e) {
                                         if (!mounted) return;
-                                        print(e);
-                                        showSnackBar('Erro de conexão: $e',
-                                            backgroundColor: Colors.red);
+
+                                        if (context.mounted) {
+                                          AppThemes.showSnackBar(
+                                              context, 'Erro de conexão: $e',
+                                              backgroundColor: Colors.red);
+                                        }
                                       } finally {
                                         if (mounted) {
                                           setState(() => _loading = false);
