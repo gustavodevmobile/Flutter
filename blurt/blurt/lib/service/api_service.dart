@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
+  // Versão Web
+  //static const String _baseUrl = 'http://192.168.0.152:3000';
+
   static const String _baseUrl = 'http://10.0.2.2:3000';
 
   Future<http.Response> cadastrarUsuario(Map<String, dynamic> data) async {

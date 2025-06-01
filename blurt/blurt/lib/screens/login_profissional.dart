@@ -59,8 +59,6 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFF7AB0A3); // cor do tema
-    final blueColor = const Color(0xFF4F8FCB); // azul suave
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Profissional'),
@@ -79,7 +77,7 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomRight,
-            colors: [themeColor, blueColor],
+            colors: [AppThemes.secondaryColor, AppThemes.primaryColor],
           ),
         ),
         child: Center(
@@ -109,7 +107,7 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: themeColor,
+                            color: AppThemes.secondaryColor,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -244,11 +242,22 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                     : () async {
                                         await _pickSelfie();
                                         if (_selfieImage != null) {
-                                          Navigator.pushNamed(context,
-                                              '/dashboard_profissional');
+                                          if (context.mounted) {
+                                            Navigator.pushNamed(context,
+                                                '/dashboard_profissional');
+                                          }
+                                        } else {
+                                          if (context.mounted) {
+                                            showSnackBar(context,
+                                                'Por favor, tire uma selfie.',
+                                                backgroundColor: Colors.red);
+                                          }
                                         }
                                       },
-                                icon: const Icon(Icons.camera_alt, color: AppThemes.textLightColor,),
+                                icon: const Icon(
+                                  Icons.camera_alt,
+                                  color: AppThemes.textLightColor,
+                                ),
                                 label: const Text('Tirar Selfie'),
                               ),
                             ],

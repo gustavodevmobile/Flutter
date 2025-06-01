@@ -21,6 +21,7 @@ class LoginController {
         onError(response.body);
       }
     } catch (e) {
+      print('Erro ao fazer login: $e');
       onError('Erro ao fazer login: $e');
     }
   }
