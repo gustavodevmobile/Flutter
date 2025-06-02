@@ -29,15 +29,15 @@ class ApiService {
     );
   }
 
-  Future<http.Response> loginUsuario(String email, String senha) async {
-    final url = Uri.parse('$_baseUrl/usuario/login');
-    final data = {'email': email, 'senha': senha};
-    return await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-  }
+  // Future<http.Response> loginUsuario(String email, String senha) async {
+  //   final url = Uri.parse('$_baseUrl/usuario/login');
+  //   final data = {'email': email, 'senha': senha};
+  //   return await http.post(
+  //     url,
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode(data),
+  //   );
+  // }
 
   Future<http.Response> loginProfissional(String cpf, String senha) async {
     final url = Uri.parse('$_baseUrl/profissional/login');

@@ -1,4 +1,6 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:blurt/controller/provider_controller.dart';
+import 'package:blurt/features/autenticacao/presentation/pages/login_usuario_screen.dart';
 import 'package:blurt/screens/atendimentos_profissional.dart';
 import 'package:blurt/screens/dashboard_profissional.dart';
 import 'package:blurt/screens/perfil_profissional.dart';
@@ -13,7 +15,9 @@ import 'screens/initial_screen.dart';
 import 'package:blurt/screens/dashboard_usuario.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+
+void main()async {
+  await dotenv.load();
   runApp(
     ChangeNotifierProvider(
       create: (_) => ProviderController(),

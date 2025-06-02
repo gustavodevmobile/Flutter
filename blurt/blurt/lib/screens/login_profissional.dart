@@ -167,26 +167,26 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                     FocusScope.of(context).unfocus();
                                     if (_formKey.currentState!.validate()) {
                                       setState(() => _loading = true);
-                                      await LoginController().loginProfissional(
-                                        _cpfController.text,
-                                        _passwordController.text,
-                                        (onSuccess) {
-                                          print('Login bem-sucedido: $onSuccess');
-                                          Provider.of<ProviderController>(
-                                                  context,
-                                                  listen: false)
-                                              .setProfissional(onSuccess);
-                                          setState(() {
-                                            _loading = false;
-                                            _showSelfieField = true;
-                                          });
-                                        },
-                                        (error) {
-                                          setState(() => _loading = false);
-                                          showSnackBar(context, error,
-                                              backgroundColor: Colors.red);
-                                        },
-                                      );
+                                      // await LoginController().loginProfissional(
+                                      //   _cpfController.text,
+                                      //   _passwordController.text,
+                                      //   (onSuccess) {
+                                      //     print('Login bem-sucedido: $onSuccess');
+                                      //     Provider.of<ProviderController>(
+                                      //             context,
+                                      //             listen: false)
+                                      //         .setProfissional(onSuccess);
+                                      //     setState(() {
+                                      //       _loading = false;
+                                      //       _showSelfieField = true;
+                                      //     });
+                                      //   },
+                                      //   (error) {
+                                      //     setState(() => _loading = false);
+                                      //     showSnackBar(context, error,
+                                      //         backgroundColor: Colors.red);
+                                      //   },
+                                      // );
                                     }
                                   },
                             child: _loading

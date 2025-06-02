@@ -1,6 +1,7 @@
 // Importações necessárias para funcionamento do cadastro e seleção de imagem
 import 'dart:convert';
 import 'dart:io';
+import 'package:blurt/core/utils/validators.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/background.dart';
 import 'package:flutter/material.dart';
@@ -343,12 +344,10 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             if (value == null || value.isEmpty) {
                               return 'CPF obrigatório';
                             }
-                            final cpfRegex = RegExp(
-                                r'^([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{11})$');
-                            if (!cpfRegex.hasMatch(value)) {
+                            final cpfValidator = Validators.isCpf(value);
+                            if (!cpfValidator) {
                               return 'CPF inválido';
                             }
-                            return null;
                           },
                           keyboardType: TextInputType.number,
                         ),
