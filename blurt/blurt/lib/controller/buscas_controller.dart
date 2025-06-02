@@ -13,6 +13,7 @@ class BuscasController {
       Response response = await _apiService.getProfissionalOnline();
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
+        print('Profissionais online: $result');
         profissionais(
           (result as List).map((e) => Professional.fromJson(e)).toList(),
         );

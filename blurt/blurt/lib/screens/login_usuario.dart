@@ -1,5 +1,6 @@
 import 'package:blurt/controller/buscas_controller.dart';
 import 'package:blurt/controller/provider_controller.dart';
+import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/controller/login_controller.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +21,6 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFF7AB0A3); // cor do tema
-    final blueColor = const Color(0xFF4F8FCB); // azul suave
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Usuário'),
@@ -40,7 +39,7 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomRight,
-            colors: [themeColor, blueColor],
+            colors: [AppThemes.secondaryColor, AppThemes.primaryColor],
           ),
         ),
         child: Center(
@@ -71,7 +70,7 @@ class _LoginUsuarioScreenState extends State<LoginUsuarioScreen> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: themeColor,
+                            color: AppThemes.secondaryColor,
                           ),
                         ),
                         const SizedBox(height: 24),

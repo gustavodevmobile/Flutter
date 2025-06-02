@@ -171,6 +171,7 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
                                         _cpfController.text,
                                         _passwordController.text,
                                         (onSuccess) {
+                                          print('Login bem-sucedido: $onSuccess');
                                           Provider.of<ProviderController>(
                                                   context,
                                                   listen: false)

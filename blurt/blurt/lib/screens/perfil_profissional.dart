@@ -48,87 +48,155 @@ class PerfilProfissionalScreen extends StatelessWidget {
                         fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ),
+                value.profissional?.tipoProfissional == 'Psicólogo'
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Text('CRP: ${value.profissional!.crp}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 const SizedBox(height: 16),
-                if (value.profissional!.abordagemPrincipal != null)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Abordagem Principal:',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      Text(value.profissional!.abordagemPrincipal!,
-                          style: const TextStyle(fontSize: 16)),
-                      const SizedBox(height: 12),
-                    ],
-                  ),
-                const SizedBox(height: 16),
-                if (value.profissional!.abordagensUtilizadas != null &&
-                    value.profissional!.abordagensUtilizadas!.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Abordagens Utilizadas:',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      Wrap(
-                        spacing: 8,
-                        children: value.profissional!.abordagensUtilizadas!
-                            .map((abord) => Chip(label: Text(abord)))
-                            .toList(),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                  ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Especialização Principal:',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    value.profissional?.especialidadePrincipal != null
-                        // &&
-                        //         value.profissional!.especialidadePrincipal!.isNotEmpty
-                        ? Text(
-                            value.profissional!.especialidadePrincipal!,
-                            style: const TextStyle(fontSize: 16),
-                          )
-                        : Text(
-                            'Nenhuma especialização informada',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                    const SizedBox(height: 12),
-                  ],
+                Text(
+                  'Biografia:',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                if (value.profissional!.temasClinicos!.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Temas Clínicos:',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      Wrap(
-                        spacing: 8,
-                        children: value.profissional!.temasClinicos!
-                            .map((tema) => Chip(label: Text(tema)))
-                            .toList(),
+                const SizedBox(height: 4),
+                if (value.profissional!.bio != null &&
+                    value.profissional!.bio!.isNotEmpty)
+                  Text(
+                    value.profissional!.bio!,
+                    style: const TextStyle(fontSize: 16),
+                  )
+                else
+                  const Text(
+                    'Nenhuma biografia informada',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                const SizedBox(height: 16),
+                value.profissional!.tipoProfissional == 'Psicóloga' ||
+                        value.profissional!.tipoProfissional == 'Psicólogo'
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (value.profissional!.abordagemPrincipal != null)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Abordagem Principal:',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                Text(value.profissional!.abordagemPrincipal!,
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(height: 12),
+                              ],
+                            ),
+                          //const SizedBox(height: 12),
+                          if (value.profissional!.abordagensUtilizadas !=
+                                  null &&
+                              value.profissional!.abordagensUtilizadas!
+                                  .isNotEmpty)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Abordagens Utilizadas:',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                Wrap(
+                                  spacing: 8,
+                                  children: value
+                                      .profissional!.abordagensUtilizadas!
+                                      .map((abord) => Chip(label: Text(abord)))
+                                      .toList(),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Especialização Principal:',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 4),
+                              value.profissional?.especialidadePrincipal !=
+                                          null &&
+                                      value.profissional!
+                                          .especialidadePrincipal!.isNotEmpty
+                                  ? Text(
+                                      value.profissional!
+                                          .especialidadePrincipal!,
+                                      style: const TextStyle(fontSize: 16),
+                                    )
+                                  : Text(
+                                      'Nenhuma especialização informada',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                              const SizedBox(height: 12),
+                            ],
+                          ),
+                          if (value.profissional!.temasClinicos!.isNotEmpty)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Temas Clínicos:',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                Wrap(
+                                  spacing: 8,
+                                  children: value.profissional!.temasClinicos!
+                                      .map((tema) => Chip(label: Text(tema)))
+                                      .toList(),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                            ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Text('Abodagem pricipal:',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
+                          Text('Psicanalista',
+                              style: const TextStyle(fontSize: 16)),
+                          const SizedBox(height: 16),
+                          Center(
+                            child: Card(
+                              color: Colors.amber[100],
+                              margin: const EdgeInsets.symmetric(vertical: 16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    const Text(
+                                      'Profissional formado em Psicanálise',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      'Atenção: Psicanalistas não são Psicólogos. '
+                                      'Seus métodos clínicos são baseados na Psicanálise, '
+                                      'que possui abordagem, formação e regulamentação diferentes da Psicologia.',
+                                      style: TextStyle(fontSize: 14),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                    ],
-                  ),
-                if (value.profissional!.tipoProfissional == 'Psicólogo')
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text('CRP: ${value.profissional!.crp ?? '---'}',
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                if (value.profissional!.tipoProfissional == 'Psicanalista')
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: TextButton(
-                      onPressed: () {},
-                      child: const Text('Profissional Psicanalista'),
-                    ),
-                  ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(

@@ -84,13 +84,15 @@ class LoginController {
               .map((e) => capitalize(e.toString()))
               .toList();
         }
+        print('Profissional: ${result['nome']}');
 
         onSuccess(Professional.fromJson(result));
       } else {
-        onError('Erro ao fazer login: ${response.body}');
+        onError('Erro ao fazer login do profissional: ${response.body}');
       }
     } catch (e) {
-      onError('Erro ao fazer login: $e');
+      print('Erro ao fazer login do profissional: $e');
+      onError('Erro ao fazer login do profissional: $e');
     }
   }
 

@@ -36,18 +36,19 @@ class _DashboardProfissionalScreenState
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: IconButton(
-              onPressed: () async {
-                await LoginController()
-                    .logoutProfissional(value.profissional!.id!, (onSuccess) {
-                  AppThemes.showSnackBar(context, onSuccess,
-                      backgroundColor: Colors.green);
-                  Provider.of<ProviderController>(context, listen: false)
-                      .clearProfissional();
-                  Navigator.pop(context);
-                }, (onError) {
-                  AppThemes.showSnackBar(context, onError,
-                      backgroundColor: Colors.red);
-                });
+              onPressed: () {
+                // await LoginController()
+                //     .logoutProfissional(value.profissional!.id!, (onSuccess) {
+                //   AppThemes.showSnackBar(context, onSuccess,
+                //       backgroundColor: Colors.green);
+                //   Provider.of<ProviderController>(context, listen: false)
+                //       .clearProfissional();
+                //   Navigator.pop(context);
+                // }, (onError) {
+                //   AppThemes.showSnackBar(context, onError,
+                //       backgroundColor: Colors.red);
+                // });
+                Navigator.pop(context);
               },
               icon: Icon(Icons.arrow_back_ios)),
         ),
@@ -59,9 +60,8 @@ class _DashboardProfissionalScreenState
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xFF7AB0A3),
-                Color(0xFF4F8FCB), // Azul claro
-                // Verde água
+                AppThemes.secondaryColor,
+                AppThemes.primaryColor,
               ],
             ),
           ),

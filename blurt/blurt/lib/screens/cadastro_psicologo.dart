@@ -48,7 +48,8 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   final TextEditingController _tipoContaController = TextEditingController();
   final List<Especialidade> _especialidades = [];
   final List<TemasClinicos> _temas = [];
-  List<Abordagem> _abordagens = [];
+  List<Abordagem> _abordagem = [];
+  List<Abordagem> _abordagensUtilizadas = [];
   //List<Abordagem> _abordagemPrincipalSelecionada = [];
   List<Abordagem> _abordagensUtilizadasSelecionada = [];
   List<TemasClinicos> _temasClinicos = [];
@@ -81,29 +82,6 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
   File? _certificadoEspecialidadePrincipal;
   File? _certificadoOutraEspecialidade;
 
-  // Exibe um SnackBar para feedback ao usuário
-
-  // Função para selecionar imagem da galeria ou câmera
-  // Future<void> _pickImageProfile(ImageSource source) async {
-  //   final pickedFile =
-  //       await _picker.pickImage(source: source, imageQuality: 80);
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _selectedImage = File(pickedFile.path);
-  //     });
-  //   }
-  // }
-
-  // Future<void> _pickImageDoc(ImageSource source) async {
-  //   final pickedFile =
-  //       await _picker.pickImage(source: source, imageQuality: 80);
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _selectedImageDoc = File(pickedFile.path);
-  //     });
-  //   }
-  // }
-
   Future<void> _pickImage(ImageSource source, String tipo) async {
     final pickedFile =
         await _picker.pickImage(source: source, imageQuality: 80);
@@ -119,16 +97,6 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
       });
     }
   }
-
-  // Future<void> _pickImageSelfie(ImageSource source) async {
-  //   final pickedFile =
-  //       await _picker.pickImage(source: source, imageQuality: 80);
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _selectedImageSelfieComDoc = File(pickedFile.path);
-  //     });
-  //   }
-  // }
 
   // Função para selecionar certificado
   Future<void> _pickCertificadoEspecialidadePrincipal() async {
@@ -148,14 +116,19 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
 
   Future<void> _carregarAbordagensEspecialidades() async {
     try {
-      final abordagens =
+      final abordagem =
           await _abordagemEspecialidadeController.buscarAbordagemPrincipal();
+      final abordagensUtilizadas =
+          await _abordagemEspecialidadeController.buscarAbordagensUtilizadas();
       final especialidades = await _abordagemEspecialidadeController
           .buscarEspecialidadePrincipal();
       final temasClinicos =
           await _abordagemEspecialidadeController.buscarTemasClinicos();
       setState(() {
-        _abordagens = abordagens
+        _abordagem = abordagem
+            .map((a) => Abordagem(id: a.id, nome: AppThemes.capitalize(a.nome)))
+            .toList();
+        _abordagensUtilizadas = abordagensUtilizadas
             .map((a) => Abordagem(id: a.id, nome: AppThemes.capitalize(a.nome)))
             .toList();
         _especialidadesDisponiveis = especialidades
@@ -168,9 +141,10 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
             .toList();
       });
     } catch (e) {
+      print('Erro ao carregar abordagens/especialidades: $e');
       if (mounted) {
         AppThemes.showSnackBar(
-            context, 'Erro ao carregar abordagens/especialidades',
+            context, 'Erro ao carregar abordagens/especialidades: $e',
             backgroundColor: Colors.red);
       }
     }
@@ -443,7 +417,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                               labelText: 'Abordagem Principal*',
                               prefixIcon: Icon(Icons.psychology_alt_outlined),
                             ),
-                            items: _abordagens
+                            items: _abordagem
                                 .map((abord) => DropdownMenuItem(
                                       value: abord,
                                       child: Text(abord.nome),
@@ -501,7 +475,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                             await showMultiSelectDialog<Abordagem>(
                               context: context,
                               title: 'Selecione as abordagens utilizadas',
-                              items: _abordagens,
+                              items: _abordagensUtilizadas,
                               selectedItems: _abordagensUtilizadasSelecionada,
                               itemLabel: (t) => t.nome,
                               onConfirm: (selecionados) {
@@ -642,7 +616,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                   value: _especialidadeSelecionada,
                                   isExpanded: true,
                                   decoration: InputDecoration(
-                                    labelText: 'Especialidade Principal*',
+                                    labelText: 'Especialidade Principal',
                                     prefixIcon:
                                         Icon(Icons.psychology_alt_outlined),
                                   ),
@@ -700,7 +674,7 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                   controller:
                                       _novaEspecialidadePrincipalController,
                                   decoration: const InputDecoration(
-                                    labelText: 'Nova abordagem',
+                                    labelText: 'Nova especialidade principal',
                                     prefixIcon: Icon(
                                       Icons.psychology_alt_outlined,
                                     ),
@@ -1066,7 +1040,6 @@ class _PsicologoFormScreenState extends State<PsicologoFormScreen> {
                                         }
 
                                         // 1. Cadastro da abordagens utilizadas
-
                                         List<String> abordagensUtilizadasIds =
                                             [];
                                         if (_novaAbordagemUtilizadaController

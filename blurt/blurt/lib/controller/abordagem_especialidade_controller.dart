@@ -17,7 +17,7 @@ class AbordagemEspecialidadeTemasController {
       }
       return abordagens;
     } else {
-      throw Exception('Erro ao buscar abordagens');
+      throw Exception('Erro ao buscar abordagem principal');
     }
   }
 
@@ -32,7 +32,7 @@ class AbordagemEspecialidadeTemasController {
       }
       return abordagens;
     } else {
-      throw Exception('Erro ao buscar abordagens');
+      throw Exception('Erro ao buscar abordagens utilizadas');
     }
   }
 
@@ -51,22 +51,7 @@ class AbordagemEspecialidadeTemasController {
     }
   }
 
-  Future<List<Especialidade>> buscarEspecialidadeOutras() async {
-    final response = await _apiService.getEspecialidadeOutras();
-    List<Especialidade> especialidades = [];
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      for (var item in data) {
-        final esp = Especialidade.fromJson(item);
-        especialidades.add(esp);
-      }
-      return especialidades;
-    } else {
-      throw Exception('Erro ao buscar especialidades');
-    }
-  }
-
-   Future<List<TemasClinicos>> buscarTemasClinicos() async {
+  Future<List<TemasClinicos>> buscarTemasClinicos() async {
     final response = await _apiService.getTemasClinicos();
     List<TemasClinicos> temasClinicos = [];
     if (response.statusCode == 200) {
@@ -80,6 +65,4 @@ class AbordagemEspecialidadeTemasController {
       throw Exception('Erro ao buscar especialidades');
     }
   }
-
-
 }
