@@ -1,7 +1,4 @@
-import 'package:blurt/controller/buscas_controller.dart';
-import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/features/autenticacao/presentation/widgets/login_form_usuario.dart';
-import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';

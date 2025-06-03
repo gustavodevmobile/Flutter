@@ -17,11 +17,6 @@ void main() async {
       child: const MyApp(),
     ),
   );
-
-  //StorageSqflite().resetDatabase();
-  //StorageSqflite().getQuestions(StorageSqflite.tableQuestionsCorrects, (result) {});
-  //StorageSqflite().getQuestions(StorageSqflite.tableQuestionsIncorrects, (result) {});
-  //StorageSqflite().deleteQuestion('223');
 }
 
 class MyApp extends StatelessWidget {

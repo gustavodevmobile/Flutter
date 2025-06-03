@@ -1,4 +1,4 @@
-import '../../../../shared/profissinal/profissional.dart';
+import '../../../../shared/profissional/profissional.dart';
 import '../repositories/login_profissional_repository.dart';
 
 class LoginProfissionalUseCase {

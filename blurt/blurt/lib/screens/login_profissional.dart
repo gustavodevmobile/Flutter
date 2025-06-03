@@ -24,7 +24,7 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
-  bool _showSelfieField = false;
+  final bool _showSelfieField = false;
   File? _selfieImage;
   String? _selfieBase64;
   final ImagePicker _picker = ImagePicker();

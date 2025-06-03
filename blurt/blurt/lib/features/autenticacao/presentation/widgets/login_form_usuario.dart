@@ -1,8 +1,13 @@
 import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
+import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
+
+import '../../../../models/professional.dart';
+
 
 class LoginFormUsuario extends StatefulWidget {
   const LoginFormUsuario({super.key});
@@ -18,8 +23,9 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginUsuarioController>(
-      builder: (context, controller, child) {
+    return Consumer3<LoginUsuarioController, ProfissionaisOnlineController, ProviderController>(
+      builder:
+          (context, controllerUsuario, controllerProfissionaisOnline, providerController, child) {
         return Form(
           key: _formKey,
           child: Column(
@@ -86,21 +92,27 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                     ),
                     textStyle: const TextStyle(fontSize: 18),
                   ),
-                  onPressed: controller.loading
+                  onPressed: controllerUsuario.loading
                       ? null
                       : () async {
                           FocusScope.of(context).unfocus();
                           try {
-                            final usuario = await controller.login(
+                            final usuario = await controllerUsuario.login(
                               context: context,
                               email: _emailController.text,
                               senha: _passwordController.text,
                               formKey: _formKey,
                             );
+
+                            final profissionaisOnline = await controllerProfissionaisOnline
+                                .buscarProfissionaisOnline();
+                            // Convert List<Profissional> to List<Professional>
+                            providerController.setProfissionaisOnline(profissionaisOnline);
+
                             if (usuario != null) {
                               if (context.mounted) {
                                 Navigator.pushNamed(
-                                    context, '/dashboard_usuario');
+                                    context, '/dashboard_usuario',);
                               }
                             }
                           } catch (e) {
@@ -112,7 +124,7 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                             }
                           }
                         },
-                  child: controller.loading
+                  child: controllerUsuario.loading
                       ? const SizedBox(
                           width: 24,
                           height: 24,
@@ -126,7 +138,7 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: controller.loading
+                onPressed: controllerUsuario.loading
                     ? null
                     : () {
                         Navigator.pushNamed(context, '/cadastro_usuario');

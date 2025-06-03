@@ -1,16 +1,16 @@
-// // Implementação do repositório de cadastro
-// import '../../domain/entities/profissional.dart';
-// import '../../domain/repositories/cadastro_repository.dart';
-// import '../datasources/cadastro_remote_datasource.dart';
-// import '../models/profissional_model.dart';
 
-// class CadastroRepositoryImpl implements CadastroRepository {
-//   final CadastroRemoteDatasource datasource;
-//   CadastroRepositoryImpl(this.datasource);
+import 'package:blurt/features/cadastro/data/datasources/profissional/cadastro_profissional_datasource_impl.dart';
+import 'package:blurt/features/cadastro/domain/repositories/cadastro_Profissional_repository.dart';
+import 'package:blurt/shared/profissional/profissional.dart';
+import 'package:blurt/shared/profissional/profissional_model.dart';
 
-//   @override
-//   Future<Profissional> cadastrar(Map<String, dynamic> data) async {
-//     final model = await datasource.cadastrar(data);
-//     return ProfissionalModel.fromJson(model);
-//   }
-// }
+class CadastroProfissionalRepositoryImpl implements CadastroProfissionalRepository {
+  final CadastroProfissionalDatasourceImpl datasource;
+  CadastroProfissionalRepositoryImpl(this.datasource);
+
+  @override
+  Future<Profissional> cadastrarProfissional(Map<String, dynamic> data) async {
+    final model = await datasource.cadastrarProfissional(data);
+    return ProfissionalModel.fromJson(model);
+  }
+}

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/models/professional.dart';
+import 'package:blurt/provider/provider_controller.dart';
+import 'package:blurt/shared/profissional/profissional.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter/material.dart';
@@ -301,7 +303,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
 }
 
 class CardProdissional extends StatelessWidget {
-  final List<Professional> profOnline;
+  final List<Profissional> profOnline;
   final Axis scrollDirection;
   final double? itemHeight;
   const CardProdissional(
