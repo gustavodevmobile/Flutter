@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,17 @@ class _DashboardProfissionalScreenState
   bool online = false;
   bool plantao = true;
   String? fotoPerfil;
+  MemoryImage? _fotoCache;
+  String? _fotoBase64Cache;
   @override
   Widget build(BuildContext context) {
+    final fotoBase64 =
+        context.watch<LoginProfissionalController>().profissional?.foto;
+    // Atualiza o cache só se a imagem mudou
+    if (fotoBase64 != null && fotoBase64 != _fotoBase64Cache) {
+      _fotoCache = MemoryImage(base64Decode(fotoBase64));
+      _fotoBase64Cache = fotoBase64;
+    }
     // Dados mockados para exemplo
     final int numeroAtendimentos = 42;
     final double ganhosEstimados = 3200.50;
@@ -28,10 +38,11 @@ class _DashboardProfissionalScreenState
     final int recibosEmitidos = 25;
     final double extratoGanhos = 2950.00;
 
-    return Consumer<ProviderController>(builder: (context, value, child) {
+    return Consumer2<LoginProfissionalController, ProviderController>(
+        builder: (context, controllerLogin, globalProvider, child) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Olá, ${value.profissional?.nome ?? ''}'),
+          title: Text('Olá, ${controllerLogin.profissional?.nome ?? ''}'),
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: IconButton(
@@ -72,19 +83,17 @@ class _DashboardProfissionalScreenState
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                       //const SizedBox(width: 1),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CircleAvatar(
                               radius: 48,
                               backgroundColor: Theme.of(context).primaryColor,
-                              backgroundImage: value.profissional?.foto != null
-                                  ? MemoryImage(
-                                      base64Decode(value.profissional!.foto))
-                                  : null,
-                              child: value.profissional?.foto == null
+                              backgroundImage: _fotoCache,
+                              child: fotoBase64 == null
                                   ? const Icon(Icons.person, size: 48)
                                   : null,
                             ),
@@ -137,8 +146,9 @@ class _DashboardProfissionalScreenState
                                             ? Colors.white
                                             : Colors.black)),
                                 Switch(
-                                  value: plantao,
-                                  onChanged: (v) => setState(() => plantao = v),
+                                  value: globalProvider.online,
+                                  onChanged: (v) =>
+                                      globalProvider.setOnline(v),
                                 ),
                               ],
                             ),
@@ -152,14 +162,14 @@ class _DashboardProfissionalScreenState
                                     size: 16),
                                 const SizedBox(width: 6),
                                 Text(
-                                    online ? 'Atender Agora' : 'Não disponível',
+                                    online ? 'Atender plantão' : 'Não atender plantão',
                                     style: TextStyle(
                                         color: online
                                             ? Colors.white
                                             : Colors.black)),
                                 Switch(
-                                  value: online,
-                                  onChanged: (v) => setState(() => online = v),
+                                  value: globalProvider.plantao,
+                                  onChanged: (v) => globalProvider.setPlantao(v),
                                 ),
                               ],
                             ),

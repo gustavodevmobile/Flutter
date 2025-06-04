@@ -28,7 +28,7 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
   final respostas = RespostasPreAnalise();
   final textStylePergunta =
       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
-  final textStyleOpcao = const TextStyle(fontSize: 16);
+  //final textStyleOpcao = const TextStyle(fontSize: 16);
   final corPrimaria = Theme.of(context).colorScheme.primary;
   final corSecundaria = Theme.of(context).colorScheme.secondary;
   final radius = BorderRadius.circular(16);

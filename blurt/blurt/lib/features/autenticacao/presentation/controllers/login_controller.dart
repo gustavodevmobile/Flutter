@@ -28,7 +28,7 @@ class LoginUsuarioController extends ChangeNotifier {
       final usuario = await loginUsuarioUseCase(email, senha);
       // Aqui você pode salvar o usuário no Provider, navegar, etc.
       setLoading(false);
-      print('Usuário logado: ${usuario}');
+      print('Usuário logado: $usuario');
       return usuario;
     } catch (e) {
       setLoading(false);

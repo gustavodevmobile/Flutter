@@ -60,7 +60,7 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
 
   List<AbordagensUtilizadas> _abordagensUtilizadasSelecionada = [];
   //List<TemasClinicos> _temasClinicos = [];
-  List<EspecialidadePrincipal> _especialidadesDisponiveis = [];
+  final List<EspecialidadePrincipal> _especialidadesDisponiveis = [];
   String? cnpj;
   String? _genero;
   AbordagemPrincipal? _abordagemSelecionada;

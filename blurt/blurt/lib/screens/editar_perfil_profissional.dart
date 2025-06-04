@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class _EditarPerfilProfissionalScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProviderController>(builder: (context, value, child) {
+    return Consumer<LoginProfissionalController>(builder: (context, controllerLogin, child) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Perfil Profissional'),
@@ -95,11 +96,11 @@ class _EditarPerfilProfissionalScreenState
                       CircleAvatar(
                         radius: 48,
                         backgroundColor: Theme.of(context).primaryColor,
-                        backgroundImage: value.profissional?.foto != null
+                        backgroundImage: controllerLogin.profissional?.foto != null
                             ? MemoryImage(
-                                base64Decode(value.profissional!.foto))
+                                base64Decode(controllerLogin.profissional!.foto))
                             : null,
-                        child: value.profissional?.foto == null
+                        child: controllerLogin.profissional?.foto == null
                             ? const Icon(Icons.person, size: 48)
                             : null,
                       ),
@@ -120,8 +121,8 @@ class _EditarPerfilProfissionalScreenState
                 Align(
                     alignment: Alignment.center, child: Text('Dados Pessoais')),
                 const SizedBox(height: 4.0),
-                _buildInfoRow('Nome', value.profissional?.nome ?? '', null),
-                _buildInfoRow('E-mail', value.profissional?.email ?? '', null),
+                _buildInfoRow('Nome', controllerLogin.profissional?.nome ?? '', null),
+                _buildInfoRow('E-mail', controllerLogin.profissional?.email ?? '', null),
                 _buildEditableRow(
                     'Senha',
                     editandoSenha,
@@ -131,7 +132,7 @@ class _EditarPerfilProfissionalScreenState
                         : const Text('********')),
                 _buildEditableRow(
                     'Biografia',
-                    value.profissional?.bio != null,
+                    controllerLogin.profissional?.bio != null,
                     () => setState(() => editandoBio = !editandoBio),
                     editandoBio
                         ? _buildTextField('Biografia', _bioController,
@@ -139,7 +140,7 @@ class _EditarPerfilProfissionalScreenState
                         : Text(_bioController.text.isEmpty
                             ? 'Não informada'
                             : _bioController.text)),
-                _buildInfoRow('CPF', value.profissional?.cpf ?? '', null),
+                _buildInfoRow('CPF', controllerLogin.profissional?.cpf ?? '', null),
                 _buildEditableRow(
                     'CNPJ',
                     editandoCnpj,
@@ -150,10 +151,10 @@ class _EditarPerfilProfissionalScreenState
                             ? 'Não informado'
                             : _cnpjController.text)),
                 _buildInfoRow(
-                    'CRP', value.profissional?.crp ?? 'Não infomado', null),
+                    'CRP', controllerLogin.profissional?.crp ?? 'Não infomado', null),
                 _buildInfoRow(
                     'Profissional',
-                    value.profissional?.tipoProfissional ?? 'Não informado',
+                    controllerLogin.profissional?.tipoProfissional ?? 'Não informado',
                     null),
                 _buildEditableRow(
                   'Valor Consulta',
@@ -164,11 +165,11 @@ class _EditarPerfilProfissionalScreenState
                       ? _buildTextField(
                           'Valor Consulta', _valorConsultaController,
                           keyboardType: TextInputType.number)
-                      : Text(value.profissional?.valorConsulta.toString() ??
+                      : Text(controllerLogin.profissional?.valorConsulta.toString() ??
                           'Não informado'),
                 ),
                 _buildInfoRow('Gênero',
-                    value.profissional?.genero ?? 'Não informado', null),
+                    controllerLogin.profissional?.genero ?? 'Não informado', null),
                 Divider(
                   color: Colors.white,
                   thickness: 1,
@@ -180,7 +181,7 @@ class _EditarPerfilProfissionalScreenState
                 ),
                 _buildInfoRow(
                     'Abordagem principal',
-                    value.profissional?.abordagemPrincipal ?? 'Não informada',
+                    controllerLogin.profissional?.abordagemPrincipal ?? 'Não informada',
                     null),
                 _buildEditableRow(
                   'Abordagens utilizadas',
@@ -190,21 +191,21 @@ class _EditarPerfilProfissionalScreenState
                   editandoAbordagensUtilizadas
                       ? _buildMultiSelectField(
                           'Temas clínicos',
-                          value.profissional?.abordagensUtilizadas ??
+                          controllerLogin.profissional?.abordagensUtilizadas ??
                               ['Não informados'],
                           (list) => setState(() => temasClinicos = list))
                       : Text(
-                          (value.profissional?.abordagensUtilizadas == null ||
-                                  value.profissional!.abordagensUtilizadas!
+                          (controllerLogin.profissional?.abordagensUtilizadas == null ||
+                                  controllerLogin.profissional!.abordagensUtilizadas!
                                       .isEmpty)
                               ? 'Não informados'
-                              : value.profissional!.abordagensUtilizadas!
+                              : controllerLogin.profissional!.abordagensUtilizadas!
                                   .join(', '),
                         ),
                 ),
                 _buildInfoRow(
                     'Especialidade principal',
-                    value.profissional?.especialidadePrincipal ??
+                    controllerLogin.profissional?.especialidadePrincipal ??
                         'Não informada',
                     null),
                 _buildEditableRow(
@@ -215,14 +216,14 @@ class _EditarPerfilProfissionalScreenState
                   editandoTemasClinicos
                       ? _buildMultiSelectField(
                           'Temas clínicos',
-                          value.profissional?.temasClinicos ??
+                          controllerLogin.profissional?.temasClinicos ??
                               ['Não informados'],
                           (list) => setState(() => temasClinicos = list))
                       : Text(
-                          (value.profissional?.temasClinicos == null ||
-                                  value.profissional!.temasClinicos!.isEmpty)
+                          (controllerLogin.profissional?.temasClinicos == null ||
+                                  controllerLogin.profissional!.temasClinicos!.isEmpty)
                               ? 'Não informados'
-                              : value.profissional!.temasClinicos!.join(', '),
+                              : controllerLogin.profissional!.temasClinicos!.join(', '),
                         ),
                 ),
                 Divider(

@@ -1,4 +1,3 @@
-import 'package:blurt/models/profissional/profissional_model.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/features/cadastro/domain/usecases/cadastrar_profissional_usecase.dart';
 import 'package:blurt/models/profissional/profissional.dart';

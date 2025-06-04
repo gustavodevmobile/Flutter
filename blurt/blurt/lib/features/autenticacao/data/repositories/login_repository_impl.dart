@@ -1,6 +1,6 @@
 import '../../../../models/usuario/usuario.dart';
 import '../../domain/repositories/login_repository.dart';
-import '../datasources/login_remote_datasource.dart';
+import '../datasources/usuario/login_remote_datasource.dart';
 import '../../../../models/usuario/usuario_model.dart';
 
 class LoginRepositoryImpl implements LoginRepository {

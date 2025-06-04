@@ -2,10 +2,15 @@ import 'package:blurt/features/abordagem_principal/data/abordagem_principal_data
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:blurt/features/abordagens_utilizadas/data/abordagens_utilizadas_datasource.dart';
 import 'package:blurt/features/abordagens_utilizadas/presentation/abordagens_utilizadas_controller.dart';
-import 'package:blurt/features/autenticacao/data/datasources/login_remote_datasource_impl.dart';
+import 'package:blurt/features/autenticacao/data/datasources/profissional/login_profissional_remote_datasource_impl.dart';
+import 'package:blurt/features/autenticacao/data/datasources/usuario/login_remote_datasource_impl.dart';
+import 'package:blurt/features/autenticacao/data/repositories/login_profissional_repository_impl.dart';
 import 'package:blurt/features/autenticacao/data/repositories/login_repository_impl.dart';
+import 'package:blurt/features/autenticacao/domain/usecases/login_profissional_usecase.dart';
 import 'package:blurt/features/autenticacao/domain/usecases/login_usuario_usecase.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
+import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
+import 'package:blurt/features/autenticacao/presentation/pages/login_profissional_screen.dart';
 import 'package:blurt/features/cadastro/data/datasources/profissional/cadastro_profissional_datasource_impl.dart';
 import 'package:blurt/features/cadastro/data/datasources/usuario/cadastro_usuario_datasource_impl.dart';
 import 'package:blurt/features/cadastro/data/repositories/cadastro_profissional_repository_impl.dart';
@@ -16,7 +21,6 @@ import 'package:blurt/features/cadastro/presentation/controllers/cadastro_profis
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuario_controller.dart';
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_profissional_screen.dart';
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_usuario_screen.dart';
-import 'package:blurt/features/cadastro/presentation/widgets/cadastro_usuario_form.dart';
 import 'package:blurt/features/especialidade_principal/data/especialidade_principal_datasource.dart';
 import 'package:blurt/features/especialidade_principal/presentation/especialidade_principal_controller.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
@@ -96,6 +100,13 @@ void main() async {
             ),
           ),
         ),
+        ChangeNotifierProvider(create: (_)=> LoginProfissionalController(
+          LoginProfissionalUseCase(
+            LoginProfissionalRepositoryImpl(
+              LoginProfissionalRemoteDatasourceImpl(http.Client()),
+            ),
+          ),
+        )),
 
         // Adicione outros providers globais aqui
       ],

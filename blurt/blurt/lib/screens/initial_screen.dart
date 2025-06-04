@@ -1,6 +1,4 @@
-import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});

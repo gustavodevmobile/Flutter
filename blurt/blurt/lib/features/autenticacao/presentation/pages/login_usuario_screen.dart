@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 import 'package:blurt/features/autenticacao/domain/usecases/login_usuario_usecase.dart';
 import 'package:blurt/features/autenticacao/data/repositories/login_repository_impl.dart';
-import 'package:blurt/features/autenticacao/data/datasources/login_remote_datasource_impl.dart';
+import 'package:blurt/features/autenticacao/data/datasources/usuario/login_remote_datasource_impl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
