@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:blurt/features/profissionais_online/domain/usecases/profissionais_online_usecases.dart';
-import 'package:blurt/shared/profissional/profissional.dart';
+import 'package:blurt/models/profissional/profissional.dart';
 
 class ProfissionaisOnlineController extends ChangeNotifier {
   final ProfissionaisOnlineUsecases usecase;

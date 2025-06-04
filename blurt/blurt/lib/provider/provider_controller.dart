@@ -1,7 +1,6 @@
-import 'package:blurt/models/usuario.dart';
-import 'package:blurt/shared/profissional/profissional.dart';
+import 'package:blurt/models/profissional/profissional.dart';
+import 'package:blurt/models/usuario/usuario.dart';
 import 'package:flutter/material.dart';
-import '../models/professional.dart';
 
 class ProviderController with ChangeNotifier {
   Profissional? profissional;

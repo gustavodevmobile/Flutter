@@ -16,6 +16,7 @@ class LoginRemoteDatasourceImpl implements LoginRemoteDatasource {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'senha': senha}),
     );
+    print('Response status: ${response.body}');
     final body = jsonDecode(response.body);
     if (response.statusCode == 200) {
       return body;

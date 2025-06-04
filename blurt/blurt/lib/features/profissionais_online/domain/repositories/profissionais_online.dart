@@ -1,4 +1,4 @@
-import 'package:blurt/shared/profissional/profissional.dart';
+import 'package:blurt/models/profissional/profissional.dart';
 
 abstract class ProfissionaisOnlineRepository {
   /// Obtém a lista de profissionais online.

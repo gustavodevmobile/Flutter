@@ -1,9 +1,6 @@
-import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:blurt/controller/login_controller.dart';
-import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';

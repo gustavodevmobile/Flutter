@@ -10,18 +10,17 @@ class CadastroProfissionalDatasourceImpl
 
   final apiUrl = dotenv.env['API_URL'];
   @override
-  Future<Map<String, dynamic>> cadastrarProfissional(
+  Future<String> cadastrarProfissional(
       Map<String, dynamic> data) async {
     final response = await client.post(
-      Uri.parse('$apiUrl/profissional/'),
+      Uri.parse('$apiUrl/profissional'),
       headers: {'Content-Type': 'application/json'},
-      body: data,
+      body: jsonEncode(data),
     );
-    final body = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      return body;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return response.body;
     } else {
-      throw (body['error'] ?? 'Erro ao fazer login');
+      throw response.body;
     }
   }
 }

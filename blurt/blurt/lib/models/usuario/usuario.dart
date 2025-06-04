@@ -1,0 +1,26 @@
+// Entidade de domínio para o usuário
+class Usuario {
+  final String? id;
+  final String nome;
+  final String email;
+  final String? telefone;
+  final String senha;
+  final String cpf;
+  final String genero;
+  final DateTime? createdAt;
+  final String? foto;
+  final DateTime? dataNascimento;
+
+  Usuario({
+    this.id,
+    required this.nome,
+    required this.email,
+    this.telefone,
+    required this.senha,
+    required this.cpf,
+    required this.genero,
+    this.createdAt,
+    this.foto,
+    this.dataNascimento,
+  });
+}

@@ -1,4 +1,5 @@
-import 'package:blurt/shared/profissional/profissional.dart';
-abstract class CadastroProfissionalRepository {
-  Future<Profissional> cadastrarProfissional(Map<String, dynamic> data);
+import 'package:blurt/models/profissional/profissional.dart';
+
+abstract class CadastroProfissionalRepositories {
+  Future<String> cadastrarProfissional(Profissional profissional);
 }

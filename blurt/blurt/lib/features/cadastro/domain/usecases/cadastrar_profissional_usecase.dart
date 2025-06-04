@@ -1,11 +1,12 @@
-import 'package:blurt/shared/profissional/profissional.dart';
-import '../repositories/cadastro_profissional_repository.dart';
+import 'package:blurt/features/cadastro/data/repositories/cadastro_profissional_repository_impl.dart';
+import 'package:blurt/models/profissional/profissional.dart';
 
 class CadastrarProfissionalUseCase {
-  final CadastroProfissionalRepository repository;
+  final CadastroProfissionalRepositoriesImpl repository;
   CadastrarProfissionalUseCase(this.repository);
 
-  Future<Profissional> call(Map<String, dynamic> data) {
-    return repository.cadastrarProfissional(data);
+  Future<String> call(Profissional profissional) async {
+    final prof = await repository.cadastrarProfissional(profissional);
+    return prof;
   }
 }

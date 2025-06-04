@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 
-import '../../../../models/professional.dart';
 
 
 class LoginFormUsuario extends StatefulWidget {

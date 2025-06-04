@@ -1,7 +1,7 @@
 import 'package:blurt/features/profissionais_online/data/datasources/profissionais_online_datasource.dart';
 import 'package:blurt/features/profissionais_online/domain/repositories/profissionais_online.dart';
-import 'package:blurt/shared/profissional/profissional_model.dart';
-import '../../../../shared/profissional/profissional.dart';
+import 'package:blurt/models/profissional/profissional_model.dart';
+import '../../../../models/profissional/profissional.dart';
 
 class ProfissionaisOnLineImpl implements ProfissionaisOnlineRepository {
   final ProfissionaisOnlineDatasoure datasource;

@@ -1,5 +1,5 @@
+import 'package:blurt/core/utils/background.dart';
 import 'package:blurt/features/autenticacao/presentation/widgets/login_form_usuario.dart';
-import 'package:blurt/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 import 'package:blurt/features/autenticacao/domain/usecases/login_usuario_usecase.dart';

@@ -1,7 +1,7 @@
-import '../../../../shared/profissional/profissional.dart';
+import '../../../../models/profissional/profissional.dart';
 import '../../domain/repositories/login_profissional_repository.dart';
 import '../datasources/login_profissional_remote_datasource.dart';
-import '../../../../shared/profissional/profissional_model.dart';
+import '../../../../models/profissional/profissional_model.dart';
 
 class LoginProfissionalRepositoryImpl implements LoginProfissionalRepository {
   final LoginProfissionalRemoteDatasource datasource;

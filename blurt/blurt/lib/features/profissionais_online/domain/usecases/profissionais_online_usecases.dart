@@ -1,6 +1,5 @@
 import 'package:blurt/features/profissionais_online/data/repositories/profissionais_online_impl.dart';
-import 'package:blurt/features/profissionais_online/domain/repositories/profissionais_online.dart';
-import 'package:blurt/shared/profissional/profissional.dart';
+import 'package:blurt/models/profissional/profissional.dart';
 
 class ProfissionaisOnlineUsecases {
   ProfissionaisOnLineImpl repository;

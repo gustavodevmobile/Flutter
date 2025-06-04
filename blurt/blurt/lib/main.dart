@@ -1,14 +1,30 @@
-import 'package:blurt/features/autenticacao/data/datasources/login_remote_datasource.dart';
+import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
+import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
+import 'package:blurt/features/abordagens_utilizadas/data/abordagens_utilizadas_datasource.dart';
+import 'package:blurt/features/abordagens_utilizadas/presentation/abordagens_utilizadas_controller.dart';
 import 'package:blurt/features/autenticacao/data/datasources/login_remote_datasource_impl.dart';
 import 'package:blurt/features/autenticacao/data/repositories/login_repository_impl.dart';
-import 'package:blurt/features/autenticacao/domain/repositories/login_repository.dart';
 import 'package:blurt/features/autenticacao/domain/usecases/login_usuario_usecase.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
+import 'package:blurt/features/cadastro/data/datasources/profissional/cadastro_profissional_datasource_impl.dart';
+import 'package:blurt/features/cadastro/data/datasources/usuario/cadastro_usuario_datasource_impl.dart';
+import 'package:blurt/features/cadastro/data/repositories/cadastro_profissional_repository_impl.dart';
+import 'package:blurt/features/cadastro/data/repositories/cadastro_usuario_repository_impl.dart';
+import 'package:blurt/features/cadastro/domain/usecases/cadastrar_profissional_usecase.dart';
+import 'package:blurt/features/cadastro/domain/usecases/cadastro_usuario_usecase.dart';
+import 'package:blurt/features/cadastro/presentation/controllers/cadastro_profissional_controller.dart';
+import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuario_controller.dart';
+import 'package:blurt/features/cadastro/presentation/pages/cadastro_profissional_screen.dart';
+import 'package:blurt/features/cadastro/presentation/pages/cadastro_usuario_screen.dart';
+import 'package:blurt/features/cadastro/presentation/widgets/cadastro_usuario_form.dart';
+import 'package:blurt/features/especialidade_principal/data/especialidade_principal_datasource.dart';
+import 'package:blurt/features/especialidade_principal/presentation/especialidade_principal_controller.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
 import 'package:blurt/features/profissionais_online/data/datasources/profissional_online_datasource_impl.dart';
 import 'package:blurt/features/profissionais_online/data/repositories/profissionais_online_impl.dart';
-import 'package:blurt/features/profissionais_online/domain/repositories/profissionais_online.dart';
 import 'package:blurt/features/profissionais_online/domain/usecases/profissionais_online_usecases.dart';
+import 'package:blurt/features/temas_clinicos/data/temas_clinicos_datasource.dart';
+import 'package:blurt/features/temas_clinicos/presentation/temas_clinicos_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:blurt/features/autenticacao/presentation/pages/login_usuario_screen.dart';
@@ -17,10 +33,7 @@ import 'package:blurt/screens/dashboard_profissional.dart';
 import 'package:blurt/screens/perfil_profissional.dart';
 import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
-import 'package:blurt/screens/cadastro_psicanalista.dart';
 import 'package:blurt/screens/login_profissional.dart';
-import 'package:blurt/screens/cadastro_usuario.dart';
-import 'package:blurt/screens/cadastro_psicologo.dart';
 import 'screens/initial_screen.dart';
 import 'package:blurt/screens/dashboard_usuario.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +64,39 @@ void main() async {
             ),
           ),
         ),
+        ChangeNotifierProvider(
+            create: (_) => AbordagemPrincipalController(
+                AbordagemPrincipalDatasource(http.Client()))),
+        ChangeNotifierProvider(
+            create: (_) => EspecialidadePrincipalController(
+                EspecialidadePrincipalDatasource(http.Client()))),
+        ChangeNotifierProvider(
+            create: (_) => TemasClinicosController(
+                TemasClinicosDatasource(http.Client()))),
+        ChangeNotifierProvider(
+          create: (_) => AbordagensUtilizadasController(
+            AbordagensUtilizadasDatasource(http.Client()),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CadastroProfissionalController(
+            CadastrarProfissionalUseCase(
+              CadastroProfissionalRepositoriesImpl(
+                CadastroProfissionalDatasourceImpl(http.Client()),
+              ),
+            ),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CadastroUsuarioController(
+            CadastrarUsuarioUseCase(
+              CadastroUsuarioRepositoriesImpl(
+                CadastroUsuarioDatasourceImpl(http.Client()),
+              ),
+            ),
+          ),
+        ),
+
         // Adicione outros providers globais aqui
       ],
       child: const MyApp(),
@@ -111,8 +157,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const InitialScreen(),
         '/login_usuario': (context) => const LoginUsuarioScreen(),
         '/login_profissional': (context) => const LoginProfissionalScreen(),
-        // '/cadastro_usuario': (context) => const UsuarioFormScreen(),
-        // '/cadastro_psicologo': (context) => const PsicologoFormScreen(),
+        '/cadastro_usuario': (context) => const UsuarioFormScreen(),
+        '/cadastro_psicologo': (context) => const CadastroPsicologoScreen(),
         // '/cadastro_psicanalista': (context) => const PsicanalistaFormScreen(),
         '/dashboard_usuario': (context) => const DashboardUsuarioScreen(),
         '/dashboard_profissional': (context) =>

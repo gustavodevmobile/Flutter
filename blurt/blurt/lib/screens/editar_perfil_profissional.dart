@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:blurt/controller/provider_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
