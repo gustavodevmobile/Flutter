@@ -85,7 +85,7 @@ class _DashboardProfissionalScreenState
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                       //const SizedBox(width: 1),
+                        //const SizedBox(width: 1),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -134,42 +134,49 @@ class _DashboardProfissionalScreenState
                             Row(
                               children: [
                                 Icon(
-                                    plantao
+                                    globalProvider.online
                                         ? Icons.circle
                                         : Icons.circle_outlined,
-                                    color: plantao ? Colors.green : Colors.grey,
+                                    color: globalProvider.online ? AppThemes.online :AppThemes.offline,
                                     size: 16),
                                 const SizedBox(width: 6),
-                                Text(plantao ? 'Online' : 'Não disponível',
+                                Text(
+                                    globalProvider.online
+                                        ? 'Online'
+                                        : 'Não disponível',
                                     style: TextStyle(
-                                        color: plantao
+                                        color: globalProvider.online
                                             ? Colors.white
                                             : Colors.black)),
                                 Switch(
                                   value: globalProvider.online,
-                                  onChanged: (v) =>
-                                      globalProvider.setOnline(v),
+                                  onChanged: (v) => globalProvider.setOnline(v),
                                 ),
                               ],
                             ),
                             Row(
                               children: [
                                 Icon(
-                                    online
+                                    globalProvider.plantao
                                         ? Icons.circle
                                         : Icons.circle_outlined,
-                                    color: online ? Colors.green : Colors.grey,
+                                    color: globalProvider.plantao
+                                        ? AppThemes.online
+                                        : AppThemes.offline,
                                     size: 16),
                                 const SizedBox(width: 6),
                                 Text(
-                                    online ? 'Atender plantão' : 'Não atender plantão',
+                                    globalProvider.plantao
+                                        ? 'Atender plantão'
+                                        : 'Não atender plantão',
                                     style: TextStyle(
-                                        color: online
+                                        color: globalProvider.plantao
                                             ? Colors.white
                                             : Colors.black)),
                                 Switch(
                                   value: globalProvider.plantao,
-                                  onChanged: (v) => globalProvider.setPlantao(v),
+                                  onChanged: (v) =>
+                                      globalProvider.setPlantao(v),
                                 ),
                               ],
                             ),

@@ -20,7 +20,7 @@ class ProfissionalModel extends Profissional {
     required super.valorConsulta,
     required super.genero,
     required super.foto,
-    super.imagemDocumento,
+    required super.imagemDocumento,
     required super.imagemSelfieComDoc,
     super.createdAt,
     super.chavePix,
@@ -57,7 +57,7 @@ class ProfissionalModel extends Profissional {
           : (json['valorConsulta'] ?? 0.0),
       genero: json['genero'] ?? '',
       foto: json['foto'] ?? '',
-      imagemDocumento: json['imagemDocumento'] as String?,
+      imagemDocumento: json['imagemDocumento'] as String,
       imagemSelfieComDoc: json['imagemSelfieComDoc'] ?? '',
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])

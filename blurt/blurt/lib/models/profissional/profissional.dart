@@ -17,7 +17,7 @@ class Profissional {
   final double valorConsulta;
   final String genero;
   final String foto;
-  final String? imagemDocumento;
+  final String imagemDocumento;
   final String imagemSelfieComDoc;
   final DateTime? createdAt;
   final String? chavePix;
@@ -50,7 +50,7 @@ class Profissional {
     required this.valorConsulta,
     required this.genero,
     required this.foto,
-    this.imagemDocumento,
+    required this.imagemDocumento,
     required this.imagemSelfieComDoc,
     this.createdAt,
     this.chavePix,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:blurt/core/utils/background.dart';
+import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +111,7 @@ class PerfilProfissionalScreen extends StatelessWidget {
                                   spacing: 8,
                                   children: value
                                       .profissional!.abordagensUtilizadas!
-                                      .map((abord) => Chip(label: Text(abord)))
+                                      .map((abord) => Chip(label: Text(Formatters.capitalize(abord))))
                                       .toList(),
                                 ),
                                 const SizedBox(height: 12),
@@ -150,7 +151,7 @@ class PerfilProfissionalScreen extends StatelessWidget {
                                 Wrap(
                                   spacing: 8,
                                   children: value.profissional!.temasClinicos!
-                                      .map((tema) => Chip(label: Text(tema)))
+                                      .map((tema) => Chip(label: Text(Formatters.capitalize(tema))))
                                       .toList(),
                                 ),
                                 const SizedBox(height: 12),
@@ -200,7 +201,7 @@ class PerfilProfissionalScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                      'Valor da Consulta: R\$ ${AppThemes.formatarValor(value.profissional!.valorConsulta)}',
+                      'Valor da Consulta: R\$ ${Formatters.formatarValor(value.profissional!.valorConsulta)}',
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 24),

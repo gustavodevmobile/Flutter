@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/theme/themes.dart';
@@ -363,7 +364,7 @@ class CardProdissional extends StatelessWidget {
                             ),
                             Text(profOnline[index].tipoProfissional.toString()),
                             Text(
-                                AppThemes.formatarValor(
+                                Formatters.formatarValor(
                                     profOnline[index].valorConsulta),
                                 style: TextStyle(fontSize: 13)),
                           ],

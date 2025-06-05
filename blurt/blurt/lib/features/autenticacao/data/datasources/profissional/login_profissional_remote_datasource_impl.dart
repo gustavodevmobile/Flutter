@@ -16,10 +16,11 @@ class LoginProfissionalRemoteDatasourceImpl
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'cpf': cpf, 'senha': senha}),
     );
+    final body = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return body;
     } else {
-      throw Exception('Erro ao fazer login do profissional');
+      throw (body['erro'] ?? 'Erro ao fazer login');
     }
   }
 }

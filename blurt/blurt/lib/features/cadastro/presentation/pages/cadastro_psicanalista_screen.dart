@@ -1,38 +1,26 @@
-import 'package:blurt/features/autenticacao/presentation/widgets/login_form_profissional.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:blurt/features/cadastro/presentation/widgets/cadastro_psicanalista_form.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-// Importe o controller de login se necessário
-// import 'package:t_acolhe/controller/login_controller.dart';
-
-class LoginProfissionalScreen extends StatefulWidget {
-  const LoginProfissionalScreen({super.key});
+class CadastroPsicanalistaFormScreen extends StatefulWidget {
+  const CadastroPsicanalistaFormScreen({super.key});
 
   @override
-  State<LoginProfissionalScreen> createState() =>
-      _LoginProfissionalScreenState();
+  State<CadastroPsicanalistaFormScreen> createState() => _CadastroPsicanalistaFormScreenState();
 }
 
-class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
+class _CadastroPsicanalistaFormScreenState extends State<CadastroPsicanalistaFormScreen> {
   
-
-  void showSnackBar(BuildContext context, String message,
-      {Color? backgroundColor}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-      ),
-    );
-  }
-
-  
-
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Profissional'),
+        title: const Text('Cadastro Psicanalista'),
         centerTitle: true,
         elevation: 3,
         automaticallyImplyLeading: false,
@@ -57,13 +45,14 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
               padding: const EdgeInsets.all(24.0),
               child: Card(
                 elevation: 8,
+                color: const Color.fromARGB(170, 255, 255, 255),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(24)),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                  child: LoginFormProfissional()
-                ),
+                  child: CadastroPsicanalistaForm()
+                )
               ),
             ),
           ),
@@ -71,4 +60,6 @@ class _LoginProfissionalScreenState extends State<LoginProfissionalScreen> {
       ),
     );
   }
+
+  
 }

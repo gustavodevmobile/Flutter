@@ -1,3 +1,4 @@
+import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuario_controller.dart';
 import 'package:blurt/models/usuario/usuario.dart';
@@ -67,7 +68,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
             // Campo Data de Nascimento
             TextFormField(
               controller: _dataNascimentoController,
-              inputFormatters: [AppThemes.dataNascimentoFormatter],
+              inputFormatters: [Formatters.dataNascimentoFormatter],
               decoration: const InputDecoration(
                 labelText: 'Data de Nascimento*',
                 prefixIcon: Icon(Icons.cake_outlined),
@@ -82,7 +83,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
                   return 'Formato inválido (ex:(dd/mm/aaaa)';
                 }
                 // Verifica se é maior de idade
-                if (!AppThemes.isMaiorDeIdade(value)) {
+                if (!Formatters.isMaiorDeIdade(value)) {
                   return 'É necessário ter 18 anos ou mais';
                 }
                 return null;
@@ -113,7 +114,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
 
             TextFormField(
               controller: _telefoneController,
-              inputFormatters: [AppThemes.telefoneFormatter],
+              inputFormatters: [Formatters.telefoneFormatter],
               decoration: const InputDecoration(
                 labelText: 'Telefone (opcional)',
                 prefixIcon: Icon(Icons.email_outlined),
@@ -138,7 +139,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _cpfController,
-              inputFormatters: [AppThemes.cpfFormater],
+              inputFormatters: [Formatters.cpfFormater],
               decoration: const InputDecoration(
                 labelText: 'CPF*',
                 prefixIcon: Icon(Icons.badge_outlined),
@@ -212,7 +213,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
 
                           final usuario = Usuario(
                             nome: _nameController.text.trim(),
-                            dataNascimento: AppThemes.parseData(
+                            dataNascimento: Formatters.parseData(
                                 _dataNascimentoController.text.trim()),
                             email: _emailController.text.trim(),
                             telefone: _telefoneController.text.trim(),

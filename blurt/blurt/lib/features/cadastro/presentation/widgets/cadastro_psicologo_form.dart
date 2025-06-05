@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
 import 'package:blurt/core/utils/validators.dart';
-import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:blurt/features/abordagens_utilizadas/presentation/abordagens_utilizadas_controller.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_profissional_controller.dart';
-import 'package:blurt/features/especialidade_principal/data/especialidade_principal_datasource.dart';
 import 'package:blurt/features/especialidade_principal/presentation/especialidade_principal_controller.dart';
-import 'package:blurt/features/temas_clinicos/data/temas_clinicos_datasource.dart';
 import 'package:blurt/features/temas_clinicos/presentation/temas_clinicos_controller.dart';
 import 'package:blurt/models/abordagem_principal/aboradagem_principal.dart';
 import 'package:blurt/models/abordagens_utilizadas/abordagens_utilizadas.dart';
@@ -19,17 +17,15 @@ import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
-class CadastroProfissionalForm extends StatefulWidget {
-  const CadastroProfissionalForm({super.key});
+class CadastroPsicologoForm extends StatefulWidget {
+  const CadastroPsicologoForm({super.key});
 
   @override
-  State<CadastroProfissionalForm> createState() =>
-      _CadastroProfissionalFormState();
+  State<CadastroPsicologoForm> createState() => _CadastroPsicologoFormState();
 }
 
-class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
+class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -46,8 +42,6 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
   final TextEditingController _novaAbordagemUtilizadaController =
       TextEditingController();
   final TextEditingController _novaEspecialidadePrincipalController =
-      TextEditingController();
-  final TextEditingController _novaOutrasEspecialidadesController =
       TextEditingController();
 
   final TextEditingController _temaClinicoController = TextEditingController();
@@ -71,14 +65,15 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
   bool _showImageSelfieComDoc = false;
   bool _showNovaAbordagemPrincipal = false;
   bool _showNovaAbordagemUtilizada = false;
-  final bool _showNovaOutraEspecialidade = false;
-  bool _showNovaEspecialidadePrincipal = false;
+  bool _showEspecialidadePrincipal = false;
+  bool _showCertificadoEspecialidade = false;
   bool _showTemasClinicos = false;
   File? _selectedImage;
   File? _selectedImageDoc;
   File? _selectedImageSelfieComDoc;
   final ImagePicker _picker = ImagePicker();
   List<TemasClinicos> _temasClinicosSelecionados = [];
+  File? _certificadoEspecialidadePrincipal;
 
   @override
   void initState() {
@@ -130,8 +125,7 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
   }
 
   // Adicione variáveis para armazenar os arquivos de certificado
-  File? _certificadoEspecialidadePrincipal;
-  File? _certificadoOutraEspecialidade;
+
   @override
   Widget build(BuildContext context) {
     return Consumer5<
@@ -183,7 +177,7 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Nome',
+                labelText: 'Nome*',
                 prefixIcon: Icon(Icons.person_outline),
               ),
               validator: (value) {
@@ -300,7 +294,7 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             // Campo CPF
             TextFormField(
               controller: _cpfController,
-              inputFormatters: [AppThemes.cpfFormater],
+              inputFormatters: [Formatters.cpfFormater],
               decoration: const InputDecoration(
                 labelText: 'CPF*',
                 prefixIcon: Icon(Icons.badge_outlined),
@@ -322,7 +316,7 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             // Campo CNPJ
             TextFormField(
               controller: _cnpjController,
-              inputFormatters: [AppThemes.cnpjFormater],
+              inputFormatters: [Formatters.cnpjFormater],
               decoration: const InputDecoration(
                 labelText: 'CNPJ',
                 prefixIcon: Icon(Icons.business_outlined),
@@ -345,7 +339,7 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             // Campo Registro Profissional
             TextFormField(
               controller: _registroProfissionalController,
-              inputFormatters: [AppThemes.crpFormater],
+              inputFormatters: [Formatters.crpFormater],
               decoration: const InputDecoration(
                 labelText: 'CRP*',
                 prefixIcon: Icon(Icons.assignment_ind_outlined),
@@ -402,8 +396,10 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                icon: const Icon(Icons.add_circle_outline),
-                label: const Text('Adicionar nova abordagem principal'),
+                icon: _showNovaAbordagemPrincipal
+                    ? const Icon(Icons.remove_circle_outline)
+                    : const Icon(Icons.add_circle_outline),
+                label: const Text('Nova abordagem principal'),
                 onPressed: () => setState(() =>
                     _showNovaAbordagemPrincipal = !_showNovaAbordagemPrincipal),
                 style: TextButton.styleFrom(
@@ -471,8 +467,10 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                icon: const Icon(Icons.add_circle_outline),
-                label: const Text('Adicionar nova abordagem utilizada'),
+                icon: _showNovaAbordagemUtilizada
+                    ? const Icon(Icons.remove_circle_outline)
+                    : const Icon(Icons.add_circle_outline),
+                label: const Text('Nova abordagem utilizada'),
                 onPressed: () => setState(() =>
                     _showNovaAbordagemUtilizada = !_showNovaAbordagemUtilizada),
                 style: TextButton.styleFrom(
@@ -538,8 +536,10 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                icon: const Icon(Icons.add_circle_outline),
-                label: const Text('Adicionar novo Tema Clínico'),
+                icon: _showTemasClinicos
+                    ? const Icon(Icons.remove_circle_outline)
+                    : const Icon(Icons.add_circle_outline),
+                label: const Text('Novo tema clínico'),
                 onPressed: () =>
                     setState(() => _showTemasClinicos = !_showTemasClinicos),
                 style: TextButton.styleFrom(
@@ -567,7 +567,7 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             ),
 
             // Campo de especialidade Principal
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: Row(
@@ -609,11 +609,18 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                icon: const Icon(Icons.add_circle_outline),
-                label: const Text('Adicionar nova especialidade'),
-                onPressed: () => setState(() =>
-                    _showNovaEspecialidadePrincipal =
-                        !_showNovaEspecialidadePrincipal),
+                icon: _showEspecialidadePrincipal
+                    ? const Icon(Icons.remove_circle_outline)
+                    : const Icon(Icons.add_circle_outline),
+                label: const Text('Nova especialidade'),
+                onPressed: () {
+                  setState(() {
+                    _showEspecialidadePrincipal = !_showEspecialidadePrincipal;
+                    if (!_showEspecialidadePrincipal) {
+                      _showCertificadoEspecialidade = false;
+                    }
+                  });
+                },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   minimumSize:
@@ -623,44 +630,51 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
                 ),
               ),
             ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeIn,
-              height: _showNovaEspecialidadePrincipal ? 70 : 0,
-              child: _showNovaEspecialidadePrincipal
-                  ? TextFormField(
-                      controller: _novaEspecialidadePrincipalController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nova especialidade principal',
-                        prefixIcon: Icon(
-                          Icons.psychology_alt_outlined,
+            ClipRect(
+              child: AnimatedAlign(
+                alignment: Alignment.center,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                heightFactor: _showEspecialidadePrincipal ? 1 : 0,
+                child: _showEspecialidadePrincipal
+                    ? TextFormField(
+                        controller: _novaEspecialidadePrincipalController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nova especialidade principal',
+                          prefixIcon: Icon(
+                            Icons.psychology_alt_outlined,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _showCertificadoEspecialidade = true;
+                          });
+                        },
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ),
+
+            _showCertificadoEspecialidade || _especialidadeSelecionada != null
+                ? Row(
+                    children: [
+                      const Icon(Icons.file_present, color: Colors.blueGrey),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _certificadoEspecialidadePrincipal != null
+                              ? 'Certificado selecionado: ${_certificadoEspecialidadePrincipal!.path.split('/').last}'
+                              : 'Anexe o certificado da especialidade principal',
                         ),
                       ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            if (_especialidadeSelecionada != null ||
-                _novaEspecialidadePrincipalController.text.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.file_present, color: Colors.blueGrey),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _certificadoEspecialidadePrincipal != null
-                          ? 'Certificado selecionado: ${_certificadoEspecialidadePrincipal!.path.split('/').last}'
-                          : 'Anexe o certificado da especialidade principal',
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.attach_file),
-                    onPressed: _pickCertificadoEspecialidadePrincipal,
-                    tooltip: 'Anexar certificado',
-                  ),
-                ],
-              ),
-            ],
+                      IconButton(
+                        icon: const Icon(Icons.attach_file),
+                        onPressed: _pickCertificadoEspecialidadePrincipal,
+                        tooltip: 'Anexar certificado',
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(),
 
             const SizedBox(height: 16),
             Divider(
@@ -931,39 +945,37 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
                     : () async {
                         if (_formKey.currentState!.validate()) {
                           // Validação dos certificados obrigatórios
-                          if (_showNovaEspecialidadePrincipal &&
+                          if (_showEspecialidadePrincipal &&
                               _novaEspecialidadePrincipalController
                                   .text.isNotEmpty &&
                               _certificadoEspecialidadePrincipal == null) {
-                            AppThemes.showSnackBar(context,
-                                'Anexe o certificado da nova especialidade principal!',
+                            SnackbarsHelpers.showSnackBar(context,
+                                'Anexe o certificado especialidade principal!',
                                 backgroundColor: Colors.red);
                             return;
                           }
-                          if (_showNovaOutraEspecialidade &&
-                              _novaOutrasEspecialidadesController
-                                  .text.isNotEmpty &&
-                              _certificadoOutraEspecialidade == null) {
-                            AppThemes.showSnackBar(context,
-                                'Anexe o certificado da nova outra especialidade!',
+                          if (_especialidadeSelecionada != null) {
+                            SnackbarsHelpers.showSnackBar(context,
+                                'Anexe o certificado da especialidade principal!',
                                 backgroundColor: Colors.red);
                             return;
                           }
+
                           if (!_showImagePicker || _selectedImage == null) {
-                            AppThemes.showSnackBar(
-                                context, 'Selecione uma imagem para o perfil!',
+                            SnackbarsHelpers.showSnackBar(context,
+                                'Selecione ou tire uma foto para o perfil!',
                                 backgroundColor: Colors.red);
                             return;
                           }
                           if (!_showImageDoc || _selectedImageDoc == null) {
-                            AppThemes.showSnackBar(
+                            SnackbarsHelpers.showSnackBar(
                                 context, 'Documento com foto é obrigatória!',
                                 backgroundColor: Colors.red);
                             return;
                           }
                           if (!_showImageSelfieComDoc ||
                               _selectedImageSelfieComDoc == null) {
-                            AppThemes.showSnackBar(context,
+                            SnackbarsHelpers.showSnackBar(context,
                                 'Selfie com documento com foto é obrigatória!',
                                 backgroundColor: Colors.red);
                             return;
@@ -1034,97 +1046,59 @@ class _CadastroProfissionalFormState extends State<CadastroProfissionalForm> {
                                 .join(','));
                           }
 
-                          if (_especialidadeSelecionada != null) {
-                            AppThemes.showSnackBar(context,
-                                'Anexe o certificado da especialidade principal!',
-                                backgroundColor: Colors.red);
-                            return;
-                          }
-
-                          String fotoBase64 = '';
-                          if (_selectedImage != null) {
-                            final bytes = await _selectedImage!.readAsBytes();
-                            fotoBase64 = base64Encode(bytes);
-                          }
-
-                          // Conversão para base64 do certificado da especialidade principal
-                          String certificadoEspPrincipalBase64 = '';
-                          if (_certificadoEspecialidadePrincipal != null) {
-                            final bytes =
-                                await _certificadoEspecialidadePrincipal!
-                                    .readAsBytes();
-                            certificadoEspPrincipalBase64 = base64Encode(bytes);
-                          }
-
-                          // 4. Criação do objeto profissional
-                          final profissional = Profissional(
-                              nome: _nameController.text.trim(),
-                              email: _emailController.text.trim(),
-                              senha: _passwordController.text,
-                              bio: _bioController.text.trim(),
-                              cpf: _cpfController.text.trim(),
-                              cnpj: _cnpjController.text.trim().isEmpty
-                                  ? null
-                                  : _cnpjController.text.trim(),
-                              crp: _registroProfissionalController.text.trim(),
-                              tipoProfissional: _genero == 'Masculino'
-                                  ? 'Psicólogo'
-                                  : 'Psicóloga',
-                              estaOnline: false,
-                              atendePlantao: false,
-                              emAtendimento: false,
-                              valorConsulta:
-                                  double.tryParse(_valorConsultaController.text.replaceAll(',', '.')) ??
-                                      0.0,
-                              genero: _genero ?? '',
-                              foto: fotoBase64,
-                              imagemDocumento: _selectedImageDoc != null
-                                  ? base64Encode(
-                                      await _selectedImageDoc!.readAsBytes())
-                                  : '',
-                              imagemSelfieComDoc: _selectedImageSelfieComDoc != null
-                                  ? base64Encode(await _selectedImageSelfieComDoc!
-                                      .readAsBytes())
-                                  : '',
-                              chavePix: _chavePixController.text.trim().isEmpty
-                                  ? null
-                                  : _chavePixController.text.trim(),
-                              contaBancaria: _contaBancariaController.text.trim().isEmpty
-                                  ? null
-                                  : _contaBancariaController.text.trim(),
-                              agencia: _agenciaController.text.trim().isEmpty
-                                  ? null
-                                  : _agenciaController.text.trim(),
-                              banco: _bancoController.text.trim().isEmpty
-                                  ? null
-                                  : _bancoController.text.trim(),
-                              tipoConta: _tipoContaController.text.trim().isEmpty
-                                  ? null
-                                  : _tipoContaController.text.trim(),
-                              abordagemPrincipal: abordagemPrincipal,
-                              abordagensUtilizadas: abordagensUtilizadasIds,
-                              especialidadePrincipal: especialidadePrincipalId,
-                              temasClinicos: temasClinicosIds,
-                              certificadoEspecializacao: certificadoEspPrincipalBase64);
+                          final profissional = {
+                            'nome': _nameController.text.trim(),
+                            'email': _emailController.text.trim(),
+                            'senha': _passwordController.text,
+                            'bio': _bioController.text.trim(),
+                            'cpf': _cpfController.text.trim(),
+                            'cnpj': _cnpjController.text.trim(),
+                            'crp': _registroProfissionalController.text.trim(),
+                            'tipoProfissional': 'Psicólogo',
+                            'estaOnline': false,
+                            'atendePlantao': false,
+                            'emAtendimento': false,
+                            'valorConsulta':
+                                double.parse(_valorConsultaController.text),
+                            'genero': _genero,
+                            'foto': _selectedImage,
+                            'imagemDocumento': _selectedImageDoc,
+                            'imagemSelfieComDoc': _selectedImageSelfieComDoc,
+                            'chavePix': _chavePixController.text.trim(),
+                            'contaBancaria':
+                                _contaBancariaController.text.trim(),
+                            'agencia': _agenciaController.text.trim(),
+                            'banco': _bancoController.text.trim(),
+                            'tipoConta': _tipoContaController.text.trim(),
+                            'abordagemPrincipal': abordagemPrincipal,
+                            'abordagensUtilizadas': abordagensUtilizadasIds,
+                            'especialidadePrincipal': especialidadePrincipalId,
+                            'temasClinicos': temasClinicosIds,
+                            'certificadoEspecializacao':
+                                _certificadoEspecialidadePrincipal
+                          };
 
                           try {
                             final result = await controllerCadastro
                                 .cadastrarProfissional(profissional);
                             if (result.isNotEmpty) {
+                              setState(() {
+                                _loading = false;
+                              });
                               if (context.mounted) {
-                                SnackbarsHelpers.showSnackBar(
-                                    context,
-                                    result,
+                                SnackbarsHelpers.showSnackBar(context, result,
                                     backgroundColor: Colors.green);
                               }
-                              _loading = false;
                             }
                           } catch (e) {
+                            setState(() {
+                              _loading = false;
+                            });
                             if (context.mounted) {
-                              AppThemes.showSnackBar(context, e.toString(),
+                              SnackbarsHelpers.showSnackBar(
+                                  context, e.toString(),
                                   backgroundColor: Colors.red);
                             }
-                            _loading = false;
                           }
                         }
                       },

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
-import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

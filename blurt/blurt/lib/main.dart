@@ -19,7 +19,8 @@ import 'package:blurt/features/cadastro/domain/usecases/cadastrar_profissional_u
 import 'package:blurt/features/cadastro/domain/usecases/cadastro_usuario_usecase.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_profissional_controller.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuario_controller.dart';
-import 'package:blurt/features/cadastro/presentation/pages/cadastro_profissional_screen.dart';
+import 'package:blurt/features/cadastro/presentation/pages/cadastro_psicanalista_screen.dart';
+import 'package:blurt/features/cadastro/presentation/pages/cadastro_psicologo_screen.dart';
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_usuario_screen.dart';
 import 'package:blurt/features/especialidade_principal/data/especialidade_principal_datasource.dart';
 import 'package:blurt/features/especialidade_principal/presentation/especialidade_principal_controller.dart';
@@ -37,7 +38,6 @@ import 'package:blurt/screens/dashboard_profissional.dart';
 import 'package:blurt/screens/perfil_profissional.dart';
 import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
-import 'package:blurt/screens/login_profissional.dart';
 import 'screens/initial_screen.dart';
 import 'package:blurt/screens/dashboard_usuario.dart';
 import 'package:provider/provider.dart';
@@ -170,7 +170,7 @@ class MyApp extends StatelessWidget {
         '/login_profissional': (context) => const LoginProfissionalScreen(),
         '/cadastro_usuario': (context) => const UsuarioFormScreen(),
         '/cadastro_psicologo': (context) => const CadastroPsicologoScreen(),
-        // '/cadastro_psicanalista': (context) => const PsicanalistaFormScreen(),
+         '/cadastro_psicanalista': (context) => const CadastroPsicanalistaFormScreen(),
         '/dashboard_usuario': (context) => const DashboardUsuarioScreen(),
         '/dashboard_profissional': (context) =>
             const DashboardProfissionalScreen(),
