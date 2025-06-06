@@ -1,6 +1,7 @@
 import 'dart:convert';
-
+import 'package:blurt/core/utils/snackbars_helpers.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
+import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -38,27 +39,41 @@ class _DashboardProfissionalScreenState
     final int recibosEmitidos = 25;
     final double extratoGanhos = 2950.00;
 
-    return Consumer2<LoginProfissionalController, ProviderController>(
-        builder: (context, controllerLogin, globalProvider, child) {
+    return Consumer3<LoginProfissionalController, ProviderController,
+            DashboardProfissionalController>(
+        builder: (context, controllerLogin, globalProvider, dashboardController,
+            child) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Olá, ${controllerLogin.profissional?.nome ?? ''}'),
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: IconButton(
-              onPressed: () {
-                // await LoginController()
-                //     .logoutProfissional(value.profissional!.id!, (onSuccess) {
-                //   AppThemes.showSnackBar(context, onSuccess,
-                //       backgroundColor: Colors.green);
-                //   Provider.of<ProviderController>(context, listen: false)
-                //       .clearProfissional();
-                //   Navigator.pop(context);
-                // }, (onError) {
-                //   AppThemes.showSnackBar(context, onError,
-                //       backgroundColor: Colors.red);
-                // });
-                Navigator.pop(context);
+              onPressed: () async {
+                try {
+                  String status = await dashboardController.logoutProfissional(
+                      profissionalId: controllerLogin.profissional!.id!);
+                  if (status.isNotEmpty) {
+                    if (context.mounted) {
+                      SnackbarsHelpers.showSnackBar(context, status,
+                          backgroundColor: Colors.green);
+                    }
+                    // Limpa o cache da foto
+                    _fotoCache = null;
+                    _fotoBase64Cache = null;
+                    // Redireciona para a tela de login
+                  }
+                  if (context.mounted) {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/login_profissional', (route) => false);
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    SnackbarsHelpers.showSnackBar(
+                        context, 'Erro ao fazer logout: $e',
+                        backgroundColor: Colors.red);
+                  }
+                }
               },
               icon: Icon(Icons.arrow_back_ios)),
         ),
@@ -131,28 +146,20 @@ class _DashboardProfissionalScreenState
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                    globalProvider.online
-                                        ? Icons.circle
-                                        : Icons.circle_outlined,
-                                    color: globalProvider.online ? AppThemes.online :AppThemes.offline,
-                                    size: 16),
-                                const SizedBox(width: 6),
-                                Text(
-                                    globalProvider.online
-                                        ? 'Online'
-                                        : 'Não disponível',
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.circle,
+                                      color: AppThemes.online, size: 22),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Online',
                                     style: TextStyle(
-                                        color: globalProvider.online
-                                            ? Colors.white
-                                            : Colors.black)),
-                                Switch(
-                                  value: globalProvider.online,
-                                  onChanged: (v) => globalProvider.setOnline(v),
-                                ),
-                              ],
+                                        fontSize: 20, color: Colors.white),
+                                  ),
+                                ],
+                              ),
                             ),
                             Row(
                               children: [
@@ -167,16 +174,41 @@ class _DashboardProfissionalScreenState
                                 const SizedBox(width: 6),
                                 Text(
                                     globalProvider.plantao
-                                        ? 'Atender plantão'
-                                        : 'Não atender plantão',
+                                        ? 'Disponível para\nacolhimento'
+                                        : 'Não disponível\nacolhimento',
                                     style: TextStyle(
                                         color: globalProvider.plantao
                                             ? Colors.white
                                             : Colors.black)),
                                 Switch(
                                   value: globalProvider.plantao,
-                                  onChanged: (v) =>
-                                      globalProvider.setPlantao(v),
+                                  onChanged: (status) async {
+                                   
+                                    globalProvider.setPlantao(status);
+                                    try {
+                                      String statusAtual =
+                                          await dashboardController
+                                              .alterarStatusAtendePlantao(
+                                                  profissionalId:
+                                                      controllerLogin
+                                                          .profissional!.id!,
+                                                  novoStatus: status);
+                                      if (statusAtual.isNotEmpty) {
+                                        if (context.mounted) {
+                                          SnackbarsHelpers.showSnackBar(
+                                              context, statusAtual,
+                                              backgroundColor: Colors.green);
+                                        }
+                                      }
+                                    } catch (error) {
+                                      if (context.mounted) {
+                                        SnackbarsHelpers.showSnackBar(context,
+                                            'Erro ao alterar status: $error',
+                                            backgroundColor: Colors.red);
+                                      }
+                                      globalProvider.setPlantao(false);
+                                    }
+                                  },
                                 ),
                               ],
                             ),
@@ -196,9 +228,9 @@ class _DashboardProfissionalScreenState
                               context, '/atendimento_profissional');
                         },
                         child: _InfoCard(
-                            title: 'Atendimentos',
-                            value: '$numeroAtendimentos',
-                            icon: Icons.people_alt_outlined),
+                            title: 'Sessões Realizadas',
+                            value: '$sessoesRealizadas',
+                            icon: Icons.event_available),
                       ),
                       _InfoCard(
                           title: 'Ganhos Estimados',
@@ -210,9 +242,9 @@ class _DashboardProfissionalScreenState
                           icon: Icons.star,
                           color: Colors.amber),
                       _InfoCard(
-                          title: 'Sessões Realizadas',
-                          value: '$sessoesRealizadas',
-                          icon: Icons.event_available),
+                          title: 'Moderações',
+                          value: '$numeroAtendimentos',
+                          icon: Icons.people_alt_outlined),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -313,72 +345,3 @@ class _InfoCard extends StatelessWidget {
     );
   }
 }
-
-
-//   id           
-//   name          
-//   email         
-//   passwordHash  
-//   bio           
-//   cpf           
-//   cnpj          
-//   CRP           
-//   diplomaPsicanalista 
-//   declSupClinica 
-//   declAnPessoal 
-//   tipoProfissional     
-//   estaOnline     
-//   atendePlantao  
-//   valorConsulta  
-//   genero         
-//   aprovado  
-//   // Dados bancários
-//   chavePix       
-//   contaBancaria  
-//   agencia        
-//   banco          
-//   tipoConta      
-//   createdAt      
-//   sessions       
-//   recibos        
-//   reports        
-//   abordagemPrincipal     
-//   abordagensUtilizadas  
-//   especialidadePrincipal 
-//   temasClinicos  
-//   foto perfil          
-//   certificados
-
-           
-//   name          
-//   email         
-//   passwordHash  
-//   bio           
-//   cpf           
-//   cnpj          
-//   CRP           
-//   diplomaPsicanalista 
-//   declSupClinica 
-//   declAnPessoal 
-//   tipoProfissional     
-//   estaOnline     
-//   atendePlantao  
-//   valorConsulta  
-//   genero         
-//   aprovado  
-//   // Dados bancários
-//   chavePix       
-//   contaBancaria  
-//   agencia        
-//   banco          
-//   tipoConta      
-//   createdAt      
-//   sessions       
-//   recibos        
-//   reports        
-//   abordagemPrincipal     
-//   abordagensUtilizadas  
-//   especialidadePrincipal 
-//   temasClinicos  
-//   foto perfil          
-//   certificados

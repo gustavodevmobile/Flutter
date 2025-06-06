@@ -22,23 +22,27 @@ import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuari
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_psicanalista_screen.dart';
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_psicologo_screen.dart';
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_usuario_screen.dart';
+import 'package:blurt/features/dashboards/profissional/data/datasources/dashboard_profissional_datasource.dart';
+import 'package:blurt/features/dashboards/profissional/data/datasources/dashbord_profissional_datasource_impl.dart';
+import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
+import 'package:blurt/features/dashboards/profissional/presentation/pages/dashboard_profissional_screen.dart';
 import 'package:blurt/features/especialidade_principal/data/especialidade_principal_datasource.dart';
 import 'package:blurt/features/especialidade_principal/presentation/especialidade_principal_controller.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
 import 'package:blurt/features/profissionais_online/data/datasources/profissional_online_datasource_impl.dart';
 import 'package:blurt/features/profissionais_online/data/repositories/profissionais_online_impl.dart';
 import 'package:blurt/features/profissionais_online/domain/usecases/profissionais_online_usecases.dart';
+import 'package:blurt/features/tela_inical/presentation/initial_screen.dart';
 import 'package:blurt/features/temas_clinicos/data/temas_clinicos_datasource.dart';
 import 'package:blurt/features/temas_clinicos/presentation/temas_clinicos_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:blurt/features/autenticacao/presentation/pages/login_usuario_screen.dart';
 import 'package:blurt/screens/atendimentos_profissional.dart';
-import 'package:blurt/screens/dashboard_profissional.dart';
 import 'package:blurt/screens/perfil_profissional.dart';
 import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
-import 'screens/initial_screen.dart';
+
 import 'package:blurt/screens/dashboard_usuario.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -100,13 +104,16 @@ void main() async {
             ),
           ),
         ),
-        ChangeNotifierProvider(create: (_)=> LoginProfissionalController(
-          LoginProfissionalUseCase(
-            LoginProfissionalRepositoryImpl(
-              LoginProfissionalRemoteDatasourceImpl(http.Client()),
+        ChangeNotifierProvider(
+          create: (_) => LoginProfissionalController(
+            LoginProfissionalUseCase(
+              LoginProfissionalRepositoryImpl(
+                LoginProfissionalRemoteDatasourceImpl(http.Client()),
+              ),
             ),
           ),
-        )),
+        ),
+        ChangeNotifierProvider(create: (_)=> DashboardProfissionalController(DashboardProfissionalDatasourceImpl(http.Client()))),
 
         // Adicione outros providers globais aqui
       ],
@@ -170,7 +177,8 @@ class MyApp extends StatelessWidget {
         '/login_profissional': (context) => const LoginProfissionalScreen(),
         '/cadastro_usuario': (context) => const UsuarioFormScreen(),
         '/cadastro_psicologo': (context) => const CadastroPsicologoScreen(),
-         '/cadastro_psicanalista': (context) => const CadastroPsicanalistaFormScreen(),
+        '/cadastro_psicanalista': (context) =>
+            const CadastroPsicanalistaFormScreen(),
         '/dashboard_usuario': (context) => const DashboardUsuarioScreen(),
         '/dashboard_profissional': (context) =>
             const DashboardProfissionalScreen(),

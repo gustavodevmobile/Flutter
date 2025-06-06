@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:blurt/features/cadastro/presentation/widgets/cadastro_psicanalista_form.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class CadastroPsicanalistaFormScreen extends StatefulWidget {
   const CadastroPsicanalistaFormScreen({super.key});

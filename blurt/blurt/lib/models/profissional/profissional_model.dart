@@ -57,7 +57,7 @@ class ProfissionalModel extends Profissional {
           : (json['valorConsulta'] ?? 0.0),
       genero: json['genero'] ?? '',
       foto: json['foto'] ?? '',
-      imagemDocumento: json['imagemDocumento'] as String,
+      imagemDocumento: json['imagemDocumento'] ?? '',
       imagemSelfieComDoc: json['imagemSelfieComDoc'] ?? '',
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
@@ -99,7 +99,7 @@ class ProfissionalModel extends Profissional {
       'valorConsulta': valorConsulta,
       'genero': genero,
       'foto': foto,
-      if (imagemDocumento != null) 'imagemDocumento': imagemDocumento,
+      'imagemDocumento': imagemDocumento,
       'imagemSelfieComDoc': imagemSelfieComDoc,
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
       if (chavePix != null) 'chavePix': chavePix,

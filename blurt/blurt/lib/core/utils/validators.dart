@@ -1,6 +1,4 @@
 // Core validators (example)
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class Validators {
   static bool isEmail(String email) =>

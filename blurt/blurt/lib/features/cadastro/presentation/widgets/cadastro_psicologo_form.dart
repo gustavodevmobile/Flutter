@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
@@ -11,7 +10,6 @@ import 'package:blurt/features/temas_clinicos/presentation/temas_clinicos_contro
 import 'package:blurt/models/abordagem_principal/aboradagem_principal.dart';
 import 'package:blurt/models/abordagens_utilizadas/abordagens_utilizadas.dart';
 import 'package:blurt/models/especialidade_principal/especialidade_principal.dart';
-import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/temas_clinicos/temas_clinicos_models.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
