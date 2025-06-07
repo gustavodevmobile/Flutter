@@ -131,7 +131,7 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                 _showSelfieField = true;
                               });
                             }
-                            print('Login realizado com sucesso: $profissional');
+                            
                           } catch (error) {
                             setState(() {
                               _loading = false;

@@ -54,6 +54,10 @@ class _DashboardProfissionalScreenState
                   String status = await dashboardController.logoutProfissional(
                       profissionalId: controllerLogin.profissional!.id!);
                   if (status.isNotEmpty) {
+                    await dashboardController.alterarStatusAtendePlantao(
+                        profissionalId: controllerLogin.profissional!.id!,
+                        novoStatus: false);
+                        globalProvider.setPlantao(false);
                     if (context.mounted) {
                       SnackbarsHelpers.showSnackBar(context, status,
                           backgroundColor: Colors.green);
@@ -183,7 +187,6 @@ class _DashboardProfissionalScreenState
                                 Switch(
                                   value: globalProvider.plantao,
                                   onChanged: (status) async {
-                                   
                                     globalProvider.setPlantao(status);
                                     try {
                                       String statusAtual =

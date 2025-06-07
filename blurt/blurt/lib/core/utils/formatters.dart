@@ -28,9 +28,24 @@ class Formatters {
     filter: {"#": RegExp(r'[0-9]')},
   );
 
-  static String formatarValor(double valor) {
-    return 'R\$ ${NumberFormat("#,##0.00", "pt_BR").format(valor)}';
+  // static String formatarValor(double valor) {
+  //   print('Valor formatado: $valor');
+  //   return 'R\$ ${NumberFormat("#,##0.00", "pt_BR").format(valor)}';
+  // }
+  static String formatarValor(dynamic valor) {
+  print('Valor recebido para formatar: $valor');
+  if (valor == null) return 'R\$ 0,00';
+  try {
+    final doubleValue = valor is num
+        ? valor.toDouble()
+        : double.tryParse(valor.toString()) ?? 0.0;
+    print('Valor formatado: $doubleValue');
+    return 'R\$ ${NumberFormat("#,##0.00", "pt_BR").format(doubleValue)}';
+  } catch (e) {
+    print('Erro ao formatar valor: $e');
+    return 'R\$ 0,00';
   }
+}
 
   static String capitalize(String s) {
     if (s.isEmpty) return s;

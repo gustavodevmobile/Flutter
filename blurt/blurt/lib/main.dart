@@ -22,7 +22,6 @@ import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuari
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_psicanalista_screen.dart';
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_psicologo_screen.dart';
 import 'package:blurt/features/cadastro/presentation/pages/cadastro_usuario_screen.dart';
-import 'package:blurt/features/dashboards/profissional/data/datasources/dashboard_profissional_datasource.dart';
 import 'package:blurt/features/dashboards/profissional/data/datasources/dashbord_profissional_datasource_impl.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/pages/dashboard_profissional_screen.dart';

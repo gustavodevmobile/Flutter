@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -164,8 +165,7 @@ class _EditarPerfilProfissionalScreenState
                       ? _buildTextField(
                           'Valor Consulta', _valorConsultaController,
                           keyboardType: TextInputType.number)
-                      : Text(controllerLogin.profissional?.valorConsulta.toString() ??
-                          'Não informado'),
+                      : Text(Formatters.formatarValor(controllerLogin.profissional?.valorConsulta.toString())),
                 ),
                 _buildInfoRow('Gênero',
                     controllerLogin.profissional?.genero ?? 'Não informado', null),
@@ -180,7 +180,7 @@ class _EditarPerfilProfissionalScreenState
                 ),
                 _buildInfoRow(
                     'Abordagem principal',
-                    controllerLogin.profissional?.abordagemPrincipal ?? 'Não informada',
+                    Formatters.capitalize(controllerLogin.profissional!.abordagemPrincipal!),
                     null),
                 _buildEditableRow(
                   'Abordagens utilizadas',

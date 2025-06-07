@@ -6,8 +6,19 @@ import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PerfilProfissionalScreen extends StatelessWidget {
+class PerfilProfissionalScreen extends StatefulWidget {
   const PerfilProfissionalScreen({super.key});
+
+  @override
+  State<PerfilProfissionalScreen> createState() =>
+      _PerfilProfissionalScreenState();
+}
+
+class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
+  initState() {
+    super.initState();
+    Formatters.formatarValor(123);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +122,9 @@ class PerfilProfissionalScreen extends StatelessWidget {
                                   spacing: 8,
                                   children: value
                                       .profissional!.abordagensUtilizadas!
-                                      .map((abord) => Chip(label: Text(Formatters.capitalize(abord))))
+                                      .map((abord) => Chip(
+                                          label: Text(
+                                              Formatters.capitalize(abord))))
                                       .toList(),
                                 ),
                                 const SizedBox(height: 12),
@@ -151,7 +164,9 @@ class PerfilProfissionalScreen extends StatelessWidget {
                                 Wrap(
                                   spacing: 8,
                                   children: value.profissional!.temasClinicos!
-                                      .map((tema) => Chip(label: Text(Formatters.capitalize(tema))))
+                                      .map((tema) => Chip(
+                                          label: Text(
+                                              Formatters.capitalize(tema))))
                                       .toList(),
                                 ),
                                 const SizedBox(height: 12),
