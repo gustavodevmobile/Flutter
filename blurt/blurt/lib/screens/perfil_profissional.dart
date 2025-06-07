@@ -15,6 +15,7 @@ class PerfilProfissionalScreen extends StatefulWidget {
 }
 
 class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
+  @override
   initState() {
     super.initState();
     Formatters.formatarValor(123);
