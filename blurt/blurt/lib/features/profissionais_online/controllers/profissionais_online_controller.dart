@@ -10,7 +10,6 @@ class ProfissionaisOnlineController extends ChangeNotifier {
     try {
       final profissionais = await usecase.getOnlineProfissionais();
       notifyListeners();
-      print('Profissionais online: ${profissionais[1].crp}');
       return profissionais;
     } catch (e) {
       print('Erro ao buscar profissionais online: $e');

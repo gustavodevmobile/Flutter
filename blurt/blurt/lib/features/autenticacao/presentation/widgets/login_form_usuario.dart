@@ -107,6 +107,8 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                                 .buscarProfissionaisOnline();
                             // Convert List<Profissional> to List<Professional>
                             providerController.setProfissionaisOnline(profissionaisOnline);
+                            print(
+                                'Profissionais online: $profissionaisOnline');
 
                             if (usuario != null) {
                               if (context.mounted) {
@@ -116,6 +118,7 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                             }
                           } catch (e) {
                             if (context.mounted) {
+                              print('Erro ao fazer login: $e');
                               // Exibe o erro usando o SnackBar
                               SnackbarsHelpers.showSnackBar(
                                   context, e.toString(),

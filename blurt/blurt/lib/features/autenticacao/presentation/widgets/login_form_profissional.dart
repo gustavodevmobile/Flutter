@@ -137,6 +137,7 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                               _loading = false;
                             });
                             if (context.mounted) {
+                              print('Erro ao fazer login: $error');
                               SnackbarsHelpers.showSnackBar(
                                 context,
                                 error.toString(),

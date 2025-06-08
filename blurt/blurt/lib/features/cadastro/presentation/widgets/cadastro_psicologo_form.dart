@@ -1092,6 +1092,7 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                             setState(() {
                               _loading = false;
                             });
+                            print('Erro ao cadastrar profissional: $e');
                             if (context.mounted) {
                               SnackbarsHelpers.showSnackBar(
                                   context, e.toString(),

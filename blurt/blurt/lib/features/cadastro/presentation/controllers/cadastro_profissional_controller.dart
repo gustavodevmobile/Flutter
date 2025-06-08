@@ -23,13 +23,7 @@ class CadastroProfissionalController extends ChangeNotifier {
         dataConvertido[entry.key] = await fileToBase64(entry.value);
       }
     }
-    //print('Dados convertidos: $data');
-    // Ajusta valores vazios para null
-    // dataConvertido.updateAll((key, value) {
-    //   if (value is String || value == null) return null;
-    //   return value;
-    // });
-    // Monta o objeto Profissional
+    print('Dados convertidos: $dataConvertido');
     final profissional = Profissional(
       nome: dataConvertido['nome'],
       email: dataConvertido['email'],
@@ -66,12 +60,13 @@ class CadastroProfissionalController extends ChangeNotifier {
           : null,
       certificadoEspecializacao: dataConvertido['certificadoEspecializacao'] ?? '',
     );
-    print('Profissional criado: ${profissional.abordagemPrincipal}');
+    
     try {
       final result = await cadastrarUseCase(profissional);
       notifyListeners();
       return result;
     } catch (error) {
+      print('Erro ao cadastrar profissional: $error');
       notifyListeners();
       rethrow;
     }

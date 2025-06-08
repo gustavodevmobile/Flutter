@@ -21,6 +21,7 @@ class EspecialidadePrincipalDatasource {
           .toList();
       return especialidades;
     } else {
+      print('Erro ao buscar especialidades principais: ${response.statusCode}');
       throw Exception('Erro ao buscar especialidades principais');
     }
   }
