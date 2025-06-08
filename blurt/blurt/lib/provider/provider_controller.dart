@@ -7,7 +7,7 @@ class ProviderController with ChangeNotifier {
   Usuario? usuario;
   List<Profissional> profissionaisOnline = [];
   bool online = false;
-  bool plantao = true;
+  bool plantao = false;
 
   void setProfissional(Profissional prof) {
     profissional = prof;

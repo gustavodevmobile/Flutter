@@ -16,12 +16,59 @@ class DashboardProfissionalScreen extends StatefulWidget {
 }
 
 class _DashboardProfissionalScreenState
-    extends State<DashboardProfissionalScreen> {
+    extends State<DashboardProfissionalScreen> with WidgetsBindingObserver {
   bool online = false;
   bool plantao = true;
   String? fotoPerfil;
   MemoryImage? _fotoCache;
   String? _fotoBase64Cache;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    didChangeAppLifecycleState(AppLifecycleState state) {
+      print('AppLifecycleState: $state');
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      // Apenas quando o app está sendo fechado
+
+      final profissionalId =
+          Provider.of<LoginProfissionalController>(context, listen: false)
+              .profissional
+              ?.id;
+      if (profissionalId != null) {
+        // Desativa o plantão e faz logout do profissional
+        Provider.of<DashboardProfissionalController>(context, listen: false)
+            .alterarStatusAtendePlantao(
+                profissionalId: profissionalId, novoStatus: false);
+
+        Provider.of<DashboardProfissionalController>(context, listen: false)
+            .logoutProfissional(profissionalId: profissionalId);
+        _fotoCache = null;
+        _fotoBase64Cache = null;
+        print('Logout do profissional realizado com sucesso.');
+      }
+    }
+    if (state == AppLifecycleState.paused) {
+      print('App está sendo fechado.');
+      // Limpa o cache da foto
+      _fotoCache = null;
+      _fotoBase64Cache = null;
+      print('Cache da foto limpo.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final fotoBase64 =
@@ -57,7 +104,7 @@ class _DashboardProfissionalScreenState
                     await dashboardController.alterarStatusAtendePlantao(
                         profissionalId: controllerLogin.profissional!.id!,
                         novoStatus: false);
-                        globalProvider.setPlantao(false);
+                    globalProvider.setPlantao(false);
                     if (context.mounted) {
                       SnackbarsHelpers.showSnackBar(context, status,
                           backgroundColor: Colors.green);

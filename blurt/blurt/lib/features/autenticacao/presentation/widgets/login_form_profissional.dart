@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/validators.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -76,9 +77,8 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                 if (value == null || value.isEmpty) {
                   return 'E-mail obrigatório';
                 }
-                final cpfRegex = RegExp(
-                    r'^([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|[0-9]{11})$');
-                if (!cpfRegex.hasMatch(value)) {
+                final cpfRegex = Validators.isCpf(value);
+                if (!cpfRegex) {
                   return 'CPF inválido';
                 }
                 return null;
@@ -131,7 +131,6 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                 _showSelfieField = true;
                               });
                             }
-                            
                           } catch (error) {
                             setState(() {
                               _loading = false;

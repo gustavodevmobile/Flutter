@@ -71,7 +71,8 @@ class _EditarPerfilProfissionalScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginProfissionalController>(builder: (context, controllerLogin, child) {
+    return Consumer<LoginProfissionalController>(
+        builder: (context, controllerLogin, child) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Perfil Profissional'),
@@ -96,10 +97,11 @@ class _EditarPerfilProfissionalScreenState
                       CircleAvatar(
                         radius: 48,
                         backgroundColor: Theme.of(context).primaryColor,
-                        backgroundImage: controllerLogin.profissional?.foto != null
-                            ? MemoryImage(
-                                base64Decode(controllerLogin.profissional!.foto))
-                            : null,
+                        backgroundImage:
+                            controllerLogin.profissional?.foto != null
+                                ? MemoryImage(base64Decode(
+                                    controllerLogin.profissional!.foto))
+                                : null,
                         child: controllerLogin.profissional?.foto == null
                             ? const Icon(Icons.person, size: 48)
                             : null,
@@ -121,8 +123,10 @@ class _EditarPerfilProfissionalScreenState
                 Align(
                     alignment: Alignment.center, child: Text('Dados Pessoais')),
                 const SizedBox(height: 4.0),
-                _buildInfoRow('Nome', controllerLogin.profissional?.nome ?? '', null),
-                _buildInfoRow('E-mail', controllerLogin.profissional?.email ?? '', null),
+                _buildInfoRow(
+                    'Nome', controllerLogin.profissional?.nome ?? '', null),
+                _buildInfoRow(
+                    'E-mail', controllerLogin.profissional?.email ?? '', null),
                 _buildEditableRow(
                     'Senha',
                     editandoSenha,
@@ -140,7 +144,8 @@ class _EditarPerfilProfissionalScreenState
                         : Text(_bioController.text.isEmpty
                             ? 'Não informada'
                             : _bioController.text)),
-                _buildInfoRow('CPF', controllerLogin.profissional?.cpf ?? '', null),
+                _buildInfoRow(
+                    'CPF', controllerLogin.profissional?.cpf ?? '', null),
                 _buildEditableRow(
                     'CNPJ',
                     editandoCnpj,
@@ -150,11 +155,12 @@ class _EditarPerfilProfissionalScreenState
                         : Text(_cnpjController.text.isEmpty
                             ? 'Não informado'
                             : _cnpjController.text)),
-                _buildInfoRow(
-                    'CRP', controllerLogin.profissional?.crp ?? 'Não infomado', null),
+                _buildInfoRow('CRP',
+                    controllerLogin.profissional?.crp ?? 'Não infomado', null),
                 _buildInfoRow(
                     'Profissional',
-                    controllerLogin.profissional?.tipoProfissional ?? 'Não informado',
+                    controllerLogin.profissional?.tipoProfissional ??
+                        'Não informado',
                     null),
                 _buildEditableRow(
                   'Valor Consulta',
@@ -165,10 +171,13 @@ class _EditarPerfilProfissionalScreenState
                       ? _buildTextField(
                           'Valor Consulta', _valorConsultaController,
                           keyboardType: TextInputType.number)
-                      : Text(Formatters.formatarValor(controllerLogin.profissional?.valorConsulta.toString())),
+                      : Text(Formatters.formatarValor(
+                          controllerLogin.profissional!.valorConsulta)),
                 ),
-                _buildInfoRow('Gênero',
-                    controllerLogin.profissional?.genero ?? 'Não informado', null),
+                _buildInfoRow(
+                    'Gênero',
+                    controllerLogin.profissional?.genero ?? 'Não informado',
+                    null),
                 Divider(
                   color: Colors.white,
                   thickness: 1,
@@ -180,7 +189,8 @@ class _EditarPerfilProfissionalScreenState
                 ),
                 _buildInfoRow(
                     'Abordagem principal',
-                    Formatters.capitalize(controllerLogin.profissional!.abordagemPrincipal!),
+                    Formatters.capitalize(
+                        controllerLogin.profissional!.abordagemPrincipal!),
                     null),
                 _buildEditableRow(
                   'Abordagens utilizadas',
@@ -194,11 +204,13 @@ class _EditarPerfilProfissionalScreenState
                               ['Não informados'],
                           (list) => setState(() => temasClinicos = list))
                       : Text(
-                          (controllerLogin.profissional?.abordagensUtilizadas == null ||
-                                  controllerLogin.profissional!.abordagensUtilizadas!
-                                      .isEmpty)
+                          (controllerLogin.profissional?.abordagensUtilizadas ==
+                                      null ||
+                                  controllerLogin.profissional!
+                                      .abordagensUtilizadas!.isEmpty)
                               ? 'Não informados'
-                              : controllerLogin.profissional!.abordagensUtilizadas!
+                              : controllerLogin
+                                  .profissional!.abordagensUtilizadas!
                                   .join(', '),
                         ),
                 ),
@@ -219,10 +231,13 @@ class _EditarPerfilProfissionalScreenState
                               ['Não informados'],
                           (list) => setState(() => temasClinicos = list))
                       : Text(
-                          (controllerLogin.profissional?.temasClinicos == null ||
-                                  controllerLogin.profissional!.temasClinicos!.isEmpty)
+                          (controllerLogin.profissional?.temasClinicos ==
+                                      null ||
+                                  controllerLogin
+                                      .profissional!.temasClinicos!.isEmpty)
                               ? 'Não informados'
-                              : controllerLogin.profissional!.temasClinicos!.join(', '),
+                              : controllerLogin.profissional!.temasClinicos!
+                                  .join(', '),
                         ),
                 ),
                 Divider(

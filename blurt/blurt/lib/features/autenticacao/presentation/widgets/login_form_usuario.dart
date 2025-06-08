@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 
-
-
 class LoginFormUsuario extends StatefulWidget {
   const LoginFormUsuario({super.key});
 
@@ -22,9 +20,10 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<LoginUsuarioController, ProfissionaisOnlineController, ProviderController>(
-      builder:
-          (context, controllerUsuario, controllerProfissionaisOnline, providerController, child) {
+    return Consumer3<LoginUsuarioController, ProfissionaisOnlineController,
+        ProviderController>(
+      builder: (context, controllerUsuario, controllerProfissionaisOnline,
+          providerController, child) {
         return Form(
           key: _formKey,
           child: Column(
@@ -103,17 +102,23 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                               formKey: _formKey,
                             );
 
-                            final profissionaisOnline = await controllerProfissionaisOnline
-                                .buscarProfissionaisOnline();
-                            // Convert List<Profissional> to List<Professional>
-                            providerController.setProfissionaisOnline(profissionaisOnline);
-                            print(
-                                'Profissionais online: $profissionaisOnline');
+                            final profissionaisOnline =
+                                await controllerProfissionaisOnline
+                                    .buscarProfissionaisOnline();
+
+                            providerController
+                                .setProfissionaisOnline(profissionaisOnline);
+                            for (var profissional in profissionaisOnline) {
+                              print(
+                                  'Profissional online: ${profissional.estaOnline}');
+                            }
 
                             if (usuario != null) {
                               if (context.mounted) {
                                 Navigator.pushNamed(
-                                    context, '/dashboard_usuario',);
+                                  context,
+                                  '/dashboard_usuario',
+                                );
                               }
                             }
                           } catch (e) {
