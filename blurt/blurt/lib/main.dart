@@ -1,3 +1,4 @@
+import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:blurt/features/abordagens_utilizadas/data/abordagens_utilizadas_datasource.dart';
@@ -112,7 +113,12 @@ void main() async {
             ),
           ),
         ),
-        ChangeNotifierProvider(create: (_)=> DashboardProfissionalController(DashboardProfissionalDatasourceImpl(http.Client()))),
+        ChangeNotifierProvider(
+          create: (_) => DashboardProfissionalController(
+            DashboardProfissionalDatasourceImpl(http.Client()),
+          ),
+        ),
+        ChangeNotifierProvider(create: (_) => WebSocketProvider())
 
         // Adicione outros providers globais aqui
       ],

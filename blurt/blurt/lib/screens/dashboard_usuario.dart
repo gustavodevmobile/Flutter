@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:blurt/core/utils/formatters.dart';
+import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/theme/themes.dart';
@@ -26,6 +27,16 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
   void initState() {
     super.initState();
     ultimaSessao = sessoes.isNotEmpty ? sessoes.first : null;
+
+    // Chama o WebSocket
+    if (context.mounted) {
+      Future.microtask(() {
+        final websocketProvider =
+            Provider.of<WebSocketProvider>(context, listen: false);
+        websocketProvider.connect();
+      });
+    }
+
     // Mostra o dialog assim que entrar no dashboard
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showSentimentoDialog();
@@ -146,7 +157,12 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProviderController>(builder: (context, value, child) {
+    return Consumer2<ProviderController, WebSocketProvider>(
+        builder: (context, globalProvider, websocketProvider, child) {
+      final profissionaisOnline =
+          websocketProvider.profissionaisOnline.isNotEmpty
+              ? websocketProvider.profissionaisOnline
+              : globalProvider.profissionaisOnline;
       return Scaffold(
         appBar: AppBar(
             title: const Text('Dashboard Usuário'),
@@ -177,7 +193,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: CardProdissional(
-                        profOnline: value.profissionaisOnline,
+                        profOnline: globalProvider.profissionaisOnline,
                         scrollDirection: Axis.vertical,
                         itemHeight: MediaQuery.of(context).size.height,
                       ),
@@ -281,16 +297,18 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  if(value.profissionaisOnline.isEmpty)
-                    Card(child: Padding(
+                  if (profissionaisOnline.isEmpty)
+                    Card(
+                        child: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: const Text('Nenhum profissional online no momento.'),
+                      child:
+                          const Text('Nenhum profissional online no momento.'),
                     ))
                   else
-                  CardProdissional(
-                    profOnline: value.profissionaisOnline,
-                    scrollDirection: Axis.horizontal,
-                  )
+                    CardProdissional(
+                      profOnline: globalProvider.profissionaisOnline,
+                      scrollDirection: Axis.horizontal,
+                    )
                 ],
               ),
             ),
