@@ -306,7 +306,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                     ))
                   else
                     CardProdissional(
-                      profOnline: globalProvider.profissionaisOnline,
+                      profOnline: profissionaisOnline,
                       scrollDirection: Axis.horizontal,
                     )
                 ],

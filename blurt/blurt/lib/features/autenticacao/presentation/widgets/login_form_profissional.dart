@@ -117,33 +117,10 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                     ? null
                     : () async {
                         FocusScope.of(context).unfocus();
-                        if (_formKey.currentState!.validate()) {
-                          setState(() => _loading = true);
-
-                          try {
-                            final profissional =
-                                await controllerProfissionalLogin.login(
-                                    _cpfController.text,
-                                    _passwordController.text);
-                            if (profissional != null) {
-                              setState(() {
-                                _loading = false;
-                                _showSelfieField = true;
-                              });
-                            }
-                          } catch (error) {
-                            setState(() {
-                              _loading = false;
-                            });
-                            if (context.mounted) {
-                              print('Erro ao fazer login: $error');
-                              SnackbarsHelpers.showSnackBar(
-                                context,
-                                error.toString(),
-                                backgroundColor: Colors.red,
-                              );
-                            }
-                          }
+                        if (_cpfController.text.isNotEmpty &&
+                            _passwordController.text.isNotEmpty) {
+                          _showSelfieField = true;
+                          print('Campos obrigatórios não preenchidos');
                         }
                       },
                 child: _loading
@@ -199,8 +176,38 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                             await _pickSelfie();
                             if (_selfieImage != null) {
                               if (context.mounted) {
-                                Navigator.pushNamed(
-                                    context, '/dashboard_profissional');
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() => _loading = true);
+
+                                  try {
+                                    final profissional =
+                                        await controllerProfissionalLogin.login(
+                                      _cpfController.text,
+                                      _passwordController.text,
+                                    );
+                                    if (profissional != null) {
+                                      setState(() {
+                                        _loading = false;
+                                        if (context.mounted) {
+                                          Navigator.pushNamed(context,
+                                              '/dashboard_profissional');
+                                        }
+                                      });
+                                    }
+                                  } catch (error) {
+                                    setState(() {
+                                      _loading = false;
+                                    });
+                                    if (context.mounted) {
+                                      print('Erro ao fazer login: $error');
+                                      SnackbarsHelpers.showSnackBar(
+                                        context,
+                                        error.toString(),
+                                        backgroundColor: Colors.red,
+                                      );
+                                    }
+                                  }
+                                }
                               }
                             } else {
                               if (context.mounted) {

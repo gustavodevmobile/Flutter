@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class WebSocketProvider extends ChangeNotifier {
   WebSocketChannel? _channel;
   List<Profissional> profissionaisOnline = [];
+
   void connect() {
     print('Chamando connect do WebSocketProvider');
     final wsUrl = dotenv.env['WS_URL'];
@@ -24,15 +25,12 @@ class WebSocketProvider extends ChangeNotifier {
             notifyListeners();
           } else if (data is Map && data['type'] == 'status_update') {
             // Atualiza ou adiciona o profissional na lista
-            final profissional =
-                ProfissionalModel.fromJson(data['profissional']);
-            final idx =
-                profissionaisOnline.indexWhere((p) => p.id == profissional.id);
-            if (idx != -1) {
-              profissionaisOnline[idx] = profissional;
-            } else {
-              profissionaisOnline.add(profissional);
-            }
+            final profissionais = data['profissionais'] as List<dynamic>? ?? [];
+            profissionaisOnline = profissionais
+                .where((e) => e != null && e is Map<String, dynamic>)
+                .map((e) =>
+                    ProfissionalModel.fromJson(e as Map<String, dynamic>))
+                .toList();
             notifyListeners();
           }
         } catch (error) {
