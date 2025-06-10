@@ -6,22 +6,26 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class WebSocketProvider extends ChangeNotifier {
-  WebSocketChannel? _channel;
+  WebSocketChannel? channel;
   List<Profissional> profissionaisOnline = [];
 
   void connect() {
     print('Chamando connect do WebSocketProvider');
     final wsUrl = dotenv.env['WS_URL'];
-    print('WS_URL: $wsUrl');
+    //print('WS_URL: $wsUrl');
     if (wsUrl != null) {
-      _channel = WebSocketChannel.connect(Uri.parse(wsUrl));
-      _channel!.stream.listen((message) {
+      channel = WebSocketChannel.connect(Uri.parse(wsUrl));
+      channel!.stream.listen((message) {
         try {
           final data = jsonDecode(message);
-          print('Mensagem recebida: $data');
+          for (var prof in data['profissionais']) {
+            print(
+                'Profissional: ${prof['nome']} - Tipo: ${prof['tipoProfissional']}');
+          }
           if (data is List) {
             profissionaisOnline =
                 data.map((e) => ProfissionalModel.fromJson(e)).toList();
+
             notifyListeners();
           } else if (data is Map && data['type'] == 'status_update') {
             // Atualiza ou adiciona o profissional na lista
@@ -31,6 +35,7 @@ class WebSocketProvider extends ChangeNotifier {
                 .map((e) =>
                     ProfissionalModel.fromJson(e as Map<String, dynamic>))
                 .toList();
+
             notifyListeners();
           }
         } catch (error) {
@@ -50,7 +55,17 @@ class WebSocketProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _channel?.sink.close();
+    channel?.sink.close();
     super.dispose();
+  }
+
+  void setProfissionaisOnline(List<Profissional> lista) {
+    profissionaisOnline = List.from(lista);
+    notifyListeners();
+  }
+
+  void clearListWebSocket() {
+    profissionaisOnline.clear();
+    notifyListeners();
   }
 }

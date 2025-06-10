@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
 import 'package:blurt/core/utils/validators.dart';
+import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,8 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginProfissionalController>(
-        builder: (context, controllerProfissionalLogin, child) {
+    return Consumer2<LoginProfissionalController, WebSocketProvider>(builder:
+        (context, controllerProfissionalLogin, webSocketController, child) {
       return Form(
         key: _formKey,
         child: Column(
@@ -119,8 +120,44 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                         FocusScope.of(context).unfocus();
                         if (_cpfController.text.isNotEmpty &&
                             _passwordController.text.isNotEmpty) {
-                          _showSelfieField = true;
-                          print('Campos obrigatórios não preenchidos');
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => _loading = true);
+
+                            try {
+                              final profissional =
+                                  await controllerProfissionalLogin.login(
+                                _cpfController.text,
+                                _passwordController.text,
+                              );
+                              if (profissional != null) {
+                                print('profissional: $profissional');
+                                // controllerProfissionalLogin
+                                //     .startPing(profissional.id!,
+                                //         webSocketController.channel!);
+
+                                if (context.mounted) {
+                                  setState(() {
+                                    _loading = false;
+                                  });
+                                  Navigator.pushNamed(
+                                      context, '/dashboard_profissional');
+                                }
+                              }
+                            } catch (error) {
+                              if (context.mounted) {
+                                setState(() {
+                                  _loading = false;
+                                });
+                                print('Erro ao fazer login: $error');
+                                SnackbarsHelpers.showSnackBar(
+                                  context,
+                                  error.toString(),
+                                  backgroundColor: Colors.red,
+                                );
+                              }
+                            }
+                          }
+                          //_showSelfieField = true;
                         }
                       },
                 child: _loading
@@ -155,76 +192,43 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                 ),
               ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  _selfieImage != null
-                      ? CircleAvatar(
-                          radius: 32,
-                          backgroundImage: FileImage(_selfieImage!),
-                        )
-                      : const CircleAvatar(
-                          radius: 32,
-                          backgroundColor: Color(0xFFE0E0E0),
-                          child:
-                              Icon(Icons.person, size: 32, color: Colors.grey),
-                        ),
-                  const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                    onPressed: _loading
-                        ? null
-                        : () async {
-                            await _pickSelfie();
-                            if (_selfieImage != null) {
-                              if (context.mounted) {
-                                if (_formKey.currentState!.validate()) {
-                                  setState(() => _loading = true);
-
-                                  try {
-                                    final profissional =
-                                        await controllerProfissionalLogin.login(
-                                      _cpfController.text,
-                                      _passwordController.text,
-                                    );
-                                    if (profissional != null) {
-                                      setState(() {
-                                        _loading = false;
-                                        if (context.mounted) {
-                                          Navigator.pushNamed(context,
-                                              '/dashboard_profissional');
-                                        }
-                                      });
-                                    }
-                                  } catch (error) {
-                                    setState(() {
-                                      _loading = false;
-                                    });
-                                    if (context.mounted) {
-                                      print('Erro ao fazer login: $error');
-                                      SnackbarsHelpers.showSnackBar(
-                                        context,
-                                        error.toString(),
-                                        backgroundColor: Colors.red,
-                                      );
-                                    }
-                                  }
-                                }
-                              }
-                            } else {
-                              if (context.mounted) {
-                                SnackbarsHelpers.showSnackBar(context,
-                                    'Por favor, tire uma selfie para validar seu login.',
-                                    backgroundColor: Colors.red);
-                              }
-                            }
-                          },
-                    icon: const Icon(
-                      Icons.camera_alt,
-                      color: AppThemes.textLightColor,
-                    ),
-                    label: const Text('Tirar Selfie'),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     _selfieImage != null
+              //         ? CircleAvatar(
+              //             radius: 32,
+              //             backgroundImage: FileImage(_selfieImage!),
+              //           )
+              //         : const CircleAvatar(
+              //             radius: 32,
+              //             backgroundColor: Color(0xFFE0E0E0),
+              //             child:
+              //                 Icon(Icons.person, size: 32, color: Colors.grey),
+              //           ),
+              //     const SizedBox(width: 16),
+              //     ElevatedButton.icon(
+              //       onPressed: _loading
+              //           ? null
+              //           : () async {
+              //               await _pickSelfie();
+              //               if (_selfieImage != null) {
+              //                 if (context.mounted) {}
+              //               } else {
+              //                 if (context.mounted) {
+              //                   SnackbarsHelpers.showSnackBar(context,
+              //                       'Por favor, tire uma selfie para validar seu login.',
+              //                       backgroundColor: Colors.red);
+              //                 }
+              //               }
+              //             },
+              //       icon: const Icon(
+              //         Icons.camera_alt,
+              //         color: AppThemes.textLightColor,
+              //       ),
+              //       label: const Text('Tirar Selfie'),
+              //     ),
+              //   ],
+              // ),
             ],
           ],
         ),

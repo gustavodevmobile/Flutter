@@ -27,46 +27,26 @@ class _DashboardProfissionalScreenState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    didChangeAppLifecycleState(AppLifecycleState state) {
-      print('AppLifecycleState: $state');
+    // ... seu código ...
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // App foi para segundo plano (background)
+      print('App em segundo plano');
+    } else if (state == AppLifecycleState.resumed) {
+      // App voltou para o primeiro plano (foreground)
+      print('App voltou para o primeiro plano');
     }
+    // Você pode tratar outros estados: inactive, detached
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    print('widgetsBinding observer removido');
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached) {
-      // Apenas quando o app está sendo fechado
-
-      final profissionalId =
-          Provider.of<LoginProfissionalController>(context, listen: false)
-              .profissional
-              ?.id;
-      if (profissionalId != null) {
-        // Desativa o plantão e faz logout do profissional
-        Provider.of<DashboardProfissionalController>(context, listen: false)
-            .alterarStatusAtendePlantao(
-                profissionalId: profissionalId, novoStatus: false);
-
-        Provider.of<DashboardProfissionalController>(context, listen: false)
-            .logoutProfissional(profissionalId: profissionalId);
-        _fotoCache = null;
-        _fotoBase64Cache = null;
-        print('Logout do profissional realizado com sucesso.');
-      }
-    }
-    if (state == AppLifecycleState.paused) {
-      print('App está sendo fechado.');
-      // Limpa o cache da foto
-      _fotoCache = null;
-      _fotoBase64Cache = null;
-      print('Cache da foto limpo.');
-    }
   }
 
   @override
@@ -299,19 +279,6 @@ class _DashboardProfissionalScreenState
                   ),
                   const SizedBox(height: 24),
 
-                  // ElevatedButton.icon(
-                  //   icon: const Icon(Icons.flash_on),
-                  //   label: const Text('Atender Agora'),
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: Colors.green,
-                  //     foregroundColor: Colors.white,
-                  //     minimumSize: const Size(double.infinity, 48),
-                  //     textStyle: const TextStyle(fontSize: 18),
-                  //   ),
-                  //   onPressed: () {
-                  //     // Implementar lógica de atendimento imediato
-                  //   },
-                  // ),
                   const SizedBox(height: 24),
                   Text('Finanças',
                       style: Theme.of(context).textTheme.titleMedium),

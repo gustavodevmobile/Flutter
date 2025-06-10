@@ -53,6 +53,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => WebSocketProvider()),
         ChangeNotifierProvider(create: (_) => ProviderController()),
         ChangeNotifierProvider(
           create: (_) => ProfissionaisOnlineController(
@@ -105,10 +106,22 @@ void main() async {
           ),
         ),
         ChangeNotifierProvider(
-          create: (_) => LoginProfissionalController(
+          create: (context) => LoginProfissionalController(
             LoginProfissionalUseCase(
               LoginProfissionalRepositoryImpl(
                 LoginProfissionalRemoteDatasourceImpl(http.Client()),
+              ),
+              
+            ),
+            //Provider.of<WebSocketProvider>(context, listen: false).channel!,
+          ),
+          
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LoginUsuarioController(
+            loginUsuarioUseCase: LoginUsuarioUseCase(
+              LoginRepositoryImpl(
+                LoginRemoteDatasourceImpl(http.Client()),
               ),
             ),
           ),
@@ -118,7 +131,7 @@ void main() async {
             DashboardProfissionalDatasourceImpl(http.Client()),
           ),
         ),
-        ChangeNotifierProvider(create: (_) => WebSocketProvider())
+        
 
         // Adicione outros providers globais aqui
       ],

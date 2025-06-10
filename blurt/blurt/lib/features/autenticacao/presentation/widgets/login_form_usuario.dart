@@ -1,4 +1,5 @@
 import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
@@ -17,13 +18,14 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<LoginUsuarioController, ProfissionaisOnlineController,
-        ProviderController>(
+    return Consumer4<LoginUsuarioController, ProfissionaisOnlineController,
+        ProviderController, WebSocketProvider>(
       builder: (context, controllerUsuario, controllerProfissionaisOnline,
-          providerController, child) {
+          providerController, webSocketProvider, child) {
         return Form(
           key: _formKey,
           child: Column(
@@ -90,48 +92,53 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                     ),
                     textStyle: const TextStyle(fontSize: 18),
                   ),
-                  onPressed: controllerUsuario.loading
+                  onPressed: _loading
                       ? null
                       : () async {
                           FocusScope.of(context).unfocus();
-                          try {
-                            final usuario = await controllerUsuario.login(
-                              context: context,
-                              email: _emailController.text,
-                              senha: _passwordController.text,
-                              formKey: _formKey,
-                            );
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => _loading = true);
 
-                            final profissionaisOnline =
-                                await controllerProfissionaisOnline
-                                    .buscarProfissionaisOnline();
+                            try {
+                              final usuario = await controllerUsuario.login(
+                                email: _emailController.text,
+                                senha: _passwordController.text,
+                              );
 
-                            providerController
-                                .setProfissionaisOnline(profissionaisOnline);
-                            for (var profissional in profissionaisOnline) {
-                              print(
-                                  'Profissional online: ${profissional.estaOnline}');
-                            }
+                              //Faz a busca dos profissionais online
+                              final profissionaisOnline =
+                                  await controllerProfissionaisOnline
+                                      .buscarProfissionaisOnline();
 
-                            if (usuario != null) {
-                              if (context.mounted) {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/dashboard_usuario',
-                                );
+                              // Atualiza a lista de profissionais online no WebSocketProvider
+                              webSocketProvider
+                                  .setProfissionaisOnline(profissionaisOnline);
+
+                              // Atualiza a lista de profissionais online no ProviderController
+                              providerController
+                                  .setProfissionaisOnline(profissionaisOnline);
+
+                              if (usuario != null) {
+                                setState(() => _loading = false);
+                                if (context.mounted) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/dashboard_usuario',
+                                  );
+                                }
                               }
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              print('Erro ao fazer login: $e');
-                              // Exibe o erro usando o SnackBar
-                              SnackbarsHelpers.showSnackBar(
-                                  context, e.toString(),
-                                  backgroundColor: Colors.red);
+                            } catch (e) {
+                              if (context.mounted) {
+                                print('Erro ao fazer login: $e');
+                                // Exibe o erro usando o SnackBar
+                                SnackbarsHelpers.showSnackBar(
+                                    context, e.toString(),
+                                    backgroundColor: Colors.red);
+                              }
                             }
                           }
                         },
-                  child: controllerUsuario.loading
+                  child: _loading
                       ? const SizedBox(
                           width: 24,
                           height: 24,
@@ -145,7 +152,7 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: controllerUsuario.loading
+                onPressed: _loading
                     ? null
                     : () {
                         Navigator.pushNamed(context, '/cadastro_usuario');

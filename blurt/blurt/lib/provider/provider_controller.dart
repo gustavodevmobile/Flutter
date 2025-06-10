@@ -26,10 +26,7 @@ class ProviderController with ChangeNotifier {
     notifyListeners();
   }
 
-  void clearProfissional() {
-    profissional = null;
-    notifyListeners();
-  }
+  
 
   void clearUsuario() {
     usuario = null;

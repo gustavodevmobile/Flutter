@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/theme/themes.dart';
@@ -22,26 +23,51 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     {'data': '10/05/2025', 'profissional': 'Dr. João', 'tipo': 'Psicanalista'},
   ];
   Map<String, dynamic>? ultimaSessao;
+  late WebSocketProvider _webSocketProvider;
+  late ProviderController _providerController;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Salve as referências enquanto o context ainda é válido
+    _webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+    _providerController =
+        Provider.of<ProviderController>(context, listen: false);
+  }
 
   @override
   void initState() {
     super.initState();
     ultimaSessao = sessoes.isNotEmpty ? sessoes.first : null;
-
     // Chama o WebSocket
-    if (context.mounted) {
+    if (mounted) {
       Future.microtask(() {
-        final websocketProvider =
-            Provider.of<WebSocketProvider>(context, listen: false);
-        websocketProvider.connect();
+        _webSocketProvider.connect();
       });
     }
+
+    print(
+        'WebSocketProvider ${Provider.of<WebSocketProvider>(context, listen: false).profissionaisOnline.length}');
+
+    print(
+        'ProviderController ${Provider.of<ProviderController>(context, listen: false).profissionaisOnline.length}');
 
     // Mostra o dialog assim que entrar no dashboard
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showSentimentoDialog();
     });
   }
+
+  @override
+  void dispose() {
+    // Use as referências salvas, não o context
+    //_webSocketProvider.clearListWebSocket();
+    Future.microtask(() {
+      _webSocketProvider.clearListWebSocket();
+      _providerController.clearOnline();
+    });
+    super.dispose();
+  } 
 
   void _showSentimentoDialog() async {
     final List<Map<String, String>> emojis = [
@@ -157,12 +183,23 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ProviderController, WebSocketProvider>(
-        builder: (context, globalProvider, websocketProvider, child) {
+    return Consumer3<ProviderController, WebSocketProvider,
+            LoginUsuarioController>(
+        builder: (context, globalProvider, websocketProvider, usuarioController,
+            child) {
       final profissionaisOnline =
           websocketProvider.profissionaisOnline.isNotEmpty
               ? websocketProvider.profissionaisOnline
               : globalProvider.profissionaisOnline;
+
+      print('Profissionais Online: ${profissionaisOnline.length}');
+      // Verifica se o usuário está logado
+      print(
+          'websocketProvider.profissionaisOnline.length: ${websocketProvider.profissionaisOnline.length}');
+
+      print(
+          'globalProvider.profissionaisOnline.length: ${globalProvider.profissionaisOnline.length}');
+
       return Scaffold(
         appBar: AppBar(
             title: const Text('Dashboard Usuário'),
@@ -193,7 +230,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: CardProdissional(
-                        profOnline: globalProvider.profissionaisOnline,
+                        profOnline: profissionaisOnline,
                         scrollDirection: Axis.vertical,
                         itemHeight: MediaQuery.of(context).size.height,
                       ),
@@ -220,7 +257,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Bem-vindo!',
+                    'Bem-vindo, ${usuarioController.usuario?.nome}',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
@@ -323,6 +360,10 @@ class CardProdissional extends StatelessWidget {
   final List<Profissional> profOnline;
   final Axis scrollDirection;
   final double? itemHeight;
+
+  // Cache estático para as fotos
+  static final Map<String, MemoryImage> _fotoCache = {};
+
   const CardProdissional(
       {required this.profOnline,
       required this.scrollDirection,
@@ -338,7 +379,16 @@ class CardProdissional extends StatelessWidget {
         itemCount: profOnline.length,
         separatorBuilder: (_, __) => const SizedBox(width: 2),
         itemBuilder: (context, index) {
-          //final prof = profOnline[index];
+          final profissional = profOnline[index];
+          MemoryImage? fotoImage;
+
+          if (profissional.foto.isNotEmpty) {
+            fotoImage = _fotoCache[profissional.id];
+            if (fotoImage == null) {
+              fotoImage = MemoryImage(base64Decode(profissional.foto));
+              _fotoCache[profissional.id!] = fotoImage;
+            }
+          }
           return GestureDetector(
             onTap: () {
               Provider.of<ProviderController>(context, listen: false)
@@ -365,10 +415,7 @@ class CardProdissional extends StatelessWidget {
                         else
                           CircleAvatar(
                             radius: 25,
-                            child: Image.memory(
-                              base64Decode(profOnline[index].foto),
-                              fit: BoxFit.cover,
-                            ),
+                            backgroundImage: fotoImage,
                           ),
                         const SizedBox(width: 16),
                         Column(
