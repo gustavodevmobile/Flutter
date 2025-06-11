@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/profissional/profissional_model.dart';
@@ -67,5 +68,21 @@ class WebSocketProvider extends ChangeNotifier {
   void clearListWebSocket() {
     profissionaisOnline.clear();
     notifyListeners();
+  }
+
+  Timer? _pingTimer;
+
+  void startPing(String profissionalId) {
+    _pingTimer?.cancel();
+    _pingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      final payload =
+          jsonEncode({'type': 'ping', 'profissionalId': profissionalId});
+      print('Enviando ping: $payload'); // ADICIONE ISSO
+      channel?.sink.add(payload);
+    });
+  }
+
+  void stopPing() {
+    _pingTimer?.cancel();
   }
 }

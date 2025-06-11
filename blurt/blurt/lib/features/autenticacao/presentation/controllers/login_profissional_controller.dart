@@ -1,44 +1,28 @@
 import 'dart:async';
-import 'dart:convert';
-
+import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:provider/provider.dart';
 import '../../domain/usecases/login_profissional_usecase.dart';
 
 class LoginProfissionalController extends ChangeNotifier {
   final LoginProfissionalUseCase loginUseCase;
-  //final WebSocketChannel channel; // Adicione isso
   LoginProfissionalController(this.loginUseCase);
 
   Profissional? profissional;
 
-  Future<Profissional?> login(String cpf, String senha) async {
+  Future<Profissional?> login(
+      String cpf, String senha, BuildContext context) async {
     try {
       profissional = await loginUseCase(cpf, senha);
-      // if (profissional != null) {
-      //   startPing(profissional!.id!, channel);
-      // }
+      if (context.mounted) {
+        Provider.of<WebSocketProvider>(context, listen: false)
+            .startPing(profissional!.id!);
+      }
       return profissional;
     } catch (e) {
       print('Erro ao fazer login: $e');
       rethrow;
     }
-  }
-
-  Timer? _pingTimer;
-
-  void startPing(String profissionalId,  WebSocketChannel channel) {
-    _pingTimer?.cancel();
-    _pingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
-      final payload =
-          jsonEncode({'type': 'ping', 'profissionalId': profissionalId});
-      print('Enviando ping: $payload'); // ADICIONE ISSO
-      channel.sink.add(payload);
-    });
-  }
-
-  void stopPing() {
-    _pingTimer?.cancel();
   }
 }

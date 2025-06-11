@@ -23,7 +23,7 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
-  bool _showSelfieField = false;
+  final bool _showSelfieField = false;
   File? _selfieImage;
   String? _selfieBase64;
   final ImagePicker _picker = ImagePicker();
@@ -126,9 +126,9 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                             try {
                               final profissional =
                                   await controllerProfissionalLogin.login(
-                                _cpfController.text,
-                                _passwordController.text,
-                              );
+                                      _cpfController.text,
+                                      _passwordController.text,
+                                      context);
                               if (profissional != null) {
                                 print('profissional: $profissional');
                                 // controllerProfissionalLogin

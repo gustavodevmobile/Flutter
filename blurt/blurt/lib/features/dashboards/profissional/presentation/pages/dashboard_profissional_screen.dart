@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
@@ -22,12 +23,25 @@ class _DashboardProfissionalScreenState
   String? fotoPerfil;
   MemoryImage? _fotoCache;
   String? _fotoBase64Cache;
+  late WebSocketProvider _webSocketProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Salve as referências enquanto o context ainda é válido
+    _webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // ... seu código ...
+    // Inicialize o WebSocketProvider se necessário
+    if (mounted) {
+      Future.microtask(() {
+        _webSocketProvider.connect();
+      });
+    }
   }
 
   @override
@@ -93,6 +107,7 @@ class _DashboardProfissionalScreenState
                     _fotoCache = null;
                     _fotoBase64Cache = null;
                     // Redireciona para a tela de login
+                    _webSocketProvider.stopPing();
                   }
                   if (context.mounted) {
                     Navigator.pushNamedAndRemoveUntil(
