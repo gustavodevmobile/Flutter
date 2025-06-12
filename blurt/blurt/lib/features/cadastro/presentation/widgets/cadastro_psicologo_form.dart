@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/state_city_dropdown.dart';
 import 'package:blurt/core/utils/validators.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:blurt/features/abordagens_utilizadas/presentation/abordagens_utilizadas_controller.dart';
@@ -52,9 +53,11 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
 
   List<AbordagensUtilizadas> _abordagensUtilizadasSelecionada = [];
   //List<TemasClinicos> _temasClinicos = [];
-  final List<EspecialidadePrincipal> _especialidadesDisponiveis = [];
+  //final List<EspecialidadePrincipal> _especialidadesDisponiveis = [];
   String? cnpj;
   String? _genero;
+  String? _estadoSelecionado;
+  String? _cidadeSelecionada;
   AbordagemPrincipal? _abordagemSelecionada;
   EspecialidadePrincipal? _especialidadeSelecionada;
   bool _loading = false;
@@ -183,6 +186,16 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                   return 'Nome obrigatório';
                 }
                 return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            // Campo Estado e Cidade
+            StateCityDropdown(
+              onSelectionChanged: (estado, cidade) {
+                setState(() {
+                  _estadoSelecionado = estado;
+                  _cidadeSelecionada = cidade;
+                });
               },
             ),
             const SizedBox(height: 16),
@@ -1046,6 +1059,8 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
 
                           final profissional = {
                             'nome': _nameController.text.trim(),
+                            'estado': _estadoSelecionado,
+                            'cidade': _cidadeSelecionada,
                             'email': _emailController.text.trim(),
                             'senha': _passwordController.text,
                             'bio': _bioController.text.trim(),
@@ -1075,7 +1090,7 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                             'certificadoEspecializacao':
                                 _certificadoEspecialidadePrincipal
                           };
-
+                          print('Profissional: $profissional');
                           try {
                             final result = await controllerCadastro
                                 .cadastrarProfissional(profissional);

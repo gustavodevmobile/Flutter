@@ -46,9 +46,23 @@ import 'package:flutter/material.dart';
 import 'package:blurt/screens/dashboard_usuario.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() async {
   await dotenv.load();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   runApp(
     MultiProvider(
@@ -111,11 +125,9 @@ void main() async {
               LoginProfissionalRepositoryImpl(
                 LoginProfissionalRemoteDatasourceImpl(http.Client()),
               ),
-              
             ),
-           // Provider.of<WebSocketProvider>(context, listen: false).channel!,
+            // Provider.of<WebSocketProvider>(context, listen: false).channel!,
           ),
-          
         ),
         ChangeNotifierProvider(
           create: (_) => LoginUsuarioController(
@@ -131,7 +143,6 @@ void main() async {
             DashboardProfissionalDatasourceImpl(http.Client()),
           ),
         ),
-        
 
         // Adicione outros providers globais aqui
       ],

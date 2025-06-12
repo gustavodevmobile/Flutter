@@ -1,6 +1,8 @@
 class Profissional {
   final String? id;
   final String nome;
+  final String estado;
+  final String cidade;
   final String email;
   final String senha;
   final String? bio;
@@ -34,6 +36,8 @@ class Profissional {
   Profissional({
     this.id,
     required this.nome,
+    required this.estado,
+    required this.cidade,
     required this.email,
     required this.senha,
     this.bio,

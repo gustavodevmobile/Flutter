@@ -4,6 +4,8 @@ class ProfissionalModel extends Profissional {
   ProfissionalModel({
     super.id,
     required super.nome,
+    required super.estado,
+    required super.cidade,
     required super.email,
     required super.senha,
     super.bio,
@@ -39,6 +41,8 @@ class ProfissionalModel extends Profissional {
     return ProfissionalModel(
       id: json['id'] as String?,
       nome: json['nome'] ?? '',
+      estado: json['estado'] ?? '',
+      cidade: json['cidade'] ?? '',
       email: json['email'] ?? '',
       senha: json['senha'] ?? '',
       bio: json['bio'] as String?,
@@ -82,6 +86,8 @@ class ProfissionalModel extends Profissional {
     return {
       if (id != null) 'id': id,
       'nome': nome,
+      'estado': estado,
+      'cidade': cidade,
       'email': email,
       'senha': senha,
       if (bio != null) 'bio': bio,
@@ -123,6 +129,8 @@ class ProfissionalModel extends Profissional {
     return ProfissionalModel(
       id: p.id,
       nome: p.nome,
+      estado: p.estado,
+      cidade: p.cidade,
       email: p.email,
       senha: p.senha,
       bio: p.bio,

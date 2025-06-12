@@ -23,9 +23,11 @@ class CadastroProfissionalController extends ChangeNotifier {
         dataConvertido[entry.key] = await fileToBase64(entry.value);
       }
     }
-    print('Dados convertidos: $dataConvertido');
+    //print('Dados convertidos: $dataConvertido');
     final profissional = Profissional(
       nome: dataConvertido['nome'],
+      estado: dataConvertido['estado'],
+      cidade: dataConvertido['cidade'],
       email: dataConvertido['email'],
       senha: dataConvertido['senha'],
       bio: dataConvertido['bio'] ?? '',

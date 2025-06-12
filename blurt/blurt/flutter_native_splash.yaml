@@ -8,4 +8,4 @@ flutter_native_splash:
     image: assets/image/splash.png
     icon_background_color: "#ffffff"
     image_dark: assets/image/splash.png
-    icon_background_color_dark: "#121212"
+    icon_background_color_dark: "#ffffff"
