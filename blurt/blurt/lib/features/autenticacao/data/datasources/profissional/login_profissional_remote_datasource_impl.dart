@@ -10,6 +10,7 @@ class LoginProfissionalRemoteDatasourceImpl
 
   @override
   Future<Map<String, dynamic>> login(String cpf, String senha) async {
+    print('Logging in with CPF: $cpf and Senha: $senha');
     final apiUrl = dotenv.env['API_URL'];
     final response = await client.post(
       Uri.parse('$apiUrl/profissional/login'),
@@ -20,7 +21,8 @@ class LoginProfissionalRemoteDatasourceImpl
     if (response.statusCode == 200) {
       return body;
     } else {
-      throw (body['erro'] ?? 'Erro ao fazer login');
+      print('Response from login:');
+      throw body['message'] ?? 'Erro ao fazer login';
     }
   }
 }

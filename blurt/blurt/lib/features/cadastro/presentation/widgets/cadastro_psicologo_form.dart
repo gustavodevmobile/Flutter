@@ -1117,11 +1117,11 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                         }
                       },
                 child: _loading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: AppThemes.primaryColor,
                           strokeWidth: 2.5,
                         ),
                       )

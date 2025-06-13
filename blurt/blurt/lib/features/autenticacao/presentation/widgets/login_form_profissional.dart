@@ -130,11 +130,6 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                       _passwordController.text,
                                       context);
                               if (profissional != null) {
-                                print('profissional: $profissional');
-                                // controllerProfissionalLogin
-                                //     .startPing(profissional.id!,
-                                //         webSocketController.channel!);
-
                                 if (context.mounted) {
                                   setState(() {
                                     _loading = false;
@@ -148,7 +143,7 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                 setState(() {
                                   _loading = false;
                                 });
-                                print('Erro ao fazer login: $error');
+
                                 SnackbarsHelpers.showSnackBar(
                                   context,
                                   error.toString(),
