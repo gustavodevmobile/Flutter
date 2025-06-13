@@ -4,8 +4,7 @@ import 'package:blurt/core/services/busca_cidades.dart';
 class StateCityDropdown extends StatefulWidget {
   final Function(String, String) onSelectionChanged;
 
-  const StateCityDropdown({Key? key, required this.onSelectionChanged})
-      : super(key: key);
+  const StateCityDropdown({super.key, required this.onSelectionChanged});
 
   @override
   _StateCityDropdownState createState() => _StateCityDropdownState();
