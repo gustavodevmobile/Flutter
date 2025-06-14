@@ -60,13 +60,16 @@ class WebSocketProvider extends ChangeNotifier {
     super.dispose();
   }
 
-  void setProfissionaisOnline(List<Profissional> lista) {
-    profissionaisOnline = List.from(lista);
+  void disconnect() {
+    channel?.sink.close();
+    channel = null;
+    profissionaisOnline.clear();
     notifyListeners();
+    print('Conexão WebSocket desconectada');
   }
 
-  void clearListWebSocket() {
-    profissionaisOnline.clear();
+  void setProfissionaisOnline(List<Profissional> lista) {
+    profissionaisOnline = List.from(lista);
     notifyListeners();
   }
 

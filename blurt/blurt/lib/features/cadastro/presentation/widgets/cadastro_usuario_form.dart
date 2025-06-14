@@ -1,5 +1,6 @@
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/state_city_dropdown.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuario_controller.dart';
 import 'package:blurt/models/usuario/usuario.dart';
 import 'package:blurt/theme/themes.dart';
@@ -23,8 +24,9 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   String? _gender;
-
   bool _loading = false;
+  String? _estadoSelecionado;
+  String? _cidadeSelecionada;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +66,13 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
                 return null;
               },
             ),
+            const SizedBox(height: 16),
+            StateCityDropdown(onSelectionChanged: (estado, cidade) {
+              setState(() {
+                _estadoSelecionado = estado;
+                _cidadeSelecionada = cidade;
+              });
+            }),
             const SizedBox(height: 16),
             // Campo Data de Nascimento
             TextFormField(
@@ -213,6 +222,8 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
 
                           final usuario = Usuario(
                             nome: _nameController.text.trim(),
+                            estado: _estadoSelecionado ?? '',
+                            cidade: _cidadeSelecionada ?? '',
                             dataNascimento: Formatters.parseData(
                                 _dataNascimentoController.text.trim()),
                             email: _emailController.text.trim(),
@@ -221,6 +232,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
                             cpf: _cpfController.text.trim(),
                             genero: _gender ?? '',
                           );
+                          print('Usuário a ser cadastrado: ${usuario.cidade}');
 
                           try {
                             final result = await controllerUsuario

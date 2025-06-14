@@ -2,6 +2,8 @@
 class Usuario {
   final String? id;
   final String nome;
+  final String estado;
+  final String cidade;
   final String email;
   final String? telefone;
   final String senha;
@@ -14,6 +16,8 @@ class Usuario {
   Usuario({
     this.id,
     required this.nome,
+    required this.estado,
+    required this.cidade,
     required this.email,
     this.telefone,
     required this.senha,

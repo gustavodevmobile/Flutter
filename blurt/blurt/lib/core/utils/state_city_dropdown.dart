@@ -5,12 +5,13 @@ class StateCityDropdown extends StatefulWidget {
   final Function(String, String) onSelectionChanged;
 
   const StateCityDropdown({super.key, required this.onSelectionChanged});
+      
 
   @override
-  _StateCityDropdownState createState() => _StateCityDropdownState();
+  StateCityDropdownState createState() => StateCityDropdownState();
 }
 
-class _StateCityDropdownState extends State<StateCityDropdown> {
+class StateCityDropdownState extends State<StateCityDropdown> {
   final List<String> estados = [
     'AC',
     'AL',
@@ -52,7 +53,7 @@ class _StateCityDropdownState extends State<StateCityDropdown> {
           await localidadesService.buscarCidadesPorEstado(estado);
       setState(() {
         cidades = cidadesResult;
-        cidadeSelecionada = null; // Resetar cidade ao mudar estado
+        cidadeSelecionada = null;
       });
     } catch (e) {
       print('Erro ao buscar cidades: $e');
@@ -65,74 +66,91 @@ class _StateCityDropdownState extends State<StateCityDropdown> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Flexible(
-          fit: FlexFit.loose,
-          child: DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Estado',
-              prefixIcon: Icon(Icons.map_outlined),
-            ),
-            value: estadoSelecionado,
-            items: estados.map((estado) {
-              return DropdownMenuItem(
-                value: estado,
-                child: Text(estado),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                estadoSelecionado = value;
-              });
-              if (value != null) {
-                buscarCidades(value);
-              }
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Selecione um estado';
-              }
-              return null;
-            },
+        DropdownButtonFormField<String>(
+          decoration: const InputDecoration(
+            labelText: 'Estado',
+            prefixIcon: Icon(Icons.map_outlined),
           ),
+          value: estadoSelecionado,
+          items: estados.map((estado) {
+            return DropdownMenuItem(
+              value: estado,
+              child: Text(estado),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              estadoSelecionado = value;
+            });
+            if (value != null) {
+              buscarCidades(value);
+            }
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Selecione um estado';
+            }
+            return null;
+          },
         ),
         const SizedBox(height: 16),
-        if (cidades.isNotEmpty)
-          Flexible(
-            fit: FlexFit.loose,
-            child: DropdownButtonFormField<String>(
+        Autocomplete<String>(
+          optionsBuilder: (TextEditingValue textEditingValue) {
+            if (estadoSelecionado == null || cidades.isEmpty) {
+              return const Iterable<String>.empty();
+            }
+            if (textEditingValue.text.isEmpty) {
+              return cidades;
+            }
+            return cidades.where((c) => c
+                .toLowerCase()
+                .startsWith(textEditingValue.text.toLowerCase()));
+          },
+          displayStringForOption: (option) => option,
+          fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+            controller.text = cidadeSelecionada ?? '';
+            return TextFormField(
+              controller: controller,
+              focusNode: focusNode,
               decoration: const InputDecoration(
                 labelText: 'Cidade',
                 prefixIcon: Icon(Icons.location_city_outlined),
               ),
-              value: cidadeSelecionada,
-              items: cidades.map((cidade) {
-                return DropdownMenuItem(
-                  value: cidade,
-                  child: Text(
-                    cidade.length > 20
-                        ? '${cidade.substring(0, 20)}...'
-                        : cidade,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
+              enabled: estadoSelecionado != null && cidades.isNotEmpty,
+              validator: (value) {
+                if (estadoSelecionado == null || cidades.isEmpty) {
+                  return 'Selecione um estado';
+                }
+                if (value == null || value.isEmpty) {
+                  return 'Selecione ou digite uma cidade';
+                }
+                if (!cidades.contains(value)) {
+                  return 'Cidade inválida';
+                }
+                return null;
+              },
               onChanged: (value) {
                 setState(() {
                   cidadeSelecionada = value;
                 });
-                if (estadoSelecionado != null && cidadeSelecionada != null) {
+                if (estadoSelecionado != null &&
+                    cidadeSelecionada != null &&
+                    cidades.contains(cidadeSelecionada)) {
                   widget.onSelectionChanged(
                       estadoSelecionado!, cidadeSelecionada!);
                 }
               },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Selecione uma cidade';
-                }
-                return null;
-              },
-            ),
-          ),
+            );
+          },
+          onSelected: (value) {
+            setState(() {
+              cidadeSelecionada = value;
+            });
+            if (estadoSelecionado != null && cidadeSelecionada != null) {
+              widget.onSelectionChanged(estadoSelecionado!, cidadeSelecionada!);
+            }
+          },
+        ),
       ],
     );
   }

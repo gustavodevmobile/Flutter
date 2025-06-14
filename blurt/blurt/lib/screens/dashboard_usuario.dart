@@ -63,7 +63,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     // Use as referências salvas, não o context
     //_webSocketProvider.clearListWebSocket();
     Future.microtask(() {
-      _webSocketProvider.clearListWebSocket();
+      _webSocketProvider.disconnect();
       _providerController.clearOnline();
     });
     super.dispose();

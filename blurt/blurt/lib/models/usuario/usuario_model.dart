@@ -4,6 +4,8 @@ class UsuarioModel extends Usuario {
   UsuarioModel({
     super.id,
     required super.nome,
+    required super.estado,
+    required super.cidade,
     required super.email,
     super.telefone,
     required super.senha,
@@ -18,6 +20,8 @@ class UsuarioModel extends Usuario {
     return UsuarioModel(
       id: json['id'] as String?,
       nome: json['nome'] ?? '',
+      estado: json['estado'] ?? '',
+      cidade: json['cidade'] ?? '',
       email: json['email'] ?? '',
       telefone: json['telefone'] as String?,
       senha: json['senha'] ?? '',
@@ -37,6 +41,8 @@ class UsuarioModel extends Usuario {
     return UsuarioModel(
       id: usuario.id,
       nome: usuario.nome,
+      estado: usuario.estado,
+      cidade: usuario.cidade,
       email: usuario.email,
       telefone: usuario.telefone,
       senha: usuario.senha,
@@ -52,6 +58,8 @@ class UsuarioModel extends Usuario {
     return {
       if (id != null) 'id': id,
       'nome': nome,
+      'estado': estado,
+      'cidade': cidade,
       'email': email,
       if (telefone != null) 'telefone': telefone,
       'senha': senha,

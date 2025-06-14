@@ -12,6 +12,7 @@ class CadastroUsuarioDatasourceImpl implements CadastroUsuarioDatasource {
   @override
   Future<String> cadastroUsuario(Map<String, dynamic> data) async {
     final apiUrl = dotenv.env['API_URL'];
+    print(data);
     final response = await client.post(
       Uri.parse('$apiUrl/usuario'),
       headers: {'Content-Type': 'application/json'},
