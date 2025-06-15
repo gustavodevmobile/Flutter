@@ -9,6 +9,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class WebSocketProvider extends ChangeNotifier {
   WebSocketChannel? channel;
   List<Profissional> profissionaisOnline = [];
+  Timer? _pingTimer;
+  Timer? _keepConnectionTimer;
+  Timer? _delayIdentifyConnection;
 
   void connect() {
     print('Chamando connect do WebSocketProvider');
@@ -16,6 +19,7 @@ class WebSocketProvider extends ChangeNotifier {
     //print('WS_URL: $wsUrl');
     if (wsUrl != null) {
       channel = WebSocketChannel.connect(Uri.parse(wsUrl));
+
       channel!.stream.listen((message) {
         try {
           final data = jsonDecode(message);
@@ -36,7 +40,6 @@ class WebSocketProvider extends ChangeNotifier {
                 .map((e) =>
                     ProfissionalModel.fromJson(e as Map<String, dynamic>))
                 .toList();
-
             notifyListeners();
           }
         } catch (error) {
@@ -73,19 +76,51 @@ class WebSocketProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Timer? _pingTimer;
-
   void startPing(String profissionalId) {
-    _pingTimer?.cancel();
-    _pingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    try {
+      _pingTimer?.cancel();
       final payload =
           jsonEncode({'type': 'ping', 'profissionalId': profissionalId});
-      print('Enviando ping: $payload'); // ADICIONE ISSO
       channel?.sink.add(payload);
-    });
+      _pingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+        channel?.sink.add(payload);
+      });
+    } catch (e) {
+      print('Erro ao iniciar o ping: $e');
+    }
   }
 
   void stopPing() {
     _pingTimer?.cancel();
+  }
+
+  void keepConnection() {
+    _keepConnectionTimer?.cancel();
+    // Envia ping a cada 14 minutos (o Render hiberna após 15)
+    _keepConnectionTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      final payload = jsonEncode({'type': 'up', 'message': 'Acorda servidor!'});
+      channel?.sink.add(payload);
+    });
+  }
+
+  void identifyConnection(String id, String userType) {
+    try {
+      final payload = jsonEncode({
+        "type": "identificacao",
+        "userType": userType,
+        "id": id,
+      });
+
+      channel?.sink.add(payload);
+
+      print('Identificando conexão: $payload');
+    } catch (e) {
+      print('Erro ao identificar conexão: $e');
+    }
+  }
+
+  void stopKeepConnection() {
+    _pingTimer?.cancel();
+    _pingTimer = null;
   }
 }

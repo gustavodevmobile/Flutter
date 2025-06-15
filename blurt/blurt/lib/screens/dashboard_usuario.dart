@@ -39,12 +39,6 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
   void initState() {
     super.initState();
     ultimaSessao = sessoes.isNotEmpty ? sessoes.first : null;
-    // Chama o WebSocket
-    if (mounted) {
-      Future.microtask(() {
-        _webSocketProvider.connect();
-      });
-    }
 
     print(
         'WebSocketProvider ${Provider.of<WebSocketProvider>(context, listen: false).profissionaisOnline.length}');
@@ -60,14 +54,13 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
 
   @override
   void dispose() {
-    // Use as referências salvas, não o context
-    //_webSocketProvider.clearListWebSocket();
     Future.microtask(() {
       _webSocketProvider.disconnect();
       _providerController.clearOnline();
+      _webSocketProvider.stopKeepConnection();
     });
     super.dispose();
-  } 
+  }
 
   void _showSentimentoDialog() async {
     final List<Map<String, String>> emojis = [

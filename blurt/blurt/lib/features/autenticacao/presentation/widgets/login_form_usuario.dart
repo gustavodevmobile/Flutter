@@ -104,28 +104,32 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                                 email: _emailController.text,
                                 senha: _passwordController.text,
                               );
-
-                              //Faz a busca dos profissionais online
-                              final profissionaisOnline =
-                                  await controllerProfissionaisOnline
-                                      .buscarProfissionaisOnline();
-
-                              // Atualiza a lista de profissionais online no WebSocketProvider
-                              webSocketProvider
-                                  .setProfissionaisOnline(profissionaisOnline);
-
-                              // Atualiza a lista de profissionais online no ProviderController
-                              providerController
-                                  .setProfissionaisOnline(profissionaisOnline);
-
                               if (usuario != null) {
-                                setState(() => _loading = false);
-                                if (context.mounted) {
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/dashboard_usuario',
-                                  );
-                                }
+                                 webSocketProvider.connect();
+                                //Faz a busca dos profissionais online
+                                final profissionaisOnline =
+                                    await controllerProfissionaisOnline
+                                        .buscarProfissionaisOnline();
+
+                                webSocketProvider.identifyConnection(
+                                    usuario.id!, "usuario");
+                                // Atualiza a lista de profissionais online no WebSocketProvider
+                                webSocketProvider.setProfissionaisOnline(
+                                    profissionaisOnline);
+
+                                webSocketProvider.keepConnection();
+
+                                // Atualiza a lista de profissionais online no ProviderController
+                                providerController.setProfissionaisOnline(
+                                    profissionaisOnline);
+                              }
+
+                              setState(() => _loading = false);
+                              if (context.mounted) {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/dashboard_usuario',
+                                );
                               }
                             } catch (e) {
                               if (context.mounted) {
