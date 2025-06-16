@@ -9,7 +9,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class WebSocketProvider extends ChangeNotifier {
   WebSocketChannel? channel;
   List<Profissional> profissionaisOnline = [];
-  Map<String, Profissional> novaSolicitacaoAtendimentoAvulso = {};
+  Map<String, dynamic> novaSolicitacaoAtendimentoAvulso = {};
+  Map<String, dynamic> respostaSolicitacaoAtendimentoAvulso = {};
   Timer? _pingTimer;
   Timer? _keepConnectionTimer;
   final wsUrl = dotenv.env['WS_URL'];
@@ -22,7 +23,6 @@ class WebSocketProvider extends ChangeNotifier {
 
         switch (msg['type']) {
           case 'status_update':
-            // Atualize a lista de profissionais online
             final profissionais = msg['profissionais'] as List<dynamic>? ?? [];
             profissionaisOnline = profissionais
                 .where((e) => e != null && e is Map<String, dynamic>)
@@ -31,12 +31,17 @@ class WebSocketProvider extends ChangeNotifier {
                 .toList();
             notifyListeners();
             print('Profissionais online atualizados: $profissionaisOnline');
-
             break;
 
           case 'nova_solicitacao_atendimento_avulso':
             print('Mensagem de chat: ${msg['textContent']}');
             novaSolicitacaoAtendimentoAvulso = msg['textContent'];
+            notifyListeners();
+            break;
+
+          case 'resposta_solicitacao_atendimento_avulso':
+            print('Mensagem de chat: ${msg['textContent']}');
+            respostaSolicitacaoAtendimentoAvulso = msg['textContent'];
             notifyListeners();
             break;
 
