@@ -17,49 +17,29 @@ class DashboardProfissionalScreen extends StatefulWidget {
 }
 
 class _DashboardProfissionalScreenState
-    extends State<DashboardProfissionalScreen> with WidgetsBindingObserver {
+    extends State<DashboardProfissionalScreen> {
   bool online = false;
   bool plantao = true;
   String? fotoPerfil;
   MemoryImage? _fotoCache;
   String? _fotoBase64Cache;
-  late WebSocketProvider _webSocketProvider;
+  late WebSocketProvider webSocketProvider;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Salve as referências enquanto o context ainda é válido
-    _webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    // Inicialize o WebSocketProvider se necessário
-    if (mounted) {
-      Future.microtask(() {
-        _webSocketProvider.connect();
-      });
-    }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // App foi para segundo plano (background)
-      print('App em segundo plano');
-    } else if (state == AppLifecycleState.resumed) {
-      // App voltou para o primeiro plano (foreground)
-      print('App voltou para o primeiro plano');
-    }
-    // Você pode tratar outros estados: inactive, detached
+    webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    print('widgetsBinding observer removido');
+    Future.microtask(() {
+      _fotoCache = null;
+      _fotoBase64Cache = null;
+      webSocketProvider.dispose();
+      webSocketProvider.disconnect();
+    });
     super.dispose();
   }
 
@@ -107,7 +87,6 @@ class _DashboardProfissionalScreenState
                     _fotoCache = null;
                     _fotoBase64Cache = null;
                     // Redireciona para a tela de login
-                    _webSocketProvider.stopPing();
                   }
                   if (context.mounted) {
                     Navigator.pushNamedAndRemoveUntil(

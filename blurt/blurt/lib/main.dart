@@ -42,7 +42,6 @@ import 'package:blurt/screens/atendimentos_profissional.dart';
 import 'package:blurt/screens/perfil_profissional.dart';
 import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
-
 import 'package:blurt/screens/dashboard_usuario.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
