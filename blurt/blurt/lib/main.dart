@@ -1,3 +1,5 @@
+import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
+import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
@@ -43,12 +45,19 @@ import 'package:blurt/screens/perfil_profissional.dart';
 import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/screens/dashboard_usuario.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+late AppLifecycleProvider appLifecycleProvider;
 
 void main() async {
   await dotenv.load();
+
+  await Firebase.initializeApp();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -63,9 +72,15 @@ void main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
+  appLifecycleProvider = AppLifecycleProvider();
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(value: appLifecycleProvider),
+        ChangeNotifierProvider(create: (_) => AppLifecycleProvider()),
         ChangeNotifierProvider(create: (_) => WebSocketProvider()),
         ChangeNotifierProvider(create: (_) => ProviderController()),
         ChangeNotifierProvider(
@@ -145,19 +160,28 @@ void main() async {
 
         // Adicione outros providers globais aqui
       ],
-      child: const MyApp(),
+      child: OverlaySupport.global(
+        child: const MyApp(),
+      ),
     ),
   );
   //ApiService().getAbordagens();
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: GlobalSnackbars.messengerKey,
       title: 'Blurt - Acolhimento e Terapia Online',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

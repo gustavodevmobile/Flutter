@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:blurt/core/utils/formatters.dart';
-import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_profissional_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -434,16 +434,16 @@ class _CadastroPsicanalistaFormState extends State<CadastroPsicanalistaForm> {
                         FocusScope.of(context).unfocus();
                         if (_formKey.currentState!.validate()) {
                           if (_profileImage == null) {
-                            SnackbarsHelpers.showSnackBar(
-                                context, 'Selecione uma foto de perfil!',
+                            GlobalSnackbars.showSnackBar(
+                                 'Selecione uma foto de perfil!',
                                 backgroundColor: Colors.red);
                             return;
                           }
                           if (_diplomaPsicanalistaImage == null ||
                               _declSupClinicaImage == null ||
                               _declAnPessoalImage == null) {
-                            SnackbarsHelpers.showSnackBar(
-                                context, 'As declarações são obrigatórias!',
+                            GlobalSnackbars.showSnackBar(
+                                 'As declarações são obrigatórias!',
                                 backgroundColor: Colors.red);
                             return;
                           }
@@ -501,7 +501,7 @@ class _CadastroPsicanalistaFormState extends State<CadastroPsicanalistaForm> {
                             if (result.isNotEmpty) {
                               setState(() => _loading = false);
                               if (context.mounted) {
-                                SnackbarsHelpers.showSnackBar(context, result,
+                                GlobalSnackbars.showSnackBar( result,
                                     backgroundColor: Colors.green);
 
                                 Navigator.pop(context);
@@ -511,8 +511,8 @@ class _CadastroPsicanalistaFormState extends State<CadastroPsicanalistaForm> {
                             print('Erro ao cadastrar profissional: $error');
                             if (context.mounted) {
                               setState(() => _loading = false);
-                              SnackbarsHelpers.showSnackBar(
-                                  context, error.toString(),
+                              GlobalSnackbars.showSnackBar(
+                                   error.toString(),
                                   backgroundColor: Colors.red);
                             }
                           }

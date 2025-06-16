@@ -23,44 +23,34 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     {'data': '10/05/2025', 'profissional': 'Dr. João', 'tipo': 'Psicanalista'},
   ];
   Map<String, dynamic>? ultimaSessao;
-  late WebSocketProvider _webSocketProvider;
-  late ProviderController _providerController;
+  // late WebSocketProvider _webSocketProvider;
+  // late ProviderController _providerController;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Salve as referências enquanto o context ainda é válido
-    _webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-    _providerController =
-        Provider.of<ProviderController>(context, listen: false);
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // Salve as referências enquanto o context ainda é válido
+  //   _webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+  //   _providerController =
+  //       Provider.of<ProviderController>(context, listen: false);
+  // }
 
   @override
   void initState() {
     super.initState();
     ultimaSessao = sessoes.isNotEmpty ? sessoes.first : null;
-
-    // print(
-    //     'WebSocketProvider ${Provider.of<WebSocketProvider>(context, listen: false).profissionaisOnline.length}');
-
-    // print(
-    //     'ProviderController ${Provider.of<ProviderController>(context, listen: false).profissionaisOnline.length}');
-
-    // Mostra o dialog assim que entrar no dashboard
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showSentimentoDialog();
     });
   }
 
-  @override
-  void dispose() {
-    Future.microtask(() {
-      _webSocketProvider.disconnect();
-      _providerController.clearOnline();
-      _webSocketProvider.stopKeepConnection();
-    });
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   Future.microtask(() {
+
+  //   });
+  //   super.dispose();
+  // }
 
   void _showSentimentoDialog() async {
     final List<Map<String, String>> emojis = [
@@ -185,14 +175,6 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
               ? websocketProvider.profissionaisOnline
               : globalProvider.profissionaisOnline;
 
-      print('Profissionais Online: ${profissionaisOnline.length}');
-      // Verifica se o usuário está logado
-      print(
-          'websocketProvider.profissionaisOnline.length: ${websocketProvider.profissionaisOnline.length}');
-
-      print(
-          'globalProvider.profissionaisOnline.length: ${globalProvider.profissionaisOnline.length}');
-
       return Scaffold(
         appBar: AppBar(
             title: const Text('Dashboard Usuário'),
@@ -200,6 +182,9 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
             automaticallyImplyLeading: false, // Remove o ícone padrão do Drawer
             leading: IconButton(
                 onPressed: () {
+                  websocketProvider.disconnect();
+                  globalProvider.clearOnline();
+
                   Navigator.pop(context); // Volta para a tela anterior
                 },
                 icon: Icon(Icons.arrow_back_ios)) // Ícone customizado

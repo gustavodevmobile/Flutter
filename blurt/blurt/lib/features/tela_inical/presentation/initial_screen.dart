@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -12,62 +10,62 @@ class InitialScreen extends StatefulWidget {
 class _InitialScreenState extends State<InitialScreen> {
   int _expanded = 0; // 0: nenhum, 1: usuario, 2: profissional
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
 
-  @override
-  void initState() {
-    super.initState();
-     _requestNotificationPermission();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // @override
+  // void initState() {
+  //   super.initState();
+  //    _requestNotificationPermission();
+  //   const AndroidInitializationSettings initializationSettingsAndroid =
+  //       AndroidInitializationSettings('@mipmap/ic_launcher');
+  //   const InitializationSettings initializationSettings =
+  //       InitializationSettings(android: initializationSettingsAndroid);
+  //   flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    // Solicitar permissão para notificações (Android 13+)
-    // flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.requestPermission(); // Remova esta linha se não estiver usando flutter_local_notifications >= 12.0.0
+  //   // Solicitar permissão para notificações (Android 13+)
+  //   // flutterLocalNotificationsPlugin
+  //   //     .resolvePlatformSpecificImplementation<
+  //   //         AndroidFlutterLocalNotificationsPlugin>()
+  //   //     ?.requestPermission(); // Remova esta linha se não estiver usando flutter_local_notifications >= 12.0.0
 
-    // Se estiver usando flutter_local_notifications < 12.0.0, não há necessidade de solicitar permissão manualmente para Android.
-    // Para Android 13+ (API 33+), use o package permission_handler para solicitar a permissão POST_NOTIFICATIONS, se necessário.
-  }
+  //   // Se estiver usando flutter_local_notifications < 12.0.0, não há necessidade de solicitar permissão manualmente para Android.
+  //   // Para Android 13+ (API 33+), use o package permission_handler para solicitar a permissão POST_NOTIFICATIONS, se necessário.
+  // }
 
-  Future<void> _requestNotificationPermission() async {
-  // Só é necessário para Android 13+ (API 33+)
-  if (await Permission.notification.isDenied) {
-    await Permission.notification.request();
-  }
-}
+  // Future<void> _requestNotificationPermission() async {
+  // // Só é necessário para Android 13+ (API 33+)
+  // if (await Permission.notification.isDenied) {
+  //   await Permission.notification.request();
+  // }
+//}
 
   void _toggle(int value) {
     setState(() {
       _expanded = _expanded == value ? 0 : value;
-      showTestNotification();
+      //showTestNotification();
       print('Botão $value pressionado');
     });
   }
 
-  Future<void> showTestNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'test_channel',
-      'Test Channel',
-      channelDescription: 'Canal de teste',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Notificação de Teste',
-      'Esta é uma notificação local!',
-      platformChannelSpecifics,
-    );
-  }
+  // Future<void> showTestNotification() async {
+  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  //       AndroidNotificationDetails(
+  //     'test_channel',
+  //     'Test Channel',
+  //     channelDescription: 'Canal de teste',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //   );
+  //   const NotificationDetails platformChannelSpecifics =
+  //       NotificationDetails(android: androidPlatformChannelSpecifics);
+  //   await flutterLocalNotificationsPlugin.show(
+  //     0,
+  //     'Notificação de Teste',
+  //     'Esta é uma notificação local!',
+  //     platformChannelSpecifics,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

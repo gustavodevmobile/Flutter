@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:blurt/core/utils/formatters.dart';
-import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/validators.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
@@ -132,10 +132,9 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                               if (profissional != null) {
                                 webSocketController.connect();
                                 // Envia a identificação do profissional
-                                webSocketController
-                                    .identifyConnection(profissional.id!, 'profissional');
-                                // Inicia o ping para manter a conexão ativa
-                                    webSocketController.keepConnection();
+                                webSocketController.identifyConnection(
+                                    profissional.id!, 'profissional');
+                               
                                 if (context.mounted) {
                                   setState(() {
                                     _loading = false;
@@ -150,8 +149,7 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                   _loading = false;
                                 });
 
-                                SnackbarsHelpers.showSnackBar(
-                                  context,
+                                GlobalSnackbars.showSnackBar(
                                   error.toString(),
                                   backgroundColor: Colors.red,
                                 );

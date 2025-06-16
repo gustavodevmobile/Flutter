@@ -1,4 +1,4 @@
-import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
@@ -105,7 +105,7 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                                 senha: _passwordController.text,
                               );
                               if (usuario != null) {
-                                 webSocketProvider.connect();
+                                webSocketProvider.connect();
                                 //Faz a busca dos profissionais online
                                 final profissionaisOnline =
                                     await controllerProfissionaisOnline
@@ -116,8 +116,6 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                                 // Atualiza a lista de profissionais online no WebSocketProvider
                                 webSocketProvider.setProfissionaisOnline(
                                     profissionaisOnline);
-
-                                webSocketProvider.keepConnection();
 
                                 // Atualiza a lista de profissionais online no ProviderController
                                 providerController.setProfissionaisOnline(
@@ -135,8 +133,7 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                               if (context.mounted) {
                                 print('Erro ao fazer login: $e');
                                 // Exibe o erro usando o SnackBar
-                                SnackbarsHelpers.showSnackBar(
-                                    context, e.toString(),
+                                GlobalSnackbars.showSnackBar(e.toString(),
                                     backgroundColor: Colors.red);
                               }
                             }

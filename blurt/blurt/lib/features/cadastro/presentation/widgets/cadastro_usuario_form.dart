@@ -1,5 +1,5 @@
 import 'package:blurt/core/utils/formatters.dart';
-import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/state_city_dropdown.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuario_controller.dart';
 import 'package:blurt/models/usuario/usuario.dart';
@@ -239,7 +239,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
                                 .cadastrarUsuario(usuario);
                             if (result.isNotEmpty) {
                               if (context.mounted) {
-                                SnackbarsHelpers.showSnackBar(context, result,
+                                GlobalSnackbars.showSnackBar(result,
                                     backgroundColor: Colors.green);
                               }
                             }

@@ -239,9 +239,22 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                 websockerProvider.solicitarAtendimentoAvulso(
                                     usuarioController.usuario!.id!,
                                     value.profissional!.id!, {
-                                  'tipo': 'atendimento_avulso',
+                                  'nome': usuarioController.usuario!.nome,
+                                  'genero': usuarioController.usuario!.genero,
+                                  //'foto': usuarioController.usuario!.foto ?? '',
+                                  'dataNascimento':
+                                      usuarioController.usuario!.dataNascimento,
+                                  'estado': usuarioController.usuario!.estado,
+                                  'cidade': usuarioController.usuario!.cidade,
+
                                   'profissionalId': 'psicologo',
                                   'usuarioId': 'usuario',
+                                  'preAnalise':{
+                                    'motivoConsulta': 'Motivo da consulta',
+                                    'objetivo': 'Objetivo da consulta',
+                                    'sintomas': 'Sintomas relatados',
+                                    'historicoClinico': 'Histórico clínico',
+                                  },
                                 });
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
@@ -80,7 +80,7 @@ class _DashboardProfissionalScreenState
                         novoStatus: false);
                     globalProvider.setPlantao(false);
                     if (context.mounted) {
-                      SnackbarsHelpers.showSnackBar(context, status,
+                      GlobalSnackbars.showSnackBar(status,
                           backgroundColor: Colors.green);
                     }
                     // Limpa o cache da foto
@@ -94,8 +94,7 @@ class _DashboardProfissionalScreenState
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    SnackbarsHelpers.showSnackBar(
-                        context, 'Erro ao fazer logout: $e',
+                    GlobalSnackbars.showSnackBar('Erro ao fazer logout: $e',
                         backgroundColor: Colors.red);
                   }
                 }
@@ -219,14 +218,14 @@ class _DashboardProfissionalScreenState
                                                   novoStatus: status);
                                       if (statusAtual.isNotEmpty) {
                                         if (context.mounted) {
-                                          SnackbarsHelpers.showSnackBar(
-                                              context, statusAtual,
+                                          GlobalSnackbars.showSnackBar(
+                                              statusAtual,
                                               backgroundColor: Colors.green);
                                         }
                                       }
                                     } catch (error) {
                                       if (context.mounted) {
-                                        SnackbarsHelpers.showSnackBar(context,
+                                        GlobalSnackbars.showSnackBar(
                                             'Erro ao alterar status: $error',
                                             backgroundColor: Colors.red);
                                       }

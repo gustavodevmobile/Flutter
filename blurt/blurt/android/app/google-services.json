@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "817075276417",
+    "project_id": "projblurt-35ee0",
+    "storage_bucket": "projblurt-35ee0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817075276417:android:7db5d2eaa53a18989a5b80",
+        "android_client_info": {
+          "package_name": "com.blurt.blurt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA98egERthcUdkbdzoP-QPFkPBChN079A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

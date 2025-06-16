@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:blurt/core/utils/formatters.dart';
-import 'package:blurt/core/utils/snackbars_helpers.dart';
+import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/state_city_dropdown.dart';
 import 'package:blurt/core/utils/validators.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
@@ -960,33 +960,33 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                               _novaEspecialidadePrincipalController
                                   .text.isNotEmpty &&
                               _certificadoEspecialidadePrincipal == null) {
-                            SnackbarsHelpers.showSnackBar(context,
+                            GlobalSnackbars.showSnackBar(
                                 'Anexe o certificado especialidade principal!',
                                 backgroundColor: Colors.red);
                             return;
                           }
                           if (_especialidadeSelecionada != null) {
-                            SnackbarsHelpers.showSnackBar(context,
+                            GlobalSnackbars.showSnackBar(
                                 'Anexe o certificado da especialidade principal!',
                                 backgroundColor: Colors.red);
                             return;
                           }
 
                           if (!_showImagePicker || _selectedImage == null) {
-                            SnackbarsHelpers.showSnackBar(context,
+                            GlobalSnackbars.showSnackBar(
                                 'Selecione ou tire uma foto para o perfil!',
                                 backgroundColor: Colors.red);
                             return;
                           }
                           if (!_showImageDoc || _selectedImageDoc == null) {
-                            SnackbarsHelpers.showSnackBar(
-                                context, 'Documento com foto é obrigatória!',
+                            GlobalSnackbars.showSnackBar(
+                                'Documento com foto é obrigatória!',
                                 backgroundColor: Colors.red);
                             return;
                           }
                           if (!_showImageSelfieComDoc ||
                               _selectedImageSelfieComDoc == null) {
-                            SnackbarsHelpers.showSnackBar(context,
+                            GlobalSnackbars.showSnackBar(
                                 'Selfie com documento com foto é obrigatória!',
                                 backgroundColor: Colors.red);
                             return;
@@ -1099,7 +1099,7 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                                 _loading = false;
                               });
                               if (context.mounted) {
-                                SnackbarsHelpers.showSnackBar(context, result,
+                                GlobalSnackbars.showSnackBar(result,
                                     backgroundColor: Colors.green);
                               }
                             }
@@ -1109,8 +1109,7 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                             });
                             print('Erro ao cadastrar profissional: $e');
                             if (context.mounted) {
-                              SnackbarsHelpers.showSnackBar(
-                                  context, e.toString(),
+                              GlobalSnackbars.showSnackBar(e.toString(),
                                   backgroundColor: Colors.red);
                             }
                           }
