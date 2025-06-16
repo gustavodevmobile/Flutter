@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:blurt/core/utils/background.dart';
 import 'package:blurt/core/utils/formatters.dart';
+import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +23,13 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
     Formatters.formatarValor(123);
   }
 
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProviderController>(builder: (context, value, child) {
+    return Consumer3<ProviderController, WebSocketProvider,
+            LoginUsuarioController>(
+        builder: (context, value, websockerProvider, usuarioController, child) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Profissional'),
@@ -223,15 +229,42 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Implementar solicitação de atendimento
-                    },
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(200, 48),
-                        textStyle: const TextStyle(fontSize: 18),
-                        backgroundColor: AppThemes.secondaryColor),
-                    child: const Text('Solicitar Atendimento'),
-                  ),
+                      onPressed: loading
+                          ? null
+                          : () async {
+                              setState(() {
+                                //loading = true;
+                              });
+                              try {
+                                websockerProvider.solicitarAtendimentoAvulso(
+                                    usuarioController.usuario!.id!,
+                                    value.profissional!.id!, {
+                                  'tipo': 'atendimento_avulso',
+                                  'profissionalId': 'psicologo',
+                                  'usuarioId': 'usuario',
+                                });
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Erro ao solicitar atendimento: $e'),
+                                  ),
+                                );
+                              } finally {
+                                setState(() {
+                                  //loading = false;
+                                });
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(200, 48),
+                          textStyle: const TextStyle(fontSize: 18),
+                          backgroundColor: AppThemes.secondaryColor),
+                      child: loading
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : const Text('Solicitar Atendimento')),
                 ),
               ],
             ),

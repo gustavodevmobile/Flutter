@@ -40,11 +40,11 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     super.initState();
     ultimaSessao = sessoes.isNotEmpty ? sessoes.first : null;
 
-    print(
-        'WebSocketProvider ${Provider.of<WebSocketProvider>(context, listen: false).profissionaisOnline.length}');
+    // print(
+    //     'WebSocketProvider ${Provider.of<WebSocketProvider>(context, listen: false).profissionaisOnline.length}');
 
-    print(
-        'ProviderController ${Provider.of<ProviderController>(context, listen: false).profissionaisOnline.length}');
+    // print(
+    //     'ProviderController ${Provider.of<ProviderController>(context, listen: false).profissionaisOnline.length}');
 
     // Mostra o dialog assim que entrar no dashboard
     WidgetsBinding.instance.addPostFrameCallback((_) {

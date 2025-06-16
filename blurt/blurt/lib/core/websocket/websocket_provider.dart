@@ -9,84 +9,47 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class WebSocketProvider extends ChangeNotifier {
   WebSocketChannel? channel;
   List<Profissional> profissionaisOnline = [];
-  Map<String, Profissional> solicitacaoAtendimento = {};
+  Map<String, Profissional> novaSolicitacaoAtendimentoAvulso = {};
   Timer? _pingTimer;
   Timer? _keepConnectionTimer;
+  final wsUrl = dotenv.env['WS_URL'];
 
   void connect() {
-    channel = WebSocketChannel.connect(Uri.parse('ws://seu-servidor/ws'));
+    if (wsUrl != null) {
+      channel = WebSocketChannel.connect(Uri.parse(wsUrl!));
+      channel!.stream.listen((data) {
+        final msg = jsonDecode(data);
 
-    channel!.stream.listen((data) {
-      final msg = jsonDecode(data);
+        switch (msg['type']) {
+          case 'status_update':
+            // Atualize a lista de profissionais online
+            final profissionais = msg['profissionais'] as List<dynamic>? ?? [];
+            profissionaisOnline = profissionais
+                .where((e) => e != null && e is Map<String, dynamic>)
+                .map((e) =>
+                    ProfissionalModel.fromJson(e as Map<String, dynamic>))
+                .toList();
+            notifyListeners();
+            print('Profissionais online atualizados: $profissionaisOnline');
 
-      switch (msg['type']) {
-        case 'status_update':
-          // Atualize a lista de profissionais online
-          final profissionais = msg['profissionais'] as List<dynamic>? ?? [];
-          profissionaisOnline = profissionais
-              .where((e) => e != null && e is Map<String, dynamic>)
-              .map((e) => ProfissionalModel.fromJson(e as Map<String, dynamic>))
-              .toList();
-          notifyListeners();
-          print('Profissionais online atualizados: $profissionaisOnline');
+            break;
 
-          break;
-        case 'solicitacao_atendimento_avulso':
-          print('Mensagem de chat: ${msg['textContent']}');
-          solicitacaoAtendimento = msg['textContent'];
-          notifyListeners();
-          break;
-        default:
-          print('Tipo de mensagem desconhecido: $msg');
-      }
-    }, onError: (error) {
-      print('Erro na conexão WebSocket: $error');
-    }, onDone: () {
-      print('Conexão WebSocket encerrada');
-    });
+          case 'nova_solicitacao_atendimento_avulso':
+            print('Mensagem de chat: ${msg['textContent']}');
+            novaSolicitacaoAtendimentoAvulso = msg['textContent'];
+            notifyListeners();
+            break;
+
+          default:
+            print('Tipo de mensagem desconhecido: $msg');
+        }
+      }, onError: (error) {
+        print('Erro na conexão WebSocket: $error');
+      }, onDone: () {
+        print('Conexão WebSocket encerrada');
+      });
+    }
   }
-
-  // void connect() {
-  //   print('Chamando connect do WebSocketProvider');
-  //   final wsUrl = dotenv.env['WS_URL'];
-  //   //print('WS_URL: $wsUrl');
-  //   if (wsUrl != null) {
-  //     channel = WebSocketChannel.connect(Uri.parse(wsUrl));
-  //     channel!.stream.listen((message) {
-  //       try {
-  //         final data = jsonDecode(message);
-  //         for (var prof in data['profissionais']) {
-  //           print(
-  //               'Profissional: ${prof['nome']} - Tipo: ${prof['tipoProfissional']}');
-  //         }
-  //         if (data is List) {
-  //           profissionaisOnline =
-  //               data.map((e) => ProfissionalModel.fromJson(e)).toList();
-
-  //           notifyListeners();
-  //         } else if (data is Map && data['type'] == 'status_update') {
-  //           // Atualiza ou adiciona o profissional na lista
-  //           final profissionais = data['profissionais'] as List<dynamic>? ?? [];
-  //           profissionaisOnline = profissionais
-  //               .where((e) => e != null && e is Map<String, dynamic>)
-  //               .map((e) =>
-  //                   ProfissionalModel.fromJson(e as Map<String, dynamic>))
-  //               .toList();
-  //           notifyListeners();
-  //         }
-  //       } catch (error) {
-  //         print('Mensagem recebida não é um JSON válido: $error');
-  //       }
-  //     }, onError: (error) {
-  //       print('Erro na conexão WebSocket: $error');
-  //     }, onDone: () {
-  //       print('Conexão WebSocket fechada');
-  //     });
-  //   } else {
-  //     print('API_URL não está definida no arquivo .env $wsUrl');
-  //   }
-  //   // Troca http/https por ws/wss
-  // }
 
   @override
   void dispose() {
@@ -157,7 +120,23 @@ class WebSocketProvider extends ChangeNotifier {
     }
   }
 
-  void solicitarAtendimento(String usuarioId, String profissionalId,
+  void solicitarAtendimentoAvulso(String usuarioId, String profissionalId,
+      Map<String, dynamic> textContent) {
+    try {
+      final payload = jsonEncode({
+        'type': 'solicitacao_atendimento_avulso',
+        'usuarioId': usuarioId,
+        'profissionalId': profissionalId,
+        'conteudo': textContent
+      });
+      channel?.sink.add(payload);
+      print('Requisitando serviços: $payload');
+    } catch (e) {
+      print('Erro ao requisitar serviços: $e');
+    }
+  }
+
+  void respostaAtendimentoAvulso(String usuarioId, String profissionalId,
       Map<String, dynamic> textContent) {
     try {
       final payload = jsonEncode({
@@ -182,6 +161,4 @@ class WebSocketProvider extends ChangeNotifier {
 //     // outros campos, se quiser
 //   }
 // }
-
- 
 }

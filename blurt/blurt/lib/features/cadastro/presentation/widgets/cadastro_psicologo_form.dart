@@ -1090,7 +1090,7 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                             'certificadoEspecializacao':
                                 _certificadoEspecialidadePrincipal
                           };
-                          print('Profissional: $profissional');
+                          //print('Profissional: $profissional');
                           try {
                             final result = await controllerCadastro
                                 .cadastrarProfissional(profissional);
