@@ -4,6 +4,7 @@ import 'package:blurt/core/utils/state_city_dropdown.dart';
 import 'package:blurt/features/cadastro/presentation/controllers/cadastro_usuario_controller.dart';
 import 'package:blurt/models/usuario/usuario.dart';
 import 'package:blurt/theme/themes.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -219,8 +220,12 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
                     : () async {
                         if (_formKey.currentState!.validate()) {
                           setState(() => _loading = true);
+                          
+                          String? tokenFcm =
+                              await FirebaseMessaging.instance.getToken();
 
                           final usuario = Usuario(
+                            tokenFcm: tokenFcm ?? '',
                             nome: _nameController.text.trim(),
                             estado: _estadoSelecionado ?? '',
                             cidade: _cidadeSelecionada ?? '',

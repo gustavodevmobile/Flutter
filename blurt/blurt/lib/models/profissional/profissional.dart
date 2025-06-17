@@ -1,5 +1,6 @@
 class Profissional {
   final String? id;
+  final String? tokenFcm;
   final String nome;
   final String estado;
   final String cidade;
@@ -16,6 +17,7 @@ class Profissional {
   final bool estaOnline;
   final bool atendePlantao;
   final bool emAtendimento;
+  final bool logado;
   final double valorConsulta;
   final String genero;
   final String foto;
@@ -35,6 +37,7 @@ class Profissional {
 
   Profissional({
     this.id,
+    this.tokenFcm,
     required this.nome,
     required this.estado,
     required this.cidade,
@@ -51,6 +54,7 @@ class Profissional {
     required this.estaOnline,
     required this.atendePlantao,
     required this.emAtendimento,
+    required this.logado,
     required this.valorConsulta,
     required this.genero,
     required this.foto,

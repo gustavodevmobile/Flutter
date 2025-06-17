@@ -3,6 +3,7 @@ import 'profissional.dart';
 class ProfissionalModel extends Profissional {
   ProfissionalModel({
     super.id,
+    super.tokenFcm,
     required super.nome,
     required super.estado,
     required super.cidade,
@@ -19,6 +20,7 @@ class ProfissionalModel extends Profissional {
     required super.estaOnline,
     required super.atendePlantao,
     required super.emAtendimento,
+    required super.logado,
     required super.valorConsulta,
     required super.genero,
     required super.foto,
@@ -40,6 +42,7 @@ class ProfissionalModel extends Profissional {
   factory ProfissionalModel.fromJson(Map<String, dynamic> json) {
     return ProfissionalModel(
       id: json['id'] as String?,
+      tokenFcm: json['tokenFcm'] as String?,
       nome: json['nome'] ?? '',
       estado: json['estado'] ?? '',
       cidade: json['cidade'] ?? '',
@@ -56,6 +59,7 @@ class ProfissionalModel extends Profissional {
       estaOnline: json['estaOnline'] ?? false,
       atendePlantao: json['atendePlantao'] ?? false,
       emAtendimento: json['emAtendimento'] ?? false,
+      logado: json['logado'] ?? false,
       valorConsulta: (json['valorConsulta'] is int)
           ? (json['valorConsulta'] as int).toDouble()
           : (json['valorConsulta'] ?? 0.0),
@@ -85,6 +89,7 @@ class ProfissionalModel extends Profissional {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
+      if (tokenFcm != null) 'tokenFcm': tokenFcm,
       'nome': nome,
       'estado': estado,
       'cidade': cidade,
@@ -102,6 +107,7 @@ class ProfissionalModel extends Profissional {
       'estaOnline': estaOnline,
       'atendePlantao': atendePlantao,
       'emAtendimento': emAtendimento,
+      'logado': logado,
       'valorConsulta': valorConsulta,
       'genero': genero,
       'foto': foto,
@@ -124,10 +130,10 @@ class ProfissionalModel extends Profissional {
     };
   }
 
-  
   factory ProfissionalModel.fromProfissional(Profissional p) {
     return ProfissionalModel(
       id: p.id,
+      tokenFcm: p.tokenFcm,
       nome: p.nome,
       estado: p.estado,
       cidade: p.cidade,
@@ -143,6 +149,7 @@ class ProfissionalModel extends Profissional {
       tipoProfissional: p.tipoProfissional,
       estaOnline: p.estaOnline,
       atendePlantao: p.atendePlantao,
+      logado: p.logado,
       emAtendimento: p.emAtendimento,
       valorConsulta: p.valorConsulta,
       genero: p.genero,
@@ -163,4 +170,3 @@ class ProfissionalModel extends Profissional {
     );
   }
 }
-

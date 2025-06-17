@@ -25,6 +25,7 @@ class CadastroProfissionalController extends ChangeNotifier {
     }
     //print('Dados convertidos: $dataConvertido');
     final profissional = Profissional(
+      tokenFcm: dataConvertido['tokenFcm'] ?? '',
       nome: dataConvertido['nome'],
       estado: dataConvertido['estado'],
       cidade: dataConvertido['cidade'],
@@ -41,6 +42,7 @@ class CadastroProfissionalController extends ChangeNotifier {
       estaOnline: dataConvertido['estaOnline'] ?? false,
       atendePlantao: dataConvertido['atendePlantao'] ?? false,
       emAtendimento: dataConvertido['emAtendimento'] ?? false,
+      logado: dataConvertido['logado'] ?? false,
       valorConsulta: dataConvertido['valorConsulta'] ?? 0.0,
       genero: dataConvertido['genero'],
       foto: dataConvertido['foto'] ?? '',

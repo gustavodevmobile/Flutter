@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlays.dart';
@@ -42,6 +40,7 @@ import 'package:blurt/features/tela_inical/presentation/initial_screen.dart';
 import 'package:blurt/features/temas_clinicos/data/temas_clinicos_datasource.dart';
 import 'package:blurt/features/temas_clinicos/presentation/temas_clinicos_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
+import 'package:blurt/theme/themes.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:blurt/features/autenticacao/presentation/pages/login_usuario_screen.dart';
@@ -59,9 +58,16 @@ import 'package:firebase_core/firebase_core.dart';
 
 late AppLifecycleProvider appLifecycleProvider;
 
+// Handler de background do FCM: exibe notificação local customizada
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
+  await mostrarNotificacaoSolicitacao(message.data);
+}
+
+// Entry point para o overlay
+@pragma("vm:entry-point")
+void overlayMain() {
+  runApp(const OverlaySolicitacaoWidget());
 }
 
 void main() async {
@@ -69,11 +75,15 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Registra o handler de background do FCM
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
+  // Inicializa o plugin de notificações locais
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+// Cria o canal de notificação para Android
   const AndroidNotificationChannel solicitacaoChannel =
       AndroidNotificationChannel(
     'solicitacao_channel',
@@ -93,21 +103,23 @@ void main() async {
 
   await setupNotifications();
 
+// Inicializa configurações do plugin de notificações
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
   const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
   );
-  await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
+// Solicita permissão de notificação (Android 13+)
   if (await Permission.notification.isDenied) {
     await Permission.notification.request();
   }
   appLifecycleProvider = AppLifecycleProvider();
+
+  //FlutterOverlayWindow.showOverlay;
+
   runApp(
     MultiProvider(
       providers: [
@@ -119,15 +131,6 @@ void main() async {
             ProfissionaisOnlineUsecases(
               ProfissionaisOnLineImpl(
                 ProfissionalOnlineDatasourceImpl(http.Client()),
-              ),
-            ),
-          ),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => LoginUsuarioController(
-            loginUsuarioUseCase: LoginUsuarioUseCase(
-              LoginRepositoryImpl(
-                LoginRemoteDatasourceImpl(http.Client()),
               ),
             ),
           ),
@@ -171,6 +174,16 @@ void main() async {
                 LoginProfissionalRemoteDatasourceImpl(http.Client()),
               ),
             ),
+            // Provider.of<WebSocketProvider>(context, listen: false).channel!,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LoginUsuarioController(
+            loginUsuarioUseCase: LoginUsuarioUseCase(
+              LoginRepositoryImpl(
+                LoginRemoteDatasourceImpl(http.Client()),
+              ),
+            ),
           ),
         ),
         ChangeNotifierProvider(
@@ -178,6 +191,7 @@ void main() async {
             DashboardProfissionalDatasourceImpl(http.Client()),
           ),
         ),
+
         // Adicione outros providers globais aqui
       ],
       child: OverlaySupport.global(
@@ -185,25 +199,18 @@ void main() async {
       ),
     ),
   );
-
-  // Listener para exibir o card ao receber notificação em foreground
+  // Listener para mensagens recebidas em foreground
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    final conteudo = message.data['conteudo'] != null
-        ? (message.data['conteudo'] is String
-            ? jsonDecode(message.data['conteudo'])
-            : message.data['conteudo'])
-        : message.data;
-    onNovaSolicitacaoAtendimentoAvulso(conteudo);
+    // App em foreground: exibe overlay
+    onNovaSolicitacaoAtendimentoAvulso(message.data);
   });
 
-  // Listener para exibir o card ao abrir a notificação
+// Listener para quando o app é aberto pela notificação
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    final conteudo = message.data['conteudo'] != null
-        ? (message.data['conteudo'] is String
-            ? jsonDecode(message.data['conteudo'])
-            : message.data['conteudo'])
-        : message.data;
-    onNovaSolicitacaoAtendimentoAvulso(conteudo);
+    // App foi aberto pela notificação: navega para a tela de solicitações
+    onNovaSolicitacaoAtendimentoAvulso(message.data);
+    Navigator.pushNamed(GlobalSnackbars.messengerKey.currentContext!,
+        '/dashboard_profissional');
   });
 }
 
@@ -224,8 +231,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7AB0A3),
-          primary: Color(0xFF4F8FCB),
+          seedColor: AppThemes.secondaryColor,
+          primary: AppThemes.primaryColor,
         ),
         useMaterial3: true,
         scaffoldBackgroundColor: Color.fromARGB(255, 117, 177, 163),

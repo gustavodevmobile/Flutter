@@ -13,6 +13,7 @@ import 'package:blurt/models/abordagens_utilizadas/abordagens_utilizadas.dart';
 import 'package:blurt/models/especialidade_principal/especialidade_principal.dart';
 import 'package:blurt/models/temas_clinicos/temas_clinicos_models.dart';
 import 'package:blurt/theme/themes.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -1056,8 +1057,12 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                                 .map((e) => e.nome)
                                 .join(','));
                           }
+                          String? tokenFcm =
+                              await FirebaseMessaging.instance.getToken();
+                          print('Token FCM gerado: $tokenFcm');
 
                           final profissional = {
+                            'tokenFcm': tokenFcm,
                             'nome': _nameController.text.trim(),
                             'estado': _estadoSelecionado,
                             'cidade': _cidadeSelecionada,
@@ -1071,6 +1076,7 @@ class _CadastroPsicologoFormState extends State<CadastroPsicologoForm> {
                             'estaOnline': false,
                             'atendePlantao': false,
                             'emAtendimento': false,
+                            'logado': false,
                             'valorConsulta':
                                 double.parse(_valorConsultaController.text),
                             'genero': _genero,

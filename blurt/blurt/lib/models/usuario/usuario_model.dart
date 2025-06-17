@@ -3,6 +3,7 @@ import 'usuario.dart';
 class UsuarioModel extends Usuario {
   UsuarioModel({
     super.id,
+    super.tokenFcm,
     required super.nome,
     required super.estado,
     required super.cidade,
@@ -19,6 +20,7 @@ class UsuarioModel extends Usuario {
   factory UsuarioModel.fromJson(Map<String, dynamic> json) {
     return UsuarioModel(
       id: json['id'] as String?,
+      tokenFcm: json['tokenFcm'] as String?,
       nome: json['nome'] ?? '',
       estado: json['estado'] ?? '',
       cidade: json['cidade'] ?? '',
@@ -40,6 +42,7 @@ class UsuarioModel extends Usuario {
   factory UsuarioModel.fromUsuario(Usuario usuario) {
     return UsuarioModel(
       id: usuario.id,
+      tokenFcm: usuario.tokenFcm,
       nome: usuario.nome,
       estado: usuario.estado,
       cidade: usuario.cidade,
@@ -57,6 +60,7 @@ class UsuarioModel extends Usuario {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
+      if (tokenFcm != null) 'tokenFcm': tokenFcm,
       'nome': nome,
       'estado': estado,
       'cidade': cidade,

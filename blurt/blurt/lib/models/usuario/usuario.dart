@@ -1,6 +1,7 @@
 // Entidade de domínio para o usuário
 class Usuario {
   final String? id;
+  final String? tokenFcm;
   final String nome;
   final String estado;
   final String cidade;
@@ -15,6 +16,7 @@ class Usuario {
 
   Usuario({
     this.id,
+    this.tokenFcm,
     required this.nome,
     required this.estado,
     required this.cidade,
