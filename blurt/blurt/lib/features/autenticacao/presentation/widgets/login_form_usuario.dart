@@ -3,6 +3,7 @@ import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
@@ -103,7 +104,13 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                               final usuario = await controllerUsuario.login(
                                 email: _emailController.text,
                                 senha: _passwordController.text,
+
+                                
                               );
+                              String? token = await FirebaseMessaging.instance.getToken();
+                              if(token != null) {
+                                print('TOKEN FCM $token');
+                              }
                               if (usuario != null) {
                                 webSocketProvider.connect();
                                 //Faz a busca dos profissionais online
