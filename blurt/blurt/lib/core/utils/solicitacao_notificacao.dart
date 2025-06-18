@@ -1,9 +1,15 @@
+import 'package:blurt/core/utils/alerta_sonoro.dart';
+import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/main.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'dart:convert';
+import 'dart:ui';
+
+import 'package:provider/provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -54,40 +60,20 @@ Histórico: $historico
   );
 }
 
-/// Handler para quando o usuário clica na notificação do sistema
-// Future<void> onSelectNotification(String? payload) async {
-//   if (payload == null) return;
-//   try {
-//     final Map<String, dynamic> dados = jsonDecode(payload);
-//     // Exibe o CardSolicitacaoOverlay ao clicar na notificação
-//     showOverlayNotification(
-//       (context) => CardSolicitacaoOverlay(
-//         dados: dados,
-//         onAceitar: () {},
-//         onRecusar: () {},
-//       ),
-//       duration: const Duration(minutes: 1),
-//       position: NotificationPosition.top,
-//     );
-//   } catch (e) {
-//     // fallback: não faz nada
-//   }
-// }
-
-Future<void> onDidReceiveNotificationResponse(NotificationResponse response) async {
+Future<void> onDidReceiveNotificationResponse(
+    NotificationResponse response) async {
   final payload = response.payload;
   if (payload == null) return;
   try {
     final Map<String, dynamic> dados = jsonDecode(payload);
     showOverlayNotification(
-      (context) => CardSolicitacaoOverlay(
-        dados: dados,
-        onAceitar: () {},
-        onRecusar: () {},
-      ),
-      duration: const Duration(minutes: 1),
-      position: NotificationPosition.top,
-    );
+        (context) => CardSolicitacaoOverlay(
+              dados: dados,
+              onAceitar: () {},
+              onRecusar: () {},
+            ),
+        duration: const Duration(minutes: 1),
+        position: NotificationPosition.top);
   } catch (e) {
     // fallback: não faz nada
   }
@@ -96,6 +82,7 @@ Future<void> onDidReceiveNotificationResponse(NotificationResponse response) asy
 void onNovaSolicitacaoAtendimentoAvulso(Map<String, dynamic> conteudo,
     {bool foreground = true}) async {
   if (appLifecycleProvider.isInForeground) {
+    AlertaSonoro.tocar();
     showOverlayNotification(
       (context) => CardSolicitacaoOverlay(
         dados: conteudo,
@@ -110,16 +97,12 @@ void onNovaSolicitacaoAtendimentoAvulso(Map<String, dynamic> conteudo,
       position: NotificationPosition.top,
     );
   } else {
-    // Notificação em segundo plano
-    if (!await FlutterOverlayWindow.isPermissionGranted()) {
-      await FlutterOverlayWindow.requestPermission();
-    }
-
     // Exibe o overlay
+    //AlertaSonoro.tocar();
     await FlutterOverlayWindow.showOverlay(
-      height: 400, 
-      width: 350,
-      enableDrag: true,
+      height: WindowSize.fullCover,
+      width: WindowSize.fullCover,
+      enableDrag: false,
       alignment: OverlayAlignment.center,
       flag: OverlayFlag.defaultFlag,
       overlayTitle: "Nova Solicitação de Atendimento",

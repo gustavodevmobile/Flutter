@@ -104,15 +104,16 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                               final usuario = await controllerUsuario.login(
                                 email: _emailController.text,
                                 senha: _passwordController.text,
-
-                                
                               );
-                              String? token = await FirebaseMessaging.instance.getToken();
-                              if(token != null) {
+                              String? token =
+                                  await FirebaseMessaging.instance.getToken();
+                              if (token != null) {
                                 print('TOKEN FCM $token');
                               }
                               if (usuario != null) {
-                                webSocketProvider.connect();
+                                if (context.mounted) {
+                                  webSocketProvider.connect();
+                                }
                                 //Faz a busca dos profissionais online
                                 final profissionaisOnline =
                                     await controllerProfissionaisOnline

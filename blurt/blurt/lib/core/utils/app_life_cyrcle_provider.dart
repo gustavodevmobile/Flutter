@@ -8,12 +8,6 @@ class AppLifecycleProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     isInForeground = state == AppLifecycleState.resumed;
     print('Primeiro plano: $isInForeground');

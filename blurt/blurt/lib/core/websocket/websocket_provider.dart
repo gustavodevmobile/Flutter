@@ -41,7 +41,8 @@ class WebSocketProvider extends ChangeNotifier {
             //novaSolicitacaoAtendimentoAvulso = msg['textContent'];
             print('Nova solicitação de atendimento avulso: $msg');
             onNovaSolicitacaoAtendimentoAvulso(
-              msg['conteudo'],
+              msg['conteudo']
+              
             );
 
             // GlobalSnackbars.showSnackBar(msg['conteudo']['dataNasciento'],

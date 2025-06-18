@@ -49,6 +49,7 @@ import 'package:blurt/screens/perfil_profissional.dart';
 import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
 import 'package:blurt/screens/dashboard_usuario.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -75,6 +76,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+   appLifecycleProvider = AppLifecycleProvider();
 
   // Registra o handler de background do FCM
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -83,7 +85,7 @@ void main() async {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-// Cria o canal de notificação para Android
+  // Cria o canal de notificação para Android
   const AndroidNotificationChannel solicitacaoChannel =
       AndroidNotificationChannel(
     'solicitacao_channel',
@@ -111,12 +113,6 @@ void main() async {
     android: initializationSettingsAndroid,
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-// Solicita permissão de notificação (Android 13+)
-  if (await Permission.notification.isDenied) {
-    await Permission.notification.request();
-  }
-  appLifecycleProvider = AppLifecycleProvider();
 
   //FlutterOverlayWindow.showOverlay;
 
@@ -204,6 +200,16 @@ void main() async {
     // App em foreground: exibe overlay
     onNovaSolicitacaoAtendimentoAvulso(message.data);
   });
+
+  // Notificação em segundo plano
+  if (!await FlutterOverlayWindow.isPermissionGranted()) {
+    await FlutterOverlayWindow.requestPermission();
+  }
+
+// Solicita permissão de notificação (Android 13+)
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
 
 // Listener para quando o app é aberto pela notificação
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {

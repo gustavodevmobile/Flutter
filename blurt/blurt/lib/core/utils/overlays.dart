@@ -8,7 +8,8 @@ class OverlaySolicitacaoWidget extends StatefulWidget {
   const OverlaySolicitacaoWidget({super.key});
 
   @override
-  State<OverlaySolicitacaoWidget> createState() => _OverlaySolicitacaoWidgetState();
+  State<OverlaySolicitacaoWidget> createState() =>
+      _OverlaySolicitacaoWidgetState();
 }
 
 class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
@@ -24,7 +25,7 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
           dados = jsonDecode(event);
         });
         AlertaSonoro.tocar();
-        
+
         // Fecha após 1 minuto
         Future.delayed(const Duration(minutes: 1), () {
           AlertaSonoro.parar();
@@ -36,7 +37,7 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
 
   @override
   void dispose() {
-    AlertaSonoro.parar();
+   AlertaSonoro.parar();
     super.dispose();
   }
 
@@ -49,22 +50,35 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
       );
     }
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Material(
-        color: Colors.transparent,
-        child: CardSolicitacaoOverlay(
-          dados: dados!,
-          onAceitar: () {
-            AlertaSonoro.parar();
-            FlutterOverlayWindow.closeOverlay();
-          },
-          onRecusar: () {
-            AlertaSonoro.parar();
-            FlutterOverlayWindow.closeOverlay();
-          },
-        ),
-      ),
+    return CardSolicitacaoOverlay(
+      dados: dados!,
+      onAceitar: () {
+        //AlertaSonoro.parar();
+        FlutterOverlayWindow.closeOverlay();
+      },
+      onRecusar: () {
+        //AlertaSonoro.parar();
+        FlutterOverlayWindow.closeOverlay();
+      },
     );
+
+    // MaterialApp(
+    //   debugShowCheckedModeBanner: false,
+    //   home:
+    //   Material(
+    //     color: Colors.transparent,
+    //     child: CardSolicitacaoOverlay(
+    //       dados: dados!,
+    //       onAceitar: () {
+    //         AlertaSonoro.parar();
+    //         FlutterOverlayWindow.closeOverlay();
+    //       },
+    //       onRecusar: () {
+    //         AlertaSonoro.parar();
+    //         FlutterOverlayWindow.closeOverlay();
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 }
