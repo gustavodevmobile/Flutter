@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:blurt/core/utils/alerta_sonoro.dart';
+import 'package:blurt/core/utils/overlay_card.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-//import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'dart:convert';
-
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -34,43 +34,45 @@ Histórico: Histórico clínico
 ''';
 
   final androidDetails = AndroidNotificationDetails(
-  'solicitacao_channel',
-  'Solicitações',
-  channelDescription: 'Notificações de novas solicitações de atendimento',
-  importance: Importance.max,
-  priority: Priority.high,
-  styleInformation: BigTextStyleInformation(
-    bigText,
-    contentTitle: '🚨 Nova Solicitação de Atendimento!',
-    summaryText: 'Toque para ver detalhes completos',
-  ),
-  color: Colors.deepPurple, // Cor da barra lateral da notificação
-  playSound: true,
-  sound: RawResourceAndroidNotificationSound('alert1'), // Som customizado
-  enableVibration: true,
-  vibrationPattern: Int64List.fromList([0, 500, 1000, 500, 2000]),
-  ticker: 'Alerta de atendimento',
-  icon: '@mipmap/ic_launcher', // Ícone customizado (deve estar no projeto)
-  largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'), // Ícone grande
-  timeoutAfter: 60000, // Some após 1 minuto
-  category: AndroidNotificationCategory.call, // Categoria especial (call, message, etc)
-  autoCancel: true,
-  visibility: NotificationVisibility.public,
-  actions: <AndroidNotificationAction>[
-    AndroidNotificationAction(
-      'aceitar',
-      'Aceitar',
-     // icon:,
+    'solicitacao_channel',
+    'Solicitações',
+    channelDescription: 'Notificações de novas solicitações de atendimento',
+    importance: Importance.max,
+    priority: Priority.high,
+    styleInformation: BigTextStyleInformation(
+      bigText,
+      contentTitle: '🚨 Nova Solicitação de Atendimento!',
+      summaryText: 'Toque para ver detalhes completos',
     ),
-    AndroidNotificationAction(
-      'recusar',
-      'Recusar',
-      //icon: '@mipmap/ic_launcher',
-      showsUserInterface: true,
-      cancelNotification: true,
-    ),
-  ],
-);
+    color: Colors.deepPurple, // Cor da barra lateral da notificação
+    playSound: true,
+    //sound: RawResourceAndroidNotificationSound('alert1'), // Som customizado
+    enableVibration: true,
+    vibrationPattern: Int64List.fromList([0, 500, 1000, 500, 2000]),
+    ticker: 'Alerta de atendimento',
+    icon: '@mipmap/ic_launcher', // Ícone customizado (deve estar no projeto)
+    largeIcon: const DrawableResourceAndroidBitmap(
+        '@mipmap/ic_launcher'), // Ícone grande
+    timeoutAfter: 60000, // Some após 1 minuto
+    category: AndroidNotificationCategory
+        .call, // Categoria especial (call, message, etc)
+    autoCancel: true,
+    //visibility: NotificationVisibility.public,
+    actions: <AndroidNotificationAction>[
+      AndroidNotificationAction(
+        'aceitar',
+        'Aceitar',
+        // icon:,
+      ),
+      AndroidNotificationAction(
+        'recusar',
+        'Recusar',
+        //icon: '@mipmap/ic_launcher',
+        showsUserInterface: true,
+        cancelNotification: true,
+      ),
+    ],
+  );
 
   final notificationDetails = NotificationDetails(android: androidDetails);
 
@@ -82,8 +84,6 @@ Histórico: Histórico clínico
     notificationDetails,
     payload: jsonEncode(dados),
   );
-
-  
 }
 
 // Future<void> onDidReceiveNotificationResponse(
@@ -112,33 +112,25 @@ void onNovaSolicitacaoAtendimentoAvulso(Map<String, dynamic> conteudo,
     showOverlayNotification(
       (context) => CardSolicitacaoOverlay(
         dados: conteudo,
-        onAceitar: () {
+        onAceitar: () async {
           AlertaSonoro.parar();
           OverlaySupportEntry.of(context)?.dismiss();
+          //await FlutterOverlayWindow.closeOverlay();
         },
-        onRecusar: () {
+        onRecusar: () async {
           AlertaSonoro.parar();
           OverlaySupportEntry.of(context)?.dismiss();
+          //await FlutterOverlayWindow.closeOverlay();
         },
       ),
       duration: const Duration(minutes: 1),
       position: NotificationPosition.top,
     );
   } else {
-    mostrarNotificacaoSolicitacao(conteudo);
-    // Exibe o overlay
     //AlertaSonoro.tocar();
-    // await FlutterOverlayWindow.showOverlay(
-    //   height: WindowSize.fullCover,
-    //   width: WindowSize.fullCover,
-    //   enableDrag: false,
-    //   alignment: OverlayAlignment.center,
-    //   flag: OverlayFlag.defaultFlag,
-    //   overlayTitle: "Nova Solicitação de Atendimento",
-    //   positionGravity: PositionGravity.auto,
-    // );
-
-    // // Compartilha os dados com o overlay
-    // await FlutterOverlayWindow.shareData(jsonEncode(conteudo));
+    //mostrarNotificacaoSolicitacao(conteudo);
+    await FlutterOverlayWindow.closeOverlay();
+    await Future.delayed(Duration(milliseconds: 300));
+    showOverlayCard(conteudo);
   }
 }

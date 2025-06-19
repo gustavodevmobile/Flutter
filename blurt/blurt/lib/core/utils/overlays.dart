@@ -1,4 +1,5 @@
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
+import 'package:blurt/core/widgets/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'dart:convert';
@@ -24,42 +25,44 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
         setState(() {
           dados = jsonDecode(event);
         });
-        //AlertaSonoro.tocar();
-
-        // Fecha após 1 minuto
-        Future.delayed(const Duration(minutes: 1), () {
-          AlertaSonoro.parar();
-          FlutterOverlayWindow.closeOverlay();
-        });
       }
+      // if (event == 'parar_som') {
+      //   AlertaSonoro.parar();
+      // } else {
+      //   // Se for dados de solicitação, trate normalmente
+      //   setState(() {
+      //     dados = jsonDecode(event);
+      //   });
+      //   AlertaSonoro.tocar();
+      // }
     });
-  }
-
-  @override
-  void dispose() {
-    AlertaSonoro.parar();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     if (dados == null) {
-      return const Material(
-        color: Colors.transparent,
-        child: Center(child: CircularProgressIndicator()),
+      return FloatBubble(
+        onTap: () async {
+          // Aqui pode abrir o app principal, se quiser
+        },
+      );
+    } else {
+      return CardSolicitacaoOverlay(
+        dados: dados!,
+        onAceitar: () {
+          //AlertaSonoro.parar();
+          setState(() {
+            dados = null; // Volta para a bolinha
+            AlertaSonoro.parar();
+          });
+        },
+        onRecusar: () async {
+          AlertaSonoro.parar();
+          setState(() {
+            dados = null; // Volta para a bolinha
+          });
+        },
       );
     }
-
-    return CardSolicitacaoOverlay(
-      dados: dados!,
-      onAceitar: () {
-        AlertaSonoro.parar();
-        //FlutterOverlayWindow.closeOverlay();
-      },
-      onRecusar: () {
-        AlertaSonoro.parar();
-        FlutterOverlayWindow.closeOverlay();
-      },
-    );
   }
 }

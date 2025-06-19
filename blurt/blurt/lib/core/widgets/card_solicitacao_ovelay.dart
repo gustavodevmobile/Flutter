@@ -1,5 +1,6 @@
 // lib/core/widgets/card_solicitacao_overlay.dart
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
+import 'package:blurt/core/utils/overlay_float_bubble.dart';
 import 'package:blurt/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
@@ -26,21 +27,15 @@ class CardSolicitacaoOverlay extends StatefulWidget {
 class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
   @override
   void initState() {
+    AlertaSonoro.tocar();
     super.initState();
-    //AlertaSonoro.tocar();
-    Future.delayed(const Duration(minutes: 1), () {
-      if (mounted) {
-        //AlertaSonoro.parar();
-        //OverlaySupportEntry.of(context)?.dismiss();
-      }
-    });
   }
 
-  // @override
-  // void dispose() {
-  //   AlertaSonoro.parar();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    AlertaSonoro.parar();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +74,14 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      //crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         ElevatedButton.icon(
                           icon: const Icon(Icons.check),
                           label: const Text('Aceitar'),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green),
-                          onPressed: () {
+                          onPressed: () async {
                             widget.onAceitar();
                           },
                         ),
@@ -95,8 +90,13 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
                           label: const Text('Recusar'),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red),
-                          onPressed: () {
+                          onPressed: () async {
                             widget.onRecusar();
+                            AlertaSonoro.parar();
+                            //OverlaySupportEntry.of(context)?.dismiss();
+                            await FlutterOverlayWindow.closeOverlay();
+                            await Future.delayed(Duration(milliseconds: 300));
+                            showOverlayFloatBubble();
                           },
                         ),
                       ],

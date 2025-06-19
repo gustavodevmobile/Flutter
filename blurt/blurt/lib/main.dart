@@ -69,11 +69,12 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Mensagem recebida em background: ${message.data}');
 }
 
-
 // Entry point para o overlay
 @pragma("vm:entry-point")
 void overlayMain() {
-  runApp(const OverlaySolicitacaoWidget());
+  runApp(Directionality(
+      textDirection: TextDirection.ltr,
+      child: const OverlaySolicitacaoWidget()));
 }
 
 void main() async {
@@ -123,7 +124,7 @@ void main() async {
 
   //FlutterOverlayWindow.showOverlay;
 
-   // Listener para mensagens recebidas em foreground
+  // Listener para mensagens recebidas em foreground
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Mensagem recebida: ${message.data}');
     // final Map<String, dynamic> dados = message.data;
@@ -132,21 +133,21 @@ void main() async {
     // if (dados is String) {
     //   dados = jsonDecode(dados);
     // }
-    if (appLifecycleProvider.isInForeground) {
-      // Mostra overlay customizado
-      showOverlayNotification(
-        (context) => CardSolicitacaoOverlay(
-          dados: message.data,
-          onAceitar: () {},
-          onRecusar: () {},
-        ),
-        duration: const Duration(minutes: 1),
-        position: NotificationPosition.top,
-      );
-    } else {
-      // Mostra notificação do sistema
-      mostrarNotificacaoSolicitacao(message.data);
-    }
+    // if (appLifecycleProvider.isInForeground) {
+    //   // Mostra overlay customizado
+    //   showOverlayNotification(
+    //     (context) => CardSolicitacaoOverlay(
+    //       dados: message.data,
+    //       onAceitar: () {},
+    //       onRecusar: () {},
+    //     ),
+    //     duration: const Duration(minutes: 1),
+    //     position: NotificationPosition.top,
+    //   );
+    // } else {
+    //   // Mostra notificação do sistema
+    //   //mostrarNotificacaoSolicitacao(message.data);
+    // }
   });
 
   runApp(
@@ -228,7 +229,6 @@ void main() async {
       ),
     ),
   );
- 
 
   // Notificação em segundo plano
   if (!await FlutterOverlayWindow.isPermissionGranted()) {
@@ -243,7 +243,7 @@ void main() async {
 // Listener para quando o app é aberto pela notificação
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     // App foi aberto pela notificação: navega para a tela de solicitações
-    onNovaSolicitacaoAtendimentoAvulso(message.data);
+    //onNovaSolicitacaoAtendimentoAvulso(message.data);
     Navigator.pushNamed(GlobalSnackbars.messengerKey.currentContext!,
         '/dashboard_profissional');
   });
