@@ -1,11 +1,11 @@
 // lib/core/widgets/card_solicitacao_overlay.dart
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
-import 'package:flutter/foundation.dart';
+import 'package:blurt/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:provider/provider.dart';
 import '../utils/alerta_sonoro.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:blurt/main.dart';
 
 class CardSolicitacaoOverlay extends StatefulWidget {
   final Map<String, dynamic> dados;
@@ -79,6 +79,7 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         ElevatedButton.icon(
                           icon: const Icon(Icons.check),
@@ -86,11 +87,7 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green),
                           onPressed: () {
-                            AlertaSonoro.parar();
                             widget.onAceitar();
-                            if (appLifecycleProvider.isInForeground) {
-                              OverlaySupportEntry.of(context)?.dismiss();
-                            }
                           },
                         ),
                         ElevatedButton.icon(
@@ -99,11 +96,7 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red),
                           onPressed: () {
-                            AlertaSonoro.parar();
                             widget.onRecusar();
-                            if (Provider.of<AppLifecycleProvider>(context,listen: false).isInForeground) {
-                              OverlaySupportEntry.of(context)?.dismiss();
-                            }
                           },
                         ),
                       ],

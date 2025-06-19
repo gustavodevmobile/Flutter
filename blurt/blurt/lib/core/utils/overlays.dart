@@ -24,7 +24,7 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
         setState(() {
           dados = jsonDecode(event);
         });
-        AlertaSonoro.tocar();
+        //AlertaSonoro.tocar();
 
         // Fecha após 1 minuto
         Future.delayed(const Duration(minutes: 1), () {
@@ -37,7 +37,7 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
 
   @override
   void dispose() {
-   AlertaSonoro.parar();
+    AlertaSonoro.parar();
     super.dispose();
   }
 
@@ -53,32 +53,13 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
     return CardSolicitacaoOverlay(
       dados: dados!,
       onAceitar: () {
-        //AlertaSonoro.parar();
-        FlutterOverlayWindow.closeOverlay();
+        AlertaSonoro.parar();
+        //FlutterOverlayWindow.closeOverlay();
       },
       onRecusar: () {
-        //AlertaSonoro.parar();
+        AlertaSonoro.parar();
         FlutterOverlayWindow.closeOverlay();
       },
     );
-
-    // MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   home:
-    //   Material(
-    //     color: Colors.transparent,
-    //     child: CardSolicitacaoOverlay(
-    //       dados: dados!,
-    //       onAceitar: () {
-    //         AlertaSonoro.parar();
-    //         FlutterOverlayWindow.closeOverlay();
-    //       },
-    //       onRecusar: () {
-    //         AlertaSonoro.parar();
-    //         FlutterOverlayWindow.closeOverlay();
-    //       },
-    //     ),
-    //   ),
-    // );
   }
 }

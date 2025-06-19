@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlays.dart';
 import 'package:blurt/core/utils/solicitacao_notificacao.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:blurt/features/abordagens_utilizadas/data/abordagens_utilizadas_datasource.dart';
@@ -63,7 +66,9 @@ late AppLifecycleProvider appLifecycleProvider;
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   await mostrarNotificacaoSolicitacao(message.data);
+  print('Mensagem recebida em background: ${message.data}');
 }
+
 
 // Entry point para o overlay
 @pragma("vm:entry-point")
@@ -76,7 +81,9 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-   appLifecycleProvider = AppLifecycleProvider();
+  appLifecycleProvider = AppLifecycleProvider();
+
+  await FirebaseMessaging.instance.requestPermission();
 
   // Registra o handler de background do FCM
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -115,6 +122,32 @@ void main() async {
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   //FlutterOverlayWindow.showOverlay;
+
+   // Listener para mensagens recebidas em foreground
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Mensagem recebida: ${message.data}');
+    // final Map<String, dynamic> dados = message.data;
+
+    // // Se algum campo vier como string JSON, faça o decode:
+    // if (dados is String) {
+    //   dados = jsonDecode(dados);
+    // }
+    if (appLifecycleProvider.isInForeground) {
+      // Mostra overlay customizado
+      showOverlayNotification(
+        (context) => CardSolicitacaoOverlay(
+          dados: message.data,
+          onAceitar: () {},
+          onRecusar: () {},
+        ),
+        duration: const Duration(minutes: 1),
+        position: NotificationPosition.top,
+      );
+    } else {
+      // Mostra notificação do sistema
+      mostrarNotificacaoSolicitacao(message.data);
+    }
+  });
 
   runApp(
     MultiProvider(
@@ -195,11 +228,7 @@ void main() async {
       ),
     ),
   );
-  // Listener para mensagens recebidas em foreground
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // App em foreground: exibe overlay
-    onNovaSolicitacaoAtendimentoAvulso(message.data);
-  });
+ 
 
   // Notificação em segundo plano
   if (!await FlutterOverlayWindow.isPermissionGranted()) {
