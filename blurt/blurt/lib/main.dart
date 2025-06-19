@@ -1,11 +1,9 @@
-import 'dart:convert';
 
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlays.dart';
 import 'package:blurt/core/utils/solicitacao_notificacao.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
-import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:blurt/features/abordagens_utilizadas/data/abordagens_utilizadas_datasource.dart';

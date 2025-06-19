@@ -1,12 +1,8 @@
 // lib/core/widgets/card_solicitacao_overlay.dart
-import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/overlay_float_bubble.dart';
-import 'package:blurt/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
-import 'package:provider/provider.dart';
 import '../utils/alerta_sonoro.dart';
-import 'package:overlay_support/overlay_support.dart';
 
 class CardSolicitacaoOverlay extends StatefulWidget {
   final Map<String, dynamic> dados;

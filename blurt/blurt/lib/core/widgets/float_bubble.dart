@@ -1,7 +1,6 @@
 // float_bubble.dart
 import 'package:blurt/core/utils/alerta_sonoro.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class FloatBubble extends StatefulWidget {
   final VoidCallback? onTap;
