@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/theme/themes.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -97,7 +98,11 @@ class _EditarPerfilProfissionalScreenState
                       CircleAvatar(
                         radius: 48,
                         backgroundColor: Theme.of(context).primaryColor,
-                        backgroundImage: controllerLogin.fotoDecodificada,
+                        backgroundImage:
+                            controllerLogin.profissional?.foto != null
+                                ? CachedNetworkImageProvider(
+                                    controllerLogin.profissional!.foto)
+                                : null,
                         child: controllerLogin.profissional?.foto == null
                             ? const Icon(Icons.person, size: 48)
                             : null,

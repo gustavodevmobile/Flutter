@@ -7,6 +7,7 @@ import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,13 +45,13 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     });
   }
 
-  // @override
-  // void dispose() {
-  //   Future.microtask(() {
+  @override
+  void dispose() {
+    Future.microtask(() {
 
-  //   });
-  //   super.dispose();
-  // }
+    });
+    super.dispose();
+  }
 
   void _showSentimentoDialog() async {
     final List<Map<String, String>> emojis = [
@@ -347,7 +348,6 @@ class CardProdissional extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ProviderController>();
     return SizedBox(
       height: itemHeight,
       child: ListView.separated(
@@ -355,8 +355,6 @@ class CardProdissional extends StatelessWidget {
         itemCount: profOnline.length,
         separatorBuilder: (_, __) => const SizedBox(width: 2),
         itemBuilder: (context, index) {
-          final prof = provider.profissionaisOnline[index];
-          final foto = provider.getFotoProfissional(prof.id!);
           return GestureDetector(
             onTap: () {
               Provider.of<ProviderController>(context, listen: false)
@@ -376,9 +374,11 @@ class CardProdissional extends StatelessWidget {
                       children: [
                         const SizedBox(width: 12),
                         CircleAvatar(
-                          radius: 25,
-                          backgroundImage: foto,
-                          child: foto == null ? const Icon(Icons.person) : null,
+                          radius: 48,
+                          backgroundColor: Theme.of(context).primaryColor,
+                          backgroundImage: CachedNetworkImageProvider(
+                              profOnline[index].foto),
+                          child: null,
                         ),
                         const SizedBox(width: 16),
                         Column(

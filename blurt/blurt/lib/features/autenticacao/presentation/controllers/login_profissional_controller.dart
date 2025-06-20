@@ -17,12 +17,7 @@ class LoginProfissionalController extends ChangeNotifier {
       String cpf, String senha, BuildContext context) async {
     try {
       profissional = await loginUseCase(cpf, senha);
-      if (profissional?.foto != null) {
-        fotoDecodificada = MemoryImage(base64Decode(profissional!.foto));
-      } else {
-        fotoDecodificada = null;
-      }
-      notifyListeners();
+
       return profissional;
     } catch (e) {
       print('Erro ao fazer login: $e');

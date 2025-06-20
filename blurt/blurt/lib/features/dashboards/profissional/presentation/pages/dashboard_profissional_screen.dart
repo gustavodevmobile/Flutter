@@ -7,6 +7,7 @@ import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class DashboardProfissionalScreen extends StatefulWidget {
   const DashboardProfissionalScreen({super.key});
@@ -33,26 +34,7 @@ class _DashboardProfissionalScreenState
   }
 
   @override
-  void dispose() {
-    Future.microtask(() {
-      // _fotoCache = null;
-      // _fotoBase64Cache = null;
-      webSocketProvider.dispose();
-      webSocketProvider.disconnect();
-    });
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // final fotoBase64 =
-    //     context.watch<LoginProfissionalController>().profissional?.foto;
-    // // Atualiza o cache só se a imagem mudou
-    // if (fotoBase64 != null && fotoBase64 != _fotoBase64Cache) {
-    //   _fotoCache = MemoryImage(base64Decode(fotoBase64));
-    //   _fotoBase64Cache = fotoBase64;
-    // }
-    // Dados mockados para exemplo
     final int numeroAtendimentos = 42;
     final double ganhosEstimados = 3200.50;
     final double avaliacao = 4.8;
@@ -131,8 +113,12 @@ class _DashboardProfissionalScreenState
                             CircleAvatar(
                               radius: 48,
                               backgroundColor: Theme.of(context).primaryColor,
-                              backgroundImage: controllerLogin.fotoDecodificada,
-                              child: controllerLogin.fotoDecodificada == null
+                              backgroundImage:
+                                  controllerLogin.profissional?.foto != null
+                                      ? CachedNetworkImageProvider(
+                                          controllerLogin.profissional!.foto)
+                                      : null,
+                              child: controllerLogin.profissional?.foto == null
                                   ? const Icon(Icons.person, size: 48)
                                   : null,
                             ),

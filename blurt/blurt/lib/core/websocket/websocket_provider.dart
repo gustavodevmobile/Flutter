@@ -40,10 +40,7 @@ class WebSocketProvider extends ChangeNotifier {
 
             //novaSolicitacaoAtendimentoAvulso = msg['textContent'];
             //print('Nova solicitação de atendimento avulso: $msg');
-            onNovaSolicitacaoAtendimentoAvulso(
-              msg['conteudo']
-              
-            );
+            onNovaSolicitacaoAtendimentoAvulso(msg['conteudo']);
 
             // GlobalSnackbars.showSnackBar(msg['conteudo']['dataNasciento'],
             //     backgroundColor: Colors.green);
@@ -82,7 +79,7 @@ class WebSocketProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    channel?.sink.close();
+    disconnect();
     super.dispose();
   }
 
@@ -165,14 +162,4 @@ class WebSocketProvider extends ChangeNotifier {
       print('Erro ao requisitar serviços: $e');
     }
   }
-
-//   {
-//   "type": "mensagem_usuario_para_profissional",
-//   "usuarioId": "id_do_usuario",
-//   "profissionalId": "id_do_profissional",
-//   "conteudo": {
-//     "texto": "Olá, gostaria de atendimento!"
-//     // outros campos, se quiser
-//   }
-// }
 }

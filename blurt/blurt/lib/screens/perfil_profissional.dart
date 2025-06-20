@@ -5,6 +5,7 @@ import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
   Widget build(BuildContext context) {
     return Consumer3<ProviderController, WebSocketProvider,
             LoginUsuarioController>(
-        builder: (context, globalProvider, websockerProvider, usuarioController, child) {
+        builder: (context, globalProvider, websockerProvider, usuarioController,
+            child) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Profissional'),
@@ -35,18 +37,22 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
             child: ListView(
               children: [
                 Center(
-                  child: CircleAvatar(
-                    radius: 48,
-                    backgroundImage: globalProvider.getFotoProfissional(globalProvider.profissional!.id!),
-                    child: globalProvider.getFotoProfissional(globalProvider.profissional!.id!) == null
-                        ? const Icon(Icons.person, size: 48)
-                        : null,
-                  ),
-                ),
+                    child: CircleAvatar(
+                  radius: 48,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundImage: globalProvider.profissional?.foto != null
+                      ? CachedNetworkImageProvider(
+                          globalProvider.profissional!.foto)
+                      : null,
+                  child: globalProvider.profissional?.foto == null
+                      ? const Icon(Icons.person, size: 48)
+                      : null,
+                )),
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    Formatters.capitalize(globalProvider.profissional?.nome ?? ''),
+                    Formatters.capitalize(
+                        globalProvider.profissional?.nome ?? ''),
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
@@ -63,7 +69,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                     ? Center(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: Text('CRP: ${globalProvider.profissional!.crp}',
+                          child: Text(
+                              'CRP: ${globalProvider.profissional!.crp}',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         ),
@@ -88,11 +95,13 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                   ),
                 const SizedBox(height: 16),
                 globalProvider.profissional!.tipoProfissional == 'Psicóloga' ||
-                        globalProvider.profissional!.tipoProfissional == 'Psicólogo'
+                        globalProvider.profissional!.tipoProfissional ==
+                            'Psicólogo'
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (globalProvider.profissional!.abordagemPrincipal != null)
+                          if (globalProvider.profissional!.abordagemPrincipal !=
+                              null)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -100,13 +109,16 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 4),
-                                Text(Formatters.capitalize(globalProvider.profissional!.abordagemPrincipal!),
+                                Text(
+                                    Formatters.capitalize(globalProvider
+                                        .profissional!.abordagemPrincipal!),
                                     style: const TextStyle(fontSize: 16)),
                                 const SizedBox(height: 12),
                               ],
                             ),
                           //const SizedBox(height: 12),
-                          if (globalProvider.profissional!.abordagensUtilizadas !=
+                          if (globalProvider
+                                      .profissional!.abordagensUtilizadas !=
                                   null &&
                               globalProvider.profissional!.abordagensUtilizadas!
                                   .isNotEmpty)
@@ -136,7 +148,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(height: 4),
-                              globalProvider.profissional?.especialidadePrincipal !=
+                              globalProvider.profissional
+                                              ?.especialidadePrincipal !=
                                           null &&
                                       globalProvider.profissional!
                                           .especialidadePrincipal!.isNotEmpty
@@ -152,7 +165,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                               const SizedBox(height: 12),
                             ],
                           ),
-                          if (globalProvider.profissional!.temasClinicos!.isNotEmpty)
+                          if (globalProvider
+                              .profissional!.temasClinicos!.isNotEmpty)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -162,7 +176,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                 const SizedBox(height: 4),
                                 Wrap(
                                   spacing: 8,
-                                  children: globalProvider.profissional!.temasClinicos!
+                                  children: globalProvider
+                                      .profissional!.temasClinicos!
                                       .map((tema) => Chip(
                                           label: Text(
                                               Formatters.capitalize(tema))))
