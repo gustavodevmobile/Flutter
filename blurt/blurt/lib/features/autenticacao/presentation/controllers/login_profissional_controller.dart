@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:flutter/material.dart';
@@ -10,15 +11,18 @@ class LoginProfissionalController extends ChangeNotifier {
   LoginProfissionalController(this.loginUseCase);
 
   Profissional? profissional;
+  MemoryImage? fotoDecodificada;
 
   Future<Profissional?> login(
       String cpf, String senha, BuildContext context) async {
     try {
       profissional = await loginUseCase(cpf, senha);
-      if (context.mounted) {
-        Provider.of<WebSocketProvider>(context, listen: false)
-            .startPing(profissional!.id!);
+      if (profissional?.foto != null) {
+        fotoDecodificada = MemoryImage(base64Decode(profissional!.foto));
+      } else {
+        fotoDecodificada = null;
       }
+      notifyListeners();
       return profissional;
     } catch (e) {
       print('Erro ao fazer login: $e');

@@ -20,9 +20,9 @@ class _DashboardProfissionalScreenState
     extends State<DashboardProfissionalScreen> {
   bool online = false;
   bool plantao = true;
-  String? fotoPerfil;
-  MemoryImage? _fotoCache;
-  String? _fotoBase64Cache;
+  // String? fotoPerfil;
+  // MemoryImage? _fotoCache;
+  // String? _fotoBase64Cache;
   late WebSocketProvider webSocketProvider;
 
   @override
@@ -35,8 +35,8 @@ class _DashboardProfissionalScreenState
   @override
   void dispose() {
     Future.microtask(() {
-      _fotoCache = null;
-      _fotoBase64Cache = null;
+      // _fotoCache = null;
+      // _fotoBase64Cache = null;
       webSocketProvider.dispose();
       webSocketProvider.disconnect();
     });
@@ -45,13 +45,13 @@ class _DashboardProfissionalScreenState
 
   @override
   Widget build(BuildContext context) {
-    final fotoBase64 =
-        context.watch<LoginProfissionalController>().profissional?.foto;
-    // Atualiza o cache só se a imagem mudou
-    if (fotoBase64 != null && fotoBase64 != _fotoBase64Cache) {
-      _fotoCache = MemoryImage(base64Decode(fotoBase64));
-      _fotoBase64Cache = fotoBase64;
-    }
+    // final fotoBase64 =
+    //     context.watch<LoginProfissionalController>().profissional?.foto;
+    // // Atualiza o cache só se a imagem mudou
+    // if (fotoBase64 != null && fotoBase64 != _fotoBase64Cache) {
+    //   _fotoCache = MemoryImage(base64Decode(fotoBase64));
+    //   _fotoBase64Cache = fotoBase64;
+    // }
     // Dados mockados para exemplo
     final int numeroAtendimentos = 42;
     final double ganhosEstimados = 3200.50;
@@ -83,9 +83,9 @@ class _DashboardProfissionalScreenState
                       GlobalSnackbars.showSnackBar(status,
                           backgroundColor: Colors.green);
                     }
-                    // Limpa o cache da foto
-                    _fotoCache = null;
-                    _fotoBase64Cache = null;
+                    // // Limpa o cache da foto
+                    // _fotoCache = null;
+                    // _fotoBase64Cache = null;
                     // Redireciona para a tela de login
                   }
                   if (context.mounted) {
@@ -131,8 +131,8 @@ class _DashboardProfissionalScreenState
                             CircleAvatar(
                               radius: 48,
                               backgroundColor: Theme.of(context).primaryColor,
-                              backgroundImage: _fotoCache,
-                              child: fotoBase64 == null
+                              backgroundImage: controllerLogin.fotoDecodificada,
+                              child: controllerLogin.fotoDecodificada == null
                                   ? const Icon(Icons.person, size: 48)
                                   : null,
                             ),

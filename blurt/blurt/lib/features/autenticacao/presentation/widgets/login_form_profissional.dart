@@ -6,6 +6,8 @@ import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/validators.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
+import 'package:blurt/main.dart';
+import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,8 +45,10 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LoginProfissionalController, WebSocketProvider>(builder:
-        (context, controllerProfissionalLogin, webSocketController, child) {
+    return Consumer3<LoginProfissionalController, WebSocketProvider,
+            ProviderController>(
+        builder: (context, controllerProfissionalLogin, webSocketController,
+            globalProvider, child) {
       return Form(
         key: _formKey,
         child: Column(
@@ -134,7 +138,9 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                 // Envia a identificação do profissional
                                 webSocketController.identifyConnection(
                                     profissional.id!, 'profissional');
-                               
+
+                                appLifecycleProvider.profissionalLogado = true;
+
                                 if (context.mounted) {
                                   setState(() {
                                     _loading = false;

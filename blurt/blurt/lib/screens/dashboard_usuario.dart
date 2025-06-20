@@ -339,9 +339,6 @@ class CardProdissional extends StatelessWidget {
   final Axis scrollDirection;
   final double? itemHeight;
 
-  // Cache estático para as fotos
-  static final Map<String, MemoryImage> _fotoCache = {};
-
   const CardProdissional(
       {required this.profOnline,
       required this.scrollDirection,
@@ -350,6 +347,7 @@ class CardProdissional extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<ProviderController>();
     return SizedBox(
       height: itemHeight,
       child: ListView.separated(
@@ -357,16 +355,8 @@ class CardProdissional extends StatelessWidget {
         itemCount: profOnline.length,
         separatorBuilder: (_, __) => const SizedBox(width: 2),
         itemBuilder: (context, index) {
-          final profissional = profOnline[index];
-          MemoryImage? fotoImage;
-
-          if (profissional.foto.isNotEmpty) {
-            fotoImage = _fotoCache[profissional.id];
-            if (fotoImage == null) {
-              fotoImage = MemoryImage(base64Decode(profissional.foto));
-              _fotoCache[profissional.id!] = fotoImage;
-            }
-          }
+          final prof = provider.profissionaisOnline[index];
+          final foto = provider.getFotoProfissional(prof.id!);
           return GestureDetector(
             onTap: () {
               Provider.of<ProviderController>(context, listen: false)
@@ -385,16 +375,11 @@ class CardProdissional extends StatelessWidget {
                     child: Row(
                       children: [
                         const SizedBox(width: 12),
-                        if (profOnline[index].foto.isEmpty)
-                          CircleAvatar(
-                            radius: 25,
-                            child: Icon(Icons.person, size: 40),
-                          )
-                        else
-                          CircleAvatar(
-                            radius: 25,
-                            backgroundImage: fotoImage,
-                          ),
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundImage: foto,
+                          child: foto == null ? const Icon(Icons.person) : null,
+                        ),
                         const SizedBox(width: 16),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

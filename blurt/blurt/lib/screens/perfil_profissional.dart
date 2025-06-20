@@ -17,19 +17,13 @@ class PerfilProfissionalScreen extends StatefulWidget {
 }
 
 class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
-  @override
-  initState() {
-    super.initState();
-    Formatters.formatarValor(123);
-  }
-
   bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     return Consumer3<ProviderController, WebSocketProvider,
             LoginUsuarioController>(
-        builder: (context, value, websockerProvider, usuarioController, child) {
+        builder: (context, globalProvider, websockerProvider, usuarioController, child) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Profissional'),
@@ -43,10 +37,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                 Center(
                   child: CircleAvatar(
                     radius: 48,
-                    backgroundImage: value.profissional?.foto != null
-                        ? MemoryImage(base64Decode(value.profissional!.foto))
-                        : null,
-                    child: value.profissional?.foto == null
+                    backgroundImage: globalProvider.getFotoProfissional(globalProvider.profissional!.id!),
+                    child: globalProvider.getFotoProfissional(globalProvider.profissional!.id!) == null
                         ? const Icon(Icons.person, size: 48)
                         : null,
                   ),
@@ -54,7 +46,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    value.profissional?.nome ?? '',
+                    Formatters.capitalize(globalProvider.profissional?.nome ?? ''),
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
@@ -62,16 +54,16 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                 const SizedBox(height: 8),
                 Center(
                   child: Text(
-                    value.profissional?.tipoProfissional ?? '',
+                    globalProvider.profissional?.tipoProfissional ?? '',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ),
-                value.profissional?.tipoProfissional == 'Psicólogo'
+                globalProvider.profissional?.tipoProfissional == 'Psicólogo'
                     ? Center(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: Text('CRP: ${value.profissional!.crp}',
+                          child: Text('CRP: ${globalProvider.profissional!.crp}',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         ),
@@ -83,10 +75,10 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                if (value.profissional!.bio != null &&
-                    value.profissional!.bio!.isNotEmpty)
+                if (globalProvider.profissional!.bio != null &&
+                    globalProvider.profissional!.bio!.isNotEmpty)
                   Text(
-                    value.profissional!.bio!,
+                    globalProvider.profissional!.bio!,
                     style: const TextStyle(fontSize: 16),
                   )
                 else
@@ -95,12 +87,12 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                     style: TextStyle(fontSize: 16),
                   ),
                 const SizedBox(height: 16),
-                value.profissional!.tipoProfissional == 'Psicóloga' ||
-                        value.profissional!.tipoProfissional == 'Psicólogo'
+                globalProvider.profissional!.tipoProfissional == 'Psicóloga' ||
+                        globalProvider.profissional!.tipoProfissional == 'Psicólogo'
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (value.profissional!.abordagemPrincipal != null)
+                          if (globalProvider.profissional!.abordagemPrincipal != null)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -108,15 +100,15 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 4),
-                                Text(value.profissional!.abordagemPrincipal!,
+                                Text(Formatters.capitalize(globalProvider.profissional!.abordagemPrincipal!),
                                     style: const TextStyle(fontSize: 16)),
                                 const SizedBox(height: 12),
                               ],
                             ),
                           //const SizedBox(height: 12),
-                          if (value.profissional!.abordagensUtilizadas !=
+                          if (globalProvider.profissional!.abordagensUtilizadas !=
                                   null &&
-                              value.profissional!.abordagensUtilizadas!
+                              globalProvider.profissional!.abordagensUtilizadas!
                                   .isNotEmpty)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +119,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                 const SizedBox(height: 4),
                                 Wrap(
                                   spacing: 8,
-                                  children: value
+                                  children: globalProvider
                                       .profissional!.abordagensUtilizadas!
                                       .map((abord) => Chip(
                                           label: Text(
@@ -144,12 +136,12 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(height: 4),
-                              value.profissional?.especialidadePrincipal !=
+                              globalProvider.profissional?.especialidadePrincipal !=
                                           null &&
-                                      value.profissional!
+                                      globalProvider.profissional!
                                           .especialidadePrincipal!.isNotEmpty
                                   ? Text(
-                                      value.profissional!
+                                      globalProvider.profissional!
                                           .especialidadePrincipal!,
                                       style: const TextStyle(fontSize: 16),
                                     )
@@ -160,7 +152,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                               const SizedBox(height: 12),
                             ],
                           ),
-                          if (value.profissional!.temasClinicos!.isNotEmpty)
+                          if (globalProvider.profissional!.temasClinicos!.isNotEmpty)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -170,7 +162,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                 const SizedBox(height: 4),
                                 Wrap(
                                   spacing: 8,
-                                  children: value.profissional!.temasClinicos!
+                                  children: globalProvider.profissional!.temasClinicos!
                                       .map((tema) => Chip(
                                           label: Text(
                                               Formatters.capitalize(tema))))
@@ -223,7 +215,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                      'Valor da Consulta: R\$ ${Formatters.formatarValor(value.profissional!.valorConsulta)}',
+                      'Valor da Consulta: R\$ ${Formatters.formatarValor(globalProvider.profissional!.valorConsulta)}',
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 24),
@@ -238,7 +230,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                               try {
                                 websockerProvider.solicitarAtendimentoAvulso(
                                     usuarioController.usuario!.id!,
-                                    value.profissional!.id!, {
+                                    globalProvider.profissional!.id!, {
                                   'nome': usuarioController.usuario!.nome,
                                   'genero': usuarioController.usuario!.genero,
                                   //'foto': usuarioController.usuario!.foto ?? '',
@@ -249,7 +241,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
 
                                   'profissionalId': 'psicologo',
                                   'usuarioId': 'usuario',
-                                  'preAnalise':{
+                                  'preAnalise': {
                                     'motivoConsulta': 'Motivo da consulta',
                                     'objetivo': 'Objetivo da consulta',
                                     'sintomas': 'Sintomas relatados',

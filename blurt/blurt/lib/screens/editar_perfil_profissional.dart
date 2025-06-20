@@ -33,13 +33,13 @@ class _EditarPerfilProfissionalScreenState
   final _tipoContaController = TextEditingController();
   final _reportsController = TextEditingController();
   // Simulação de dados não editáveis
-  final String nome = 'Fulano de Tal';
-  final String email = 'fulano@email.com';
-  final String cpf = '000.000.000-00';
-  final String crp = '12/345678';
-  final String genero = 'Masculino';
-  final String abordagemPrincipal = 'TCC';
-  final String profissional = 'Psicólogo';
+  // final String nome = 'Fulano de Tal';
+  // final String email = 'fulano@email.com';
+  // final String cpf = '000.000.000-00';
+  // final String crp = '12/345678';
+  // final String genero = 'Masculino';
+  // final String abordagemPrincipal = 'TCC';
+  // final String profissional = 'Psicólogo';
 
   bool estaOnline = true;
   bool atendePlantao = false;
@@ -97,11 +97,7 @@ class _EditarPerfilProfissionalScreenState
                       CircleAvatar(
                         radius: 48,
                         backgroundColor: Theme.of(context).primaryColor,
-                        backgroundImage:
-                            controllerLogin.profissional?.foto != null
-                                ? MemoryImage(base64Decode(
-                                    controllerLogin.profissional!.foto))
-                                : null,
+                        backgroundImage: controllerLogin.fotoDecodificada,
                         child: controllerLogin.profissional?.foto == null
                             ? const Icon(Icons.person, size: 48)
                             : null,

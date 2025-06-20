@@ -1,4 +1,3 @@
-
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlays.dart';
@@ -43,6 +42,7 @@ import 'package:blurt/features/temas_clinicos/presentation/temas_clinicos_contro
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:blurt/features/autenticacao/presentation/pages/login_usuario_screen.dart';
 import 'package:blurt/screens/atendimentos_profissional.dart';
@@ -147,6 +147,8 @@ void main() async {
     //   //mostrarNotificacaoSolicitacao(message.data);
     // }
   });
+  const platform = MethodChannel('com.example.blurt/intent');
+ 
 
   runApp(
     MultiProvider(
@@ -228,6 +230,18 @@ void main() async {
     ),
   );
 
+  platform.setMethodCallHandler((call) async {
+    if (call.method == 'abrir_dashboard') {
+      // Use seu provider ou navigatorKey para navegar para o dashboard
+      navigatorKey.currentState?.pushReplacementNamed('/dashboard_profissional');
+    }
+  });
+
+  MaterialApp(
+    navigatorKey: navigatorKey,
+    // ...
+  );
+
   // Notificação em segundo plano
   if (!await FlutterOverlayWindow.isPermissionGranted()) {
     await FlutterOverlayWindow.requestPermission();
@@ -246,6 +260,8 @@ void main() async {
         '/dashboard_profissional');
   });
 }
+// Global key para o Navigator
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -259,6 +275,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       scaffoldMessengerKey: GlobalSnackbars.messengerKey,
       title: 'Blurt - Acolhimento e Terapia Online',
       debugShowCheckedModeBanner: false,

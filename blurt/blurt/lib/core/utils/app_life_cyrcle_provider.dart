@@ -4,6 +4,7 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class AppLifecycleProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool isInForeground = true;
+  bool profissionalLogado = false;
 
   AppLifecycleProvider() {
     WidgetsBinding.instance.addObserver(this);
@@ -18,7 +19,7 @@ class AppLifecycleProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.paused && profissionalLogado) {
       // App foi para background
       isInForeground = false;
       notifyListeners();
