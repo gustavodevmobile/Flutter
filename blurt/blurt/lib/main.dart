@@ -3,6 +3,7 @@ import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlays.dart';
 import 'package:blurt/core/utils/solicitacao_notificacao.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/core/websocket/websocket_provider_overlay.dart';
 import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
 import 'package:blurt/features/abordagens_utilizadas/data/abordagens_utilizadas_datasource.dart';
@@ -68,11 +69,19 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 // Entry point para o overlay
+// overlay_main.dart
 @pragma("vm:entry-point")
-void overlayMain() {
-  runApp(Directionality(
-      textDirection: TextDirection.ltr,
-      child: const OverlaySolicitacaoWidget()));
+void overlayMain() async {
+  await dotenv.load();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => WebSocketProviderOverlay()),
+        // Adicione outros providers necessários para o overlay
+      ],
+      child: const OverlaySolicitacaoWidget(),
+    ),
+  );
 }
 
 void main() async {

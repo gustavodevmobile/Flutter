@@ -1,6 +1,9 @@
 import 'package:blurt/core/utils/overlay_float_bubble.dart';
+import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:provider/provider.dart';
 
 class AppLifecycleProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool isInForeground = true;
@@ -28,6 +31,14 @@ class AppLifecycleProvider extends ChangeNotifier with WidgetsBindingObserver {
       // App voltou para foreground
       isInForeground = true;
       notifyListeners();
+
+      FlutterOverlayWindow.shareData('desconectar');
+
+      WebSocketProvider? wsProvider = Provider.of<WebSocketProvider>(
+        navigatorKey.currentContext!,
+        listen: false,
+      );
+      wsProvider.connect();
 
       // Fecha o overlay se estiver aberto
       await FlutterOverlayWindow.closeOverlay();

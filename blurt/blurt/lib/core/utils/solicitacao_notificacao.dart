@@ -105,8 +105,9 @@ Histórico: Histórico clínico
 //   }
 // }
 
-void onNovaSolicitacaoAtendimentoAvulso(Map<String, dynamic> conteudo,
-    {bool foreground = true}) async {
+void onNovaSolicitacaoAtendimentoAvulso(
+  Map<String, dynamic> conteudo,
+) async {
   if (appLifecycleProvider.isInForeground) {
     AlertaSonoro.tocar();
     showOverlayNotification(
@@ -126,11 +127,5 @@ void onNovaSolicitacaoAtendimentoAvulso(Map<String, dynamic> conteudo,
       duration: const Duration(minutes: 1),
       position: NotificationPosition.top,
     );
-  } else {
-    //AlertaSonoro.tocar();
-    //mostrarNotificacaoSolicitacao(conteudo);
-    await FlutterOverlayWindow.closeOverlay();
-    await Future.delayed(Duration(milliseconds: 300));
-    showOverlayCard(conteudo);
   }
 }
