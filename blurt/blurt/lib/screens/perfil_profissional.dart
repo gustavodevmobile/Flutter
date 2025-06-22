@@ -7,6 +7,7 @@ import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:provider/provider.dart';
 
 class PerfilProfissionalScreen extends StatefulWidget {
@@ -243,6 +244,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                 //loading = true;
                               });
                               try {
+                                // solicitação websocket context app principal (foreground)
                                 websockerProvider.solicitarAtendimentoAvulso(
                                     usuarioController.usuario!.id!,
                                     globalProvider.profissional!.id!, {
@@ -263,6 +265,34 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                     'historicoClinico': 'Histórico clínico',
                                   },
                                 });
+                                //solicitação websocket contexto overlay (background)
+
+                                //await FlutterOverlayWindow.shareData('solicitacao_atendimento_avulso');
+
+
+                                // Provider.of<WebSocketProviderOverlay>(
+                                //         context,
+                                //         listen: false)
+                                //     .solicitarAtendimentoAvulsoOverlay(
+                                //         usuarioController.usuario!.id!,
+                                //         globalProvider.profissional!.id!, {
+                                //   'nome': usuarioController.usuario!.nome,
+                                //   'genero': usuarioController.usuario!.genero,
+                                //   //'foto': usuarioController.usuario!.foto ?? '',
+                                //   'dataNascimento':
+                                //       usuarioController.usuario!.dataNascimento,
+                                //   'estado': usuarioController.usuario!.estado,
+                                //   'cidade': usuarioController.usuario!.cidade,
+
+                                //   'profissionalId': 'psicologo',
+                                //   'usuarioId': 'usuario',
+                                //   'preAnalise': {
+                                //     'motivoConsulta': 'Motivo da consulta',
+                                //     'objetivo': 'Objetivo da consulta',
+                                //     'sintomas': 'Sintomas relatados',
+                                //     'historicoClinico': 'Histórico clínico',
+                                //   },
+                                // });
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -270,6 +300,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                         'Erro ao solicitar atendimento: $e'),
                                   ),
                                 );
+                                print('Erro ao solicitar atendimento: $e');
                               } finally {
                                 setState(() {
                                   //loading = false;

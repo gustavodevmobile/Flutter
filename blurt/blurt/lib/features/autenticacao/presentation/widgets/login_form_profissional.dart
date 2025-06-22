@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/validators.dart';
@@ -45,10 +46,10 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<LoginProfissionalController, WebSocketProvider,
-            ProviderController>(
+    return Consumer4<LoginProfissionalController, WebSocketProvider,
+            ProviderController, AppLifecycleProvider>(
         builder: (context, controllerProfissionalLogin, webSocketController,
-            globalProvider, child) {
+            globalProvider, appCicleProvider, child) {
       return Form(
         key: _formKey,
         child: Column(
@@ -139,7 +140,12 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                 webSocketController.identifyConnection(
                                     profissional.id!, 'profissional');
 
+                                webSocketController.startPing(profissional.id!);
+
                                 appLifecycleProvider.profissionalLogado = true;
+
+                                appCicleProvider
+                                    .setProfissionalId(profissional.id!);
 
                                 if (context.mounted) {
                                   setState(() {

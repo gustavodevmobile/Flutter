@@ -88,11 +88,6 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
                               backgroundColor: Colors.red),
                           onPressed: () async {
                             widget.onRecusar();
-                            AlertaSonoro.parar();
-                            //OverlaySupportEntry.of(context)?.dismiss();
-                            await FlutterOverlayWindow.closeOverlay();
-                            await Future.delayed(Duration(milliseconds: 300));
-                            showOverlayFloatBubble();
                           },
                         ),
                       ],

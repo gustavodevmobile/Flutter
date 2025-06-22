@@ -108,24 +108,54 @@ Histórico: Histórico clínico
 void onNovaSolicitacaoAtendimentoAvulso(
   Map<String, dynamic> conteudo,
 ) async {
-  if (appLifecycleProvider.isInForeground) {
-    AlertaSonoro.tocar();
-    showOverlayNotification(
-      (context) => CardSolicitacaoOverlay(
-        dados: conteudo,
-        onAceitar: () async {
-          AlertaSonoro.parar();
-          OverlaySupportEntry.of(context)?.dismiss();
-          //await FlutterOverlayWindow.closeOverlay();
-        },
-        onRecusar: () async {
-          AlertaSonoro.parar();
-          OverlaySupportEntry.of(context)?.dismiss();
-          //await FlutterOverlayWindow.closeOverlay();
-        },
-      ),
-      duration: const Duration(minutes: 1),
-      position: NotificationPosition.top,
-    );
-  }
+  AlertaSonoro.tocar();
+  showOverlayNotification(
+    (context) => CardSolicitacaoOverlay(
+      dados: conteudo,
+      onAceitar: () async {
+        AlertaSonoro.parar();
+        OverlaySupportEntry.of(context)?.dismiss();
+        Navigator.pushNamed(context, '/editar_perfil_profissional');
+      },
+      onRecusar: () async {
+        AlertaSonoro.parar();
+        OverlaySupportEntry.of(context)?.dismiss();
+        //await FlutterOverlayWindow.closeOverlay();
+      },
+    ),
+    duration: const Duration(minutes: 1),
+    position: NotificationPosition.top,
+  );
+  // if (appLifecycleProvider.isInForeground) {
+  //   AlertaSonoro.tocar();
+  //   showOverlayNotification(
+  //     (context) => CardSolicitacaoOverlay(
+  //       dados: conteudo,
+  //       onAceitar: () async {
+  //         AlertaSonoro.parar();
+  //         OverlaySupportEntry.of(context)?.dismiss();
+  //         Navigator.pushNamed(context, '/editar_perfil_profissional');
+  //       },
+  //       onRecusar: () async {
+  //         AlertaSonoro.parar();
+  //         OverlaySupportEntry.of(context)?.dismiss();
+  //         //await FlutterOverlayWindow.closeOverlay();
+  //       },
+  //     ),
+  //     duration: const Duration(minutes: 1),
+  //     position: NotificationPosition.top,
+  //   );
+  // } else {
+  //   await FlutterOverlayWindow.showOverlay(
+  //     enableDrag: true,
+  //     alignment: OverlayAlignment.center,
+  //     flag: OverlayFlag.defaultFlag,
+  //     overlayTitle: "Blurt",
+  //     positionGravity: PositionGravity.none,
+  //   );
+
+  //   await FlutterOverlayWindow.shareData(jsonEncode({
+  //     'type': 'teste',
+  //   }));
+  // }
 }

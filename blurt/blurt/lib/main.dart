@@ -1,5 +1,6 @@
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
+import 'package:blurt/core/utils/overlay_card.dart';
 import 'package:blurt/core/utils/overlays.dart';
 import 'package:blurt/core/utils/solicitacao_notificacao.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
@@ -157,13 +158,13 @@ void main() async {
     // }
   });
   const platform = MethodChannel('com.example.blurt/intent');
- 
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: appLifecycleProvider),
         ChangeNotifierProvider(create: (_) => WebSocketProvider()),
+        //ChangeNotifierProvider(create: (_) => WebSocketProviderOverlay()),
         ChangeNotifierProvider(create: (_) => ProviderController()),
         ChangeNotifierProvider(
           create: (_) => ProfissionaisOnlineController(
@@ -242,7 +243,8 @@ void main() async {
   platform.setMethodCallHandler((call) async {
     if (call.method == 'abrir_dashboard') {
       // Use seu provider ou navigatorKey para navegar para o dashboard
-      navigatorKey.currentState?.pushReplacementNamed('/dashboard_profissional');
+      navigatorKey.currentState
+          ?.pushReplacementNamed('/dashboard_profissional');
     }
   });
 
@@ -269,6 +271,7 @@ void main() async {
         '/dashboard_profissional');
   });
 }
+
 // Global key para o Navigator
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

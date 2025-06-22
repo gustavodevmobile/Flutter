@@ -72,7 +72,7 @@ class WebSocketProvider extends ChangeNotifier {
       }, onError: (error) {
         print('Erro na conexão WebSocket: $error');
       }, onDone: () {
-        print('Conexão WebSocket ');
+        print('Conexão WebSocket app principal desconectada');
       });
     }
   }
@@ -88,7 +88,7 @@ class WebSocketProvider extends ChangeNotifier {
     channel = null;
     profissionaisOnline.clear();
     stopPing();
-    print('Conexão WebSocket desconectada');
+    //print('Conexão WebSocket desconectada');
   }
 
   void setProfissionaisOnline(List<Profissional> lista) {

@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/core/websocket/websocket_provider_overlay.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -65,10 +67,6 @@ class _DashboardProfissionalScreenState
                       GlobalSnackbars.showSnackBar(status,
                           backgroundColor: Colors.green);
                     }
-                    // // Limpa o cache da foto
-                    // _fotoCache = null;
-                    // _fotoBase64Cache = null;
-                    // Redireciona para a tela de login
                   }
                   if (context.mounted) {
                     Navigator.pushNamedAndRemoveUntil(

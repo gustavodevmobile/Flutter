@@ -1,10 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlay_card.dart';
+import 'package:blurt/core/utils/overlay_float_bubble.dart';
+import 'package:blurt/core/utils/solicitacao_notificacao.dart';
+import 'package:blurt/main.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/profissional/profissional_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -15,15 +21,17 @@ class WebSocketProviderOverlay extends ChangeNotifier {
   Map<String, dynamic> respostaSolicitacaoAtendimentoAvulso = {};
   String? feedback;
   Timer? _pingTimer;
+  bool isConnected = false;
 
   final wsUrl = dotenv.env['WS_URL'];
 
   void connect() {
     if (wsUrl != null) {
       channel = WebSocketChannel.connect(Uri.parse(wsUrl!));
+      isConnected = true;
       channel!.stream.listen((data) {
         final msg = jsonDecode(data);
-
+        print('Overlay connectado: $isConnected');
         switch (msg['type']) {
           case 'status_update':
             final profissionais = msg['profissionais'] as List<dynamic>? ?? [];
@@ -39,12 +47,16 @@ class WebSocketProviderOverlay extends ChangeNotifier {
           case 'nova_solicitacao_atendimento_avulso':
 
             //novaSolicitacaoAtendimentoAvulso = msg['textContent'];
-            //print('Nova solicitação de atendimento avulso: $msg');
+            print(
+                '@@@@@@@@@@@   Nova solicitação de atendimento no handle do websocket @@@@@@@');
             showOverlayCard(msg['conteudo']);
+            //onNovaSolicitacaoAtendimentoAvulso(msg['conteudo']);
 
-            // GlobalSnackbars.showSnackBar(msg['conteudo']['dataNasciento'],
-            //     backgroundColor: Colors.green);
-            // notifyListeners();
+            //ShowCardOverlay().showOverlayCard(msg['conteudo']);
+            // final appLifecycleProvider =
+            //     Provider.of<AppLifecycleProvider>(context, listen: false);
+            // appLifecycleProvider.showOverlayCard(msg['conteudo']);
+
             break;
 
           case 'resposta_solicitacao_atendimento_avulso':
@@ -70,25 +82,27 @@ class WebSocketProviderOverlay extends ChangeNotifier {
             print('Tipo de mensagem desconhecido: $msg');
         }
       }, onError: (error) {
+        isConnected = false;
         print('Erro na conexão WebSocket: $error');
       }, onDone: () {
-        print('Conexão WebSocket ');
+        isConnected = false;
+        print('Conexão WebSocket OVERLAY desconectado');
       });
     }
   }
 
-  @override
-  void dispose() {
-    disconnect();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   disconnect();
+  //   super.dispose();
+  // }
 
   void disconnect() {
     channel?.sink.close();
     channel = null;
     profissionaisOnline.clear();
     stopPing();
-    print('Conexão WebSocket desconectada');
+    print('Conexão WebSocket no contexto overlay desconectada');
   }
 
   void setProfissionaisOnline(List<Profissional> lista) {
@@ -105,6 +119,7 @@ class WebSocketProviderOverlay extends ChangeNotifier {
       _pingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
         channel?.sink.add(payload);
       });
+      print('Ping iniciado: $payload');
     } catch (e) {
       print('Erro ao iniciar o ping: $e');
     }
@@ -131,14 +146,29 @@ class WebSocketProviderOverlay extends ChangeNotifier {
     }
   }
 
-  void solicitarAtendimentoAvulso(String usuarioId, String profissionalId,
-      Map<String, dynamic> textContent) {
+  void solicitarAtendimentoAvulsoOverlay() {
     try {
       final payload = jsonEncode({
         'type': 'solicitacao_atendimento_avulso',
-        'usuarioId': usuarioId,
-        'profissionalId': profissionalId,
-        'conteudo': textContent
+        'usuarioId': '123',
+        'profissionalId': '321',
+        'conteudo': {
+          'nome': 'Gustavo',
+          'genero': 'Masculino',
+          //'foto': usuarioController.usuario!.foto ?? '',
+          'dataNascimento': '1990-01-01',
+          'estado': 'São paulo',
+          'cidade': 'Santos',
+
+          'profissionalId': 'psicologo',
+          'usuarioId': 'usuario',
+          'preAnalise': {
+            'motivoConsulta': 'Motivo da consulta',
+            'objetivo': 'Objetivo da consulta',
+            'sintomas': 'Sintomas relatados',
+            'historicoClinico': 'Histórico clínico',
+          },
+        }
       });
       channel?.sink.add(payload);
       print('Requisitando serviços: $payload');
