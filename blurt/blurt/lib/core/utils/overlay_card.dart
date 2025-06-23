@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
-Future<void> showOverlayCard(Map<String, dynamic> conteudo) async {
+Future<void> showOverlayCard(Map<String, dynamic> usuario,
+    {RespostasPreAnalise? preAnelise}) async {
   await FlutterOverlayWindow.closeOverlay();
   await Future.delayed(const Duration(milliseconds: 300));
   await FlutterOverlayWindow.showOverlay(
@@ -12,5 +14,8 @@ Future<void> showOverlayCard(Map<String, dynamic> conteudo) async {
     overlayTitle: "Blurt",
     positionGravity: PositionGravity.none,
   );
-  await FlutterOverlayWindow.shareData(jsonEncode(conteudo));
+  await FlutterOverlayWindow.shareData(jsonEncode({
+    'usuario': usuario,
+    'preAnalise': preAnelise?.toMap(),
+  }));
 }

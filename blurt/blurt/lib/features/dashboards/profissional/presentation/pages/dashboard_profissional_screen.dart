@@ -7,8 +7,6 @@ import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class DashboardProfissionalScreen extends StatefulWidget {
   const DashboardProfissionalScreen({super.key});

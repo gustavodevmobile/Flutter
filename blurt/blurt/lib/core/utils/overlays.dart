@@ -4,6 +4,7 @@ import 'package:android_intent_plus/flag.dart';
 import 'package:blurt/core/utils/overlay_float_bubble.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/core/widgets/float_bubble.dart';
+import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import '../utils/alerta_sonoro.dart';
@@ -17,8 +18,8 @@ class OverlaySolicitacaoWidget extends StatefulWidget {
 }
 
 class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
-  Map<String, dynamic>? dados;
-  Offset position = const Offset(20, 20);
+  Map<String, dynamic>? usuario;
+  RespostasPreAnalise? preAnalise;
 
   @override
   void initState() {
@@ -29,7 +30,8 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
         final map = event != null ? jsonDecode(event) : null;
         if (map is Map<String, dynamic>) {
           setState(() {
-            dados = map;
+            usuario = map['usuario'] as Map<String, dynamic>?;
+            preAnalise = map['preAnalise'] as RespostasPreAnalise?;
           });
         }
       } catch (_) {
@@ -40,7 +42,7 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (dados == null) {
+    if (usuario == null) {
       return FloatBubble(
         onTap: () async {
           const intent = AndroidIntent(
@@ -57,8 +59,10 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
         },
       );
     } else {
+      AlertaSonoro.tocar();
       return CardSolicitacaoOverlay(
-        dados: dados!,
+        dadosUsuario: usuario!,
+        preAnalise: preAnalise,
         onAceitar: () async {
           // print(dados);
           AlertaSonoro.parar();
@@ -76,7 +80,8 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
           await intent.launch();
           //await FlutterOverlayWindow.closeOverlay();
           setState(() {
-            print('dados $dados'); // Volta para a bolinha
+            usuario = null; // Volta para a bolinha
+            preAnalise = null;
           });
         },
         onRecusar: () async {
@@ -85,7 +90,8 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
           await Future.delayed(Duration(milliseconds: 300));
           showOverlayFloatBubble();
           setState(() {
-            dados = null; // Volta para a bolinha
+            usuario = null; // Volta para a bolinha
+            preAnalise = null;
           });
         },
       );

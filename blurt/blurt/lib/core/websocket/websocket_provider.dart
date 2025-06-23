@@ -36,8 +36,15 @@ class WebSocketProvider extends ChangeNotifier {
             break;
 
           case 'nova_solicitacao_atendimento_avulso':
-            onNovaSolicitacaoAtendimentoAvulso(msg['conteudo']);
-            break;
+            print('Nova solicitação de atendimento avulso recebida: $msg');
+            if (msg['preAnalise'] != null) {
+              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'],msg['usuario'],
+                  preAnalise: msg['preAnalise']);
+              break;
+            } else {
+              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'], msg['usuario']);
+              break;
+            }
 
           case 'resposta_solicitacao_atendimento_avulso':
             print('Mensagem de chat: ${msg['textContent']}');
@@ -118,14 +125,16 @@ class WebSocketProvider extends ChangeNotifier {
   }
 
   void solicitarAtendimentoAvulso(String usuarioId, String profissionalId,
-      Map<String, dynamic> textContent) {
+      Map<String, dynamic> dadosUsuario, {Map<String, dynamic>? preAnalise}) {
     try {
       final payload = jsonEncode({
         'type': 'solicitacao_atendimento_avulso',
         'usuarioId': usuarioId,
         'profissionalId': profissionalId,
-        'conteudo': textContent
+        'dadosUsuario': dadosUsuario,
+        'preAnalise': preAnalise
       });
+      print('Payload de solicitação: $payload');
       channel?.sink.add(payload);
       print('Requisitando serviços: $payload');
     } catch (e) {

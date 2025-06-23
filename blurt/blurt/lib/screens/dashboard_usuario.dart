@@ -6,7 +6,6 @@ import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

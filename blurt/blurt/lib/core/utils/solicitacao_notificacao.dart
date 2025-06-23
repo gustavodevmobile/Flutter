@@ -4,6 +4,7 @@ import 'package:blurt/core/utils/alerta_sonoro.dart';
 import 'package:blurt/core/utils/overlay_card.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/main.dart';
+import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -86,18 +87,25 @@ Histórico: Histórico clínico
 }
 
 void onNovaSolicitacaoAtendimentoAvulso(
-  Map<String, dynamic> conteudo,
+  String usuarioId,
+  Map<String, dynamic> usuario,
+ {Map<String, dynamic>? preAnalise}
 ) async {
+  RespostasPreAnalise? respostasPreAnalise;
+  if (preAnalise != null) {
+    respostasPreAnalise = RespostasPreAnalise.fromMap(preAnalise);
+  }
   if (appLifecycleProvider.isInForeground) {
     AlertaSonoro.tocar();
     showOverlayNotification(
       (context) => CardSolicitacaoOverlay(
-        dados: conteudo,
+        dadosUsuario: usuario,
+        preAnalise: respostasPreAnalise,
         onAceitar: () async {
           AlertaSonoro.parar();
           OverlaySupportEntry.of(context)?.dismiss();
           Navigator.pushNamed(context, '/editar_perfil_profissional');
-          print('Aceitar solicitação: ${conteudo['nome']}');
+          //print('Aceitar solicitação: ${conteudo['nome']}');
         },
         onRecusar: () async {
           AlertaSonoro.parar();
@@ -109,6 +117,11 @@ void onNovaSolicitacaoAtendimentoAvulso(
       position: NotificationPosition.top,
     );
   } else {
-    showOverlayCard(conteudo);
+    AlertaSonoro.tocar();
+    if (respostasPreAnalise != null) {
+      showOverlayCard(usuario, preAnelise: respostasPreAnalise);
+    } else {
+      showOverlayCard(usuario);
+    }
   }
 }

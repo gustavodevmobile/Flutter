@@ -34,6 +34,19 @@ class RespostasPreAnalise {
       'isRisk': isRisk,
     };
   }
+
+  factory RespostasPreAnalise.fromMap(Map<String, dynamic> map) {
+    return RespostasPreAnalise(
+      desejaResponder: map['desejaResponder'] ?? false,
+      dormeBem: map['dormeBem'] ?? false,
+      algoTiraPaz: map['algoTiraPaz'] ?? false,
+      motivoAnsiedade: map['motivoAnsiedade'] ?? '',
+      querFalarAcontecimento: map['querFalarAcontecimento'] ?? false,
+      acontecimento: map['acontecimento'] ?? '',
+      pensamentosRuins: map['pensamentosRuins'] ?? false,
+      isRisk: map['isRisk'] ?? false,
+    );
+  }
 }
 
 Future<RespostasPreAnalise?> showQuestionarioPreAnalise(

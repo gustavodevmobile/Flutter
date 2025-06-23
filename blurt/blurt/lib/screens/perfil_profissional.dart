@@ -6,9 +6,7 @@ import 'package:blurt/features/autenticacao/presentation/controllers/login_contr
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:provider/provider.dart';
 
 class PerfilProfissionalScreen extends StatefulWidget {
@@ -253,8 +251,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                         .usuario!.dataNascimento,
                                     'estado': usuarioController.usuario!.estado,
                                     'cidade': usuarioController.usuario!.cidade,
-                                    'preAnalise': 'Não respondeu o questionário',
-                                  },
+                                  }
+                                  
                                 );
                               } else {
                                 // Respondeu o questionário, envia solicitação com as respostas
@@ -269,8 +267,8 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                         .usuario!.dataNascimento,
                                     'estado': usuarioController.usuario!.estado,
                                     'cidade': usuarioController.usuario!.cidade,
-                                    'preAnalise': respostas.toMap(),
                                   },
+                                  preAnalise: respostas.toMap(),
                                 );
                               }
                             },
