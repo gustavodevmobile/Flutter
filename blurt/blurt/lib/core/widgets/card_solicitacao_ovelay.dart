@@ -1,7 +1,5 @@
 // lib/core/widgets/card_solicitacao_overlay.dart
-import 'package:blurt/core/utils/overlay_float_bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import '../utils/alerta_sonoro.dart';
 
 class CardSolicitacaoOverlay extends StatefulWidget {
@@ -72,23 +70,28 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       //crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.check),
-                          label: const Text('Aceitar'),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green),
-                          onPressed: () async {
-                            widget.onAceitar();
-                          },
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.check),
+                            label: const Text('Aceitar'),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green),
+                            onPressed: () async {
+                              widget.onAceitar();
+                              
+                            },
+                          ),
                         ),
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.close),
-                          label: const Text('Recusar'),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red),
-                          onPressed: () async {
-                            widget.onRecusar();
-                          },
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.close),
+                            label: const Text('Recusar'),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red),
+                            onPressed: () async {
+                              widget.onRecusar();
+                            },
+                          ),
                         ),
                       ],
                     ),

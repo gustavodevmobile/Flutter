@@ -1,10 +1,11 @@
-import 'dart:convert';
 import 'package:blurt/core/utils/background.dart';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/core/widgets/animated_cache_image.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
+import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
@@ -38,17 +39,12 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
             child: ListView(
               children: [
                 Center(
-                    child: CircleAvatar(
-                  radius: 48,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  backgroundImage: globalProvider.profissional?.foto != null
-                      ? CachedNetworkImageProvider(
-                          globalProvider.profissional!.foto)
-                      : null,
-                  child: globalProvider.profissional?.foto == null
-                      ? const Icon(Icons.person, size: 48)
-                      : null,
-                )),
+                  child: CircleAvatar(
+                      radius: 48,
+                      child: AnimatedCachedImage(
+                        imageUrl: globalProvider.profissional?.foto ?? '',
+                      )),
+                ),
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
@@ -240,73 +236,88 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                       onPressed: loading
                           ? null
                           : () async {
-                              setState(() {
-                                //loading = true;
-                              });
-                              try {
-                                // solicitação websocket context app principal (foreground)
+                              final respostas =
+                                  await showQuestionarioPreAnalise(context);
+                              print(respostas?.desejaResponder);
+
+                              if (respostas == null) {
+                                // Não quis responder o questionário, envia solicitação simples
                                 websockerProvider.solicitarAtendimentoAvulso(
-                                    usuarioController.usuario!.id!,
-                                    globalProvider.profissional!.id!, {
-                                  'nome': usuarioController.usuario!.nome,
-                                  'genero': usuarioController.usuario!.genero,
-                                  //'foto': usuarioController.usuario!.foto ?? '',
-                                  'dataNascimento':
-                                      usuarioController.usuario!.dataNascimento,
-                                  'estado': usuarioController.usuario!.estado,
-                                  'cidade': usuarioController.usuario!.cidade,
-
-                                  'profissionalId': 'psicologo',
-                                  'usuarioId': 'usuario',
-                                  'preAnalise': {
-                                    'motivoConsulta': 'Motivo da consulta',
-                                    'objetivo': 'Objetivo da consulta',
-                                    'sintomas': 'Sintomas relatados',
-                                    'historicoClinico': 'Histórico clínico',
+                                  usuarioController.usuario!.id!,
+                                  globalProvider.profissional!.id!,
+                                  {
+                                    'nome': usuarioController.usuario!.nome,
+                                    'genero': usuarioController.usuario!.genero,
+                                    //'foto': usuarioController.usuario!.foto ?? '',
+                                    'dataNascimento': usuarioController
+                                        .usuario!.dataNascimento,
+                                    'estado': usuarioController.usuario!.estado,
+                                    'cidade': usuarioController.usuario!.cidade,
+                                    'preAnalise': 'Não respondeu o questionário',
                                   },
-                                });
-                                //solicitação websocket contexto overlay (background)
-
-                                //await FlutterOverlayWindow.shareData('solicitacao_atendimento_avulso');
-
-
-                                // Provider.of<WebSocketProviderOverlay>(
-                                //         context,
-                                //         listen: false)
-                                //     .solicitarAtendimentoAvulsoOverlay(
-                                //         usuarioController.usuario!.id!,
-                                //         globalProvider.profissional!.id!, {
-                                //   'nome': usuarioController.usuario!.nome,
-                                //   'genero': usuarioController.usuario!.genero,
-                                //   //'foto': usuarioController.usuario!.foto ?? '',
-                                //   'dataNascimento':
-                                //       usuarioController.usuario!.dataNascimento,
-                                //   'estado': usuarioController.usuario!.estado,
-                                //   'cidade': usuarioController.usuario!.cidade,
-
-                                //   'profissionalId': 'psicologo',
-                                //   'usuarioId': 'usuario',
-                                //   'preAnalise': {
-                                //     'motivoConsulta': 'Motivo da consulta',
-                                //     'objetivo': 'Objetivo da consulta',
-                                //     'sintomas': 'Sintomas relatados',
-                                //     'historicoClinico': 'Histórico clínico',
-                                //   },
-                                // });
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Erro ao solicitar atendimento: $e'),
-                                  ),
                                 );
-                                print('Erro ao solicitar atendimento: $e');
-                              } finally {
-                                setState(() {
-                                  //loading = false;
-                                });
+                              } else {
+                                // Respondeu o questionário, envia solicitação com as respostas
+                                websockerProvider.solicitarAtendimentoAvulso(
+                                  usuarioController.usuario!.id!,
+                                  globalProvider.profissional!.id!,
+                                  {
+                                    'nome': usuarioController.usuario!.nome,
+                                    'genero': usuarioController.usuario!.genero,
+                                    //'foto': usuarioController.usuario!.foto ?? '',
+                                    'dataNascimento': usuarioController
+                                        .usuario!.dataNascimento,
+                                    'estado': usuarioController.usuario!.estado,
+                                    'cidade': usuarioController.usuario!.cidade,
+                                    'preAnalise': respostas.toMap(),
+                                  },
+                                );
                               }
                             },
+
+                      // loading
+                      //     ? null
+                      //     : () async {
+                      //         setState(() {
+                      //           //loading = true;
+                      //         });
+                      //         try {
+                      //           // solicitação websocket context app principal (foreground)
+                      //           websockerProvider.solicitarAtendimentoAvulso(
+                      //               usuarioController.usuario!.id!,
+                      //               globalProvider.profissional!.id!, {
+                      //             'nome': usuarioController.usuario!.nome,
+                      //             'genero': usuarioController.usuario!.genero,
+                      //             //'foto': usuarioController.usuario!.foto ?? '',
+                      //             'dataNascimento':
+                      //                 usuarioController.usuario!.dataNascimento,
+                      //             'estado': usuarioController.usuario!.estado,
+                      //             'cidade': usuarioController.usuario!.cidade,
+
+                      //             'profissionalId':
+                      //                 globalProvider.profissional!.id!,
+                      //             'usuarioId': usuarioController.usuario!.id!,
+                      //             'preAnalise': {
+                      //               'motivoConsulta': 'Motivo da consulta',
+                      //               'objetivo': 'Objetivo da consulta',
+                      //               'sintomas': 'Sintomas relatados',
+                      //               'historicoClinico': 'Histórico clínico',
+                      //             },
+                      //           });
+                      //         } catch (e) {
+                      //           ScaffoldMessenger.of(context).showSnackBar(
+                      //             SnackBar(
+                      //               content: Text(
+                      //                   'Erro ao solicitar atendimento: $e'),
+                      //             ),
+                      //           );
+                      //           print('Erro ao solicitar atendimento: $e');
+                      //         } finally {
+                      //           setState(() {
+                      //             //loading = false;
+                      //           });
+                      //         }
+                      //       },
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(200, 48),
                           textStyle: const TextStyle(fontSize: 18),

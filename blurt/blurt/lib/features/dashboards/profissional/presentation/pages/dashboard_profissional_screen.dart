@@ -1,15 +1,14 @@
-import 'dart:convert';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
-import 'package:blurt/core/websocket/websocket_provider_overlay.dart';
+import 'package:blurt/core/widgets/animated_cache_image.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class DashboardProfissionalScreen extends StatefulWidget {
   const DashboardProfissionalScreen({super.key});
@@ -109,17 +108,10 @@ class _DashboardProfissionalScreenState
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CircleAvatar(
-                              radius: 48,
-                              backgroundColor: Theme.of(context).primaryColor,
-                              backgroundImage:
-                                  controllerLogin.profissional?.foto != null
-                                      ? CachedNetworkImageProvider(
-                                          controllerLogin.profissional!.foto)
-                                      : null,
-                              child: controllerLogin.profissional?.foto == null
-                                  ? const Icon(Icons.person, size: 48)
-                                  : null,
-                            ),
+                                radius: 48,
+                                child: AnimatedCachedImage(
+                                    imageUrl:
+                                        controllerLogin.profissional!.foto)),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: TextButton.icon(

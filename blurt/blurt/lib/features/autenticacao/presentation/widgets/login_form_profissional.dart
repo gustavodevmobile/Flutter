@@ -144,9 +144,6 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
 
                                 appLifecycleProvider.profissionalLogado = true;
 
-                                appCicleProvider
-                                    .setProfissionalId(profissional.id!);
-
                                 if (context.mounted) {
                                   setState(() {
                                     _loading = false;

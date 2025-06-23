@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
+import 'package:blurt/core/widgets/animated_cache_image.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/models/profissional/profissional.dart';
@@ -24,17 +23,6 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     {'data': '10/05/2025', 'profissional': 'Dr. João', 'tipo': 'Psicanalista'},
   ];
   Map<String, dynamic>? ultimaSessao;
-  // late WebSocketProvider _webSocketProvider;
-  // late ProviderController _providerController;
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   // Salve as referências enquanto o context ainda é válido
-  //   _webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-  //   _providerController =
-  //       Provider.of<ProviderController>(context, listen: false);
-  // }
 
   @override
   void initState() {
@@ -47,9 +35,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
 
   @override
   void dispose() {
-    Future.microtask(() {
-
-    });
+    Future.microtask(() {});
     super.dispose();
   }
 
@@ -289,8 +275,8 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                       minimumSize: const Size(double.infinity, 48),
                       textStyle: const TextStyle(fontSize: 18),
                     ),
-                    onPressed: () {
-                      showQuestionarioPreAnalise(context);
+                    onPressed: () async {
+                      RespostasPreAnalise? respostasPreAnalise = await showQuestionarioPreAnalise(context);
                     },
                   ),
                   const SizedBox(height: 12),
@@ -374,12 +360,10 @@ class CardProdissional extends StatelessWidget {
                       children: [
                         const SizedBox(width: 12),
                         CircleAvatar(
-                          radius: 48,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          backgroundImage: CachedNetworkImageProvider(
-                              profOnline[index].foto),
-                          child: null,
-                        ),
+                            radius: 35,
+                            child: AnimatedCachedImage(
+                              imageUrl: profOnline[index].foto,
+                            )),
                         const SizedBox(width: 16),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/usuario/usuario.dart';

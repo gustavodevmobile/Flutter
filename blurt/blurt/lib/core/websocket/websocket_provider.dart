@@ -33,18 +33,10 @@ class WebSocketProvider extends ChangeNotifier {
                     ProfissionalModel.fromJson(e as Map<String, dynamic>))
                 .toList();
             notifyListeners();
-            //print('Profissionais online atualizados: $profissionaisOnline');
             break;
 
           case 'nova_solicitacao_atendimento_avulso':
-
-            //novaSolicitacaoAtendimentoAvulso = msg['textContent'];
-            //print('Nova solicitação de atendimento avulso: $msg');
             onNovaSolicitacaoAtendimentoAvulso(msg['conteudo']);
-
-            // GlobalSnackbars.showSnackBar(msg['conteudo']['dataNasciento'],
-            //     backgroundColor: Colors.green);
-            // notifyListeners();
             break;
 
           case 'resposta_solicitacao_atendimento_avulso':
@@ -75,12 +67,6 @@ class WebSocketProvider extends ChangeNotifier {
         print('Conexão WebSocket app principal desconectada');
       });
     }
-  }
-
-  @override
-  void dispose() {
-    disconnect();
-    super.dispose();
   }
 
   void disconnect() {

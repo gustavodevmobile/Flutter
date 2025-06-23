@@ -6,7 +6,6 @@ import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'dart:convert';
 
@@ -86,76 +85,30 @@ Histórico: Histórico clínico
   );
 }
 
-// Future<void> onDidReceiveNotificationResponse(
-//     NotificationResponse response) async {
-//   final payload = response.payload;
-//   if (payload == null) return;
-//   try {
-//     final Map<String, dynamic> dados = jsonDecode(payload);
-//     showOverlayNotification(
-//         (context) => CardSolicitacaoOverlay(
-//               dados: dados,
-//               onAceitar: () {},
-//               onRecusar: () {},
-//             ),
-//         duration: const Duration(minutes: 1),
-//         position: NotificationPosition.top);
-//   } catch (e) {
-//     // fallback: não faz nada
-//   }
-// }
-
 void onNovaSolicitacaoAtendimentoAvulso(
   Map<String, dynamic> conteudo,
 ) async {
-  AlertaSonoro.tocar();
-  showOverlayNotification(
-    (context) => CardSolicitacaoOverlay(
-      dados: conteudo,
-      onAceitar: () async {
-        AlertaSonoro.parar();
-        OverlaySupportEntry.of(context)?.dismiss();
-        Navigator.pushNamed(context, '/editar_perfil_profissional');
-      },
-      onRecusar: () async {
-        AlertaSonoro.parar();
-        OverlaySupportEntry.of(context)?.dismiss();
-        //await FlutterOverlayWindow.closeOverlay();
-      },
-    ),
-    duration: const Duration(minutes: 1),
-    position: NotificationPosition.top,
-  );
-  // if (appLifecycleProvider.isInForeground) {
-  //   AlertaSonoro.tocar();
-  //   showOverlayNotification(
-  //     (context) => CardSolicitacaoOverlay(
-  //       dados: conteudo,
-  //       onAceitar: () async {
-  //         AlertaSonoro.parar();
-  //         OverlaySupportEntry.of(context)?.dismiss();
-  //         Navigator.pushNamed(context, '/editar_perfil_profissional');
-  //       },
-  //       onRecusar: () async {
-  //         AlertaSonoro.parar();
-  //         OverlaySupportEntry.of(context)?.dismiss();
-  //         //await FlutterOverlayWindow.closeOverlay();
-  //       },
-  //     ),
-  //     duration: const Duration(minutes: 1),
-  //     position: NotificationPosition.top,
-  //   );
-  // } else {
-  //   await FlutterOverlayWindow.showOverlay(
-  //     enableDrag: true,
-  //     alignment: OverlayAlignment.center,
-  //     flag: OverlayFlag.defaultFlag,
-  //     overlayTitle: "Blurt",
-  //     positionGravity: PositionGravity.none,
-  //   );
-
-  //   await FlutterOverlayWindow.shareData(jsonEncode({
-  //     'type': 'teste',
-  //   }));
-  // }
+  if (appLifecycleProvider.isInForeground) {
+    AlertaSonoro.tocar();
+    showOverlayNotification(
+      (context) => CardSolicitacaoOverlay(
+        dados: conteudo,
+        onAceitar: () async {
+          AlertaSonoro.parar();
+          OverlaySupportEntry.of(context)?.dismiss();
+          Navigator.pushNamed(context, '/editar_perfil_profissional');
+          print('Aceitar solicitação: ${conteudo['nome']}');
+        },
+        onRecusar: () async {
+          AlertaSonoro.parar();
+          OverlaySupportEntry.of(context)?.dismiss();
+          //await FlutterOverlayWindow.closeOverlay();
+        },
+      ),
+      duration: const Duration(minutes: 1),
+      position: NotificationPosition.top,
+    );
+  } else {
+    showOverlayCard(conteudo);
+  }
 }

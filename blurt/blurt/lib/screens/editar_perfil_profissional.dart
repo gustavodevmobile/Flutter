@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';

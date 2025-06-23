@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class RespostasPreAnalise {
   bool desejaResponder;
@@ -19,6 +21,19 @@ class RespostasPreAnalise {
     this.pensamentosRuins = false,
     this.isRisk = false,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'desejaResponder': desejaResponder,
+      'dormeBem': dormeBem,
+      'algoTiraPaz': algoTiraPaz,
+      'motivoAnsiedade': motivoAnsiedade,
+      'querFalarAcontecimento': querFalarAcontecimento,
+      'acontecimento': acontecimento,
+      'pensamentosRuins': pensamentosRuins,
+      'isRisk': isRisk,
+    };
+  }
 }
 
 Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
@@ -28,7 +43,6 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
   final respostas = RespostasPreAnalise();
   final textStylePergunta =
       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
-  //final textStyleOpcao = const TextStyle(fontSize: 16);
   final corPrimaria = Theme.of(context).colorScheme.primary;
   final corSecundaria = Theme.of(context).colorScheme.secondary;
   final radius = BorderRadius.circular(16);
@@ -38,6 +52,16 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
     fillColor: Colors.grey[100],
     counterText: '',
   );
+
+  // Função para voltar para a página anterior
+  void voltar() {
+    if (currentPage > 0) {
+      pageController.previousPage(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
 
   return await showDialog<RespostasPreAnalise>(
     context: context,
@@ -58,7 +82,7 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
                 ),
                 content: SizedBox(
                   width: 350,
-                  height: 280,
+                  height: 320,
                   child: PageView(
                     controller: pageController,
                     physics: const NeverScrollableScrollPhysics(),
@@ -66,310 +90,430 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
                         setState(() => currentPage = index),
                     children: [
                       // Página 1
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                              'Para uma sessão mais aprimorada, deseja responder um breve questionário?',
-                              style: textStylePergunta,
-                              textAlign: TextAlign.center),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _modernRadio(
-                                context,
-                                label: 'Sim',
-                                selected: respostas.desejaResponder,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.desejaResponder = true;
-                                  });
-                                  Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                cor: corPrimaria,
-                              ),
-                              const SizedBox(width: 24),
-                              _modernRadio(
-                                context,
-                                label: 'Não',
-                                selected: !respostas.desejaResponder,
-                                onTap: () {
-                                  Navigator.of(context).pop(null);
-                                },
-                                cor: corSecundaria,
-                              ),
-                            ],
-                          ),
-                        ],
+                      SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                'Para uma sessão mais aprimorada, deseja responder um breve questionário?',
+                                style: textStylePergunta,
+                                textAlign: TextAlign.center),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _modernRadio(
+                                  context,
+                                  label: 'Sim',
+                                  selected: respostas.desejaResponder,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.desejaResponder = true;
+                                    });
+                                    Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      pageController.nextPage(
+                                          duration:
+                                              const Duration(milliseconds: 350),
+                                          curve: Curves.easeInOut);
+                                    });
+                                  },
+                                  cor: corPrimaria,
+                                ),
+                                const SizedBox(width: 24),
+                                _modernRadio(
+                                  context,
+                                  label: 'Não',
+                                  selected: !respostas.desejaResponder,
+                                  onTap: () {
+                                    Navigator.of(context).pop(null);
+                                  },
+                                  cor: corSecundaria,
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms)
+                            .slideY(begin: 0.2, end: 0),
                       ),
                       // Página 2
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                              'Você tem conseguido dormir bem nos últimos dias?',
-                              style: textStylePergunta,
-                              textAlign: TextAlign.center),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _modernRadio(
-                                context,
-                                label: 'Sim',
-                                selected: respostas.dormeBem,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.dormeBem = true;
-                                  });
-                                  Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                cor: corPrimaria,
+                      SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                'Você tem conseguido dormir bem nos últimos dias?',
+                                style: textStylePergunta,
+                                textAlign: TextAlign.center),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _modernRadio(
+                                  context,
+                                  label: 'Sim',
+                                  selected: respostas.dormeBem,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.dormeBem = true;
+                                    });
+                                    Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      pageController.nextPage(
+                                          duration:
+                                              const Duration(milliseconds: 350),
+                                          curve: Curves.easeInOut);
+                                    });
+                                  },
+                                  cor: corPrimaria,
+                                ),
+                                const SizedBox(width: 24),
+                                _modernRadio(
+                                  context,
+                                  label: 'Não',
+                                  selected: !respostas.dormeBem,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.dormeBem = false;
+                                    });
+                                    Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      pageController.nextPage(
+                                          duration:
+                                              const Duration(milliseconds: 350),
+                                          curve: Curves.easeInOut);
+                                    });
+                                  },
+                                  cor: corSecundaria,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            if (currentPage > 0)
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: const Text('Voltar'),
+                                  onPressed: () {
+                                    voltar();
+                                  },
+                                ),
                               ),
-                              const SizedBox(width: 24),
-                              _modernRadio(
-                                context,
-                                label: 'Não',
-                                selected: !respostas.dormeBem,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.dormeBem = false;
-                                  });
-                                  Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                cor: corSecundaria,
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms)
+                            .slideY(begin: 0.2, end: 0),
                       ),
                       // Página 3
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                              'Algo tem tirado a sua paz ou causado ansiedade ultimamente?',
-                              style: textStylePergunta,
-                              textAlign: TextAlign.center),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _modernRadio(
-                                context,
-                                label: 'Sim',
-                                selected: respostas.algoTiraPaz,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.algoTiraPaz = true;
-                                  });
-                                },
-                                cor: corPrimaria,
-                              ),
-                              const SizedBox(width: 24),
-                              _modernRadio(
-                                context,
-                                label: 'Não',
-                                selected: !respostas.algoTiraPaz,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.algoTiraPaz = false;
-                                    respostas.motivoAnsiedade = '';
-                                  });
-                                  Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                cor: corSecundaria,
-                              ),
-                            ],
-                          ),
-                          if (respostas.algoTiraPaz)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: TextField(
-                                maxLength: 200,
-                                maxLines: 3,
-                                decoration: inputDecoration.copyWith(
-                                    labelText: 'Conte um pouco (opcional)'),
-                                onChanged: (v) => respostas.motivoAnsiedade = v,
-                              ),
+                      SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                'Algo tem tirado a sua paz ou causado ansiedade ultimamente?',
+                                style: textStylePergunta,
+                                textAlign: TextAlign.center),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _modernRadio(
+                                  context,
+                                  label: 'Sim',
+                                  selected: respostas.algoTiraPaz,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.algoTiraPaz = true;
+                                    });
+                                  },
+                                  cor: corPrimaria,
+                                ),
+                                const SizedBox(width: 24),
+                                _modernRadio(
+                                  context,
+                                  label: 'Não',
+                                  selected: !respostas.algoTiraPaz,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.algoTiraPaz = false;
+                                      respostas.motivoAnsiedade =
+                                          'Não respondido';
+                                    });
+                                    Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      pageController.nextPage(
+                                          duration:
+                                              const Duration(milliseconds: 350),
+                                          curve: Curves.easeInOut);
+                                    });
+                                  },
+                                  cor: corSecundaria,
+                                ),
+                              ],
                             ),
-                          if (respostas.algoTiraPaz)
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Future.delayed(
-                                      const Duration(milliseconds: 100), () {
-                                    pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                child: const Text('Próxima'),
+                            if (respostas.algoTiraPaz)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: TextField(
+                                  maxLength: 20,
+                                  maxLines: 2,
+                                  decoration: inputDecoration.copyWith(
+                                      labelText: 'Conte um pouco (opcional)'),
+                                  onChanged: (v) => respostas.motivoAnsiedade =
+                                      v.isEmpty ? 'Não respondido' : v,
+                                ),
                               ),
-                            ),
-                        ],
+                            if (respostas.algoTiraPaz)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton.icon(
+                                    icon: const Icon(Icons.arrow_back),
+                                    label: const Text('Voltar'),
+                                    onPressed: () {
+                                      voltar();
+                                    },
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (respostas.motivoAnsiedade.isEmpty) {
+                                        respostas.motivoAnsiedade =
+                                            'Não respondido';
+                                      }
+                                      Future.delayed(
+                                          const Duration(milliseconds: 100),
+                                          () {
+                                        pageController.nextPage(
+                                            duration: const Duration(
+                                                milliseconds: 350),
+                                            curve: Curves.easeInOut);
+                                      });
+                                    },
+                                    child: const Text('Próxima'),
+                                  ),
+                                ],
+                              ),
+                            if (!respostas.algoTiraPaz && currentPage > 0)
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: const Text('Voltar'),
+                                  onPressed: () {
+                                    voltar();
+                                  },
+                                ),
+                              ),
+                          ],
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms)
+                            .slideY(begin: 0.2, end: 0),
                       ),
                       // Página 4
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                              'Gostaria de falar sobre algum acontecimento recente que te afetou?',
-                              style: textStylePergunta,
-                              textAlign: TextAlign.center),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _modernRadio(
-                                context,
-                                label: 'Sim',
-                                selected: respostas.querFalarAcontecimento,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.querFalarAcontecimento = true;
-                                  });
-                                },
-                                cor: corPrimaria,
-                              ),
-                              const SizedBox(width: 24),
-                              _modernRadio(
-                                context,
-                                label: 'Não',
-                                selected: !respostas.querFalarAcontecimento,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.querFalarAcontecimento = false;
-                                    respostas.acontecimento = '';
-                                  });
-                                  Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                cor: corSecundaria,
-                              ),
-                            ],
-                          ),
-                          if (respostas.querFalarAcontecimento)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: TextField(
-                                maxLength: 200,
-                                maxLines: 3,
-                                decoration: inputDecoration.copyWith(
-                                    labelText: 'Conte um pouco (opcional)'),
-                                onChanged: (v) => respostas.acontecimento = v,
-                              ),
+                      SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                'Gostaria de falar sobre algum acontecimento recente que te afetou?',
+                                style: textStylePergunta,
+                                textAlign: TextAlign.center),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _modernRadio(
+                                  context,
+                                  label: 'Sim',
+                                  selected: respostas.querFalarAcontecimento,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.querFalarAcontecimento = true;
+                                    });
+                                  },
+                                  cor: corPrimaria,
+                                ),
+                                const SizedBox(width: 24),
+                                _modernRadio(
+                                  context,
+                                  label: 'Não',
+                                  selected: !respostas.querFalarAcontecimento,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.querFalarAcontecimento = false;
+                                      respostas.acontecimento =
+                                          'Não respondido';
+                                    });
+                                    Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      pageController.nextPage(
+                                          duration:
+                                              const Duration(milliseconds: 350),
+                                          curve: Curves.easeInOut);
+                                    });
+                                  },
+                                  cor: corSecundaria,
+                                ),
+                              ],
                             ),
-                          if (respostas.querFalarAcontecimento)
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Future.delayed(
-                                      const Duration(milliseconds: 100), () {
-                                    pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                child: const Text('Próxima'),
+                            if (respostas.querFalarAcontecimento)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12.0),
+                                child: TextField(
+                                  maxLength: 200,
+                                  maxLines: 3,
+                                  decoration: inputDecoration.copyWith(
+                                      labelText: 'Conte um pouco (opcional)'),
+                                  onChanged: (v) => respostas.acontecimento =
+                                      v.isEmpty ? 'Não respondido' : v,
+                                ),
                               ),
-                            ),
-                        ],
+                            if (respostas.querFalarAcontecimento)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton.icon(
+                                    icon: const Icon(Icons.arrow_back),
+                                    label: const Text('Voltar'),
+                                    onPressed: () {
+                                      voltar();
+                                    },
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (respostas.acontecimento.isEmpty) {
+                                        respostas.acontecimento =
+                                            'Não respondido';
+                                      }
+                                      Future.delayed(
+                                          const Duration(milliseconds: 100),
+                                          () {
+                                        pageController.nextPage(
+                                            duration: const Duration(
+                                                milliseconds: 350),
+                                            curve: Curves.easeInOut);
+                                      });
+                                    },
+                                    child: const Text('Próxima'),
+                                  ),
+                                ],
+                              ),
+                            if (!respostas.querFalarAcontecimento &&
+                                currentPage > 0)
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: const Text('Voltar'),
+                                  onPressed: () {
+                                    voltar();
+                                  },
+                                ),
+                              ),
+                          ],
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms)
+                            .slideY(begin: 0.2, end: 0),
                       ),
                       // Página 5
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                              'Tem sentido vontade de sumir, fugir ou pensamentos de que nada vale a pena?',
-                              style: textStylePergunta,
-                              textAlign: TextAlign.center),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _modernRadio(
-                                context,
-                                label: 'Sim',
-                                selected: respostas.pensamentosRuins,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.pensamentosRuins = true;
-                                    respostas.isRisk = true;
-                                  });
-                                },
-                                cor: Colors.redAccent,
-                              ),
-                              const SizedBox(width: 24),
-                              _modernRadio(
-                                context,
-                                label: 'Não',
-                                selected: !respostas.pensamentosRuins,
-                                onTap: () {
-                                  setState(() {
-                                    respostas.pensamentosRuins = false;
-                                    respostas.isRisk = false;
-                                  });
-                                },
-                                cor: corSecundaria,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            icon: const Icon(Icons.check_circle_outline),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: corPrimaria,
-                              shape:
-                                  RoundedRectangleBorder(borderRadius: radius),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop(respostas);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Questionário finalizado! Risco: ${respostas.isRisk ? 'Sim' : 'Não'}',
-                                  ),
+                      SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                'Tem sentido vontade de sumir, fugir ou pensamentos de que nada vale a pena?',
+                                style: textStylePergunta,
+                                textAlign: TextAlign.center),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _modernRadio(
+                                  context,
+                                  label: 'Sim',
+                                  selected: respostas.pensamentosRuins,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.pensamentosRuins = true;
+                                      respostas.isRisk = true;
+                                    });
+                                  },
+                                  cor: Colors.redAccent,
                                 ),
-                              );
-                            },
-                            label: const Text('Finalizar'),
-                          ),
-                        ],
+                                const SizedBox(width: 24),
+                                _modernRadio(
+                                  context,
+                                  label: 'Não',
+                                  selected: !respostas.pensamentosRuins,
+                                  onTap: () {
+                                    setState(() {
+                                      respostas.pensamentosRuins = false;
+                                      respostas.isRisk = false;
+                                    });
+                                  },
+                                  cor: corSecundaria,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton.icon(
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: const Text('Voltar'),
+                                  onPressed: () {
+                                    voltar();
+                                  },
+                                ),
+                                ElevatedButton.icon(
+                                  icon: const Icon(Icons.check_circle_outline),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: corPrimaria,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: radius),
+                                  ),
+                                  onPressed: () {
+                                    // Garante que campos de texto não fiquem vazios
+                                    if (respostas.algoTiraPaz &&
+                                        respostas.motivoAnsiedade.isEmpty) {
+                                      respostas.motivoAnsiedade =
+                                          'Não respondido';
+                                    }
+                                    if (respostas.querFalarAcontecimento &&
+                                        respostas.acontecimento.isEmpty) {
+                                      respostas.acontecimento =
+                                          'Não respondido';
+                                    }
+                                    Navigator.of(context).pop(respostas);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Questionário finalizado! Risco: [1m${respostas.isRisk ? 'Sim' : 'Não'}',
+                                        ),
+                                      ),
+                                    );
+                                    final resp = jsonEncode(respostas.toMap());
+                                    print(
+                                        '@@@@@@@@@@@@@ @@@@  Respostas: $resp');
+                                  },
+                                  label: const Text('Finalizar'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms)
+                            .slideY(begin: 0.2, end: 0),
                       ),
                     ],
                   ),

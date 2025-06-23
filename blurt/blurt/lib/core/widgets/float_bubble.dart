@@ -1,12 +1,6 @@
-// float_bubble.dart
-import 'dart:io';
-
+//float_bubble.dart
 import 'package:blurt/core/utils/alerta_sonoro.dart';
-import 'package:blurt/main.dart';
 import 'package:flutter/material.dart';
-import 'package:android_intent_plus/android_intent.dart';
-import 'package:android_intent_plus/flag.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class FloatBubble extends StatefulWidget {
   final VoidCallback? onTap;
@@ -27,32 +21,8 @@ class _FloatBubbleState extends State<FloatBubble> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        if (Platform.isAndroid) {
-          // Abre o dashboard do profissional
-          const intent = AndroidIntent(
-            action: "android.intent.action.MAIN",
-            package: 'com.example.blurt', // Substitua pelo seu package name!
-            componentName:
-                'com.example.blurt.MainActivity', // Substitua também!
-            flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-            arguments: <String, dynamic>{
-              'abrir_dashboard': true,
-            },
-          );
-          await intent.launch();
-        } else {
-          await FlutterOverlayWindow.closeOverlay();
-          const intent = AndroidIntent(
-            action: "android.intent.action.MAIN",
-            package: 'com.example.blurt', // Substitua pelo seu package name!
-            componentName:
-                'com.example.blurt/.MainActivity', // Substitua também!
-            flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-            arguments: <String, dynamic>{
-              'abrir_dashboard': true,
-            },
-          );
-          await intent.launch();
+        if (widget.onTap != null) {
+          widget.onTap!();
         }
       },
       child: Container(
