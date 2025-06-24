@@ -86,12 +86,7 @@ Histórico: Histórico clínico
 }
 
 void onNovaSolicitacaoAtendimentoAvulso(
-    String usuarioId,
-    String profissionalId,
-    Map<String, dynamic> usuario,
-    Function(String usuarioId, String profissionalId,
-            {Map<String, dynamic>? preAnalise})
-        respostaAtendimentoAvulso,
+    String usuarioId, String profissionalId, Map<String, dynamic> usuario,
     {Map<String, dynamic>? preAnalise}) async {
   RespostasPreAnalise? respostasPreAnalise;
   if (preAnalise != null) {
@@ -109,10 +104,12 @@ void onNovaSolicitacaoAtendimentoAvulso(
           Navigator.pushNamed(context, '/editar_perfil_profissional');
 
           if (respostasPreAnalise != null) {
-            respostaAtendimentoAvulso(usuarioId, profissionalId,
-                preAnalise: respostasPreAnalise.toMap());
+            globalWebSocketProvider.respostaAtendimentoAvulso(
+                usuarioId, profissionalId,
+                respostasPreAnalise: respostasPreAnalise.toMap());
           } else {
-            respostaAtendimentoAvulso(usuarioId, profissionalId);
+            globalWebSocketProvider.respostaAtendimentoAvulso(
+                usuarioId, profissionalId);
           }
         },
         onRecusar: () async {
@@ -129,12 +126,8 @@ void onNovaSolicitacaoAtendimentoAvulso(
     if (respostasPreAnalise != null) {
       showOverlayCard(usuarioId, profissionalId, usuario,
           preAnalise: respostasPreAnalise);
-
-      respostaAtendimentoAvulso(usuarioId, profissionalId,
-          preAnalise: respostasPreAnalise.toMap());
     } else {
       showOverlayCard(usuarioId, profissionalId, usuario);
-      respostaAtendimentoAvulso(usuarioId, profissionalId);
     }
   }
 }

@@ -459,7 +459,7 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
                                       respostas.isRisk = true;
                                     });
                                   },
-                                  cor: Colors.redAccent,
+                                  cor: corSecundaria,
                                 ),
                                 const SizedBox(width: 24),
                                 _modernRadio(
@@ -507,16 +507,6 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
                                           'Não respondido';
                                     }
                                     Navigator.of(context).pop(respostas);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Questionário finalizado! Risco: [1m${respostas.isRisk ? 'Sim' : 'Não'}',
-                                        ),
-                                      ),
-                                    );
-                                    final resp = jsonEncode(respostas.toMap());
-                                    print(
-                                        '@@@@@@@@@@@@@ @@@@  Respostas: $resp');
                                   },
                                   label: const Text('Finalizar'),
                                 ),

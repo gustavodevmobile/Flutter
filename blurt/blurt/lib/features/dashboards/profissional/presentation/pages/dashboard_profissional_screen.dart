@@ -1,12 +1,19 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/core/widgets/animated_cache_image.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
+import 'package:blurt/main.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:receive_intent/receive_intent.dart';
+// import 'package:android_intent_plus/android_intent.dart';
+// import 'package:android_intent_plus/flag.dart';
 
 class DashboardProfissionalScreen extends StatefulWidget {
   const DashboardProfissionalScreen({super.key});
@@ -20,17 +27,51 @@ class _DashboardProfissionalScreenState
     extends State<DashboardProfissionalScreen> {
   bool online = false;
   bool plantao = true;
-  // String? fotoPerfil;
-  // MemoryImage? _fotoCache;
-  // String? _fotoBase64Cache;
-  late WebSocketProvider webSocketProvider;
+  StreamSubscription? _intentSubscription;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Salve as referências enquanto o context ainda é válido
-    webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+  void initState() {
+    super.initState();
+    _checarIntent();
   }
+
+  Future<void> _checarIntent() async {
+    //final intent = await ReceiveIntent.getInitialIntent();
+    _intentSubscription = ReceiveIntent.receivedIntentStream.listen((intent) {
+      if (intent != null && intent.extra != null) {
+        final args = intent.extra as Map<String, dynamic>;
+        if (args['acao'] == 'aceitar') {
+          if (args['preAnalise'] != null) {
+            final preAnaliseMap = jsonDecode(args['preAnalise']);
+            globalWebSocketProvider.respostaAtendimentoAvulso(
+              args['usuarioId'],
+              args['profissionalId'],
+              respostasPreAnalise: preAnaliseMap,
+            );
+          } else {
+            globalWebSocketProvider.respostaAtendimentoAvulso(
+              args['usuarioId'],
+              args['profissionalId'],
+            );
+          }
+        }
+        // ... trate outros casos, como recusar
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _intentSubscription?.cancel();
+    super.dispose();
+  }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // Salve as referências enquanto o context ainda é válido
+  //   //webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +101,7 @@ class _DashboardProfissionalScreenState
                         profissionalId: controllerLogin.profissional!.id!,
                         novoStatus: false);
                     globalProvider.setPlantao(false);
-                    webSocketProvider.disconnect();
+                    globalWebSocketProvider.disconnect();
 
                     if (context.mounted) {
                       GlobalSnackbars.showSnackBar(status,

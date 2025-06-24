@@ -12,7 +12,7 @@ class WebSocketProvider extends ChangeNotifier {
   WebSocketChannel? channel;
   List<Profissional> profissionaisOnline = [];
   Map<String, dynamic> novaSolicitacaoAtendimentoAvulso = {};
-  Map<String, dynamic> respostaSolicitacaoAtendimentoAvulso = {};
+  //Map<String, dynamic> respostaSolicitacaoAtendimentoAvulso = {};
   String? feedback;
   Timer? _pingTimer;
 
@@ -38,30 +38,21 @@ class WebSocketProvider extends ChangeNotifier {
           case 'nova_solicitacao_atendimento_avulso':
             print('Nova solicitação de atendimento avulso recebida: $msg');
 
-            void handleResposta(String usuarioId, String profissionalId,
-                {Map<String, dynamic>? preAnalise}) {
-              if (preAnalise != null) {
-                respostaAtendimentoAvulso(usuarioId, profissionalId,
-                    respostasPreAnalise: preAnalise);
-              } else {
-                respostaAtendimentoAvulso(usuarioId, profissionalId);
-              }
-            }
-
             if (msg['preAnalise'] != null) {
-              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'],
-                  msg['profissionalId'], msg['usuario'], handleResposta,
+              onNovaSolicitacaoAtendimentoAvulso(
+                  msg['usuarioId'], msg['profissionalId'], msg['usuario'],
                   preAnalise: msg['preAnalise']);
-              break;
+              //break;
             } else {
-              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'],
-                  msg['profissionalId'], msg['usuario'], handleResposta);
-              break;
+              onNovaSolicitacaoAtendimentoAvulso(
+                  msg['usuarioId'], msg['profissionalId'], msg['usuario']);
+              //break;
             }
+            break;
 
           case 'resposta_solicitacao_atendimento_avulso':
-            respostaSolicitacaoAtendimentoAvulso = msg['textContent'];
-            notifyListeners();
+            GlobalSnackbars.showSnackBar(msg['mensagem'],
+                backgroundColor: Colors.green);
             break;
 
           case 'feedback_solicitacao_profissional_disponivel':
@@ -164,8 +155,9 @@ class WebSocketProvider extends ChangeNotifier {
         'profissionalId': profissionalId,
         'respostasPreAnalise': respostasPreAnalise ?? {}
       });
-      //channel?.sink.add(payload);
-      print('Resposta atendimento avulso: $payload');
+
+      channel?.sink.add(payload);
+      //print('Resposta atendimento avulso: $payload');
     } catch (e) {
       print('Erro ao requisitar serviços: $e');
     }
