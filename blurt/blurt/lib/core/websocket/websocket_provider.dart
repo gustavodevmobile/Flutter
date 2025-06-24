@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:blurt/core/utils/global_snackbars.dart';
-import 'package:blurt/core/utils/solicitacao_notificacao.dart';
+import 'package:blurt/core/utils/overlay_solicitacao_foreground.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/profissional/profissional_model.dart';
 import 'package:flutter/material.dart';
@@ -37,17 +37,29 @@ class WebSocketProvider extends ChangeNotifier {
 
           case 'nova_solicitacao_atendimento_avulso':
             print('Nova solicitação de atendimento avulso recebida: $msg');
+
+            void handleResposta(String usuarioId, String profissionalId,
+                {Map<String, dynamic>? preAnalise}) {
+              if (preAnalise != null) {
+                respostaAtendimentoAvulso(usuarioId, profissionalId,
+                    respostasPreAnalise: preAnalise);
+              } else {
+                respostaAtendimentoAvulso(usuarioId, profissionalId);
+              }
+            }
+
             if (msg['preAnalise'] != null) {
-              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'],msg['usuario'],
+              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'],
+                  msg['profissionalId'], msg['usuario'], handleResposta,
                   preAnalise: msg['preAnalise']);
               break;
             } else {
-              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'], msg['usuario']);
+              onNovaSolicitacaoAtendimentoAvulso(msg['usuarioId'],
+                  msg['profissionalId'], msg['usuario'], handleResposta);
               break;
             }
 
           case 'resposta_solicitacao_atendimento_avulso':
-            print('Mensagem de chat: ${msg['textContent']}');
             respostaSolicitacaoAtendimentoAvulso = msg['textContent'];
             notifyListeners();
             break;
@@ -125,7 +137,8 @@ class WebSocketProvider extends ChangeNotifier {
   }
 
   void solicitarAtendimentoAvulso(String usuarioId, String profissionalId,
-      Map<String, dynamic> dadosUsuario, {Map<String, dynamic>? preAnalise}) {
+      Map<String, dynamic> dadosUsuario,
+      {Map<String, dynamic>? preAnalise}) {
     try {
       final payload = jsonEncode({
         'type': 'solicitacao_atendimento_avulso',
@@ -143,16 +156,16 @@ class WebSocketProvider extends ChangeNotifier {
   }
 
   void respostaAtendimentoAvulso(String usuarioId, String profissionalId,
-      Map<String, dynamic> textContent) {
+      {Map<String, dynamic>? respostasPreAnalise}) {
     try {
       final payload = jsonEncode({
-        'type': 'solicitacao_atendimento_avulso',
+        'type': 'resposta_atendimento_avulso',
         'usuarioId': usuarioId,
         'profissionalId': profissionalId,
-        'conteudo': textContent
+        'respostasPreAnalise': respostasPreAnalise ?? {}
       });
-      channel?.sink.add(payload);
-      print('Requisitando serviços: $payload');
+      //channel?.sink.add(payload);
+      print('Resposta atendimento avulso: $payload');
     } catch (e) {
       print('Erro ao requisitar serviços: $e');
     }

@@ -15,8 +15,6 @@ class _InitialScreenState extends State<InitialScreen> {
   void _toggle(int value) {
     setState(() {
       _expanded = _expanded == value ? 0 : value;
-      //showTestNotification();
-      print('Botão $value pressionado');
     });
   }
 

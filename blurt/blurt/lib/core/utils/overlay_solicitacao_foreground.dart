@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:blurt/core/utils/alerta_sonoro.dart';
 import 'package:blurt/core/utils/overlay_card.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
@@ -87,16 +86,19 @@ Histórico: Histórico clínico
 }
 
 void onNovaSolicitacaoAtendimentoAvulso(
-  String usuarioId,
-  Map<String, dynamic> usuario,
- {Map<String, dynamic>? preAnalise}
-) async {
+    String usuarioId,
+    String profissionalId,
+    Map<String, dynamic> usuario,
+    Function(String usuarioId, String profissionalId,
+            {Map<String, dynamic>? preAnalise})
+        respostaAtendimentoAvulso,
+    {Map<String, dynamic>? preAnalise}) async {
   RespostasPreAnalise? respostasPreAnalise;
   if (preAnalise != null) {
     respostasPreAnalise = RespostasPreAnalise.fromMap(preAnalise);
   }
   if (appLifecycleProvider.isInForeground) {
-    AlertaSonoro.tocar();
+    //AlertaSonoro.tocar();
     showOverlayNotification(
       (context) => CardSolicitacaoOverlay(
         dadosUsuario: usuario,
@@ -105,7 +107,13 @@ void onNovaSolicitacaoAtendimentoAvulso(
           AlertaSonoro.parar();
           OverlaySupportEntry.of(context)?.dismiss();
           Navigator.pushNamed(context, '/editar_perfil_profissional');
-          //print('Aceitar solicitação: ${conteudo['nome']}');
+
+          if (respostasPreAnalise != null) {
+            respostaAtendimentoAvulso(usuarioId, profissionalId,
+                preAnalise: respostasPreAnalise.toMap());
+          } else {
+            respostaAtendimentoAvulso(usuarioId, profissionalId);
+          }
         },
         onRecusar: () async {
           AlertaSonoro.parar();
@@ -117,11 +125,16 @@ void onNovaSolicitacaoAtendimentoAvulso(
       position: NotificationPosition.top,
     );
   } else {
-    AlertaSonoro.tocar();
+    //AlertaSonoro.tocar();
     if (respostasPreAnalise != null) {
-      showOverlayCard(usuario, preAnelise: respostasPreAnalise);
+      showOverlayCard(usuarioId, profissionalId, usuario,
+          preAnalise: respostasPreAnalise);
+
+      respostaAtendimentoAvulso(usuarioId, profissionalId,
+          preAnalise: respostasPreAnalise.toMap());
     } else {
-      showOverlayCard(usuario);
+      showOverlayCard(usuarioId, profissionalId, usuario);
+      respostaAtendimentoAvulso(usuarioId, profissionalId);
     }
   }
 }

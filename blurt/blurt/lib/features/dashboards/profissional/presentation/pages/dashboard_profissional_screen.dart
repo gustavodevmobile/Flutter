@@ -60,6 +60,8 @@ class _DashboardProfissionalScreenState
                         profissionalId: controllerLogin.profissional!.id!,
                         novoStatus: false);
                     globalProvider.setPlantao(false);
+                    webSocketProvider.disconnect();
+
                     if (context.mounted) {
                       GlobalSnackbars.showSnackBar(status,
                           backgroundColor: Colors.green);
