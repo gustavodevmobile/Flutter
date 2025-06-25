@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlay_solicitacao_foreground.dart';
+import 'package:blurt/core/widgets/card_feedback_overlay.dart';
+import 'package:blurt/main.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/profissional/profissional_model.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -51,19 +54,46 @@ class WebSocketProvider extends ChangeNotifier {
             break;
 
           case 'resposta_solicitacao_atendimento_avulso':
-            GlobalSnackbars.showSnackBar(msg['mensagem'],
-                backgroundColor: Colors.green);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final overlayContext =
+                  navigatorKey.currentState?.overlay?.context;
+              if (overlayContext != null && overlayContext.mounted) {
+                CardFeedbackSolicitacaoOverlay.show(overlayContext,
+                    estado: CardFeedbackSolicitacao
+                        .aceita, // ou aceita, recusada
+                      mensagem: 'teste',
+                    linkSala: 'https://link-da-sala.com', // se aplicável
+                    onTimeout: () {});
+              }
+            });
+            // GlobalSnackbars.showSnackBar(msg['mensagem'],
+            //     backgroundColor: Colors.green);
             break;
 
           case 'feedback_solicitacao_profissional_disponivel':
-            print('Mensagem de chat: ${msg['feedback']}');
-            GlobalSnackbars.showSnackBar(msg['feedback'],
-                backgroundColor: Colors.green);
+            navigatorKey.currentState?.pushNamed('/perfil_profissional');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final overlayContext =
+                  navigatorKey.currentState?.overlay?.context;
+              if (overlayContext != null && overlayContext.mounted) {
+                CardFeedbackSolicitacaoOverlay.show(overlayContext,
+                    estado: CardFeedbackSolicitacao
+                        .aguardando, // ou aceita, recusada
+                    mensagem: msg['feedback'],
+                    linkSala: 'https://link-da-sala.com', // se aplicável
+                    onTimeout: () {});
+              }
+            });
+            // ação ao expirar o tempo, se
+
+            // GlobalSnackbars.showSnackBar(msg['feedback'],
+            //     backgroundColor: Colors.green);
             // notifyListeners();
             break;
 
           case 'feedback_solicitacao_profissional_indisponivel':
             print('Mensagem de chat: ${msg['feedback']}');
+
             GlobalSnackbars.showSnackBar(msg['feedback'],
                 backgroundColor: Colors.red);
             break;
