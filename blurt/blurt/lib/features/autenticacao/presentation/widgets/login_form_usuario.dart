@@ -152,7 +152,7 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: AppThemes.secondaryColor,
                             strokeWidth: 2.5,
                           ),
                         )

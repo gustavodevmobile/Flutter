@@ -25,7 +25,7 @@ class CardFeedbackSolicitacaoOverlay {
         onClose: close,
       ),
       duration: const Duration(minutes: 1),
-      position: NotificationPosition.top,
+      position: NotificationPosition.bottom
     );
   }
 
@@ -122,7 +122,7 @@ class _CardFeedbackSolicitacaoWidgetState
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black,
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -157,7 +157,8 @@ class _CardFeedbackSolicitacaoWidgetState
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  widget.mensagem ?? 'Aguarde a confirmação do profissional',
+                  //widget.mensagem ?? 'Aguarde a confirmação do profissional',
+                  'Sua solicitação foi recebida.\nAguarde a confirmação do profissional',
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w600),
                 )
@@ -186,7 +187,8 @@ class _CardFeedbackSolicitacaoWidgetState
                 .scale(duration: 400.ms),
             const SizedBox(height: 16),
             Text(
-              widget.mensagem ?? 'Solicitação aceita!',
+              //widget.mensagem ?? 'Solicitação aceita!',
+              'Solicitação, prossiga com o pagamento',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ).animate().fadeIn(duration: 400.ms),
             const SizedBox(height: 16),

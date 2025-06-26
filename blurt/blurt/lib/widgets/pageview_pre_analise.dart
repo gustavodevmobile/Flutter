@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -528,7 +527,8 @@ Future<RespostasPreAnalise?> showQuestionarioPreAnalise(
                 child: IconButton(
                   icon: const Icon(Icons.close, color: Colors.white, size: 30),
                   onPressed: () {
-                    Navigator.of(context).pop(null);
+                    //Navigator.of(context).pop(null);
+                    Navigator.pop(context);
                   },
                 ),
               ),

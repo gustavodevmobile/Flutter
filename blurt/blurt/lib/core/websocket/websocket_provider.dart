@@ -7,7 +7,6 @@ import 'package:blurt/main.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/profissional/profissional_model.dart';
 import 'package:flutter/material.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

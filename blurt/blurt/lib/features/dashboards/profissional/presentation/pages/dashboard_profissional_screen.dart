@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:blurt/core/utils/global_snackbars.dart';
-import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/core/widgets/animated_cache_image.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
@@ -93,6 +92,8 @@ class _DashboardProfissionalScreenState
           automaticallyImplyLeading: false,
           leading: IconButton(
               onPressed: () async {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/login_profissional', (route) => false);
                 try {
                   String status = await dashboardController.logoutProfissional(
                       profissionalId: controllerLogin.profissional!.id!);
@@ -108,10 +109,10 @@ class _DashboardProfissionalScreenState
                           backgroundColor: Colors.green);
                     }
                   }
-                  if (context.mounted) {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/login_profissional', (route) => false);
-                  }
+                  // if (context.mounted) {
+                  //   Navigator.pushNamedAndRemoveUntil(
+                  //       context, '/login_profissional', (route) => false);
+                  // }
                 } catch (e) {
                   if (context.mounted) {
                     GlobalSnackbars.showSnackBar('Erro ao fazer logout: $e',

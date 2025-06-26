@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:blurt/main.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:blurt/core/utils/overlay_float_bubble.dart';
