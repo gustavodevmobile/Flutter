@@ -134,11 +134,12 @@ void solicitacaoAtendimento(String tipoAtendimento, String usuarioId,
     );
   } else {
     //AlertaSonoro.tocar();
+    
     if (respostasPreAnalise != null) {
       showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario,
           preAnalise: respostasPreAnalise);
     } else {
-      await Future.delayed(Duration(milliseconds: 2000));
+      //await Future.delayed(Duration(milliseconds: 2000));
       showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario);
     }
   }

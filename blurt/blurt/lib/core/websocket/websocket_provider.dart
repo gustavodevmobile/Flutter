@@ -44,13 +44,13 @@ class WebSocketProvider extends ChangeNotifier {
               solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
                   msg['profissionalId'], msg['usuario'],
                   preAnalise: msg['preAnalise']);
-              //break;
+              break;
             } else {
               solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
                   msg['profissionalId'], msg['usuario']);
-              //break;
+              break;
             }
-            break;
+            //break;
 
           case 'resposta_solicitacao_atendimento_avulso':
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -99,7 +99,7 @@ class WebSocketProvider extends ChangeNotifier {
 
           case 'nova_solicitacao_atendimento_imediato':
             print('Nova solicitação de atendimento imediato recebida: $msg');
-            print('@@@@@@@@@@@@@@@ Dados do usuário: ${msg['usuario']} @@@@@@@@@@@@@@@@@@@@');
+            //print('@@@@@@@@@@@@@@@ Dados do usuário: ${msg['usuario']} @@@@@@@@@@@@@@@@@@@@');
             solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
                 msg['profissionalId'], msg['usuario']);
             break;

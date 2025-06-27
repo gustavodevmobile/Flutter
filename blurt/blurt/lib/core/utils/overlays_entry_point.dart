@@ -82,12 +82,12 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
       }
       AlertaSonoro.tocar(onTimeout: () {
         // setState(() {
-        //   usuario = null;
+        //   dadosUsuario = null;
         //   preAnalise = null;
         // });
       });
       return CardSolicitacaoOverlay(
-        dadosUsuario: dataUser,
+        dadosUsuario: dadosUsuario!,
         preAnalise: preAnalise,
         onAceitar: () async {
           AlertaSonoro.parar();
@@ -122,36 +122,40 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
         },
         onRecusar: () async {
           AlertaSonoro.parar();
-          final args = <String, dynamic>{
-            //'abrir_dashboard': true,
-            'tipoAtendimento': tipoAtendimento,
-            'usuarioId': usuarioId,
-            'profissionalId': profissionalId,
-            'acao': 'recusar',
-          };
-
-          if (respostasPreAnalise != null) {
-            final jsonPreAnalise = jsonEncode(respostasPreAnalise);
-            args['dadosUsuario'] = jsonPreAnalise;
-          }
-
-          final intent = AndroidIntent(
-            action: 'android.intent.action.MAIN',
-            package: 'com.example.blurt',
-            componentName: 'com.example.blurt.MainActivity',
-            flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-            arguments: args,
-          );
-          await intent.launch();
-          await Future.delayed(Duration(milliseconds: 2000));
+          //await Future.delayed(Duration(milliseconds: 300));
           await FlutterOverlayWindow.closeOverlay();
-          await Future.delayed(Duration(milliseconds: 2000));
+          // if (tipoAtendimento == 'atendimento_imediato') {
+          //   final args = <String, dynamic>{
+          //     'abrir_dashboard': false,
+          //     'tipoAtendimento': tipoAtendimento,
+          //     'usuarioId': usuarioId,
+          //     'profissionalId': profissionalId,
+          //     'acao': 'recusar',
+          //   };
+
+          //   if (respostasPreAnalise != null) {
+          //     final jsonPreAnalise = jsonEncode(respostasPreAnalise);
+          //     args['dadosUsuario'] = jsonPreAnalise;
+          //   }
+
+          //   final intent = AndroidIntent(
+          //     action: 'android.intent.action.MAIN',
+          //     package: 'com.example.blurt',
+          //     componentName: 'com.example.blurt.MainActivity',
+          //     flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+          //     arguments: args,
+          //   );
+          //   await intent.launch();
+          // }
+          setState(() {
+            dadosUsuario = null; // Volta para a bolinha
+            preAnalise = null;
+          });
+
+          await Future.delayed(Duration(milliseconds: 300));
           showOverlayFloatBubble();
 
-          setState(() {
-            // dadosUsuario = null; // Volta para a bolinha
-            // preAnalise = null;
-          });
+          
         },
       );
     }

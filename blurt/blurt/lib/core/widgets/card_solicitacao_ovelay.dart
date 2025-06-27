@@ -84,70 +84,72 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
             color: theme.cardColor,
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.notifications_active_rounded,
-                          color: Colors.deepPurple, size: 32),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'Nova Solicitação de Atendimento',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.notifications_active_rounded,
+                            color: Colors.deepPurple, size: 32),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Nova Solicitação de Atendimento',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
                         ),
-                      ),
-                    ],
-                  ).animate().fade(duration: 400.ms).slideY(begin: 0.2, end: 0),
-                  const SizedBox(height: 16),
-                  _buildUserInfo(theme)
-                      .animate()
-                      .fade(duration: 400.ms, delay: 100.ms),
-                  const SizedBox(height: 10),
-                  _buildPreAnalise(theme)
-                      .animate()
-                      .fade(duration: 400.ms, delay: 200.ms),
-                  const SizedBox(height: 24), // Substitui Spacer()
-                  _buildTimerBar(theme),
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.check),
-                          label: const Text('Aceitar'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16)),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          onPressed: () {
-                            _timer.cancel();
-                            AlertaSonoro.parar();
-                            widget.onAceitar();
-                          },
-                        ).animate().fade(duration: 300.ms, delay: 300.ms),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.close),
-                          label: const Text('Recusar'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16)),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          onPressed: _closeOverlay,
-                        ).animate().fade(duration: 300.ms, delay: 350.ms),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ).animate().fade(duration: 400.ms).slideY(begin: 0.2, end: 0),
+                    const SizedBox(height: 16),
+                    _buildUserInfo(theme)
+                        .animate()
+                        .fade(duration: 400.ms, delay: 100.ms),
+                    const SizedBox(height: 10),
+                    _buildPreAnalise(theme)
+                        .animate()
+                        .fade(duration: 400.ms, delay: 200.ms),
+                    const SizedBox(height: 24), // Substitui Spacer()
+                    _buildTimerBar(theme),
+                    const SizedBox(height: 18),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.check),
+                            label: const Text('Aceitar'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            onPressed: () {
+                              _timer.cancel();
+                              AlertaSonoro.parar();
+                              widget.onAceitar();
+                            },
+                          ).animate().fade(duration: 300.ms, delay: 300.ms),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.close),
+                            label: const Text('Recusar'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            onPressed: _closeOverlay,
+                          ).animate().fade(duration: 300.ms, delay: 350.ms),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           )

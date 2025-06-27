@@ -8,7 +8,7 @@ Future<void> showOverlayCard(String tipoAtendimento, String usuarioId, String pr
       print('@@@@@@@@@@@@@@@@@@@@@@@   showOverlayCard: $dadosUsuario    @@@@@@@@@@@@@@@@@@@@@@@@@@@');
   try {
     await FlutterOverlayWindow.closeOverlay();
-    await Future.delayed(const Duration(milliseconds: 2000));
+    await Future.delayed(const Duration(milliseconds: 300));
     await FlutterOverlayWindow.showOverlay(
       enableDrag: true,
       alignment: OverlayAlignment.center,
