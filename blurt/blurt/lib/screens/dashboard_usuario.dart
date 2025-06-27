@@ -8,6 +8,7 @@ import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class DashboardUsuarioScreen extends StatefulWidget {
   const DashboardUsuarioScreen({super.key});
@@ -266,18 +267,41 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
                         ),
                   //const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    icon: const Icon(Icons.flash_on),
-                    label: const Text('Atendimento Agora'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      textStyle: const TextStyle(fontSize: 18),
-                    ),
-                    onPressed: () async {
-                      RespostasPreAnalise? respostasPreAnalise = await showQuestionarioPreAnalise(context);
-                    },
-                  ),
+                      icon: const Icon(Icons.flash_on),
+                      label: const Text('Atendimento Agora'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 48),
+                        textStyle: const TextStyle(fontSize: 18),
+                      ),
+                      onPressed: () async {
+                        final usuario = usuarioController.usuario!;
+                        await showGeneroDialog(
+                          context: context,
+                          usuarioId: usuario.id!,
+                          // dadosUsuario: {
+                          //   'nome': usuario.nome,
+                          //   'genero': usuario.genero,
+                          //   'dataNascimento': usuario.dataNascimento,
+                          //   'estado': usuario.estado,
+                          //   'cidade': usuario.cidade,
+                          // },
+                          onSolicitar: (generoEscolhido) {
+                            websocketProvider.solicitacaoAtendimentoImediato(
+                              usuario.id!,
+                              generoEscolhido,
+                              {
+                                'nome': usuario.nome,
+                                'genero': usuario.genero,
+                                'dataNascimento': usuario.dataNascimento,
+                                'estado': usuario.estado,
+                                'cidade': usuario.cidade,
+                              },
+                            );
+                          },
+                        );
+                      }),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -318,6 +342,94 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
       );
     });
   }
+
+  Future<void> showGeneroDialog({
+    required BuildContext context,
+    required String usuarioId,
+    //required Map<String, dynamic> dadosUsuario,
+    required void Function(String genero) onSolicitar,
+  }) async {
+    String? generoSelecionado;
+    final generos = ['Masculino', 'Feminino', 'Indiferente'];
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final isMobile = MediaQuery.of(context).size.width < 600;
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              titlePadding: const EdgeInsets.only(top: 16, left: 24, right: 8),
+              title: Text(
+                'Escolha o gênero do profissional',
+                style: Theme.of(context).textTheme.titleMedium,
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(begin: -0.2, end: 0),
+              content: SizedBox(
+                width: isMobile ? double.infinity : 350,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: generoSelecionado,
+                      decoration: InputDecoration(
+                        labelText: 'Gênero',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      items: generos
+                          .map((g) => DropdownMenuItem(
+                                value: g,
+                                child: Text(g),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          generoSelecionado = value;
+                        });
+                      },
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 200.ms)
+                        .slideY(begin: 0.2, end: 0, delay: 200.ms),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.flash_on),
+                      label: const Text('Solicitar'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 48),
+                        textStyle: const TextStyle(fontSize: 18),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: generoSelecionado == null
+                          ? null
+                          : () {
+                              Navigator.of(context).pop();
+                              onSolicitar(generoSelecionado!);
+                            },
+                    )
+                        .animate(target: generoSelecionado != null ? 1 : 0)
+                        .fadeIn(duration: 400.ms)
+                        .scale(
+                            begin: const Offset(0.95, 0.95), end: Offset(1, 1)),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+// ...dentro do build, substitua o onPressed do botão "Atendimento Agora":
 }
 
 class CardProdissional extends StatelessWidget {
@@ -405,3 +517,5 @@ class CardProdissional extends StatelessWidget {
     );
   }
 }
+
+// Função para mostrar o diálogo de seleção de gênero

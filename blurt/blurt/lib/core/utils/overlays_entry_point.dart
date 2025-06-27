@@ -10,19 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import '../utils/alerta_sonoro.dart';
 
-class OverlaySolicitacaoWidget extends StatefulWidget {
-  const OverlaySolicitacaoWidget({super.key});
+class OverlayEntryPoint extends StatefulWidget {
+  const OverlayEntryPoint({super.key});
 
   @override
-  State<OverlaySolicitacaoWidget> createState() =>
-      _OverlaySolicitacaoWidgetState();
+  State<OverlayEntryPoint> createState() => _OverlayEntryPointState();
 }
 
-class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
+class _OverlayEntryPointState extends State<OverlayEntryPoint> {
   String? usuarioId;
   String? profissionalId;
-  Map<String, dynamic>? usuario;
+  Map<String, dynamic>? dadosUsuario;
   Map<String, dynamic>? respostasPreAnalise;
+  String? tipoAtendimento;
 
   @override
   void initState() {
@@ -31,11 +31,13 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
     FlutterOverlayWindow.overlayListener.listen((event) {
       try {
         final map = event != null ? jsonDecode(event) : null;
+        print('@@@@@@@@@@@@@@@@@@@@@@@@   Dados recebidos no overlay: $map @@2222222222222222222222222222222222@@@@@@');
         if (map is Map<String, dynamic>) {
           setState(() {
+            tipoAtendimento = map['tipoAtendimento'];
             profissionalId = map['profissionalId'];
             usuarioId = map['usuarioId'];
-            usuario = map['usuario'];
+            dadosUsuario = map['usuario'];
             respostasPreAnalise = map['preAnalise'];
           });
         }
@@ -47,7 +49,7 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (usuario == null) {
+    if (dadosUsuario == null && tipoAtendimento == null) {
       return FloatBubble(
         onTap: () async {
           const intent = AndroidIntent(
@@ -69,13 +71,13 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
         preAnalise = RespostasPreAnalise.fromMap(respostasPreAnalise!);
       }
       AlertaSonoro.tocar(onTimeout: () {
-        setState(() {
-          usuario = null;
-          preAnalise = null;
-        });
+        // setState(() {
+        //   usuario = null;
+        //   preAnalise = null;
+        // });
       });
       return CardSolicitacaoOverlay(
-        dadosUsuario: usuario!,
+        dadosUsuario: dadosUsuario!,
         preAnalise: preAnalise,
         onAceitar: () async {
           AlertaSonoro.parar();
@@ -83,6 +85,7 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
 
           final args = <String, dynamic>{
             'abrir_dashboard': true,
+            'type': tipoAtendimento,
             'usuarioId': usuarioId,
             'profissionalId': profissionalId,
             'acao': 'aceitar',
@@ -103,17 +106,40 @@ class _OverlaySolicitacaoWidgetState extends State<OverlaySolicitacaoWidget> {
           await intent.launch();
 
           setState(() {
-            usuario = null; // Volta para a bolinha
+            dadosUsuario = null; // Volta para a bolinha
             respostasPreAnalise = null;
           });
         },
         onRecusar: () async {
           AlertaSonoro.parar();
+          final args = <String, dynamic>{
+            //'abrir_dashboard': true,
+            'type': tipoAtendimento,
+            'usuarioId': usuarioId,
+            'profissionalId': profissionalId,
+            'acao': 'recusar',
+          };
+
+          if (respostasPreAnalise != null) {
+            final jsonPreAnalise = jsonEncode(respostasPreAnalise);
+            args['dadosUsuario'] = jsonPreAnalise;
+          }
+
+          final intent = AndroidIntent(
+            action: 'android.intent.action.MAIN',
+            package: 'com.example.blurt',
+            componentName: 'com.example.blurt.MainActivity',
+            flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+            arguments: args,
+          );
+          await intent.launch();
+
           await FlutterOverlayWindow.closeOverlay();
           await Future.delayed(Duration(milliseconds: 300));
           showOverlayFloatBubble();
+
           setState(() {
-            usuario = null; // Volta para a bolinha
+            dadosUsuario = null; // Volta para a bolinha
             preAnalise = null;
           });
         },

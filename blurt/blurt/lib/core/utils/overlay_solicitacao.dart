@@ -85,8 +85,8 @@ Histórico: Histórico clínico
   );
 }
 
-void onNovaSolicitacaoAtendimentoAvulso(
-    String usuarioId, String profissionalId, Map<String, dynamic> usuario,
+void solicitacaoAtendimento(String tipoAtendimento, String usuarioId,
+    String profissionalId, Map<String, dynamic> dadosUsuario,
     {Map<String, dynamic>? preAnalise}) async {
   RespostasPreAnalise? respostasPreAnalise;
   if (preAnalise != null) {
@@ -96,26 +96,37 @@ void onNovaSolicitacaoAtendimentoAvulso(
     //AlertaSonoro.tocar();
     showOverlayNotification(
       (context) => CardSolicitacaoOverlay(
-        dadosUsuario: usuario,
+        dadosUsuario: dadosUsuario,
         preAnalise: respostasPreAnalise,
         onAceitar: () async {
           AlertaSonoro.parar();
           OverlaySupportEntry.of(context)?.dismiss();
-          Navigator.pushNamed(context, '/editar_perfil_profissional');
+          Navigator.pushNamed(context, '/dashboard_profissional');
 
-          if (respostasPreAnalise != null) {
-            globalWebSocketProvider.respostaAtendimentoAvulso(
-                usuarioId, profissionalId,
-                respostasPreAnalise: respostasPreAnalise.toMap());
-          } else {
-            globalWebSocketProvider.respostaAtendimentoAvulso(
-                usuarioId, profissionalId);
+          if (tipoAtendimento == 'atendimento_avulso') {
+            if (respostasPreAnalise != null) {
+              globalWebSocketProvider.respostaAtendimentoAvulso(
+                  usuarioId, profissionalId,
+                  respostasPreAnalise: respostasPreAnalise.toMap());
+            } else {
+              globalWebSocketProvider.respostaAtendimentoAvulso(
+                  usuarioId, profissionalId);
+            }
+          } else if (tipoAtendimento == 'atendimento_imediato') {
+            globalWebSocketProvider.respostaAtendimentoImediato(
+                usuarioId, profissionalId, true, false);
           }
         },
         onRecusar: () async {
           AlertaSonoro.parar();
           OverlaySupportEntry.of(context)?.dismiss();
-          //await FlutterOverlayWindow.closeOverlay();
+          Navigator.pushNamed(context, '/dashboard_profissional');
+          if (tipoAtendimento == 'atendimento_avulso') {
+            // implementar lógica de recusa para atendimento avulso
+          } else if (tipoAtendimento == 'atendimento_imediato') {
+            globalWebSocketProvider.respostaAtendimentoImediato(
+                usuarioId, profissionalId, false, true);
+          }
         },
       ),
       duration: const Duration(minutes: 1),
@@ -124,10 +135,10 @@ void onNovaSolicitacaoAtendimentoAvulso(
   } else {
     //AlertaSonoro.tocar();
     if (respostasPreAnalise != null) {
-      showOverlayCard(usuarioId, profissionalId, usuario,
+      showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario,
           preAnalise: respostasPreAnalise);
     } else {
-      showOverlayCard(usuarioId, profissionalId, usuario);
+      showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario);
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
-import 'package:blurt/core/utils/overlays_solicita%C3%A7%C3%A3o_background.dart';
-import 'package:blurt/core/utils/overlay_solicitacao_foreground.dart';
+import 'package:blurt/core/utils/overlays_entry_point.dart';
+import 'package:blurt/core/utils/overlay_solicitacao.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
 import 'package:blurt/features/abordagem_principal/presentation/abordagem_principal_controller.dart';
@@ -67,7 +67,7 @@ void overlayMain() async {
   await dotenv.load();
   globalWebSocketProvider = WebSocketProvider();
   runApp(
-    const OverlaySolicitacaoWidget(),
+    const OverlayEntryPoint(),
   );
 }
 

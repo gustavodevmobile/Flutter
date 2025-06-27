@@ -39,21 +39,34 @@ class _DashboardProfissionalScreenState
     _intentSubscription = ReceiveIntent.receivedIntentStream.listen((intent) {
       if (intent != null && intent.extra != null) {
         final args = intent.extra as Map<String, dynamic>;
-        if (args['acao'] == 'aceitar') {
-          if (args['preAnalise'] != null) {
-            final preAnaliseMap = jsonDecode(args['preAnalise']);
-            globalWebSocketProvider.respostaAtendimentoAvulso(
-              args['usuarioId'],
-              args['profissionalId'],
-              respostasPreAnalise: preAnaliseMap,
-            );
-          } else {
-            globalWebSocketProvider.respostaAtendimentoAvulso(
-              args['usuarioId'],
-              args['profissionalId'],
-            );
+        if (args['atendimento_avulso']) {
+          if (args['acao'] == 'aceitar') {
+            if (args['preAnalise'] != null) {
+              final preAnaliseMap = jsonDecode(args['preAnalise']);
+              globalWebSocketProvider.respostaAtendimentoAvulso(
+                args['usuarioId'],
+                args['profissionalId'],
+                respostasPreAnalise: preAnaliseMap,
+              );
+            } else {
+              globalWebSocketProvider.respostaAtendimentoAvulso(
+                args['usuarioId'],
+                args['profissionalId'],
+              );
+            }
+          } else if (args['acao'] == 'recusar') {}
+          
+        } else if (args['atendimento_imediato']) {
+          //final dadosUsuario = jsonDecode(args['dadosUsuario']);
+          if (args['acao'] == 'aceitar') {
+            globalWebSocketProvider.respostaAtendimentoImediato(
+                args['usuarioId'], args['profissionalId'], true, false);
+          } else if (args['acao'] == 'recusar') {
+            globalWebSocketProvider.respostaAtendimentoImediato(
+                args['usuarioId'], args['profissionalId'], false, true);
           }
         }
+
         // ... trate outros casos, como recusar
       }
     });

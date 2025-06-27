@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:blurt/core/utils/global_snackbars.dart';
-import 'package:blurt/core/utils/overlay_solicitacao_foreground.dart';
+import 'package:blurt/core/utils/overlay_solicitacao.dart';
 import 'package:blurt/core/widgets/card_feedback_overlay.dart';
 import 'package:blurt/main.dart';
 import 'package:blurt/models/profissional/profissional.dart';
@@ -41,13 +41,13 @@ class WebSocketProvider extends ChangeNotifier {
             print('Nova solicitação de atendimento avulso recebida: $msg');
 
             if (msg['preAnalise'] != null) {
-              onNovaSolicitacaoAtendimentoAvulso(
-                  msg['usuarioId'], msg['profissionalId'], msg['usuario'],
+              solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                  msg['profissionalId'], msg['usuario'],
                   preAnalise: msg['preAnalise']);
               //break;
             } else {
-              onNovaSolicitacaoAtendimentoAvulso(
-                  msg['usuarioId'], msg['profissionalId'], msg['usuario']);
+              solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                  msg['profissionalId'], msg['usuario']);
               //break;
             }
             break;
@@ -58,9 +58,9 @@ class WebSocketProvider extends ChangeNotifier {
                   navigatorKey.currentState?.overlay?.context;
               if (overlayContext != null && overlayContext.mounted) {
                 CardFeedbackSolicitacaoOverlay.show(overlayContext,
-                    estado: CardFeedbackSolicitacao
-                        .aceita, // ou aceita, recusada
-                      mensagem: 'teste',
+                    estado:
+                        CardFeedbackSolicitacao.aceita, // ou aceita, recusada
+                    mensagem: 'teste',
                     linkSala: 'https://link-da-sala.com', // se aplicável
                     onTimeout: () {});
               }
@@ -95,6 +95,13 @@ class WebSocketProvider extends ChangeNotifier {
 
             GlobalSnackbars.showSnackBar(msg['feedback'],
                 backgroundColor: Colors.red);
+            break;
+
+          case 'nova_solicitacao_atendimento_imediato':
+            print('Nova solicitação de atendimento imediato recebida: $msg');
+            print('@@@@@@@@@@@@@@@ Dados do usuário: ${msg['usuario']} @@@@@@@@@@@@@@@@@@@@');
+            solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
+                msg['profissionalId'], msg['usuario']);
             break;
 
           default:
@@ -189,6 +196,43 @@ class WebSocketProvider extends ChangeNotifier {
       //print('Resposta atendimento avulso: $payload');
     } catch (e) {
       print('Erro ao requisitar serviços: $e');
+    }
+  }
+
+  void solicitacaoAtendimentoImediato(
+      String usuarioId, String genero, Map<String, dynamic> dadosUsuario) {
+    try {
+      final payload = jsonEncode({
+        'type': 'solicitacao_atendimento_imediato',
+        'usuarioId': usuarioId,
+        'genero': genero,
+        'dadosUsuario': dadosUsuario
+      });
+      channel?.sink.add(payload);
+      print('Requisitando atendimento imediato: $payload');
+    } catch (e) {
+      print('Erro ao requisitar serviços: $e');
+    }
+  }
+
+  void respostaAtendimentoImediato(
+    String usuarioId,
+    String profissionalId,
+    bool aceito,
+    bool recusado,
+  ) {
+    try {
+      final payload = jsonEncode({
+        'type': 'resposta_atendimento_imediato',
+        'usuarioId': usuarioId,
+        'profissionalId': profissionalId,
+        'aceito': aceito,
+        'recusado': recusado,
+      });
+      channel?.sink.add(payload);
+      //print('Resposta atendimento imediato: $payload');
+    } catch (e) {
+      print('Erro ao responder solicitação de atendimento imediato: $e');
     }
   }
 }

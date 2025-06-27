@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
-Future<void> showOverlayCard(String usuarioId, String profissionalId ,Map<String, dynamic> usuario,
+Future<void> showOverlayCard(String tipoAtendimento, String usuarioId, String profissionalId, Map<String, dynamic> dadosUsuario,
     {RespostasPreAnalise? preAnalise}) async {
+      print('@@@@@@@@@@@@@@@@@@@@@@@   showOverlayCard: $dadosUsuario    @@@@@@@@@@@@@@@@@@@@@@@@@@@');
   try {
     await FlutterOverlayWindow.closeOverlay();
     await Future.delayed(const Duration(milliseconds: 300));
@@ -17,9 +18,10 @@ Future<void> showOverlayCard(String usuarioId, String profissionalId ,Map<String
     );
     final respostas = preAnalise?.toMap();
     await FlutterOverlayWindow.shareData(jsonEncode({
+      'tipoAtendimento': tipoAtendimento,
       'profissionalId': profissionalId,
       'usuarioId': usuarioId,
-      'usuario': usuario,
+      'usuario': dadosUsuario,
       'preAnalise': respostas,
     }));
   } catch (e) {
