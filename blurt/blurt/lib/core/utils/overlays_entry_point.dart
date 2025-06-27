@@ -31,7 +31,8 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
     FlutterOverlayWindow.overlayListener.listen((event) {
       try {
         final map = event != null ? jsonDecode(event) : null;
-        print('@@@@@@@@@@@@@@@@@@@@@@@@   Dados recebidos no overlay: $map @@2222222222222222222222222222222222@@@@@@');
+        print(
+            '@@@@@@@@@@@@@@@@@@@@@@@@   Dados recebidos no overlay: $map @@2222222222222222222222222222222222@@@@@@');
         if (map is Map<String, dynamic>) {
           setState(() {
             tipoAtendimento = map['tipoAtendimento'];
@@ -46,6 +47,15 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
       }
     });
   }
+
+  final dataUser = {
+    'nome': 'Gustavo',
+    'genero': 'Masculino',
+    //'foto': usuarioController.usuario!.foto ?? '',
+    'dataNascimento': '01/01/2000',
+    'estado': 'sp',
+    'cidade': 'santos',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +87,7 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
         // });
       });
       return CardSolicitacaoOverlay(
-        dadosUsuario: dadosUsuario!,
+        dadosUsuario: dataUser,
         preAnalise: preAnalise,
         onAceitar: () async {
           AlertaSonoro.parar();
@@ -85,7 +95,7 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
 
           final args = <String, dynamic>{
             'abrir_dashboard': true,
-            'type': tipoAtendimento,
+            'tipoAtendimento': tipoAtendimento,
             'usuarioId': usuarioId,
             'profissionalId': profissionalId,
             'acao': 'aceitar',
@@ -114,7 +124,7 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
           AlertaSonoro.parar();
           final args = <String, dynamic>{
             //'abrir_dashboard': true,
-            'type': tipoAtendimento,
+            'tipoAtendimento': tipoAtendimento,
             'usuarioId': usuarioId,
             'profissionalId': profissionalId,
             'acao': 'recusar',
@@ -133,14 +143,14 @@ class _OverlayEntryPointState extends State<OverlayEntryPoint> {
             arguments: args,
           );
           await intent.launch();
-
+          await Future.delayed(Duration(milliseconds: 2000));
           await FlutterOverlayWindow.closeOverlay();
-          await Future.delayed(Duration(milliseconds: 300));
+          await Future.delayed(Duration(milliseconds: 2000));
           showOverlayFloatBubble();
 
           setState(() {
-            dadosUsuario = null; // Volta para a bolinha
-            preAnalise = null;
+            // dadosUsuario = null; // Volta para a bolinha
+            // preAnalise = null;
           });
         },
       );

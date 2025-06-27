@@ -81,7 +81,7 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),
-            color: theme.cardColor.withOpacity(0.98),
+            color: theme.cardColor,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(

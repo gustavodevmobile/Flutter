@@ -138,6 +138,7 @@ void solicitacaoAtendimento(String tipoAtendimento, String usuarioId,
       showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario,
           preAnalise: respostasPreAnalise);
     } else {
+      await Future.delayed(Duration(milliseconds: 2000));
       showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario);
     }
   }
