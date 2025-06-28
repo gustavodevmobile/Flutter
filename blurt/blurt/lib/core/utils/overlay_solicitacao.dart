@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:blurt/core/utils/alerta_sonoro.dart';
-import 'package:blurt/core/utils/overlay_card.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/main.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
@@ -93,7 +92,14 @@ void solicitacaoAtendimento(String tipoAtendimento, String usuarioId,
     respostasPreAnalise = RespostasPreAnalise.fromMap(preAnalise);
   }
   if (appLifecycleProvider.isInForeground) {
-    //AlertaSonoro.tocar();
+    AlertaSonoro.tocar(onTimeout: () {
+      if(tipoAtendimento == 'atendimento_avulso') {
+        // Se for atendimento avulso, não faz nada
+      } else if (tipoAtendimento == 'atendimento_imediato') {
+        globalWebSocketProvider.respostaAtendimentoImediato(
+            usuarioId, profissionalId, false, true);
+      }
+    },);
     showOverlayNotification(
       (context) => CardSolicitacaoOverlay(
         dadosUsuario: dadosUsuario,
@@ -120,7 +126,7 @@ void solicitacaoAtendimento(String tipoAtendimento, String usuarioId,
         onRecusar: () async {
           AlertaSonoro.parar();
           OverlaySupportEntry.of(context)?.dismiss();
-          Navigator.pushNamed(context, '/dashboard_profissional');
+          //Navigator.pushNamed(context, '/dashboard_profissional');
           if (tipoAtendimento == 'atendimento_avulso') {
             // implementar lógica de recusa para atendimento avulso
           } else if (tipoAtendimento == 'atendimento_imediato') {
@@ -130,17 +136,19 @@ void solicitacaoAtendimento(String tipoAtendimento, String usuarioId,
         },
       ),
       duration: const Duration(minutes: 1),
-      position: NotificationPosition.top,
+      //position: NotificationPosition.bottom,
     );
-  } else {
-    //AlertaSonoro.tocar();
+  } 
+  
+  // else {
+  //   //AlertaSonoro.tocar();
     
-    if (respostasPreAnalise != null) {
-      showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario,
-          preAnalise: respostasPreAnalise);
-    } else {
-      //await Future.delayed(Duration(milliseconds: 2000));
-      showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario);
-    }
-  }
+  //   if (respostasPreAnalise != null) {
+  //     showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario,
+  //         preAnalise: respostasPreAnalise);
+  //   } else {
+  //     //await Future.delayed(Duration(milliseconds: 2000));
+  //     showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario);
+  //   }
+  // }
 }

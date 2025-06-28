@@ -18,11 +18,11 @@ class LoginProfissionalRemoteDatasourceImpl
       body: jsonEncode({'cpf': cpf, 'senha': senha}),
     );
     final body = jsonDecode(response.body);
-    print('Response body: $body');
+    //print('Response body: $body');
     if (response.statusCode == 200) {
       return body;
     } else {
-      print('Response from login:');
+      //print('Response from login:');
       throw body['message'] ?? 'Erro ao fazer login';
     }
   }

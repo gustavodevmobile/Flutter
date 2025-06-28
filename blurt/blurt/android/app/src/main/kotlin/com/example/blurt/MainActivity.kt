@@ -10,19 +10,24 @@ class MainActivity: FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.blurt/intent")
-        .setMethodCallHandler { call, result ->
+        //MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.blurt/intent")
+        //.setMethodCallHandler { call, result ->
             // Handler do Flutter para chamadas nativas (opcional)
-        }
+       // }
 
         if (abrirDashboard) {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.blurt/intent")
-            .invokeMethod("abrir_dashboard", null)
+            .invokeMethod("abrir_dashboard", mapOf("abrir_dashboard" to true))
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState) // Só aceite intents do próprio app, se possível
+        val callingPackage = callingActivity?.packageName
+        if (callingPackage != null && callingPackage != packageName) {
+            // Ignora intents de outros apps
+            return
+        }
         abrirDashboard = intent.getBooleanExtra("abrir_dashboard", false)
     }
 }

@@ -3,7 +3,6 @@ import 'package:blurt/widgets/pageview_pre_analise.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
-import '../utils/alerta_sonoro.dart';
 
 class CardSolicitacaoOverlay extends StatefulWidget {
   final Map<String, dynamic> dadosUsuario;
@@ -25,41 +24,38 @@ class CardSolicitacaoOverlay extends StatefulWidget {
 
 class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
     with SingleTickerProviderStateMixin {
-  late Timer _timer;
-  int _secondsLeft = 60;
-  bool _closing = false;
+  late Timer timer;
+  int secondsLeft = 60;
+  bool closing = false;
 
   @override
   void initState() {
     super.initState();
-    AlertaSonoro.tocar();
     _startTimer();
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_secondsLeft > 0) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (secondsLeft > 0) {
         setState(() {
-          _secondsLeft--;
+          secondsLeft--;
         });
       } else {
-        _closeOverlay();
+        closeOverlay();
       }
     });
   }
 
-  void _closeOverlay() {
-    if (_closing) return;
-    _closing = true;
-    _timer.cancel();
-    AlertaSonoro.parar();
+  void closeOverlay() {
+    if (closing) return;
+    closing = true;
+    timer.cancel();
     widget.onRecusar();
   }
 
   @override
   void dispose() {
-    _timer.cancel();
-    AlertaSonoro.parar();
+    timer.cancel();
     super.dispose();
   }
 
@@ -101,7 +97,10 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                           ),
                         ),
                       ],
-                    ).animate().fade(duration: 400.ms).slideY(begin: 0.2, end: 0),
+                    )
+                        .animate()
+                        .fade(duration: 400.ms)
+                        .slideY(begin: 0.2, end: 0),
                     const SizedBox(height: 16),
                     _buildUserInfo(theme)
                         .animate()
@@ -126,8 +125,8 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             onPressed: () {
-                              _timer.cancel();
-                              AlertaSonoro.parar();
+                              // _timer.cancel();
+                              // AlertaSonoro.parar();
                               widget.onAceitar();
                             },
                           ).animate().fade(duration: 300.ms, delay: 300.ms),
@@ -143,7 +142,9 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                                   borderRadius: BorderRadius.circular(16)),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            onPressed: _closeOverlay,
+                            onPressed: () {
+                              widget.onRecusar();
+                            },
                           ).animate().fade(duration: 300.ms, delay: 350.ms),
                         ),
                       ],
@@ -213,7 +214,7 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
   }
 
   Widget _buildTimerBar(ThemeData theme) {
-    final percent = _secondsLeft / 60.0;
+    final percent = secondsLeft / 60.0;
     return Column(
       children: [
         SizedBox(
@@ -230,7 +231,7 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                 strokeWidth: 5,
               ).animate().fade(duration: 400.ms),
               Text(
-                _secondsLeft.toString(),
+                secondsLeft.toString(),
                 style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color:

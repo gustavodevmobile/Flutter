@@ -1,4 +1,3 @@
-import 'package:blurt/core/utils/overlay_float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
@@ -30,13 +29,14 @@ class AppLifecycleProvider extends ChangeNotifier with WidgetsBindingObserver {
         isInForeground = false;
         notifyListeners();
         //await FlutterOverlayWindow.closeOverlay();
-        await Future.delayed(const Duration(milliseconds: 300));
-        showOverlayFloatBubble();
+        //await Future.delayed(const Duration(milliseconds: 300));
+        //showOverlayFloatBubble();
       } else if (state == AppLifecycleState.resumed) {
+        print('App voltou para o foreground, fechando overlay');
         isInForeground = true;
         notifyListeners();
 
-        await FlutterOverlayWindow.closeOverlay();
+        //await FlutterOverlayWindow.closeOverlay();
       }
     }
   }

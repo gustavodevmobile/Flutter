@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
 
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/widgets/animated_cache_image.dart';
@@ -10,7 +8,6 @@ import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:receive_intent/receive_intent.dart';
 // import 'package:android_intent_plus/android_intent.dart';
 // import 'package:android_intent_plus/flag.dart';
 
@@ -26,57 +23,57 @@ class _DashboardProfissionalScreenState
     extends State<DashboardProfissionalScreen> {
   bool online = false;
   bool plantao = true;
-  StreamSubscription? _intentSubscription;
+  //StreamSubscription? _intentSubscription;
 
   @override
   void initState() {
     super.initState();
-    _checarIntent();
+    print('Iniciando Dashboard Profissional');
   }
 
-  Future<void> _checarIntent() async {
-    //final intent = await ReceiveIntent.getInitialIntent();
-    _intentSubscription = ReceiveIntent.receivedIntentStream.listen((intent) {
-      if (intent != null && intent.extra != null) {
-        final args = intent.extra as Map<String, dynamic>;
-        if (args['tipoAtendimento'] == 'atendimento_avulso') {
-          if (args['acao'] == 'aceitar') {
-            if (args['preAnalise'] != null) {
-              final preAnaliseMap = jsonDecode(args['preAnalise']);
-              globalWebSocketProvider.respostaAtendimentoAvulso(
-                args['usuarioId'],
-                args['profissionalId'],
-                respostasPreAnalise: preAnaliseMap,
-              );
-            } else {
-              globalWebSocketProvider.respostaAtendimentoAvulso(
-                args['usuarioId'],
-                args['profissionalId'],
-              );
-            }
-          } else if (args['acao'] == 'recusar') {}
-          
-        } else if (args['tipoAtendimento'] == 'atendimento_imediato') {
-          //final dadosUsuario = jsonDecode(args['dadosUsuario']);
-          if (args['acao'] == 'aceitar') {
-            globalWebSocketProvider.respostaAtendimentoImediato(
-                args['usuarioId'], args['profissionalId'], true, false);
-          } else if (args['acao'] == 'recusar') {
-            globalWebSocketProvider.respostaAtendimentoImediato(
-                args['usuarioId'], args['profissionalId'], false, true);
-          }
-        }
+  // Future<void> _checarIntent() async {
+  //   //final intent = await ReceiveIntent.getInitialIntent();
+  //   _intentSubscription = ReceiveIntent.receivedIntentStream.listen((intent) {
+  //     if (intent != null && intent.extra != null) {
+  //       final args = intent.extra as Map<String, dynamic>;
 
-        // ... trate outros casos, como recusar
-      }
-    });
-  }
+  //       if (args['tipoAtendimento'] == 'atendimento_avulso') {
+  //         if (args['acao'] == 'aceitar') {
+  //           if (args['preAnalise'] != null) {
+  //             final preAnaliseMap = jsonDecode(args['preAnalise']);
+  //             globalWebSocketProvider.respostaAtendimentoAvulso(
+  //               args['usuarioId'],
+  //               args['profissionalId'],
+  //               respostasPreAnalise: preAnaliseMap,
+  //             );
+  //           } else {
+  //             globalWebSocketProvider.respostaAtendimentoAvulso(
+  //               args['usuarioId'],
+  //               args['profissionalId'],
+  //             );
+  //           }
+  //         } else if (args['acao'] == 'recusar') {}
+  //       } else if (args['tipoAtendimento'] == 'atendimento_imediato') {
+  //         //final dadosUsuario = jsonDecode(args['dadosUsuario']);
+  //         if (args['acao'] == 'aceitar') {
+  //           globalWebSocketProvider.respostaAtendimentoImediato(
+  //               args['usuarioId'], args['profissionalId'], true, false);
+  //         } else if (args['acao'] == 'recusar') {
+  //           globalWebSocketProvider.respostaAtendimentoImediato(
+  //               args['usuarioId'], args['profissionalId'], false, true);
+  //         }
+  //       }
 
-  @override
-  void dispose() {
-    _intentSubscription?.cancel();
-    super.dispose();
-  }
+  //       // ... trate outros casos, como recusar
+  //     }
+  //   });
+  // }
+
+  // @override
+  // void dispose() {
+  //   _intentSubscription?.cancel();
+  //   super.dispose();
+  // }
 
   // @override
   // void didChangeDependencies() {

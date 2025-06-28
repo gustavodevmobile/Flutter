@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:android_intent_plus/flag.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/utils/overlay_solicitacao.dart';
 import 'package:blurt/core/widgets/card_feedback_overlay.dart';
@@ -23,7 +25,7 @@ class WebSocketProvider extends ChangeNotifier {
   void connect() {
     if (wsUrl != null) {
       channel = WebSocketChannel.connect(Uri.parse(wsUrl!));
-      channel!.stream.listen((data) {
+      channel!.stream.listen((data) async {
         final msg = jsonDecode(data);
 
         switch (msg['type']) {
@@ -36,22 +38,42 @@ class WebSocketProvider extends ChangeNotifier {
                 .toList();
             notifyListeners();
             break;
-
           case 'nova_solicitacao_atendimento_avulso':
-            print('Nova solicitação de atendimento avulso recebida: $msg');
-
-            if (msg['preAnalise'] != null) {
-              solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                  msg['profissionalId'], msg['usuario'],
-                  preAnalise: msg['preAnalise']);
-              break;
+            print('Nova solicitação de atendimento avulso recebida');
+            if (!appLifecycleProvider.isInForeground) {
+              const intent = AndroidIntent(
+                action: 'android.intent.action.MAIN',
+                package: 'com.example.blurt',
+                componentName: 'com.example.blurt.MainActivity',
+                flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+                arguments: <String, dynamic>{
+                  'abrir_dashboard': true,
+                },
+              );
+              await intent.launch();
+              await Future.delayed(const Duration(milliseconds: 500));
+              if (msg['preAnalise'] != null) {
+                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                    msg['profissionalId'], msg['usuario'],
+                    preAnalise: msg['preAnalise']);
+                break;
+              } else {
+                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                    msg['profissionalId'], msg['usuario']);
+                break;
+              }
             } else {
-              solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                  msg['profissionalId'], msg['usuario']);
-              break;
+              if (msg['preAnalise'] != null) {
+                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                    msg['profissionalId'], msg['usuario'],
+                    preAnalise: msg['preAnalise']);
+                break;
+              } else {
+                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                    msg['profissionalId'], msg['usuario']);
+                break;
+              }
             }
-            //break;
-
           case 'resposta_solicitacao_atendimento_avulso':
             WidgetsBinding.instance.addPostFrameCallback((_) {
               final overlayContext =
@@ -68,7 +90,6 @@ class WebSocketProvider extends ChangeNotifier {
             // GlobalSnackbars.showSnackBar(msg['mensagem'],
             //     backgroundColor: Colors.green);
             break;
-
           case 'feedback_solicitacao_profissional_disponivel':
             navigatorKey.currentState?.pushNamed('/perfil_profissional');
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -89,21 +110,33 @@ class WebSocketProvider extends ChangeNotifier {
             //     backgroundColor: Colors.green);
             // notifyListeners();
             break;
-
           case 'feedback_solicitacao_profissional_indisponivel':
             print('Mensagem de chat: ${msg['feedback']}');
 
             GlobalSnackbars.showSnackBar(msg['feedback'],
                 backgroundColor: Colors.red);
             break;
-
           case 'nova_solicitacao_atendimento_imediato':
-            print('Nova solicitação de atendimento imediato recebida: $msg');
-            //print('@@@@@@@@@@@@@@@ Dados do usuário: ${msg['usuario']} @@@@@@@@@@@@@@@@@@@@');
-            solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
-                msg['profissionalId'], msg['usuario']);
+            print('Nova solicitação de atendimento imediato recebida');
+            if (!appLifecycleProvider.isInForeground) {
+              const intent = AndroidIntent(
+                action: 'android.intent.action.MAIN',
+                package: 'com.example.blurt',
+                componentName: 'com.example.blurt.MainActivity',
+                flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+                arguments: <String, dynamic>{
+                  'abrir_dashboard': true,
+                },
+              );
+              await intent.launch();
+              await Future.delayed(const Duration(milliseconds: 500));
+              solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
+                  msg['profissionalId'], msg['usuario']);
+            } else {
+              solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
+                  msg['profissionalId'], msg['usuario']);
+            }
             break;
-
           default:
             print('Tipo de mensagem desconhecido: $msg');
         }

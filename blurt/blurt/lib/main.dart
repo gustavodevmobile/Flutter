@@ -1,6 +1,5 @@
 import 'package:blurt/core/utils/app_life_cyrcle_provider.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
-import 'package:blurt/core/utils/overlays_entry_point.dart';
 import 'package:blurt/core/utils/overlay_solicitacao.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/features/abordagem_principal/data/abordagem_principal_datasource.dart';
@@ -61,15 +60,13 @@ import 'package:firebase_core/firebase_core.dart';
 late AppLifecycleProvider appLifecycleProvider;
 late WebSocketProvider globalWebSocketProvider;
 
-@pragma("vm:entry-point")
-void overlayMain() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
-  globalWebSocketProvider = WebSocketProvider();
-  runApp(
-    const OverlayEntryPoint(),
-  );
-}
+//@pragma("vm:entry-point")
+// void overlayMain() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   runApp(
+//     const OverlayEntryPoint(),
+//   );
+// }
 
 // Handler de background do FCM: exibe notificação local customizada
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -215,16 +212,15 @@ void main() async {
 
   platform.setMethodCallHandler((call) async {
     if (call.method == 'abrir_dashboard') {
-      // Use seu provider ou navigatorKey para navegar para o dashboard
-      navigatorKey.currentState
-          ?.pushReplacementNamed('/dashboard_profissional');
+      //Verifica se deve abrir o dashboard
+      final abrirDashboard = call.arguments?['abrir_dashboard'] ?? false;
+      if (abrirDashboard == true) {
+        navigatorKey.currentState
+            ?.pushReplacementNamed('/dashboard_profissional');
+      }
+      // Se não for para abrir, apenas ignore ou faça outra ação
     }
   });
-
-  MaterialApp(
-    navigatorKey: navigatorKey,
-    // ...
-  );
 
   // Notificação em segundo plano
   if (!await FlutterOverlayWindow.isPermissionGranted()) {
