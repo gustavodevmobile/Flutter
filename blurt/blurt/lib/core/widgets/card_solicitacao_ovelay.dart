@@ -56,6 +56,7 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
   @override
   void dispose() {
     timer.cancel();
+    
     super.dispose();
   }
 

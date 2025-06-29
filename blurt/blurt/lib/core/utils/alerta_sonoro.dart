@@ -1,9 +1,7 @@
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:blurt/core/utils/overlay_float_bubble.dart';
 import 'dart:async';
 
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class AlertaSonoro {
   static AudioPlayer? _audioPlayer;

@@ -7,11 +7,11 @@ void showCentralOverlay(Widget child,
     {Duration? duration}) {
   final overlay = navigatorKey.currentState?.overlay;
   _centralOverlayEntry = OverlayEntry(
-    builder: (context) => Center(child: child,)
-    //  Material(
-    //   color: Colors.black54, 
-    //   child: Center(child: child),
-    // ),
+    builder: (context) => 
+     Material(
+      color: Colors.black54, 
+      child: Center(child: child),
+    ),
   );
   overlay!.insert(_centralOverlayEntry!);
   if (duration != null) {

@@ -20,10 +20,26 @@ class WebSocketProvider extends ChangeNotifier {
   List<Profissional> profissionaisOnline = [];
   Map<String, dynamic> novaSolicitacaoAtendimentoAvulso = {};
   //Map<String, dynamic> respostaSolicitacaoAtendimentoAvulso = {};
-  String? feedback;
+  //String? feedback;
   Timer? _pingTimer;
+  bool novaSolicitacao = false;
 
   final wsUrl = dotenv.env['WS_URL'];
+  final StreamController _eventoSolicitacaoController =
+      StreamController.broadcast();
+  Stream get streamSolicitacao => _eventoSolicitacaoController.stream;
+
+  void setNovaSolicitacao(
+      String tipoAtendimento, Map<String, dynamic> dadosUsuario,
+      {Map<String, dynamic>? preAnalise}) {
+    novaSolicitacao = true;
+    novaSolicitacaoAtendimentoAvulso = {
+      'tipoAtendimento': tipoAtendimento,
+      'dadosUsuario': dadosUsuario,
+      'preAnalise': preAnalise,
+    };
+    notifyListeners();
+  }
 
   void connect() {
     if (wsUrl != null) {
@@ -57,24 +73,46 @@ class WebSocketProvider extends ChangeNotifier {
                 await intent.launch();
                 await Future.delayed(const Duration(milliseconds: 500));
                 if (msg['preAnalise'] != null) {
-                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                      msg['profissionalId'], msg['usuario'],
-                      preAnalise: msg['preAnalise']);
+                  // solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                  //     msg['profissionalId'], msg['usuario'],
+                  //     preAnalise: msg['preAnalise']);
+                  _eventoSolicitacaoController
+                      .add(novaSolicitacaoAtendimentoAvulso = {
+                    'tipoAtendimento': 'atendimento_avulso',
+                    'dadosUsuario': msg['usuario'],
+                    'preAnalise': msg['preAnalise'],
+                  });
                   break;
                 } else {
-                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                      msg['profissionalId'], msg['usuario']);
+                  // solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                  //     msg['profissionalId'], msg['usuario']);
+                  _eventoSolicitacaoController
+                      .add(novaSolicitacaoAtendimentoAvulso = {
+                    'tipoAtendimento': 'atendimento_avulso',
+                    'dadosUsuario': msg['usuario'],
+                  });
                   break;
                 }
               } else {
                 if (msg['preAnalise'] != null) {
-                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                      msg['profissionalId'], msg['usuario'],
-                      preAnalise: msg['preAnalise']);
+                  // solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                  //     msg['profissionalId'], msg['usuario'],
+                  //     preAnalise: msg['preAnalise']);
+                  _eventoSolicitacaoController
+                      .add(novaSolicitacaoAtendimentoAvulso = {
+                    'tipoAtendimento': 'atendimento_avulso',
+                    'dadosUsuario': msg['usuario'],
+                    'preAnalise': msg['preAnalise'],
+                  });
                   break;
                 } else {
-                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                      msg['profissionalId'], msg['usuario']);
+                  // solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                  //     msg['profissionalId'], msg['usuario']);
+                  _eventoSolicitacaoController
+                      .add(novaSolicitacaoAtendimentoAvulso = {
+                    'tipoAtendimento': 'atendimento_avulso',
+                    'dadosUsuario': msg['usuario'],
+                  });
                   break;
                 }
               }
@@ -83,24 +121,24 @@ class WebSocketProvider extends ChangeNotifier {
             print('Resposta de solicitação de atendimento avulso recebida');
             if (msg['mensagem'] != null) {
               closeCentralOverlay();
-               navigatorKey.currentState?.popAndPushNamed('/perfil_profissional');
+              navigatorKey.currentState
+                  ?.popAndPushNamed('/perfil_profissional');
               WidgetsBinding.instance.addPostFrameCallback((_) {
-              showCentralOverlay(
-                CardFeedbackSolicitacaoWidget(
-                  estado: 'aceita',
-                  mensagem: 'teste',
-                  linkSala: 'http://teste.com', // se aplicável
-                  onTimeout: () {
-                    // Implementar lógica de timeout, se necessário
-                    closeCentralOverlay();
-                  },
-                  onClose: () {
-                    closeCentralOverlay();
-                  },
-                ),
-              );
-              
-            });
+                showCentralOverlay(
+                  CardFeedbackSolicitacaoWidget(
+                    estado: 'aceita',
+                    mensagem: 'teste',
+                    linkSala: 'http://teste.com', // se aplicável
+                    onTimeout: () {
+                      // Implementar lógica de timeout, se necessário
+                      closeCentralOverlay();
+                    },
+                    onClose: () {
+                      closeCentralOverlay();
+                    },
+                  ),
+                );
+              });
             }
 
             // GlobalSnackbars.showSnackBar(msg['mensagem'],
@@ -126,7 +164,6 @@ class WebSocketProvider extends ChangeNotifier {
                   },
                 ),
               );
-              
             });
 
             break;

@@ -1,5 +1,8 @@
+import 'package:blurt/core/utils/alerta_sonoro.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
+import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/core/widgets/animated_cache_image.dart';
+import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/main.dart';
@@ -24,6 +27,37 @@ class _DashboardProfissionalScreenState
     extends State<DashboardProfissionalScreen> {
   // bool online = false;
   // bool plantao = true;
+
+  @override
+  void initState() {
+    globalWebSocketProvider.streamSolicitacao.listen((event) {
+      AlertaSonoro.tocar();
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => CardSolicitacaoOverlay(
+            dadosUsuario: event['dadosUsuario'],
+            preAnalise: event['preAnalise'],
+            onAceitar: () async {
+              AlertaSonoro.parar();
+              if (event['tipoAtendimento'] == 'atendimento_avulso') {
+                if (event['preAnalise'] != null) {
+                } else {}
+              } else if (event['tipoAtendimento'] == 'atendimento_imediato') {}
+            },
+            onRecusar: () async {
+              AlertaSonoro.parar();
+              Navigator.pop(context);
+              if (event['tipoAtendimento'] == 'atendimento_avulso') {
+                // implementar lógica de recusa para atendimento avulso
+              } else if (event['tipoAtendimento'] == 'atendimento_imediato') {}
+            },
+          ),
+        );
+      }
+    });
+    super.initState();
+  }
 
   Future<void> verificarPermissoes() async {
     if (!await FlutterOverlayWindow.isPermissionGranted() &&
@@ -259,7 +293,7 @@ class _DashboardProfissionalScreenState
                                         GlobalSnackbars.showSnackBar(
                                             'Você está desconectado!',
                                             backgroundColor: Colors.amber);
-                                      } 
+                                      }
                                     } else {
                                       if (context.mounted) {
                                         GlobalSnackbars.showSnackBar(

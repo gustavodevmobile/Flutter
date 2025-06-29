@@ -52,7 +52,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 late AppLifecycleProvider appLifecycleProvider;

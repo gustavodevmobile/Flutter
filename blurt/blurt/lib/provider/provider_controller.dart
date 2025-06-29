@@ -10,6 +10,7 @@ class ProviderController with ChangeNotifier {
   bool online = false;
   bool plantao = false;
   bool isForeground = true;
+  bool feedback = false;
 
   void setProfissional(Profissional prof) {
     profissional = prof;
@@ -47,6 +48,11 @@ class ProviderController with ChangeNotifier {
 
   void setPlantao(bool value) {
     plantao = value;
+    notifyListeners();
+  }
+
+  void setFeedback(bool value) {
+    feedback = value;
     notifyListeners();
   }
 }

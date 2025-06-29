@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:overlay_support/overlay_support.dart';
 
 // enum CardFeedbackSolicitacao { aguardando, aceita, recusada }
 
