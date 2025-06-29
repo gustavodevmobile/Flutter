@@ -29,6 +29,7 @@ import 'package:blurt/features/cadastro/presentation/pages/cadastro_usuario_scre
 import 'package:blurt/features/dashboards/profissional/data/datasources/dashbord_profissional_datasource_impl.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/pages/dashboard_profissional_screen.dart';
+import 'package:blurt/features/dashboards/profissional/presentation/pages/dashboard_usuario_screen.dart';
 import 'package:blurt/features/especialidade_principal/data/especialidade_principal_datasource.dart';
 import 'package:blurt/features/especialidade_principal/presentation/especialidade_principal_controller.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
@@ -48,9 +49,6 @@ import 'package:blurt/screens/atendimentos_profissional.dart';
 import 'package:blurt/screens/perfil_profissional.dart';
 import 'package:blurt/screens/editar_perfil_profissional.dart';
 import 'package:flutter/material.dart';
-import 'package:blurt/screens/dashboard_usuario.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -82,6 +80,8 @@ void main() async {
   appLifecycleProvider = AppLifecycleProvider();
   globalWebSocketProvider = WebSocketProvider();
 
+
+// Permissão
   await FirebaseMessaging.instance.requestPermission();
 
   // Registra o handler de background do FCM
@@ -201,14 +201,9 @@ void main() async {
 
         // Adicione outros providers globais aqui
       ],
-      child: OverlaySupport.global(
-        child: const MyApp(),
-      ),
+      child: const MyApp(),
     ),
   );
-
-  // Entry point para o overlay
-//overlay_main.dart
 
   platform.setMethodCallHandler((call) async {
     if (call.method == 'abrir_dashboard') {
@@ -221,16 +216,6 @@ void main() async {
       // Se não for para abrir, apenas ignore ou faça outra ação
     }
   });
-
-  // Notificação em segundo plano
-  if (!await FlutterOverlayWindow.isPermissionGranted()) {
-    await FlutterOverlayWindow.requestPermission();
-  }
-
-// Solicita permissão de notificação (Android 13+)
-  if (await Permission.notification.isDenied) {
-    await Permission.notification.request();
-  }
 
 // Listener para quando o app é aberto pela notificação
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -319,6 +304,3 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
-
-
-// EAAJ8fNlDw6oBO18GZBSKXdcDrAqfB4mvmoLcZAwoByuxRJ20hagYXtZAg1V9N2qN9FFa9fgXnSTrVZCa5Wq2zr9LjP4xsQiHpMrNB7BP5Ys8RzREYq9bmLtI4CmO0eB4VVLhFZC3L2uctWRqKlFLpP3BvkkD7vgGdr5PnPW6gxZAeE1xD78fgzB82cgCOTneAryIU6oWjmVb6cMEDMvQ2i0fG7PTlwY9ztlat5qcSzsNDfygZDZD

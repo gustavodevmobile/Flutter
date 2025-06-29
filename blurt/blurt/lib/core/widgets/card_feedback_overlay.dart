@@ -3,60 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:overlay_support/overlay_support.dart';
 
-enum CardFeedbackSolicitacao { aguardando, aceita, recusada }
+// enum CardFeedbackSolicitacao { aguardando, aceita, recusada }
 
-class CardFeedbackSolicitacaoOverlay {
-  static OverlaySupportEntry? _currentEntry;
 
-  static void show(
-    BuildContext context, {
-    required CardFeedbackSolicitacao estado,
-    String? mensagem,
-    String? linkSala,
-    VoidCallback? onTimeout,
-  }) {
-    close();
-    _currentEntry = showOverlayNotification(
-      (ctx) => _CardFeedbackSolicitacaoWidget(
-        estado: estado,
-        mensagem: mensagem,
-        linkSala: linkSala,
-        onTimeout: onTimeout,
-        onClose: close,
-      ),
-      duration: const Duration(minutes: 1),
-      position: NotificationPosition.bottom
-    );
-  }
 
-  static void close() {
-    _currentEntry?.dismiss();
-    _currentEntry = null;
-  }
-}
-
-class _CardFeedbackSolicitacaoWidget extends StatefulWidget {
-  final CardFeedbackSolicitacao estado;
+class CardFeedbackSolicitacaoWidget extends StatefulWidget {
+  final String estado;
   final String? mensagem;
   final String? linkSala;
   final VoidCallback? onTimeout;
   final VoidCallback? onClose;
 
-  const _CardFeedbackSolicitacaoWidget({
+  const CardFeedbackSolicitacaoWidget({
     required this.estado,
     this.mensagem,
     this.linkSala,
     this.onTimeout,
     this.onClose,
+    super.key
   });
 
   @override
-  State<_CardFeedbackSolicitacaoWidget> createState() =>
-      _CardFeedbackSolicitacaoWidgetState();
+  State<CardFeedbackSolicitacaoWidget> createState() =>
+      CardFeedbackSolicitacaoWidgetState();
 }
 
-class _CardFeedbackSolicitacaoWidgetState
-    extends State<_CardFeedbackSolicitacaoWidget> {
+class CardFeedbackSolicitacaoWidgetState
+    extends State<CardFeedbackSolicitacaoWidget> {
   late int _secondsLeft;
   Timer? _timer;
 
@@ -64,16 +37,16 @@ class _CardFeedbackSolicitacaoWidgetState
   void initState() {
     super.initState();
     _secondsLeft = 60;
-    if (widget.estado == CardFeedbackSolicitacao.aguardando) {
+    if (widget.estado == 'aguardando') {
       _startTimer();
     }
   }
 
   @override
-  void didUpdateWidget(covariant _CardFeedbackSolicitacaoWidget oldWidget) {
+  void didUpdateWidget(covariant CardFeedbackSolicitacaoWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.estado != oldWidget.estado) {
-      if (widget.estado == CardFeedbackSolicitacao.aguardando) {
+      if (widget.estado == 'aguardando') {
         _secondsLeft = 60;
         _startTimer();
       } else {
@@ -110,38 +83,36 @@ class _CardFeedbackSolicitacaoWidgetState
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    return Material(
-      color: Colors.transparent,
-      child: Center(
-        child: Container(
-          width: isMobile ? double.infinity : 400,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Theme.of(context).dialogBackgroundColor,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                blurRadius: 16,
-                offset: const Offset(0, 8),
+    //final isMobile = MediaQuery.of(context).size.width < 600;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildContent(),
+            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: widget.onClose,
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildContent(),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: widget.onClose,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -149,7 +120,7 @@ class _CardFeedbackSolicitacaoWidgetState
 
   Widget _buildContent() {
     switch (widget.estado) {
-      case CardFeedbackSolicitacao.aguardando:
+      case 'aguardando':
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -178,7 +149,7 @@ class _CardFeedbackSolicitacaoWidgetState
                 .slideY(begin: 0.2, end: 0, duration: 500.ms),
           ],
         );
-      case CardFeedbackSolicitacao.aceita:
+      case 'aceita':
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -200,7 +171,7 @@ class _CardFeedbackSolicitacaoWidgetState
               ).animate().fadeIn(duration: 600.ms),
           ],
         );
-      case CardFeedbackSolicitacao.recusada:
+      case 'recusada':
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [

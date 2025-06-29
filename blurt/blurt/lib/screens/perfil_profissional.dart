@@ -241,19 +241,16 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                               if (respostas == null) {
                                 // Não quis responder o questionário, envia solicitação simples
                                 websockerProvider.solicitarAtendimentoAvulso(
-                                  usuarioController.usuario!.id!,
-                                  globalProvider.profissional!.id!,
-                                  {
-                                    'nome': usuarioController.usuario!.nome,
-                                    'genero': usuarioController.usuario!.genero,
-                                    //'foto': usuarioController.usuario!.foto ?? '',
-                                    'dataNascimento': usuarioController
-                                        .usuario!.dataNascimento,
-                                    'estado': usuarioController.usuario!.estado,
-                                    'cidade': usuarioController.usuario!.cidade,
-                                  }
-                                  
-                                );
+                                    usuarioController.usuario!.id!,
+                                    globalProvider.profissional!.id!, {
+                                  'nome': usuarioController.usuario!.nome,
+                                  'genero': usuarioController.usuario!.genero,
+                                  //'foto': usuarioController.usuario!.foto ?? '',
+                                  'dataNascimento':
+                                      usuarioController.usuario!.dataNascimento,
+                                  'estado': usuarioController.usuario!.estado,
+                                  'cidade': usuarioController.usuario!.cidade,
+                                });
                               } else {
                                 // Respondeu o questionário, envia solicitação com as respostas
                                 websockerProvider.solicitarAtendimentoAvulso(
@@ -272,50 +269,6 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                                 );
                               }
                             },
-
-                      // loading
-                      //     ? null
-                      //     : () async {
-                      //         setState(() {
-                      //           //loading = true;
-                      //         });
-                      //         try {
-                      //           // solicitação websocket context app principal (foreground)
-                      //           websockerProvider.solicitarAtendimentoAvulso(
-                      //               usuarioController.usuario!.id!,
-                      //               globalProvider.profissional!.id!, {
-                      //             'nome': usuarioController.usuario!.nome,
-                      //             'genero': usuarioController.usuario!.genero,
-                      //             //'foto': usuarioController.usuario!.foto ?? '',
-                      //             'dataNascimento':
-                      //                 usuarioController.usuario!.dataNascimento,
-                      //             'estado': usuarioController.usuario!.estado,
-                      //             'cidade': usuarioController.usuario!.cidade,
-
-                      //             'profissionalId':
-                      //                 globalProvider.profissional!.id!,
-                      //             'usuarioId': usuarioController.usuario!.id!,
-                      //             'preAnalise': {
-                      //               'motivoConsulta': 'Motivo da consulta',
-                      //               'objetivo': 'Objetivo da consulta',
-                      //               'sintomas': 'Sintomas relatados',
-                      //               'historicoClinico': 'Histórico clínico',
-                      //             },
-                      //           });
-                      //         } catch (e) {
-                      //           ScaffoldMessenger.of(context).showSnackBar(
-                      //             SnackBar(
-                      //               content: Text(
-                      //                   'Erro ao solicitar atendimento: $e'),
-                      //             ),
-                      //           );
-                      //           print('Erro ao solicitar atendimento: $e');
-                      //         } finally {
-                      //           setState(() {
-                      //             //loading = false;
-                      //           });
-                      //         }
-                      //       },
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(200, 48),
                           textStyle: const TextStyle(fontSize: 18),

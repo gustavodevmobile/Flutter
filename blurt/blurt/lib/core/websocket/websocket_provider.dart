@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
+import 'package:blurt/core/utils/overlay_card.dart';
 import 'package:blurt/core/utils/overlay_solicitacao.dart';
 import 'package:blurt/core/widgets/card_feedback_overlay.dart';
+
 import 'package:blurt/main.dart';
 import 'package:blurt/models/profissional/profissional.dart';
 import 'package:blurt/models/profissional/profissional_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -40,75 +43,92 @@ class WebSocketProvider extends ChangeNotifier {
             break;
           case 'nova_solicitacao_atendimento_avulso':
             print('Nova solicitação de atendimento avulso recebida');
-            if (!appLifecycleProvider.isInForeground) {
-              const intent = AndroidIntent(
-                action: 'android.intent.action.MAIN',
-                package: 'com.example.blurt',
-                componentName: 'com.example.blurt.MainActivity',
-                flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-                arguments: <String, dynamic>{
-                  'abrir_dashboard': true,
-                },
-              );
-              await intent.launch();
-              await Future.delayed(const Duration(milliseconds: 500));
-              if (msg['preAnalise'] != null) {
-                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                    msg['profissionalId'], msg['usuario'],
-                    preAnalise: msg['preAnalise']);
-                break;
+            if (await FlutterOverlayWindow.isPermissionGranted()) {
+              if (!appLifecycleProvider.isInForeground) {
+                const intent = AndroidIntent(
+                  action: 'android.intent.action.MAIN',
+                  package: 'com.example.blurt',
+                  componentName: 'com.example.blurt.MainActivity',
+                  flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+                  arguments: <String, dynamic>{
+                    'abrir_dashboard': true,
+                  },
+                );
+                await intent.launch();
+                await Future.delayed(const Duration(milliseconds: 500));
+                if (msg['preAnalise'] != null) {
+                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                      msg['profissionalId'], msg['usuario'],
+                      preAnalise: msg['preAnalise']);
+                  break;
+                } else {
+                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                      msg['profissionalId'], msg['usuario']);
+                  break;
+                }
               } else {
-                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                    msg['profissionalId'], msg['usuario']);
-                break;
-              }
-            } else {
-              if (msg['preAnalise'] != null) {
-                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                    msg['profissionalId'], msg['usuario'],
-                    preAnalise: msg['preAnalise']);
-                break;
-              } else {
-                solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                    msg['profissionalId'], msg['usuario']);
-                break;
+                if (msg['preAnalise'] != null) {
+                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                      msg['profissionalId'], msg['usuario'],
+                      preAnalise: msg['preAnalise']);
+                  break;
+                } else {
+                  solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
+                      msg['profissionalId'], msg['usuario']);
+                  break;
+                }
               }
             }
           case 'resposta_solicitacao_atendimento_avulso':
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              final overlayContext =
-                  navigatorKey.currentState?.overlay?.context;
-              if (overlayContext != null && overlayContext.mounted) {
-                CardFeedbackSolicitacaoOverlay.show(overlayContext,
-                    estado:
-                        CardFeedbackSolicitacao.aceita, // ou aceita, recusada
-                    mensagem: 'teste',
-                    linkSala: 'https://link-da-sala.com', // se aplicável
-                    onTimeout: () {});
-              }
+            print('Resposta de solicitação de atendimento avulso recebida');
+            if (msg['mensagem'] != null) {
+              closeCentralOverlay();
+               navigatorKey.currentState?.popAndPushNamed('/perfil_profissional');
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+              showCentralOverlay(
+                CardFeedbackSolicitacaoWidget(
+                  estado: 'aceita',
+                  mensagem: 'teste',
+                  linkSala: 'http://teste.com', // se aplicável
+                  onTimeout: () {
+                    // Implementar lógica de timeout, se necessário
+                    closeCentralOverlay();
+                  },
+                  onClose: () {
+                    closeCentralOverlay();
+                  },
+                ),
+              );
+              
             });
+            }
+
             // GlobalSnackbars.showSnackBar(msg['mensagem'],
             //     backgroundColor: Colors.green);
             break;
           case 'feedback_solicitacao_profissional_disponivel':
-            navigatorKey.currentState?.pushNamed('/perfil_profissional');
+            print(
+                'Feedback de solicitação de profissional disponível recebido');
+            // navigatorKey.currentState?.pop();
+            navigatorKey.currentState?.popAndPushNamed('/perfil_profissional');
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              final overlayContext =
-                  navigatorKey.currentState?.overlay?.context;
-              if (overlayContext != null && overlayContext.mounted) {
-                CardFeedbackSolicitacaoOverlay.show(overlayContext,
-                    estado: CardFeedbackSolicitacao
-                        .aguardando, // ou aceita, recusada
-                    mensagem: msg['feedback'],
-                    linkSala: 'https://link-da-sala.com', // se aplicável
-                    onTimeout: () {});
-              }
+              showCentralOverlay(
+                CardFeedbackSolicitacaoWidget(
+                  estado: 'aguardando',
+                  mensagem: 'teste',
+                  linkSala: 'http://teste.com', // se aplicável
+                  onTimeout: () {
+                    // Implementar lógica de timeout, se necessário
+                    closeCentralOverlay();
+                  },
+                  onClose: () {
+                    closeCentralOverlay();
+                  },
+                ),
+              );
+              
             });
-            // ação ao expirar o tempo, se
 
-            // GlobalSnackbars.showSnackBar(msg['feedback'],
-            //     backgroundColor: Colors.green);
-            // notifyListeners();
             break;
           case 'feedback_solicitacao_profissional_indisponivel':
             print('Mensagem de chat: ${msg['feedback']}');
@@ -118,23 +138,25 @@ class WebSocketProvider extends ChangeNotifier {
             break;
           case 'nova_solicitacao_atendimento_imediato':
             print('Nova solicitação de atendimento imediato recebida');
-            if (!appLifecycleProvider.isInForeground) {
-              const intent = AndroidIntent(
-                action: 'android.intent.action.MAIN',
-                package: 'com.example.blurt',
-                componentName: 'com.example.blurt.MainActivity',
-                flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-                arguments: <String, dynamic>{
-                  'abrir_dashboard': true,
-                },
-              );
-              await intent.launch();
-              await Future.delayed(const Duration(milliseconds: 500));
-              solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
-                  msg['profissionalId'], msg['usuario']);
-            } else {
-              solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
-                  msg['profissionalId'], msg['usuario']);
+            if (await FlutterOverlayWindow.isPermissionGranted()) {
+              if (!appLifecycleProvider.isInForeground) {
+                const intent = AndroidIntent(
+                  action: 'android.intent.action.MAIN',
+                  package: 'com.example.blurt',
+                  componentName: 'com.example.blurt.MainActivity',
+                  flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+                  arguments: <String, dynamic>{
+                    'abrir_dashboard': true,
+                  },
+                );
+                await intent.launch();
+                await Future.delayed(const Duration(milliseconds: 500));
+                solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
+                    msg['profissionalId'], msg['usuario']);
+              } else {
+                solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
+                    msg['profissionalId'], msg['usuario']);
+              }
             }
             break;
           default:

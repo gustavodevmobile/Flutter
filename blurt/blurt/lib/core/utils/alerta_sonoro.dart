@@ -15,10 +15,10 @@ class AlertaSonoro {
     await _audioPlayer!.play(AssetSource('sounds/alert1.mp3'));
     _timer = Timer(const Duration(minutes: 1), () async {
       parar();
-      await FlutterOverlayWindow.closeOverlay();
+      //await FlutterOverlayWindow.closeOverlay();
       await Future.delayed(Duration(milliseconds: 300));
       if (onTimeout != null) onTimeout(); // Chama o callback!
-      showOverlayFloatBubble();
+      //showOverlayFloatBubble();
       print('Alerta sonoro parado após 1 minuto');
     });
   }

@@ -135,12 +135,12 @@ class _LoginFormProfissionalState extends State<LoginFormProfissional> {
                                       _passwordController.text,
                                       context);
                               if (profissional != null) {
-                                webSocketController.connect();
-                                // Envia a identificação do profissional
-                                webSocketController.identifyConnection(
-                                    profissional.id!, 'profissional');
+                                // webSocketController.connect();
+                                // // Envia a identificação do profissional
+                                // webSocketController.identifyConnection(
+                                //     profissional.id!, 'profissional');
 
-                                webSocketController.startPing(profissional.id!);
+                                // webSocketController.startPing(profissional.id!);
 
                                 appLifecycleProvider.profissionalLogado = true;
 

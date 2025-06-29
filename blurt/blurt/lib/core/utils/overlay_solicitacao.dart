@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:blurt/core/utils/alerta_sonoro.dart';
+import 'package:blurt/core/utils/overlay_card.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/main.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
@@ -92,57 +93,103 @@ void solicitacaoAtendimento(String tipoAtendimento, String usuarioId,
     respostasPreAnalise = RespostasPreAnalise.fromMap(preAnalise);
   }
   if (appLifecycleProvider.isInForeground) {
-    AlertaSonoro.tocar(onTimeout: () {
-      if(tipoAtendimento == 'atendimento_avulso') {
-        // Se for atendimento avulso, não faz nada
-      } else if (tipoAtendimento == 'atendimento_imediato') {
-        globalWebSocketProvider.respostaAtendimentoImediato(
-            usuarioId, profissionalId, false, true);
-      }
-    },);
-    showOverlayNotification(
-      (context) => CardSolicitacaoOverlay(
-        dadosUsuario: dadosUsuario,
-        preAnalise: respostasPreAnalise,
-        onAceitar: () async {
-          AlertaSonoro.parar();
-          OverlaySupportEntry.of(context)?.dismiss();
-          Navigator.pushNamed(context, '/dashboard_profissional');
-
-          if (tipoAtendimento == 'atendimento_avulso') {
-            if (respostasPreAnalise != null) {
-              globalWebSocketProvider.respostaAtendimentoAvulso(
-                  usuarioId, profissionalId,
-                  respostasPreAnalise: respostasPreAnalise.toMap());
-            } else {
-              globalWebSocketProvider.respostaAtendimentoAvulso(
-                  usuarioId, profissionalId);
-            }
-          } else if (tipoAtendimento == 'atendimento_imediato') {
-            globalWebSocketProvider.respostaAtendimentoImediato(
-                usuarioId, profissionalId, true, false);
-          }
-        },
-        onRecusar: () async {
-          AlertaSonoro.parar();
-          OverlaySupportEntry.of(context)?.dismiss();
-          //Navigator.pushNamed(context, '/dashboard_profissional');
-          if (tipoAtendimento == 'atendimento_avulso') {
-            // implementar lógica de recusa para atendimento avulso
-          } else if (tipoAtendimento == 'atendimento_imediato') {
-            globalWebSocketProvider.respostaAtendimentoImediato(
-                usuarioId, profissionalId, false, true);
-          }
-        },
-      ),
-      duration: const Duration(minutes: 1),
-      //position: NotificationPosition.bottom,
+    AlertaSonoro.tocar(
+      onTimeout: () {
+        if (tipoAtendimento == 'atendimento_avulso') {
+          // implementar lógica de recusa para atendimento avulso
+        } else if (tipoAtendimento == 'atendimento_imediato') {
+          globalWebSocketProvider.respostaAtendimentoImediato(
+              usuarioId, profissionalId, false, true);
+        }
+      },
     );
-  } 
-  
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (navigatorKey.currentContext!.mounted) {
+        showCentralOverlay(
+          CardSolicitacaoOverlay(
+            dadosUsuario: dadosUsuario,
+            preAnalise: respostasPreAnalise,
+            onAceitar: () async {
+              AlertaSonoro.parar();
+              //OverlaySupportEntry.of(context)?.dismiss();
+              //Navigator.pushNamed(context, '/dashboard_profissional');
+              closeCentralOverlay();
+
+              if (tipoAtendimento == 'atendimento_avulso') {
+                if (respostasPreAnalise != null) {
+                  globalWebSocketProvider.respostaAtendimentoAvulso(
+                      usuarioId, profissionalId,
+                      respostasPreAnalise: respostasPreAnalise.toMap());
+                } else {
+                  globalWebSocketProvider.respostaAtendimentoAvulso(
+                      usuarioId, profissionalId);
+                }
+              } else if (tipoAtendimento == 'atendimento_imediato') {
+                globalWebSocketProvider.respostaAtendimentoImediato(
+                    usuarioId, profissionalId, true, false);
+              }
+            },
+            onRecusar: () async {
+              AlertaSonoro.parar();
+              //OverlaySupportEntry.of(context)?.dismiss();
+              //Navigator.pushNamed(context, '/dashboard_profissional');
+              closeCentralOverlay();
+              if (tipoAtendimento == 'atendimento_avulso') {
+                // implementar lógica de recusa para atendimento avulso
+              } else if (tipoAtendimento == 'atendimento_imediato') {
+                globalWebSocketProvider.respostaAtendimentoImediato(
+                    usuarioId, profissionalId, false, true);
+              }
+            },
+          ),
+          duration: const Duration(minutes: 1),
+        );
+      }
+    });
+
+    // showOverlayNotification(
+    //   (context) => CardSolicitacaoOverlay(
+    //     dadosUsuario: dadosUsuario,
+    //     preAnalise: respostasPreAnalise,
+    //     onAceitar: () async {
+    //       AlertaSonoro.parar();
+    //       OverlaySupportEntry.of(context)?.dismiss();
+    //       Navigator.pushNamed(context, '/dashboard_profissional');
+
+    //       if (tipoAtendimento == 'atendimento_avulso') {
+    //         if (respostasPreAnalise != null) {
+    //           globalWebSocketProvider.respostaAtendimentoAvulso(
+    //               usuarioId, profissionalId,
+    //               respostasPreAnalise: respostasPreAnalise.toMap());
+    //         } else {
+    //           globalWebSocketProvider.respostaAtendimentoAvulso(
+    //               usuarioId, profissionalId);
+    //         }
+    //       } else if (tipoAtendimento == 'atendimento_imediato') {
+    //         globalWebSocketProvider.respostaAtendimentoImediato(
+    //             usuarioId, profissionalId, true, false);
+    //       }
+    //     },
+    //     onRecusar: () async {
+    //       AlertaSonoro.parar();
+    //       OverlaySupportEntry.of(context)?.dismiss();
+    //       //Navigator.pushNamed(context, '/dashboard_profissional');
+    //       if (tipoAtendimento == 'atendimento_avulso') {
+    //         // implementar lógica de recusa para atendimento avulso
+    //       } else if (tipoAtendimento == 'atendimento_imediato') {
+    //         globalWebSocketProvider.respostaAtendimentoImediato(
+    //             usuarioId, profissionalId, false, true);
+    //       }
+    //     },
+    //   ),
+    //   duration: const Duration(minutes: 1),
+    //   //position: NotificationPosition.bottom,
+    // );
+  }
+
   // else {
   //   //AlertaSonoro.tocar();
-    
+
   //   if (respostasPreAnalise != null) {
   //     showOverlayCard(tipoAtendimento, usuarioId, profissionalId, dadosUsuario,
   //         preAnalise: respostasPreAnalise);

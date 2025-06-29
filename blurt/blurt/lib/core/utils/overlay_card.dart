@@ -1,30 +1,25 @@
-// import 'dart:async';
-// import 'dart:convert';
-// import 'package:blurt/widgets/pageview_pre_analise.dart';
-// import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:blurt/main.dart';
+import 'package:flutter/material.dart';
 
-// Future<void> showOverlayCard(String tipoAtendimento, String usuarioId, String profissionalId, Map<String, dynamic> dadosUsuario,
-//     {RespostasPreAnalise? preAnalise}) async {
-    
-//   try {
-//     await FlutterOverlayWindow.closeOverlay();
-//     await Future.delayed(const Duration(milliseconds: 300));
-//     await FlutterOverlayWindow.showOverlay(
-//       enableDrag: true,
-//       alignment: OverlayAlignment.center,
-//       flag: OverlayFlag.defaultFlag,
-//       overlayTitle: "Blurt",
-//       positionGravity: PositionGravity.none,
-//     );
-//     final respostas = preAnalise?.toMap();
-//     await FlutterOverlayWindow.shareData(jsonEncode({
-//       'tipoAtendimento': tipoAtendimento,
-//       'profissionalId': profissionalId,
-//       'usuarioId': usuarioId,
-//       'usuario': dadosUsuario,
-//       'preAnalise': respostas,
-//     }));
-//   } catch (e) {
-//     print('Erro ao mostrar overlay: $e');
-//   }
-// }
+OverlayEntry? _centralOverlayEntry;
+
+void showCentralOverlay(Widget child,
+    {Duration? duration}) {
+  final overlay = navigatorKey.currentState?.overlay;
+  _centralOverlayEntry = OverlayEntry(
+    builder: (context) => Center(child: child,)
+    //  Material(
+    //   color: Colors.black54, 
+    //   child: Center(child: child),
+    // ),
+  );
+  overlay!.insert(_centralOverlayEntry!);
+  if (duration != null) {
+    Future.delayed(duration, closeCentralOverlay);
+  }
+}
+
+void closeCentralOverlay() {
+  _centralOverlayEntry?.remove();
+  _centralOverlayEntry = null;
+}

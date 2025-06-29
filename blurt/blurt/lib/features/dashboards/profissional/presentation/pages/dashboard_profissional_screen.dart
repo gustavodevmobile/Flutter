@@ -1,4 +1,3 @@
-
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/widgets/animated_cache_image.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_profissional_controller.dart';
@@ -7,6 +6,8 @@ import 'package:blurt/main.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 // import 'package:android_intent_plus/android_intent.dart';
 // import 'package:android_intent_plus/flag.dart';
@@ -21,66 +22,71 @@ class DashboardProfissionalScreen extends StatefulWidget {
 
 class _DashboardProfissionalScreenState
     extends State<DashboardProfissionalScreen> {
-  bool online = false;
-  bool plantao = true;
-  //StreamSubscription? _intentSubscription;
+  // bool online = false;
+  // bool plantao = true;
 
-  @override
-  void initState() {
-    super.initState();
-    print('Iniciando Dashboard Profissional');
+  Future<void> verificarPermissoes() async {
+    if (!await FlutterOverlayWindow.isPermissionGranted() &&
+        !await Permission.notification.isDenied) {
+      showPermissaoOverlayDialog();
+    }
   }
 
-  // Future<void> _checarIntent() async {
-  //   //final intent = await ReceiveIntent.getInitialIntent();
-  //   _intentSubscription = ReceiveIntent.receivedIntentStream.listen((intent) {
-  //     if (intent != null && intent.extra != null) {
-  //       final args = intent.extra as Map<String, dynamic>;
-
-  //       if (args['tipoAtendimento'] == 'atendimento_avulso') {
-  //         if (args['acao'] == 'aceitar') {
-  //           if (args['preAnalise'] != null) {
-  //             final preAnaliseMap = jsonDecode(args['preAnalise']);
-  //             globalWebSocketProvider.respostaAtendimentoAvulso(
-  //               args['usuarioId'],
-  //               args['profissionalId'],
-  //               respostasPreAnalise: preAnaliseMap,
-  //             );
-  //           } else {
-  //             globalWebSocketProvider.respostaAtendimentoAvulso(
-  //               args['usuarioId'],
-  //               args['profissionalId'],
-  //             );
-  //           }
-  //         } else if (args['acao'] == 'recusar') {}
-  //       } else if (args['tipoAtendimento'] == 'atendimento_imediato') {
-  //         //final dadosUsuario = jsonDecode(args['dadosUsuario']);
-  //         if (args['acao'] == 'aceitar') {
-  //           globalWebSocketProvider.respostaAtendimentoImediato(
-  //               args['usuarioId'], args['profissionalId'], true, false);
-  //         } else if (args['acao'] == 'recusar') {
-  //           globalWebSocketProvider.respostaAtendimentoImediato(
-  //               args['usuarioId'], args['profissionalId'], false, true);
-  //         }
-  //       }
-
-  //       // ... trate outros casos, como recusar
-  //     }
-  //   });
-  // }
-
-  // @override
-  // void dispose() {
-  //   _intentSubscription?.cancel();
-  //   super.dispose();
-  // }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   // Salve as referências enquanto o context ainda é válido
-  //   //webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-  // }
+  Future<void> showPermissaoOverlayDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              Icon(Icons.notifications_active, color: Colors.blue, size: 25),
+              SizedBox(width: 8),
+              Text('Permitir notificações', style: TextStyle(fontSize: 20)),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Para receber alertas de atendimento mesmo quando estiver usando outros aplicativos, '
+                'é necessário permitir a exibição de notificações sobre outros apps.',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 16),
+              Icon(Icons.info_outline, color: Colors.blueAccent, size: 48),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Agora não'),
+            ),
+            ElevatedButton.icon(
+              icon: Icon(Icons.check_circle),
+              label: Text('Permitir'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                if (!await FlutterOverlayWindow.isPermissionGranted()) {
+                  await FlutterOverlayWindow.requestPermission();
+                }
+                // Solicita permissão de notificação (Android 13+)
+                if (await Permission.notification.isDenied) {
+                  await Permission.notification.request();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,20 +204,74 @@ class _DashboardProfissionalScreenState
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.circle,
-                                      color: AppThemes.online, size: 22),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'Online',
+                            Row(
+                              children: [
+                                Icon(
+                                    globalProvider.online
+                                        ? Icons.circle
+                                        : Icons.circle_outlined,
+                                    color: globalProvider.online
+                                        ? AppThemes.online
+                                        : AppThemes.offline,
+                                    size: 16),
+                                const SizedBox(width: 6),
+                                Text(
+                                    globalProvider.online
+                                        ? 'Online'
+                                        : 'Offline',
                                     style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                  ),
-                                ],
-                              ),
+                                        color: globalProvider.online
+                                            ? Colors.white
+                                            : Colors.black)),
+                                Switch(
+                                  value: globalProvider.online,
+                                  onChanged: (status) async {
+                                    globalProvider.setOnline(status);
+                                    // Verifica permissões antes de conectar
+                                    verificarPermissoes();
+                                    // Verifica se a permissão de notificação foi concedida
+                                    if (await FlutterOverlayWindow
+                                        .isPermissionGranted()) {
+                                      // Conecta ao WebSocket se estiver online
+                                      if (globalProvider.online) {
+                                        globalWebSocketProvider.connect();
+                                        // Envia a identificação do profissional
+                                        globalWebSocketProvider
+                                            .identifyConnection(
+                                                controllerLogin
+                                                    .profissional!.id!,
+                                                'profissional');
+
+                                        globalWebSocketProvider.startPing(
+                                            controllerLogin.profissional!.id!);
+                                        GlobalSnackbars.showSnackBar(
+                                            'Você está conectado!',
+                                            backgroundColor: Colors.green);
+                                      } else {
+                                        globalWebSocketProvider.disconnect();
+                                        globalWebSocketProvider.stopPing();
+                                        await dashboardController
+                                            .alterarStatusAtendePlantao(
+                                                profissionalId: controllerLogin
+                                                    .profissional!.id!,
+                                                novoStatus: status);
+                                        globalProvider.setPlantao(false);
+                                        GlobalSnackbars.showSnackBar(
+                                            'Você está desconectado!',
+                                            backgroundColor: Colors.amber);
+                                      } 
+                                    } else {
+                                      if (context.mounted) {
+                                        GlobalSnackbars.showSnackBar(
+                                            'Você precisa permitir as notificações para ficar online.',
+                                            backgroundColor: Colors.orange,
+                                            durationInSeconds: 5);
+                                      }
+                                      globalProvider.setOnline(false);
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                             Row(
                               children: [
@@ -226,7 +286,7 @@ class _DashboardProfissionalScreenState
                                 const SizedBox(width: 6),
                                 Text(
                                     globalProvider.plantao
-                                        ? 'Disponível para\nacolhimento'
+                                        ? 'Atendimento\nimediato'
                                         : 'Não disponível\nacolhimento',
                                     style: TextStyle(
                                         color: globalProvider.plantao
@@ -236,26 +296,36 @@ class _DashboardProfissionalScreenState
                                   value: globalProvider.plantao,
                                   onChanged: (status) async {
                                     globalProvider.setPlantao(status);
-                                    try {
-                                      String statusAtual =
-                                          await dashboardController
-                                              .alterarStatusAtendePlantao(
-                                                  profissionalId:
-                                                      controllerLogin
-                                                          .profissional!.id!,
-                                                  novoStatus: status);
-                                      if (statusAtual.isNotEmpty) {
+                                    if (globalProvider.online) {
+                                      verificarPermissoes();
+                                      try {
+                                        String statusAtual =
+                                            await dashboardController
+                                                .alterarStatusAtendePlantao(
+                                                    profissionalId:
+                                                        controllerLogin
+                                                            .profissional!.id!,
+                                                    novoStatus: status);
+                                        if (statusAtual.isNotEmpty) {
+                                          if (context.mounted) {
+                                            GlobalSnackbars.showSnackBar(
+                                                statusAtual,
+                                                backgroundColor: Colors.green);
+                                          }
+                                        }
+                                      } catch (error) {
                                         if (context.mounted) {
                                           GlobalSnackbars.showSnackBar(
-                                              statusAtual,
-                                              backgroundColor: Colors.green);
+                                              'Erro ao alterar status: $error',
+                                              backgroundColor: Colors.red);
                                         }
+                                        globalProvider.setPlantao(false);
                                       }
-                                    } catch (error) {
+                                    } else {
                                       if (context.mounted) {
                                         GlobalSnackbars.showSnackBar(
-                                            'Erro ao alterar status: $error',
-                                            backgroundColor: Colors.red);
+                                            'Você precisa estar online para alterar o status de plantão.',
+                                            backgroundColor: Colors.orange);
                                       }
                                       globalProvider.setPlantao(false);
                                     }
