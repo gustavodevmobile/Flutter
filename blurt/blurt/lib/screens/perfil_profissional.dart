@@ -1,8 +1,10 @@
 import 'package:blurt/core/utils/background.dart';
 import 'package:blurt/core/utils/formatters.dart';
+import 'package:blurt/core/utils/show_solicitacao_dialog.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
 import 'package:blurt/core/widgets/animated_cache_image.dart';
 import 'package:blurt/features/autenticacao/presentation/controllers/login_controller.dart';
+import 'package:blurt/main.dart';
 import 'package:blurt/provider/provider_controller.dart';
 import 'package:blurt/theme/themes.dart';
 import 'package:blurt/widgets/pageview_pre_analise.dart';
@@ -19,6 +21,30 @@ class PerfilProfissionalScreen extends StatefulWidget {
 
 class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
   bool loading = false;
+
+  @override
+  void initState() {
+    globalWebSocketProvider.streamSolicitacao.listen((event) {
+      print('Evento recebido no Perfil profissional: $event');
+      if (mounted) {
+        if (event['estado'] == 'aguardando') {
+          showFeedbackDialog(context, 'aguardando',
+              mensagem: event['mensagem']);
+        } else if (event['aceita']) {
+          Navigator.pop(context);
+          showFeedbackDialog(context, 'aceita',
+              mensagem: event['mensagem'], linkSala: event['linkSala']);
+        } else if (!event['aceita']) {
+          Navigator.pop(context);
+          showFeedbackDialog(context, 'recusada',
+              mensagem:
+                  event['mensagem'] ?? 'Profissional indisponível no momento',
+              recusada: () {});
+        }
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

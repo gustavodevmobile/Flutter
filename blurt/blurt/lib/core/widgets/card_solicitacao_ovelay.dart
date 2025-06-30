@@ -50,13 +50,11 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
     if (closing) return;
     closing = true;
     timer.cancel();
-    widget.onRecusar();
   }
 
   @override
   void dispose() {
     timer.cancel();
-    
     super.dispose();
   }
 
@@ -126,8 +124,6 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             onPressed: () {
-                              // _timer.cancel();
-                              // AlertaSonoro.parar();
                               widget.onAceitar();
                             },
                           ).animate().fade(duration: 300.ms, delay: 300.ms),

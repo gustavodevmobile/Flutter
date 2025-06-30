@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
-import 'package:blurt/core/utils/overlay_card.dart';
-import 'package:blurt/core/utils/overlay_solicitacao.dart';
-import 'package:blurt/core/widgets/card_feedback_overlay.dart';
 
 import 'package:blurt/main.dart';
 import 'package:blurt/models/profissional/profissional.dart';
@@ -19,34 +16,19 @@ class WebSocketProvider extends ChangeNotifier {
   WebSocketChannel? channel;
   List<Profissional> profissionaisOnline = [];
   Map<String, dynamic> novaSolicitacaoAtendimentoAvulso = {};
-  //Map<String, dynamic> respostaSolicitacaoAtendimentoAvulso = {};
-  //String? feedback;
   Timer? _pingTimer;
-  bool novaSolicitacao = false;
 
   final wsUrl = dotenv.env['WS_URL'];
   final StreamController _eventoSolicitacaoController =
       StreamController.broadcast();
   Stream get streamSolicitacao => _eventoSolicitacaoController.stream;
 
-  void setNovaSolicitacao(
-      String tipoAtendimento, Map<String, dynamic> dadosUsuario,
-      {Map<String, dynamic>? preAnalise}) {
-    novaSolicitacao = true;
-    novaSolicitacaoAtendimentoAvulso = {
-      'tipoAtendimento': tipoAtendimento,
-      'dadosUsuario': dadosUsuario,
-      'preAnalise': preAnalise,
-    };
-    notifyListeners();
-  }
-
   void connect() {
     if (wsUrl != null) {
       channel = WebSocketChannel.connect(Uri.parse(wsUrl!));
       channel!.stream.listen((data) async {
         final msg = jsonDecode(data);
-
+        print('Mensagem recebida no Websocket: $msg');
         switch (msg['type']) {
           case 'status_update':
             final profissionais = msg['profissionais'] as List<dynamic>? ?? [];
@@ -71,23 +53,22 @@ class WebSocketProvider extends ChangeNotifier {
                   },
                 );
                 await intent.launch();
-                await Future.delayed(const Duration(milliseconds: 500));
+                await Future.delayed(const Duration(milliseconds: 300));
                 if (msg['preAnalise'] != null) {
-                  // solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                  //     msg['profissionalId'], msg['usuario'],
-                  //     preAnalise: msg['preAnalise']);
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'usuarioId': msg['usuarioId'],
+                    'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
                     'dadosUsuario': msg['usuario'],
                     'preAnalise': msg['preAnalise'],
                   });
                   break;
                 } else {
-                  // solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                  //     msg['profissionalId'], msg['usuario']);
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'usuarioId': msg['usuarioId'],
+                    'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
                     'dadosUsuario': msg['usuario'],
                   });
@@ -95,11 +76,10 @@ class WebSocketProvider extends ChangeNotifier {
                 }
               } else {
                 if (msg['preAnalise'] != null) {
-                  // solicitacaoAtendimento('atendimento_avulso', msg['usuarioId'],
-                  //     msg['profissionalId'], msg['usuario'],
-                  //     preAnalise: msg['preAnalise']);
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'usuarioId': msg['usuarioId'],
+                    'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
                     'dadosUsuario': msg['usuario'],
                     'preAnalise': msg['preAnalise'],
@@ -110,6 +90,8 @@ class WebSocketProvider extends ChangeNotifier {
                   //     msg['profissionalId'], msg['usuario']);
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'usuarioId': msg['usuarioId'],
+                    'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
                     'dadosUsuario': msg['usuario'],
                   });
@@ -119,52 +101,36 @@ class WebSocketProvider extends ChangeNotifier {
             }
           case 'resposta_solicitacao_atendimento_avulso':
             print('Resposta de solicitação de atendimento avulso recebida');
-            if (msg['mensagem'] != null) {
-              closeCentralOverlay();
-              navigatorKey.currentState
-                  ?.popAndPushNamed('/perfil_profissional');
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                showCentralOverlay(
-                  CardFeedbackSolicitacaoWidget(
-                    estado: 'aceita',
-                    mensagem: 'teste',
-                    linkSala: 'http://teste.com', // se aplicável
-                    onTimeout: () {
-                      // Implementar lógica de timeout, se necessário
-                      closeCentralOverlay();
-                    },
-                    onClose: () {
-                      closeCentralOverlay();
-                    },
-                  ),
-                );
+            if (msg['aceita']) {
+              _eventoSolicitacaoController
+                  .add(novaSolicitacaoAtendimentoAvulso = {
+                'tipoAtendimento': 'atendimento_avulso',
+                'usuarioId': msg['usuarioId'],
+                'profissionalId': msg['profissionalId'],
+                'aceita': true,
+                'mensagem': msg['mensagem'],
+              });
+            } else if (!msg['aceita']) {
+              _eventoSolicitacaoController
+                  .add(novaSolicitacaoAtendimentoAvulso = {
+                'tipoAtendimento': 'atendimento_avulso',
+                'usuarioId': msg['usuarioId'],
+                'profissionalId': msg['profissionalId'],
+                'aceita': false,
+                'mensagem': msg['mensagem'],
               });
             }
-
-            // GlobalSnackbars.showSnackBar(msg['mensagem'],
-            //     backgroundColor: Colors.green);
             break;
           case 'feedback_solicitacao_profissional_disponivel':
-            print(
-                'Feedback de solicitação de profissional disponível recebido');
-            // navigatorKey.currentState?.pop();
-            navigatorKey.currentState?.popAndPushNamed('/perfil_profissional');
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              showCentralOverlay(
-                CardFeedbackSolicitacaoWidget(
-                  estado: 'aguardando',
-                  mensagem: 'teste',
-                  linkSala: 'http://teste.com', // se aplicável
-                  onTimeout: () {
-                    // Implementar lógica de timeout, se necessário
-                    closeCentralOverlay();
-                  },
-                  onClose: () {
-                    closeCentralOverlay();
-                  },
-                ),
-              );
-            });
+            if (msg['feedback'] != null) {
+              _eventoSolicitacaoController
+                  .add(novaSolicitacaoAtendimentoAvulso = {
+                'usuarioId': msg['usuarioId'],
+                'profissionalId': msg['profissionalId'],
+                'estado': 'aguardando',
+                'feedback': msg['feedback'],
+              });
+            }
 
             break;
           case 'feedback_solicitacao_profissional_indisponivel':
@@ -188,11 +154,21 @@ class WebSocketProvider extends ChangeNotifier {
                 );
                 await intent.launch();
                 await Future.delayed(const Duration(milliseconds: 500));
-                solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
-                    msg['profissionalId'], msg['usuario']);
+                _eventoSolicitacaoController
+                    .add(novaSolicitacaoAtendimentoAvulso = {
+                  'usuarioId': msg['usuarioId'],
+                  'profissionalId': msg['profissionalId'],
+                  'tipoAtendimento': 'atendimento_imediato',
+                  'dadosUsuario': msg['usuario'],
+                });
               } else {
-                solicitacaoAtendimento('atendimento_imediato', msg['usuarioId'],
-                    msg['profissionalId'], msg['usuario']);
+                _eventoSolicitacaoController
+                    .add(novaSolicitacaoAtendimentoAvulso = {
+                  'usuarioId': msg['usuarioId'],
+                  'profissionalId': msg['profissionalId'],
+                  'tipoAtendimento': 'atendimento_imediato',
+                  'dadosUsuario': msg['usuario'],
+                });
               }
             }
             break;
@@ -274,16 +250,18 @@ class WebSocketProvider extends ChangeNotifier {
     }
   }
 
-  void respostaAtendimentoAvulso(String usuarioId, String profissionalId,
+  void respostaAtendimentoAvulso(
+      String usuarioId, String profissionalId, bool aceita,
       {Map<String, dynamic>? respostasPreAnalise}) {
     try {
       final payload = jsonEncode({
         'type': 'resposta_atendimento_avulso',
+        'aceita': aceita,
         'usuarioId': usuarioId,
         'profissionalId': profissionalId,
         'respostasPreAnalise': respostasPreAnalise ?? {}
       });
-
+      print('Payload de resposta: $payload');
       channel?.sink.add(payload);
       //print('Resposta atendimento avulso: $payload');
     } catch (e) {

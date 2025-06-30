@@ -2,10 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-// enum CardFeedbackSolicitacao { aguardando, aceita, recusada }
-
-
-
 class CardFeedbackSolicitacaoWidget extends StatefulWidget {
   final String estado;
   final String? mensagem;
@@ -13,14 +9,13 @@ class CardFeedbackSolicitacaoWidget extends StatefulWidget {
   final VoidCallback? onTimeout;
   final VoidCallback? onClose;
 
-  const CardFeedbackSolicitacaoWidget({
-    required this.estado,
-    this.mensagem,
-    this.linkSala,
-    this.onTimeout,
-    this.onClose,
-    super.key
-  });
+  const CardFeedbackSolicitacaoWidget(
+      {required this.estado,
+      this.mensagem,
+      this.linkSala,
+      this.onTimeout,
+      this.onClose,
+      super.key});
 
   @override
   State<CardFeedbackSolicitacaoWidget> createState() =>
@@ -82,36 +77,45 @@ class CardFeedbackSolicitacaoWidgetState
 
   @override
   Widget build(BuildContext context) {
-    //final isMobile = MediaQuery.of(context).size.width < 600;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 16,
-              offset: const Offset(0, 8),
+      child: Material(
+        color: Colors.transparent,
+        child: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.85,
+            constraints: const BoxConstraints(
+              maxWidth: 400,
+              minHeight: 180,
+              maxHeight: 400,
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildContent(),
-            const SizedBox(height: 24),
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: widget.onClose,
-              ),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 16,
+                  offset: Offset(0, 8),
+                ),
+              ],
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildContent(),
+                const SizedBox(height: 24),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: widget.onClose,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -123,19 +127,12 @@ class CardFeedbackSolicitacaoWidgetState
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  //widget.mensagem ?? 'Aguarde a confirmação do profissional',
-                  'Sua solicitação foi recebida.\nAguarde a confirmação do profissional',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w600),
-                )
-                    .animate(onPlay: (controller) => controller.repeat())
-                    .shimmer(duration: 1200.ms),
-              ],
-            ),
+            Text(
+              'Sua solicitação foi recebida.\nAguarde a confirmação. ',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            )
+                .animate(onPlay: (controller) => controller.repeat())
+                .shimmer(duration: 1200.ms),
             const SizedBox(height: 24),
             _AnimatedDots(),
             const SizedBox(height: 16),
