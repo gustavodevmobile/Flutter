@@ -28,9 +28,6 @@ class AppLifecycleProvider extends ChangeNotifier with WidgetsBindingObserver {
         print('App foi para background, executando comandos de overlay');
         isInForeground = false;
         notifyListeners();
-        //await FlutterOverlayWindow.closeOverlay();
-        //await Future.delayed(const Duration(milliseconds: 300));
-        //showOverlayFloatBubble();
       } else if (state == AppLifecycleState.resumed) {
         print('App voltou para o foreground, fechando overlay');
         isInForeground = true;

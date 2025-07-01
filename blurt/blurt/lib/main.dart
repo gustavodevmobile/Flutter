@@ -29,7 +29,7 @@ import 'package:blurt/features/cadastro/presentation/pages/cadastro_usuario_scre
 import 'package:blurt/features/dashboards/profissional/data/datasources/dashbord_profissional_datasource_impl.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/controllers/dashboard_profissional_controller.dart';
 import 'package:blurt/features/dashboards/profissional/presentation/pages/dashboard_profissional_screen.dart';
-import 'package:blurt/features/dashboards/profissional/presentation/pages/dashboard_usuario_screen.dart';
+import 'package:blurt/features/dashboards/usuario/presentation/pages/dashboard_usuario_screen.dart';
 import 'package:blurt/features/especialidade_principal/data/especialidade_principal_datasource.dart';
 import 'package:blurt/features/especialidade_principal/presentation/especialidade_principal_controller.dart';
 import 'package:blurt/features/profissionais_online/controllers/profissionais_online_controller.dart';
@@ -78,7 +78,6 @@ void main() async {
   await Firebase.initializeApp();
   appLifecycleProvider = AppLifecycleProvider();
   globalWebSocketProvider = WebSocketProvider();
-
 
 // Permissão
   await FirebaseMessaging.instance.requestPermission();
@@ -129,7 +128,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: appLifecycleProvider),
-        //ChangeNotifierProvider(create: (_) => WebSocketProvider()),
         ChangeNotifierProvider.value(value: globalWebSocketProvider),
         ChangeNotifierProvider(create: (_) => ProviderController()),
         ChangeNotifierProvider(

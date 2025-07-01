@@ -134,10 +134,11 @@ class WebSocketProvider extends ChangeNotifier {
 
             break;
           case 'feedback_solicitacao_profissional_indisponivel':
-            print('Mensagem de chat: ${msg['feedback']}');
-
-            GlobalSnackbars.showSnackBar(msg['feedback'],
-                backgroundColor: Colors.red);
+            _eventoSolicitacaoController.add(
+                novaSolicitacaoAtendimentoAvulso = {
+              'eventType': 'feedback_solicitacao_profissional_indisponivel',
+              'mensagem': msg['mensagem'],
+            });
             break;
           case 'nova_solicitacao_atendimento_imediato':
             print('Nova solicitação de atendimento imediato recebida');
@@ -171,6 +172,24 @@ class WebSocketProvider extends ChangeNotifier {
                 });
               }
             }
+            break;
+          case 'buscando_profissionais':
+            print('Buscando profissionais disponíveis...');
+            _eventoSolicitacaoController
+                .add(novaSolicitacaoAtendimentoAvulso = {
+              'eventType': 'buscando_profissionais',
+              'estado': 'aguardando_profissionais_disponiveis',
+              'mensagem': msg['mensagem'],
+            });
+            break;
+          case 'resposta_solicitacao_atendimento_imediato':
+            print('Profissional encontrado: ${msg['profissionalId']}');
+            _eventoSolicitacaoController
+                .add(novaSolicitacaoAtendimentoAvulso = {
+              'profissionalId': msg['profissionalId'],
+              'dadosProfissional': msg['dadosProfissional'],
+              'mensagem': msg['mensagem'],
+            });
             break;
           default:
             print('Tipo de mensagem desconhecido: $msg');
@@ -289,7 +308,6 @@ class WebSocketProvider extends ChangeNotifier {
     String usuarioId,
     String profissionalId,
     bool aceito,
-    bool recusado,
   ) {
     try {
       final payload = jsonEncode({
@@ -297,7 +315,6 @@ class WebSocketProvider extends ChangeNotifier {
         'usuarioId': usuarioId,
         'profissionalId': profissionalId,
         'aceito': aceito,
-        'recusado': recusado,
       });
       channel?.sink.add(payload);
       //print('Resposta atendimento imediato: $payload');

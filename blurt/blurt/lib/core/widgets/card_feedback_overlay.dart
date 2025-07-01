@@ -128,7 +128,7 @@ class CardFeedbackSolicitacaoWidgetState
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Sua solicitação foi recebida.\nAguarde a confirmação. ',
+              widget.mensagem ?? 'Aguardando atendimento...',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             )
                 .animate(onPlay: (controller) => controller.repeat())
@@ -143,6 +143,28 @@ class CardFeedbackSolicitacaoWidgetState
                 .animate()
                 .fadeIn(duration: 500.ms)
                 .slideY(begin: 0.2, end: 0, duration: 500.ms),
+          ],
+        );
+        case 'aguardando_atendimento_imediato':
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.mensagem ?? 'Buscando profissional...',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            )
+                .animate(onPlay: (controller) => controller.repeat())
+                .shimmer(duration: 1200.ms),
+            const SizedBox(height: 24),
+            _AnimatedDots(),
+            const SizedBox(height: 16),
+            // Text(
+            //   'Tempo restante: ${_formatSeconds(_secondsLeft)}',
+            //   style: const TextStyle(fontSize: 16, color: Colors.grey),
+            // )
+            //     .animate()
+            //     .fadeIn(duration: 500.ms)
+            //     .slideY(begin: 0.2, end: 0, duration: 500.ms),
           ],
         );
       case 'aceita':

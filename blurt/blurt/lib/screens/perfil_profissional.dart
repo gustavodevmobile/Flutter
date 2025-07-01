@@ -21,6 +21,14 @@ class PerfilProfissionalScreen extends StatefulWidget {
 
 class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
   bool loading = false;
+  bool isShowingDialog = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    isShowingDialog =
+        Provider.of<ProviderController>(context, listen: false).isShowDialog;
+  }
 
   @override
   void initState() {
@@ -31,11 +39,15 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
           showFeedbackDialog(context, 'aguardando',
               mensagem: event['mensagem']);
         } else if (event['aceita']) {
-          Navigator.pop(context);
+          if (context.mounted && isShowingDialog) {
+            Navigator.pop(context);
+          }
           showFeedbackDialog(context, 'aceita',
               mensagem: event['mensagem'], linkSala: event['linkSala']);
         } else if (!event['aceita']) {
-          Navigator.pop(context);
+          if (context.mounted && isShowingDialog) {
+            Navigator.pop(context);
+          }
           showFeedbackDialog(context, 'recusada',
               mensagem:
                   event['mensagem'] ?? 'Profissional indisponível no momento',

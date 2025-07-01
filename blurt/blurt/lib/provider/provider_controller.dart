@@ -11,6 +11,7 @@ class ProviderController with ChangeNotifier {
   bool plantao = false;
   bool isForeground = true;
   bool feedback = false;
+  bool isShowDialog = false;
 
   void setProfissional(Profissional prof) {
     profissional = prof;
@@ -53,6 +54,11 @@ class ProviderController with ChangeNotifier {
 
   void setFeedback(bool value) {
     feedback = value;
+    notifyListeners();
+  }
+
+  void setIsShowDialog(bool value) {
+    isShowDialog = value;
     notifyListeners();
   }
 }

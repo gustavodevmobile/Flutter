@@ -3,9 +3,14 @@ import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/widgets/card_feedback_overlay.dart';
 import 'package:blurt/core/widgets/card_solicitacao_ovelay.dart';
 import 'package:blurt/main.dart';
+import 'package:blurt/provider/provider_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
+  final isShowingDialog =
+      Provider.of<ProviderController>(context, listen: false);
+  isShowingDialog.setIsShowDialog(true);
   try {
     AlertaSonoro.tocar(
       onTimeout: () {
@@ -13,63 +18,69 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
           // implementar lógica de recusa para atendimento avulso
         } else if (event['tipoAtendimento'] == 'atendimento_imediato') {
           globalWebSocketProvider.respostaAtendimentoImediato(
-              event['usuarioId'], event['profissionalId'], false, true);
+              event['usuarioId'], event['profissionalId'], false);
         }
         //Navigator.of(dialogContext).pop();
       },
     );
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => CardSolicitacaoOverlay(
-        dadosUsuario: event['dadosUsuario'],
-        preAnalise: event['preAnalise'],
-        onAceitar: () async {
-          AlertaSonoro.parar();
-          if (event['tipoAtendimento'] == 'atendimento_avulso') {
-            if (event['preAnalise'] != null) {
-              globalWebSocketProvider.respostaAtendimentoAvulso(
-                  event['usuarioId'], event['profissionalId'], true,
-                  respostasPreAnalise: event['preAnalise']);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pop(dialogContext);
-              });
-            } else {
-              globalWebSocketProvider.respostaAtendimentoAvulso(
-                  event['usuarioId'], event['profissionalId'], true);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pop(dialogContext);
-              });
-            }
-          } else if (event['tipoAtendimento'] == 'atendimento_imediato') {
-            // implementar lógica de aceitação para atendimento imediato
-          }
-        },
-        onRecusar: () async {
-          AlertaSonoro.parar();
-          if (event['tipoAtendimento'] == 'atendimento_avulso') {
-            globalWebSocketProvider.respostaAtendimentoAvulso(
-                event['usuarioId'], event['profissionalId'], false);
 
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pop(dialogContext);
-            });
-          } else if (event['tipoAtendimento'] == 'atendimento_imediato') {
-            globalWebSocketProvider.respostaAtendimentoImediato(
-                event['usuarioId'], event['profissionalId'], false, true);
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pop(dialogContext);
-            });
-          }
-        },
-      ),
-    );
+    late BuildContext dialogContext;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) {
+          dialogContext = ctx;
+          return CardSolicitacaoOverlay(
+            dadosUsuario: event['dadosUsuario'],
+            preAnalise: event['preAnalise'],
+            onAceitar: () async {
+              AlertaSonoro.parar();
+              if (event['tipoAtendimento'] == 'atendimento_avulso') {
+                if (event['preAnalise'] != null) {
+                  globalWebSocketProvider.respostaAtendimentoAvulso(
+                      event['usuarioId'], event['profissionalId'], true,
+                      respostasPreAnalise: event['preAnalise']);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pop(dialogContext);
+                  });
+                } else {
+                  globalWebSocketProvider.respostaAtendimentoAvulso(
+                      event['usuarioId'], event['profissionalId'], true);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pop(dialogContext);
+                  });
+                }
+              } else if (event['tipoAtendimento'] == 'atendimento_imediato') {
+                // implementar lógica de aceitação para atendimento imediato
+              }
+            },
+            onRecusar: () async {
+              AlertaSonoro.parar();
+              if (event['tipoAtendimento'] == 'atendimento_avulso') {
+                globalWebSocketProvider.respostaAtendimentoAvulso(
+                    event['usuarioId'], event['profissionalId'], false);
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pop(dialogContext);
+                });
+              } else if (event['tipoAtendimento'] == 'atendimento_imediato') {
+                globalWebSocketProvider.respostaAtendimentoImediato(
+                    event['usuarioId'], event['profissionalId'], false);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pop(dialogContext);
+                });
+              }
+            },
+          );
+        }).then((_) {
+      isShowingDialog.setIsShowDialog(false);
+    });
     // FECHA AUTOMATICAMENTE APÓS 1 MINUTO
     Future.delayed(const Duration(minutes: 1), () {
-      if (context.mounted) {
-        if (Navigator.of(context).canPop()) {
+      if (dialogContext.mounted) {
+        if (Navigator.of(dialogContext).canPop()) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pop(context);
+            Navigator.pop(dialogContext);
           });
         }
       }
@@ -85,30 +96,33 @@ void showFeedbackDialog(BuildContext context, String estado,
     String? linkSala,
     VoidCallback? recusada,
     VoidCallback? onClose}) {
+  final isShowingDialog =
+      Provider.of<ProviderController>(context, listen: false);
+  isShowingDialog.setIsShowDialog(true);
   try {
-    print(
-        'showFeedbackDialog: $estado, mensagem: $mensagem, linkSala: $linkSala');
     showDialog(
       barrierDismissible: true,
       context: context,
-      builder: (_) => CardFeedbackSolicitacaoWidget(
+      builder: (dialogContext) => CardFeedbackSolicitacaoWidget(
           estado: estado,
           mensagem: mensagem,
           linkSala: linkSala,
           onTimeout: () {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
             });
           },
           onClose: () {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
             });
             if (recusada != null) {
               recusada();
             }
           }),
-    );
+    ).then((_) {
+      isShowingDialog.setIsShowDialog(false);
+    });
   } catch (e) {
     GlobalSnackbars.showSnackBar(e.toString());
     print('Erro ao exibir feedback: $e');

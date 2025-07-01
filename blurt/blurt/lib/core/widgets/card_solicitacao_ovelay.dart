@@ -54,7 +54,10 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
 
   @override
   void dispose() {
-    timer.cancel();
+    if (!closing) {
+      closing = true;
+      timer.cancel();
+    }
     super.dispose();
   }
 
@@ -86,14 +89,21 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                     Row(
                       children: [
                         const Icon(Icons.notifications_active_rounded,
-                            color: Colors.deepPurple, size: 32),
+                            color: Colors.deepPurple, size: 24),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Nova Solicitação de Atendimento',
+                            'Solicitação de Atendimento',
                             style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                                fontWeight: FontWeight.bold, fontSize: 18),
                           ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 28),
+                          onPressed: () {
+                            widget.onRecusar();
+                            closeOverlay();
+                          },
                         ),
                       ],
                     )
@@ -115,7 +125,6 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
-                            icon: const Icon(Icons.check),
                             label: const Text('Aceitar'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
@@ -127,22 +136,6 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                               widget.onAceitar();
                             },
                           ).animate().fade(duration: 300.ms, delay: 300.ms),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.close),
-                            label: const Text('Recusar'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            onPressed: () {
-                              widget.onRecusar();
-                            },
-                          ).animate().fade(duration: 300.ms, delay: 350.ms),
                         ),
                       ],
                     ),
