@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/show_solicitacao_dialog.dart';
 import 'package:blurt/core/websocket/websocket_provider.dart';
@@ -24,6 +26,8 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     {'data': '10/05/2025', 'profissional': 'Dr. João', 'tipo': 'Psicanalista'},
   ];
   Map<String, dynamic>? ultimaSessao;
+  late StreamSubscription solicitacaoSubscription;
+
 
   @override
   void initState() {
@@ -32,21 +36,30 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showSentimentoDialog();
     });
-    globalWebSocketProvider.streamSolicitacao.listen((event) {
-      if (event['eventType'] == 'buscando_profissionais') {
-        if (event['estado'] == 'aguardando_profissionais_disponiveis') {
+   solicitacaoSubscription = globalWebSocketProvider.streamSolicitacao.listen((event) {
+      switch (event['eventType']) {
+        case 'buscando_profissionais':
           if (mounted) {
-            showFeedbackDialog(context, 'aguardando_atendimento_imediato',
+            showFeedbackDialogAguardando(context, solicitacaoSubscription, 'aguardando_atendimento_imediato',
                 mensagem: event['mensagem']);
           }
-        }
-      } else if (event['eventType'] ==
-          'feedback_solicitacao_profissional_indisponivel') {
-        if (mounted) {
-          showFeedbackDialog(context, 'recusada',
-              mensagem: event['mensagem']);
-        }
-      } 
+          break;
+        case 'feedback_solicitacao_profissional_indisponivel':
+          if (mounted) {
+            showFeedbackDialogAceita(context, 'recusada',
+                mensagem: event['mensagem']);
+          }
+          break;
+        case 'resposta_solicitacao_atendimento_imediato':
+        final dadosProfissional = event['dadosProfissional'];
+        final profissionaId = event['profissionalId'];
+        final mensagem = event['mensagem'];
+          if (mounted) {
+            showFeedbackDialogAceita(context, 'recusada',
+                mensagem: event['mensagem']);
+          }
+          break;
+      }
     });
   }
 

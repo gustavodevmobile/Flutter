@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
-import 'package:blurt/core/utils/global_snackbars.dart';
 
 import 'package:blurt/main.dart';
 import 'package:blurt/models/profissional/profissional.dart';
@@ -39,6 +38,42 @@ class WebSocketProvider extends ChangeNotifier {
                 .toList();
             notifyListeners();
             break;
+          // Dashboard Profissional
+          case 'nova_solicitacao_atendimento_imediato':
+            print('Nova solicitação de atendimento imediato recebida');
+            if (await FlutterOverlayWindow.isPermissionGranted()) {
+              if (!appLifecycleProvider.isInForeground) {
+                const intent = AndroidIntent(
+                  action: 'android.intent.action.MAIN',
+                  package: 'com.example.blurt',
+                  componentName: 'com.example.blurt.MainActivity',
+                  flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+                  arguments: <String, dynamic>{
+                    'abrir_dashboard': true,
+                  },
+                );
+                await intent.launch();
+                await Future.delayed(const Duration(milliseconds: 500));
+                _eventoSolicitacaoController
+                    .add(novaSolicitacaoAtendimentoAvulso = {
+                  'eventType': 'nova_solicitacao_atendimento_imediato',
+                  'valorConsulta': msg['valorConsulta'],
+                  'usuarioId': msg['usuarioId'],
+                  'profissionalId': msg['profissionalId'],
+                  'tipoAtendimento': 'atendimento_imediato',
+                  'dadosUsuario': msg['usuario'],
+                });
+              } else {
+                _eventoSolicitacaoController
+                    .add(novaSolicitacaoAtendimentoAvulso = {
+                  'usuarioId': msg['usuarioId'],
+                  'profissionalId': msg['profissionalId'],
+                  'tipoAtendimento': 'atendimento_imediato',
+                  'dadosUsuario': msg['usuario'],
+                });
+              }
+            }
+            break;
           case 'nova_solicitacao_atendimento_avulso':
             print('Nova solicitação de atendimento avulso recebida');
             if (await FlutterOverlayWindow.isPermissionGranted()) {
@@ -57,6 +92,8 @@ class WebSocketProvider extends ChangeNotifier {
                 if (msg['preAnalise'] != null) {
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'eventType': 'nova_solicitacao_atendimento_avulso',
+                    'valorConsulta': msg['valorConsulta'],
                     'usuarioId': msg['usuarioId'],
                     'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
@@ -67,6 +104,7 @@ class WebSocketProvider extends ChangeNotifier {
                 } else {
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'eventType': 'nova_solicitacao_atendimento_avulso',
                     'usuarioId': msg['usuarioId'],
                     'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
@@ -78,6 +116,7 @@ class WebSocketProvider extends ChangeNotifier {
                 if (msg['preAnalise'] != null) {
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'eventType': 'nova_solicitacao_atendimento_avulso',
                     'usuarioId': msg['usuarioId'],
                     'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
@@ -90,6 +129,7 @@ class WebSocketProvider extends ChangeNotifier {
                   //     msg['profissionalId'], msg['usuario']);
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
+                    'eventType': 'nova_solicitacao_atendimento_avulso',
                     'usuarioId': msg['usuarioId'],
                     'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
@@ -99,80 +139,8 @@ class WebSocketProvider extends ChangeNotifier {
                 }
               }
             }
-          case 'resposta_solicitacao_atendimento_avulso':
-            print('Resposta de solicitação de atendimento avulso recebida');
-            if (msg['aceita']) {
-              _eventoSolicitacaoController
-                  .add(novaSolicitacaoAtendimentoAvulso = {
-                'tipoAtendimento': 'atendimento_avulso',
-                'usuarioId': msg['usuarioId'],
-                'profissionalId': msg['profissionalId'],
-                'aceita': true,
-                'mensagem': msg['mensagem'],
-              });
-            } else if (!msg['aceita']) {
-              _eventoSolicitacaoController
-                  .add(novaSolicitacaoAtendimentoAvulso = {
-                'tipoAtendimento': 'atendimento_avulso',
-                'usuarioId': msg['usuarioId'],
-                'profissionalId': msg['profissionalId'],
-                'aceita': false,
-                'mensagem': msg['mensagem'],
-              });
-            }
-            break;
-          case 'feedback_solicitacao_profissional_disponivel':
-            if (msg['feedback'] != null) {
-              _eventoSolicitacaoController
-                  .add(novaSolicitacaoAtendimentoAvulso = {
-                'usuarioId': msg['usuarioId'],
-                'profissionalId': msg['profissionalId'],
-                'estado': 'aguardando',
-                'feedback': msg['feedback'],
-              });
-            }
 
-            break;
-          case 'feedback_solicitacao_profissional_indisponivel':
-            _eventoSolicitacaoController.add(
-                novaSolicitacaoAtendimentoAvulso = {
-              'eventType': 'feedback_solicitacao_profissional_indisponivel',
-              'mensagem': msg['mensagem'],
-            });
-            break;
-          case 'nova_solicitacao_atendimento_imediato':
-            print('Nova solicitação de atendimento imediato recebida');
-            if (await FlutterOverlayWindow.isPermissionGranted()) {
-              if (!appLifecycleProvider.isInForeground) {
-                const intent = AndroidIntent(
-                  action: 'android.intent.action.MAIN',
-                  package: 'com.example.blurt',
-                  componentName: 'com.example.blurt.MainActivity',
-                  flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
-                  arguments: <String, dynamic>{
-                    'abrir_dashboard': true,
-                  },
-                );
-                await intent.launch();
-                await Future.delayed(const Duration(milliseconds: 500));
-                _eventoSolicitacaoController
-                    .add(novaSolicitacaoAtendimentoAvulso = {
-                  'usuarioId': msg['usuarioId'],
-                  'profissionalId': msg['profissionalId'],
-                  'tipoAtendimento': 'atendimento_imediato',
-                  'dadosUsuario': msg['usuario'],
-                });
-              } else {
-                _eventoSolicitacaoController
-                    .add(novaSolicitacaoAtendimentoAvulso = {
-                  'usuarioId': msg['usuarioId'],
-                  'profissionalId': msg['profissionalId'],
-                  'tipoAtendimento': 'atendimento_imediato',
-                  'dadosUsuario': msg['usuario'],
-                });
-              }
-            }
-            break;
+          // Dashboard Usuário
           case 'buscando_profissionais':
             print('Buscando profissionais disponíveis...');
             _eventoSolicitacaoController
@@ -186,11 +154,61 @@ class WebSocketProvider extends ChangeNotifier {
             print('Profissional encontrado: ${msg['profissionalId']}');
             _eventoSolicitacaoController
                 .add(novaSolicitacaoAtendimentoAvulso = {
+              'eventType': 'resposta_solicitacao_atendimento_imediato',
               'profissionalId': msg['profissionalId'],
               'dadosProfissional': msg['dadosProfissional'],
               'mensagem': msg['mensagem'],
             });
             break;
+
+          //Perfil Profissional
+          case 'resposta_solicitacao_atendimento_avulso':
+            print('Resposta de solicitação de atendimento avulso recebida');
+            if (msg['aceita']) {
+              _eventoSolicitacaoController
+                  .add(novaSolicitacaoAtendimentoAvulso = {
+                'eventType': 'resposta_solicitacao_atendimento_avulso',
+                'tipoAtendimento': 'atendimento_avulso',
+                'usuarioId': msg['usuarioId'],
+                'profissionalId': msg['profissionalId'],
+                'aceita': true,
+                'mensagem': msg['mensagem'],
+              });
+            } else if (!msg['aceita']) {
+              _eventoSolicitacaoController
+                  .add(novaSolicitacaoAtendimentoAvulso = {
+                'eventType': 'resposta_solicitacao_atendimento_avulso',
+                'tipoAtendimento': 'atendimento_avulso',
+                'usuarioId': msg['usuarioId'],
+                'profissionalId': msg['profissionalId'],
+                'aceita': false,
+                'mensagem': msg['mensagem'],
+              });
+            }
+            break;
+          case 'feedback_solicitacao_profissional_disponivel':
+            if (msg['feedback'] != null) {
+              _eventoSolicitacaoController
+                  .add(novaSolicitacaoAtendimentoAvulso = {
+                'eventType': 'feedback_solicitacao_profissional_disponivel',
+                'usuarioId': msg['usuarioId'],
+                'profissionalId': msg['profissionalId'],
+                'estado': 'aguardando',
+                'feedback': msg['feedback'],
+              });
+            }
+
+            break;
+
+          // Dashboard Usuário e Perfil Profissional
+          case 'feedback_solicitacao_profissional_indisponivel':
+            _eventoSolicitacaoController
+                .add(novaSolicitacaoAtendimentoAvulso = {
+              'eventType': 'feedback_solicitacao_profissional_indisponivel',
+              'mensagem': msg['mensagem'],
+            });
+            break;
+
           default:
             print('Tipo de mensagem desconhecido: $msg');
         }

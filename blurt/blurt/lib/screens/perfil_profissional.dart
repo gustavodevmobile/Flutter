@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:blurt/core/utils/background.dart';
 import 'package:blurt/core/utils/formatters.dart';
 import 'package:blurt/core/utils/show_solicitacao_dialog.dart';
@@ -21,41 +23,83 @@ class PerfilProfissionalScreen extends StatefulWidget {
 
 class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
   bool loading = false;
-  bool isShowingDialog = false;
+
+  late StreamSubscription solicitacaoSubscription;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    isShowingDialog =
-        Provider.of<ProviderController>(context, listen: false).isShowDialog;
   }
 
   @override
   void initState() {
-    globalWebSocketProvider.streamSolicitacao.listen((event) {
-      print('Evento recebido no Perfil profissional: $event');
+    bool isDialogOpen = false;
+
+    Future.microtask(() {
       if (mounted) {
-        if (event['estado'] == 'aguardando') {
-          showFeedbackDialog(context, 'aguardando',
-              mensagem: event['mensagem']);
-        } else if (event['aceita']) {
-          if (context.mounted && isShowingDialog) {
-            Navigator.pop(context);
-          }
-          showFeedbackDialog(context, 'aceita',
-              mensagem: event['mensagem'], linkSala: event['linkSala']);
-        } else if (!event['aceita']) {
-          if (context.mounted && isShowingDialog) {
-            Navigator.pop(context);
-          }
-          showFeedbackDialog(context, 'recusada',
-              mensagem:
-                  event['mensagem'] ?? 'Profissional indisponível no momento',
-              recusada: () {});
-        }
+        isDialogOpen = Provider.of<ProviderController>(context, listen: false)
+            .isShowDialog;
       }
+      solicitacaoSubscription =
+          globalWebSocketProvider.streamSolicitacao.listen((event) async {
+        //print('Evento recebido no Perfil profissional: $event');
+        switch (event['eventType']) {
+          case 'resposta_solicitacao_atendimento_avulso':
+            if (event['aceita']) {
+              print('Solicitação aceita');
+              if (mounted && isDialogOpen) {
+                Navigator.pop(context);
+              }
+              if (mounted) {
+                showFeedbackDialogAceita(context, 'aceita',
+                    mensagem: event['mensagem'], linkSala: event['linkSala']);
+              }
+            } else if (!event['aceita']) {
+              print('Solicitação recusada');
+              print(
+                  'recusada, ${Provider.of<ProviderController>(context, listen: false).isShowDialog}');
+              print(mounted);
+              if (isDialogOpen) {
+                closeDialogoAguardando();
+              }
+              //await Future.delayed(const Duration(seconds: 1));
+              // if (mounted) {
+              //   showFeedbackDialogAceita(context, 'recusada',
+              //       mensagem: event['mensagem'] ??
+              //           'Profissional indisponível no momento',
+              //       recusada: () {});
+              // }
+            }
+            break;
+          case 'feedback_solicitacao_profissional_disponivel':
+            if (mounted) {
+              showFeedbackDialogAguardando(
+                  context, solicitacaoSubscription, 'aguardando',
+                  mensagem: event['mensagem']);
+            }
+            break;
+          case 'feedback_solicitacao_profissional_indisponivel':
+            if (mounted) {
+              showFeedbackDialogAceita(context, 'recusada',
+                  mensagem: event['mensagem'] ??
+                      'Profissional indisponível no momento',
+                  recusada: () {});
+            }
+            break;
+          default:
+            print('Evento desconhecido recebido: ${event['eventType']}');
+            break;
+        }
+      });
     });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    solicitacaoSubscription.cancel();
+    super.dispose();
   }
 
   @override

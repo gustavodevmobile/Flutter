@@ -5,14 +5,18 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
 
 class CardSolicitacaoOverlay extends StatefulWidget {
+  final String tipoSolicitacao;
+  final double valorConsulta;
   final Map<String, dynamic> dadosUsuario;
   final RespostasPreAnalise? preAnalise;
   final VoidCallback onAceitar;
   final VoidCallback onRecusar;
 
   const CardSolicitacaoOverlay({
+    required this.tipoSolicitacao,
+    required this.valorConsulta,
     required this.dadosUsuario,
-    this.preAnalise,
+    this.preAnalise, 
     required this.onAceitar,
     required this.onRecusar,
     super.key,
@@ -115,10 +119,12 @@ class _CardSolicitacaoOverlayState extends State<CardSolicitacaoOverlay>
                         .animate()
                         .fade(duration: 400.ms, delay: 100.ms),
                     const SizedBox(height: 10),
-                    _buildPreAnalise(theme)
-                        .animate()
-                        .fade(duration: 400.ms, delay: 200.ms),
-                    const SizedBox(height: 24), // Substitui Spacer()
+                    widget.tipoSolicitacao == 'atendimento_avulso'
+                        ? _buildPreAnalise(theme)
+                            .animate()
+                            .fade(duration: 400.ms, delay: 200.ms)
+                        // Substitui Spacer()
+                        : const SizedBox.shrink(),
                     _buildTimerBar(theme),
                     const SizedBox(height: 18),
                     Row(

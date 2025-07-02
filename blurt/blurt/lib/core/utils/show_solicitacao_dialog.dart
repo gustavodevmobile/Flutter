@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:blurt/core/utils/alerta_sonoro.dart';
 import 'package:blurt/core/utils/global_snackbars.dart';
 import 'package:blurt/core/widgets/card_feedback_overlay.dart';
@@ -15,7 +17,8 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
     AlertaSonoro.tocar(
       onTimeout: () {
         if (event['tipoAtendimento'] == 'atendimento_avulso') {
-          // implementar lógica de recusa para atendimento avulso
+          globalWebSocketProvider.respostaAtendimentoAvulso(
+              event['usuarioId'], event['profissionalId'], false);
         } else if (event['tipoAtendimento'] == 'atendimento_imediato') {
           globalWebSocketProvider.respostaAtendimentoImediato(
               event['usuarioId'], event['profissionalId'], false);
@@ -31,6 +34,8 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
         builder: (ctx) {
           dialogContext = ctx;
           return CardSolicitacaoOverlay(
+            tipoSolicitacao: event['tipoAtendimento'],
+            valorConsulta: event['valorConsulta'] ?? 0.0,
             dadosUsuario: event['dadosUsuario'],
             preAnalise: event['preAnalise'],
             onAceitar: () async {
@@ -59,7 +64,6 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
               if (event['tipoAtendimento'] == 'atendimento_avulso') {
                 globalWebSocketProvider.respostaAtendimentoAvulso(
                     event['usuarioId'], event['profissionalId'], false);
-
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Navigator.pop(dialogContext);
                 });
@@ -73,6 +77,7 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
             },
           );
         }).then((_) {
+      print('Dialog closed');
       isShowingDialog.setIsShowDialog(false);
     });
     // FECHA AUTOMATICAMENTE APÓS 1 MINUTO
@@ -91,7 +96,9 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
   }
 }
 
-void showFeedbackDialog(BuildContext context, String estado,
+late BuildContext dialogContextAguardando;
+void showFeedbackDialogAguardando(BuildContext context,
+    StreamSubscription solicitacaoSubscription, String estado,
     {String? mensagem,
     String? linkSala,
     VoidCallback? recusada,
@@ -99,6 +106,50 @@ void showFeedbackDialog(BuildContext context, String estado,
   final isShowingDialog =
       Provider.of<ProviderController>(context, listen: false);
   isShowingDialog.setIsShowDialog(true);
+  print('isShowingDialog: ${isShowingDialog.isShowDialog}');
+  try {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (ctx) {
+          print('Dialog context: $ctx');
+          dialogContextAguardando = ctx;
+          return CardFeedbackSolicitacaoWidget(
+              estado: estado,
+              mensagem: mensagem,
+              linkSala: linkSala,
+              onTimeout: () {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pop(dialogContextAguardando);
+                });
+              },
+              onClose: () {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pop(dialogContextAguardando);
+                });
+                if (recusada != null) {
+                  recusada();
+                }
+              });
+        }).then((_) {
+      isShowingDialog.setIsShowDialog(false);
+      //solicitacaoSubscription.cancel();
+      print('Dialog closed');
+    });
+  } catch (e) {
+    GlobalSnackbars.showSnackBar(e.toString());
+    print('Erro ao exibir feedback: $e');
+  }
+}
+
+void showFeedbackDialogAceita(BuildContext context, String estado,
+    {String? mensagem,
+    String? linkSala,
+    VoidCallback? recusada,
+    VoidCallback? onClose}) {
+  // final isShowingDialog =
+  //     Provider.of<ProviderController>(context, listen: false);
+  // isShowingDialog.setIsShowDialog(true);
   try {
     showDialog(
       barrierDismissible: true,
@@ -120,11 +171,14 @@ void showFeedbackDialog(BuildContext context, String estado,
               recusada();
             }
           }),
-    ).then((_) {
-      isShowingDialog.setIsShowDialog(false);
-    });
+    );
   } catch (e) {
     GlobalSnackbars.showSnackBar(e.toString());
     print('Erro ao exibir feedback: $e');
   }
+}
+
+void closeDialogoAguardando() {
+  print('Closing dialog: $dialogContextAguardando');
+   Navigator.pop(dialogContextAguardando);
 }
