@@ -28,6 +28,18 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
     );
 
     late BuildContext dialogContext;
+
+    double valorConsulta = 0.0;
+    if (event['valorConsulta'] != null) {
+      if (event['valorConsulta'] is int) {
+        valorConsulta = (event['valorConsulta'] as int).toDouble();
+      } else if (event['valorConsulta'] is double) {
+        valorConsulta = event['valorConsulta'];
+      } else if (event['valorConsulta'] is String) {
+        valorConsulta = double.tryParse(event['valorConsulta']) ?? 0.0;
+      }
+    }
+
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -35,7 +47,9 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
           dialogContext = ctx;
           return CardSolicitacaoOverlay(
             tipoSolicitacao: event['tipoAtendimento'],
-            valorConsulta: event['valorConsulta'] ?? 0.0,
+            valorConsulta: event['valorConsulta'] != null
+                ? (event['valorConsulta'] as int).toDouble()
+                : 0.0,
             dadosUsuario: event['dadosUsuario'],
             preAnalise: event['preAnalise'],
             onAceitar: () async {
@@ -97,8 +111,7 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
 }
 
 late BuildContext dialogContextAguardando;
-void showFeedbackDialogAguardando(BuildContext context,
-    StreamSubscription solicitacaoSubscription, String estado,
+void showFeedbackDialogAguardando(BuildContext context, String estado,
     {String? mensagem,
     String? linkSala,
     VoidCallback? recusada,
@@ -133,7 +146,7 @@ void showFeedbackDialogAguardando(BuildContext context,
               });
         }).then((_) {
       isShowingDialog.setIsShowDialog(false);
-      //solicitacaoSubscription.cancel();
+
       print('Dialog closed');
     });
   } catch (e) {
@@ -170,6 +183,7 @@ void showFeedbackDialogAceita(BuildContext context, String estado,
             if (recusada != null) {
               recusada();
             }
+            //solicitacaoSubscription.cancel();
           }),
     );
   } catch (e) {
@@ -180,5 +194,5 @@ void showFeedbackDialogAceita(BuildContext context, String estado,
 
 void closeDialogoAguardando() {
   print('Closing dialog: $dialogContextAguardando');
-   Navigator.pop(dialogContextAguardando);
+  Navigator.pop(dialogContextAguardando);
 }

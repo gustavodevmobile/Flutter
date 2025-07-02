@@ -66,6 +66,8 @@ class WebSocketProvider extends ChangeNotifier {
               } else {
                 _eventoSolicitacaoController
                     .add(novaSolicitacaoAtendimentoAvulso = {
+                  'eventType': 'nova_solicitacao_atendimento_imediato',
+                  'valorConsulta': msg['valorConsulta'],
                   'usuarioId': msg['usuarioId'],
                   'profissionalId': msg['profissionalId'],
                   'tipoAtendimento': 'atendimento_imediato',
@@ -105,6 +107,7 @@ class WebSocketProvider extends ChangeNotifier {
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
                     'eventType': 'nova_solicitacao_atendimento_avulso',
+                    'valorConsulta': msg['valorConsulta'],
                     'usuarioId': msg['usuarioId'],
                     'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
@@ -117,6 +120,7 @@ class WebSocketProvider extends ChangeNotifier {
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
                     'eventType': 'nova_solicitacao_atendimento_avulso',
+                    'valorConsulta': msg['valorConsulta'],
                     'usuarioId': msg['usuarioId'],
                     'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
@@ -130,6 +134,7 @@ class WebSocketProvider extends ChangeNotifier {
                   _eventoSolicitacaoController
                       .add(novaSolicitacaoAtendimentoAvulso = {
                     'eventType': 'nova_solicitacao_atendimento_avulso',
+                    'valorConsulta': msg['valorConsulta'],
                     'usuarioId': msg['usuarioId'],
                     'profissionalId': msg['profissionalId'],
                     'tipoAtendimento': 'atendimento_avulso',
@@ -205,7 +210,7 @@ class WebSocketProvider extends ChangeNotifier {
             _eventoSolicitacaoController
                 .add(novaSolicitacaoAtendimentoAvulso = {
               'eventType': 'feedback_solicitacao_profissional_indisponivel',
-              'mensagem': msg['mensagem'],
+              'mensagem': msg['feedback'],
             });
             break;
 
@@ -279,7 +284,7 @@ class WebSocketProvider extends ChangeNotifier {
         'dadosUsuario': dadosUsuario,
         'preAnalise': preAnalise
       });
-      print('Payload de solicitação: $payload');
+      //print('Payload de solicitação: $payload');
       channel?.sink.add(payload);
       print('Requisitando serviços: $payload');
     } catch (e) {

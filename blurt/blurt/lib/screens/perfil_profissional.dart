@@ -33,48 +33,44 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
 
   @override
   void initState() {
-    bool isDialogOpen = false;
-
     Future.microtask(() {
-      if (mounted) {
-        isDialogOpen = Provider.of<ProviderController>(context, listen: false)
-            .isShowDialog;
-      }
       solicitacaoSubscription =
-          globalWebSocketProvider.streamSolicitacao.listen((event) async {
+          globalWebSocketProvider.streamSolicitacao.listen((event) {
         //print('Evento recebido no Perfil profissional: $event');
         switch (event['eventType']) {
           case 'resposta_solicitacao_atendimento_avulso':
             if (event['aceita']) {
               print('Solicitação aceita');
-              if (mounted && isDialogOpen) {
-                Navigator.pop(context);
+              if (mounted) {
+                if (Provider.of<ProviderController>(context, listen: false)
+                    .isShowDialog) {
+                  closeDialogoAguardando();
+                }
               }
               if (mounted) {
                 showFeedbackDialogAceita(context, 'aceita',
                     mensagem: event['mensagem'], linkSala: event['linkSala']);
               }
             } else if (!event['aceita']) {
-              print('Solicitação recusada');
-              print(
-                  'recusada, ${Provider.of<ProviderController>(context, listen: false).isShowDialog}');
-              print(mounted);
-              if (isDialogOpen) {
-                closeDialogoAguardando();
+              if (mounted) {
+                if (Provider.of<ProviderController>(context, listen: false)
+                    .isShowDialog) {
+                  closeDialogoAguardando();
+                }
               }
-              //await Future.delayed(const Duration(seconds: 1));
-              // if (mounted) {
-              //   showFeedbackDialogAceita(context, 'recusada',
-              //       mensagem: event['mensagem'] ??
-              //           'Profissional indisponível no momento',
-              //       recusada: () {});
-              // }
+              //await Future.delayed(const Duration());
+              if (mounted) {
+                showFeedbackDialogAceita(context, 'recusada',
+                    mensagem: event['mensagem'] ??
+                        'Profissional indisponível no momento',
+                    recusada: () {});
+              }
             }
             break;
           case 'feedback_solicitacao_profissional_disponivel':
             if (mounted) {
               showFeedbackDialogAguardando(
-                  context, solicitacaoSubscription, 'aguardando',
+                  context, 'aguardando',
                   mensagem: event['mensagem']);
             }
             break;
@@ -96,11 +92,11 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    solicitacaoSubscription.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   solicitacaoSubscription.cancel();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

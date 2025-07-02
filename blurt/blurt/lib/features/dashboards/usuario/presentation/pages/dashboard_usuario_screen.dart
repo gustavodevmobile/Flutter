@@ -28,7 +28,6 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
   Map<String, dynamic>? ultimaSessao;
   late StreamSubscription solicitacaoSubscription;
 
-
   @override
   void initState() {
     super.initState();
@@ -36,24 +35,33 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showSentimentoDialog();
     });
-   solicitacaoSubscription = globalWebSocketProvider.streamSolicitacao.listen((event) {
+    solicitacaoSubscription =
+        globalWebSocketProvider.streamSolicitacao.listen((event) {
       switch (event['eventType']) {
         case 'buscando_profissionais':
           if (mounted) {
-            showFeedbackDialogAguardando(context, solicitacaoSubscription, 'aguardando_atendimento_imediato',
+            showFeedbackDialogAguardando(
+                context, 'aguardando_atendimento_imediato',
                 mensagem: event['mensagem']);
           }
           break;
         case 'feedback_solicitacao_profissional_indisponivel':
+          if (mounted) {
+            if (Provider.of<ProviderController>(context, listen: false)
+                .isShowDialog) {
+              closeDialogoAguardando();
+            }
+          }
+
           if (mounted) {
             showFeedbackDialogAceita(context, 'recusada',
                 mensagem: event['mensagem']);
           }
           break;
         case 'resposta_solicitacao_atendimento_imediato':
-        final dadosProfissional = event['dadosProfissional'];
-        final profissionaId = event['profissionalId'];
-        final mensagem = event['mensagem'];
+          final dadosProfissional = event['dadosProfissional'];
+          final profissionaId = event['profissionalId'];
+          final mensagem = event['mensagem'];
           if (mounted) {
             showFeedbackDialogAceita(context, 'recusada',
                 mensagem: event['mensagem']);
