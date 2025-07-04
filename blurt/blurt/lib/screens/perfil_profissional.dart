@@ -48,7 +48,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
                 }
               }
               if (mounted) {
-                showFeedbackDialogAceita(context, 'aceita',
+                showFeedbackDialogAceitaOuRecusa(context, 'aceita',
                     mensagem: event['mensagem'], linkSala: event['linkSala']);
               }
             } else if (!event['aceita']) {
@@ -60,7 +60,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
               }
               //await Future.delayed(const Duration());
               if (mounted) {
-                showFeedbackDialogAceita(context, 'recusada',
+                showFeedbackDialogAceitaOuRecusa(context, 'recusada',
                     mensagem: event['mensagem'] ??
                         'Profissional indisponível no momento',
                     recusada: () {});
@@ -76,7 +76,7 @@ class _PerfilProfissionalScreenState extends State<PerfilProfissionalScreen> {
             break;
           case 'feedback_solicitacao_profissional_indisponivel':
             if (mounted) {
-              showFeedbackDialogAceita(context, 'recusada',
+              showFeedbackDialogAceitaOuRecusa(context, 'recusada',
                   mensagem: event['mensagem'] ??
                       'Profissional indisponível no momento',
                   recusada: () {});

@@ -111,11 +111,14 @@ void showSolicitacaoDialog(BuildContext context, Map<String, dynamic> event) {
 }
 
 late BuildContext dialogContextAguardando;
-void showFeedbackDialogAguardando(BuildContext context, String estado,
-    {String? mensagem,
-    String? linkSala,
-    VoidCallback? recusada,
-    VoidCallback? onClose}) {
+void showFeedbackDialogAguardando(
+  BuildContext context,
+  String estado, {
+  String? mensagem,
+  String? linkSala,
+  VoidCallback? recusada,
+  VoidCallback? onClose,
+}) {
   final isShowingDialog =
       Provider.of<ProviderController>(context, listen: false);
   isShowingDialog.setIsShowDialog(true);
@@ -131,11 +134,11 @@ void showFeedbackDialogAguardando(BuildContext context, String estado,
               estado: estado,
               mensagem: mensagem,
               linkSala: linkSala,
-              onTimeout: () {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Navigator.pop(dialogContextAguardando);
-                });
-              },
+              // onTimeout: () {
+              //   WidgetsBinding.instance.addPostFrameCallback((_) {
+              //     // Navigator.pop(dialogContextAguardando);
+              //   });
+              // },
               onClose: () {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Navigator.pop(dialogContextAguardando);
@@ -146,8 +149,6 @@ void showFeedbackDialogAguardando(BuildContext context, String estado,
               });
         }).then((_) {
       isShowingDialog.setIsShowDialog(false);
-
-      print('Dialog closed');
     });
   } catch (e) {
     GlobalSnackbars.showSnackBar(e.toString());
@@ -155,14 +156,11 @@ void showFeedbackDialogAguardando(BuildContext context, String estado,
   }
 }
 
-void showFeedbackDialogAceita(BuildContext context, String estado,
+void showFeedbackDialogAceitaOuRecusa(BuildContext context, String estado,
     {String? mensagem,
     String? linkSala,
     VoidCallback? recusada,
     VoidCallback? onClose}) {
-  // final isShowingDialog =
-  //     Provider.of<ProviderController>(context, listen: false);
-  // isShowingDialog.setIsShowDialog(true);
   try {
     showDialog(
       barrierDismissible: true,
@@ -171,11 +169,11 @@ void showFeedbackDialogAceita(BuildContext context, String estado,
           estado: estado,
           mensagem: mensagem,
           linkSala: linkSala,
-          onTimeout: () {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pop(dialogContext);
-            });
-          },
+          // onTimeout: () {
+          //   WidgetsBinding.instance.addPostFrameCallback((_) {
+          //     Navigator.pop(dialogContext);
+          //   });
+          // },
           onClose: () {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pop(dialogContext);

@@ -54,7 +54,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
           }
 
           if (mounted) {
-            showFeedbackDialogAceita(context, 'recusada',
+            showFeedbackDialogAceitaOuRecusa(context, 'recusada',
                 mensagem: event['mensagem']);
           }
           break;
@@ -63,7 +63,7 @@ class _DashboardUsuarioScreenState extends State<DashboardUsuarioScreen> {
           final profissionaId = event['profissionalId'];
           final mensagem = event['mensagem'];
           if (mounted) {
-            showFeedbackDialogAceita(context, 'recusada',
+            showFeedbackDialogAceitaOuRecusa(context, 'recusada',
                 mensagem: event['mensagem']);
           }
           break;

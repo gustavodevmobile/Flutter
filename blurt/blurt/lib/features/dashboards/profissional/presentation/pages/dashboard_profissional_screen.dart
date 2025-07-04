@@ -26,7 +26,6 @@ class _DashboardProfissionalScreenState
   @override
   void initState() {
     globalWebSocketProvider.streamSolicitacao.listen((event) {
-     
       switch (event['eventType']) {
         case 'nova_solicitacao_atendimento_imediato':
           print('Solicitação recebida: $event imediato');

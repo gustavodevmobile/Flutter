@@ -6,14 +6,14 @@ class CardFeedbackSolicitacaoWidget extends StatefulWidget {
   final String estado;
   final String? mensagem;
   final String? linkSala;
-  final VoidCallback? onTimeout;
+  //final VoidCallback? onTimeout;
   final VoidCallback? onClose;
 
   const CardFeedbackSolicitacaoWidget(
       {required this.estado,
       this.mensagem,
       this.linkSala,
-      this.onTimeout,
+      //this.onTimeout,
       this.onClose,
       super.key});
 
@@ -58,8 +58,6 @@ class CardFeedbackSolicitacaoWidgetState
         });
       } else {
         _stopTimer();
-        widget.onTimeout?.call();
-        widget.onClose?.call();
       }
     });
   }
@@ -145,7 +143,7 @@ class CardFeedbackSolicitacaoWidgetState
                 .slideY(begin: 0.2, end: 0, duration: 500.ms),
           ],
         );
-        case 'aguardando_atendimento_imediato':
+      case 'aguardando_atendimento_imediato':
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [

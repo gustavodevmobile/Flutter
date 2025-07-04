@@ -138,8 +138,8 @@ class _LoginFormUsuarioState extends State<LoginFormUsuario> {
                                 );
                               }
                             } catch (e) {
+                              setState(() => _loading = false);
                               if (context.mounted) {
-                                print('Erro ao fazer login: $e');
                                 // Exibe o erro usando o SnackBar
                                 GlobalSnackbars.showSnackBar(e.toString(),
                                     backgroundColor: Colors.red);
