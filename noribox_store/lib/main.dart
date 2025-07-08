@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:noribox_store/views/ecommerce_page.dart';
+import 'package:noribox_store/controllers/produtos_controllers.dart';
+import 'package:noribox_store/service/produtos_service.dart';
+import 'package:noribox_store/views/home.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -8,7 +10,11 @@ void main() async {
   await dotenv.load(); // CARREGUE O DOTENV ANTES DE TUDO
   runApp(
     MultiProvider(
-      providers: [],
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ProdutosController(service: ProdutosService()),
+        ),
+      ],
       child: const MyApp(),
     ),
   );

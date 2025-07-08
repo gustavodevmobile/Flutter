@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:admin_noribox_store/controllers/produto_controller.dart';
-import 'package:admin_noribox_store/models/produto.dart';
 import 'package:admin_noribox_store/views/editar_produto_page.dart';
 import 'package:admin_noribox_store/widgets/global_snackbar.dart';
 import 'package:flutter/material.dart';
