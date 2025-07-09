@@ -1,6 +1,9 @@
+import 'package:admin_noribox_store/controllers/categoria_controller.dart';
 import 'package:admin_noribox_store/controllers/produto_controller.dart';
+import 'package:admin_noribox_store/services/categoria_service.dart';
 import 'package:admin_noribox_store/services/produto_service.dart';
 import 'package:admin_noribox_store/views/admin_dashboard_page.dart';
+import 'package:admin_noribox_store/views/cadastro_categoria_page.dart';
 import 'package:admin_noribox_store/views/cadastro_produto_page.dart';
 import 'package:admin_noribox_store/views/lista_produtos_page.dart';
 import 'package:admin_noribox_store/widgets/global_snackbar.dart';
@@ -16,6 +19,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (_) => ProdutoController(service: Service()),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CategoriaController(service: CategoriaService()),
         ),
       ],
       child: const MyApp(),
@@ -39,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const AdminDashboardPage(),
         '/produtos': (context) => const ListaProdutosPage(),
         '/cadastrar-produto': (context) => const CadastroProdutoPage(),
+        '/cadastrar-categoria': (context) => const CadastroCategoriaPage(),
       },
     );
   }

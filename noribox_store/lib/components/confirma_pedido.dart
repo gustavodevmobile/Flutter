@@ -17,7 +17,7 @@ void abrirTelaCheckout(BuildContext context, Produto produto) async {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Produto: ${produto.nome}'),
-            Text('Valor: R\$ ${produto.preco.toStringAsFixed(2)}'),
+            Text('Valor: R\$ ${produto.valor.toStringAsFixed(2)}'),
             TextField(
               controller: quantidadeController,
               decoration: const InputDecoration(labelText: 'Quantidade'),
@@ -47,7 +47,7 @@ void abrirTelaCheckout(BuildContext context, Produto produto) async {
     // Chame o backend para criar a preferência
     final preferenceId = await service.criarPreferenceId(
       nome: produto.nome,
-      valor: produto.preco * resultado['quantidade'],
+      valor: produto.valor * resultado['quantidade'],
       quantidade: resultado['quantidade'],
     );
     
@@ -57,7 +57,7 @@ void abrirTelaCheckout(BuildContext context, Produto produto) async {
         MaterialPageRoute(
           builder: (_) => CheckoutBricksPage(
             preferenceId: preferenceId,
-            amount: produto.preco * resultado['quantidade'],
+            amount: produto.valor * resultado['quantidade'],
             publicKey: 'TEST-9f5523a7-05ff-4478-a030-557514887057',
           ),
         ),

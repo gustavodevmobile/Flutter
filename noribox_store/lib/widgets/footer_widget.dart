@@ -24,7 +24,7 @@ class FooterWidget extends StatelessWidget {
         children: [
           // Logo ou nome da loja
           Text(
-            "Noribox Store",
+            "Asatoma Store",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

@@ -17,7 +17,7 @@ class Service {
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return Produto.fromMap(data);
+        return Produto.fromJson(data);
       } else {
         throw Exception('Erro ao cadastrar produto: ${response.body}');
       }
@@ -32,7 +32,7 @@ class Service {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      return data.map((item) => Produto.fromMap(item)).toList();
+      return data.map((item) => Produto.fromJson(item)).toList();
     } else {
       throw AppException('Erro ao buscar produtos: ${response.body}');
     }
@@ -59,7 +59,7 @@ class Service {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return Produto.fromMap(data);
+      return Produto.fromJson(data);
     } else {
       throw AppException('Erro ao editar produto: ${response.body}');
     }

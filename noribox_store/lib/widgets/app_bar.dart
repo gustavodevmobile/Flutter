@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppBarWidget extends StatefulWidget {
   const AppBarWidget({super.key});
@@ -26,7 +27,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   child: Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color:Color.fromARGB(228, 220, 75, 31),
+                      color: Color.fromARGB(228, 220, 75, 31),
                     ),
                     padding: const EdgeInsets.only(left: 8),
                   ).animate().fadeIn(delay: 100.ms),
@@ -37,7 +38,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  // Logo
+                  // Logotipo da loja
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
@@ -48,7 +49,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     ),
                   ).animate().scale(delay: 200.ms),
                   const SizedBox(width: 16),
-    
+
                   // Campo de busca
                   Expanded(
                     child: Container(
@@ -75,9 +76,25 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       ),
                     ).animate().slideX(delay: 300.ms),
                   ),
-    
+
                   const SizedBox(width: 12),
-    
+// Carrinho
+                  Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: TextButton(
+                              child: Text(
+                                'Pedidos',
+                                style: GoogleFonts.aboreto(),
+                              ),
+                              onPressed: () {}))
+                      .animate()
+                      .scale(delay: 400.ms),
+
+                  const SizedBox(width: 8),
+
                   // Carrinho
                   Container(
                     decoration: BoxDecoration(
@@ -92,9 +109,9 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       },
                     ),
                   ).animate().scale(delay: 400.ms),
-    
+
                   const SizedBox(width: 8),
-    
+
                   // Entrar
                   TextButton(
                     onPressed: () {
@@ -103,7 +120,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     child: const Text('Entrar',
                         style: TextStyle(color: Colors.redAccent)),
                   ).animate().fadeIn(delay: 500.ms),
-    
+
                   // Cadastrar
                   ElevatedButton(
                     onPressed: () {

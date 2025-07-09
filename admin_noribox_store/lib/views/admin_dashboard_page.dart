@@ -10,16 +10,16 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      if (mounted) {
-        Provider.of<ProdutoController>(context, listen: false)
-            .buscarProdutosController();
-      }
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(() {
+  //     if (mounted) {
+  //       Provider.of<ProdutoController>(context, listen: false)
+  //           .buscarProdutosController();
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +96,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                       color: Colors.blue,
                       onTap: () {
                         Navigator.pushNamed(context, '/cadastrar-produto');
+                      },
+                    ),
+                    _DashboardCard(
+                      icon: Icons.category,
+                      title: 'Cadastrar Categoria',
+                      color: Colors.blue,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/cadastrar-categoria');
                       },
                     ),
                     _DashboardCard(

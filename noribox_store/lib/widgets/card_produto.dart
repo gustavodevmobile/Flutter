@@ -123,7 +123,7 @@ class CardProduto extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-                'R\$ ${produto.preco.toStringAsFixed(2)}',
+                'R\$ ${produto.valor.toStringAsFixed(2)}',
                 style: TextStyle(
                   color: const Color.fromARGB(255, 145, 42, 35),
                   fontWeight: FontWeight.bold,

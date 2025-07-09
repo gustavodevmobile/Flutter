@@ -1,6 +1,6 @@
 {
-    "name": "noribox_store",
-    "short_name": "noribox_store",
+    "name": "asatoma_store",
+    "short_name": "asatoma_store",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
