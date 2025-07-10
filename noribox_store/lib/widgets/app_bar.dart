@@ -17,6 +17,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       backgroundColor: Colors.white,
       elevation: 1,
       shadowColor: Colors.blueGrey,
+      automaticallyImplyLeading: false,
       flexibleSpace: SafeArea(
         child: Column(
           children: [

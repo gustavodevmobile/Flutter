@@ -31,8 +31,8 @@ class _EditarProdutoPageState extends State<EditarProdutoPage> {
     _descricaoController =
         TextEditingController(text: widget.produto.descricao);
     _valorController =
-        TextEditingController(text: widget.produto.valor.toString());
-    _imagemBase64 = widget.produto.imagem;
+        TextEditingController(text: widget.produto.valorVenda.toString());
+    _imagemBase64 = widget.produto.imagemPrincipal;
     if (_imagemBase64 != null && _imagemBase64!.isNotEmpty) {
       try {
         _imagemBytes = base64Decode(_imagemBase64!);
@@ -68,8 +68,8 @@ class _EditarProdutoPageState extends State<EditarProdutoPage> {
         id: widget.produto.id,
         nome: _nomeController.text.trim(),
         descricao: _descricaoController.text.trim(),
-        valor: double.tryParse(_valorController.text.trim()) ?? 0.0,
-        imagem: _imagemBase64 ?? '',
+        valorVenda: double.tryParse(_valorController.text.trim()) ?? 0.0,
+        imagemPrincipal: _imagemBase64 ?? '',
       );
       // Aqui você pode criar um método editarProdutoController no seu controller
       await Provider.of<ProdutoController>(context, listen: false)

@@ -35,26 +35,26 @@ class _ListaProdutosPageState extends State<ListaProdutosPage> {
               rows: produtosController.produtos.map((produto) {
                 return DataRow(cells: [
                   DataCell(
-                    produto.imagem.isNotEmpty
+                    produto.imagemPrincipal.isNotEmpty
                         ? SizedBox(
                             width: 40,
                             height: 40,
-                            child: produto.imagem.startsWith('http')
-                                ? Image.network(produto.imagem,
+                            child: produto.imagemPrincipal.startsWith('http')
+                                ? Image.network(produto.imagemPrincipal,
                                     fit: BoxFit.cover)
                                 : Image.memory(
                                     // Se for base64, decodifique
-                                    produto.imagem.contains(',')
+                                    produto.imagemPrincipal.contains(',')
                                         ? base64Decode(
-                                            produto.imagem.split(',').last)
-                                        : base64Decode(produto.imagem),
+                                            produto.imagemPrincipal.split(',').last)
+                                        : base64Decode(produto.imagemPrincipal),
                                     fit: BoxFit.cover,
                                   ),
                           )
                         : const Icon(Icons.image_not_supported),
                   ),
                   DataCell(Text(produto.nome)),
-                  DataCell(Text('R\$ ${produto.valor.toStringAsFixed(2)}')),
+                  DataCell(Text('R\$ ${produto.valorVenda.toStringAsFixed(2)}')),
                   DataCell(Text(produto.descricao)),
                   DataCell(IconButton(
                     icon: const Icon(Icons.edit),

@@ -1,5 +1,4 @@
 import 'package:admin_noribox_store/controllers/categoria_controller.dart';
-import 'package:admin_noribox_store/models/categoria.dart';
 import 'package:admin_noribox_store/widgets/global_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

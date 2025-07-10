@@ -3,9 +3,18 @@ import 'package:admin_noribox_store/models/categoria.dart';
 class Produto {
   final String? id;
   final String nome;
-  final double valor;
+  final double? valorCompra;
+  final double valorVenda;
+  final double? valorNoPix;
+  final double? valorComJuros;
+  final double? valorSemJuros;
+  final double? lucroSobreVenda;
   final String descricao;
-  final String imagem;
+  final String imagemPrincipal;
+  final String? imagem2;
+  final String? imagem3;
+  final String? imagem4;
+  final String? videoProduto;
   final String? material;
   final String? marca;
   final String? cor;
@@ -18,18 +27,33 @@ class Produto {
   final bool freteGratis;
   final String? origem;
   final bool disponivel;
+  final bool isEletrico;
+  final String? consumoEletrico;
+  final String? peso;
+  final String? validade;
+  final String? informacoesAdicionais;
+  final String? sugestoesDeUso;
+  final String? urlFornecedor;
+  final String? idFornecedor;
   final String? parcelamento;
   final String? categoriaId;
-
-  // Você pode criar um model Categoria se quiser detalhar mais
   final Categoria? categoria;
 
   Produto({
     this.id,
     required this.nome,
-    required this.valor,
+    this.valorCompra,
+    required this.valorVenda,
+    this.valorNoPix,
+    this.valorComJuros,
+    this.valorSemJuros,
+    this.lucroSobreVenda,
     required this.descricao,
-    required this.imagem,
+    required this.imagemPrincipal,
+    this.imagem2,
+    this.imagem3,
+    this.imagem4,
+    this.videoProduto,
     this.material,
     this.marca,
     this.cor,
@@ -42,6 +66,14 @@ class Produto {
     this.freteGratis = false,
     this.origem,
     this.disponivel = true,
+    this.isEletrico = false,
+    this.consumoEletrico,
+    this.peso,
+    this.validade,
+    this.informacoesAdicionais,
+    this.sugestoesDeUso,
+    this.urlFornecedor,
+    this.idFornecedor,
     this.parcelamento,
     this.categoriaId,
     this.categoria,
@@ -51,9 +83,18 @@ class Produto {
     return Produto(
       id: json['id'],
       nome: json['nome'],
-      valor: (json['valor'] ?? 0).toDouble(),
+      valorCompra: (json['valorCompra'] as num?)?.toDouble(),
+      valorVenda: (json['valorVenda'] ?? 0).toDouble(),
+      valorNoPix: (json['valorNoPix'] as num?)?.toDouble(),
+      valorComJuros: (json['valorComJuros'] as num?)?.toDouble(),
+      valorSemJuros: (json['valorSemJuros'] as num?)?.toDouble(),
+      lucroSobreVenda: (json['lucroSobreVenda'] as num?)?.toDouble(),
       descricao: json['descricao'] ?? '',
-      imagem: json['imagem'] ?? '',
+      imagemPrincipal: json['imagemPrincipal'],
+      imagem2: json['imagem2'],
+      imagem3: json['imagem3'],
+      imagem4: json['imagem4'], 
+      videoProduto: json['videoProduto'],
       material: json['material'],
       marca: json['marca'],
       cor: json['cor'],
@@ -66,6 +107,14 @@ class Produto {
       freteGratis: json['freteGratis'] ?? false,
       origem: json['origem'],
       disponivel: json['disponivel'] ?? true,
+      isEletrico: json['isEletrico'] ?? false,
+      consumoEletrico: json['consumoEletrico'],
+      peso: json['peso'],
+      validade: json['validade'],
+      informacoesAdicionais: json['informacoesAdicionais'],
+      sugestoesDeUso: json['sugestoesDeUso'],
+      urlFornecedor: json['urlFornecedor'],
+      idFornecedor: json['idFornecedor'],
       parcelamento: json['parcelamento'],
       categoriaId: json['categoriaId'],
       categoria: json['categoria'] != null
@@ -78,9 +127,18 @@ class Produto {
     return {
       'id': id,
       'nome': nome,
-      'valor': valor,
+      'valorCompra': valorCompra,
+      'valorVenda': valorVenda,
+      'valorNoPix': valorNoPix,
+      'valorComJuros': valorComJuros,
+      'valorSemJuros': valorSemJuros,
+      'lucroSobreVenda': lucroSobreVenda,
       'descricao': descricao,
-      'imagem': imagem,
+      'imagemPrincipal': imagemPrincipal,
+      'imagem2': imagem2,
+      'imagem3': imagem3,
+      'imagem4': imagem4,
+      'videoProduto': videoProduto,
       'material': material,
       'marca': marca,
       'cor': cor,
@@ -93,10 +151,17 @@ class Produto {
       'freteGratis': freteGratis,
       'origem': origem,
       'disponivel': disponivel,
+      'isEletrico': isEletrico,
+      'consumoEletrico': consumoEletrico,
+      'peso': peso,
+      'validade': validade,
+      'informacoesAdicionais': informacoesAdicionais,
+      'sugestoesDeUso': sugestoesDeUso,
+      'urlFornecedor': urlFornecedor,
+      'idFornecedor': idFornecedor,
       'parcelamento': parcelamento,
       'categoriaId': categoriaId,
-      // Se quiser enviar a categoria detalhada, descomente a linha abaixo:
-      // 'categoria': categoria?.toMap(),
+      // 'categoria': categoria?.toMap(), // descomente se precisar enviar categoria detalhada
     };
   }
 }

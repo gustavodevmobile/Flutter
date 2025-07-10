@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:noribox_store/models/produtos_models.dart';
+import 'package:noribox_store/themes/themes.dart';
+import 'package:noribox_store/utils/formatters.dart';
 import 'package:noribox_store/widgets/contador_quantidade.dart';
+import 'package:noribox_store/widgets/custom_text_rich.dart';
 
 class CardProduto extends StatelessWidget {
   final Produto produto;
@@ -48,7 +51,6 @@ class CardProduto extends StatelessWidget {
               blurRadius: 12,
               spreadRadius: 1,
             ),
-            
           ],
         ),
         child: Column(
@@ -59,9 +61,9 @@ class CardProduto extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               child: Padding(
                 padding: const EdgeInsets.only(top: 6),
-                child: produto.imagem.isNotEmpty
+                child: produto.imagemPrincipal.isNotEmpty
                     ? _buildBase64Image(
-                        produto.imagem,
+                        produto.imagemPrincipal,
                         // width: 200,
                         // height: 200,
                         fit: BoxFit.contain,
@@ -76,20 +78,7 @@ class CardProduto extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            // Estrelas de avaliação
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(5, (index) {
-                return Icon(Icons.star_border, color: Colors.yellow, size: 14);
-                // Icon(
-                //   index < (produto.avaliacao ?? '4') // valor mock ou do produto
-                //       ? Icons.star
-                //       : Icons.star_border,
-                //   color: Colors.amber,
-                //   size: 18,
-                // );
-              }),
-            ),
+
             // Nome do produto
             const SizedBox(height: 4),
             Text(
@@ -120,68 +109,113 @@ class CardProduto extends StatelessWidget {
               ),
             ),
             // Preço
+            const SizedBox(height: 4),
+            // Estrelas de avaliação
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                return Icon(Icons.star, color: Colors.amber, size: 20);
+                // Icon(
+                //   index < (produto.avaliacao ?? '4') // valor mock ou do produto
+                //       ? Icons.star
+                //       : Icons.star_border,
+                //   color: Colors.amber,
+                //   size: 18,
+                // );
+              }),
+            ),
+            const SizedBox(height: 4),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text(
-                'R\$ ${produto.valor.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 145, 42, 35),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+              child: CustomTextRich(
+                textPrimary: 'R\$',
+                fontSizePrimary: 12,
+                colorTextPrimary: Themes.redPrimary,
+                isBoldPrimary: true,
+                textSecondary: Formatters.formatercurrency(produto.valorNoPix.toString()),
+                fontSizeSecondary: 26,
+                colorTextSecondary: Themes.redPrimary,
+                isBoldSecondary: true,
+                textTertiary: '(no Pix)',
+                fontSizeTertiary: 12,
+                colorTextTertiary: Themes.green,
               ),
             ),
-
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: CustomTextRich(
+                textPrimary: ' ou em até',
+                fontSizePrimary: 12,
+                colorTextPrimary: Themes.blackLight,
+                textSecondary: '12x',
+                fontSizeSecondary: 14,
+                colorTextSecondary: Themes.redPrimary,
+                isBoldSecondary: true,
+                textTertiary: 'de',
+                fontSizeTertiary: 12,
+                colorTextTertiary: Themes.blackLight,
+                textQuaternary: 'R\$',
+                fontSizeQuaternary: 12,
+                colorTextQuaternary: Themes.redPrimary,
+                isBoldQuaternary: true,
+                textQuinary: (produto.valorVenda / 12).toString(),
+                fontSizeQuinary: 14,
+                colorTextQuinary: Themes.redPrimary,
+                isBoldQuinary: true,
+              ),
+            ),
+            const SizedBox(height: 12),
             // Botão comprar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  ContadorQuantidade(),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: onTap,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      child: const Text('Comprar'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 12),
+            //   child: Row(
+            //     children: [
+            //       //ContadorQuantidade(),
+            //       const SizedBox(width: 8),
+            //       Expanded(
+            //         child: ElevatedButton(
+            //           onPressed: onTap,
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: Colors.green,
+            //             foregroundColor: Colors.white,
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(8),
+            //             ),
+            //             padding: const EdgeInsets.symmetric(vertical: 10),
+            //             textStyle: const TextStyle(
+            //               fontWeight: FontWeight.bold,
+            //             ),
+            //           ),
+            //           child: const Text('Comprar'),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(height: 8),
 
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: onTap,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightGreen,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    //padding: const EdgeInsets.symmetric(vertical: 10),
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  child: const Text('Dúvidas'),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: SizedBox(
+            //     width: double.infinity,
+            //     child: ElevatedButton(
+            //       onPressed: onTap,
+            //       style: ElevatedButton.styleFrom(
+            //         backgroundColor: Colors.lightGreen,
+            //         foregroundColor: Colors.white,
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(8),
+            //         ),
+            //         //padding: const EdgeInsets.symmetric(vertical: 10),
+            //         textStyle: const TextStyle(
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //       ),
+            //       child: const Text('Dúvidas'),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noribox_store/themes/themes.dart';
 
 class FooterWidget extends StatelessWidget {
   const FooterWidget({super.key});
@@ -9,7 +10,7 @@ class FooterWidget extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Themes.blackLight,
         //borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(

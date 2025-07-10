@@ -3,7 +3,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
 import 'package:noribox_store/service/produtos_service.dart';
 import 'package:noribox_store/views/home.dart';
-import 'package:noribox_store/views/produto_detalher.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

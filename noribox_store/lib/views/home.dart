@@ -3,8 +3,7 @@ import 'dart:typed_data';
 import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:noribox_store/components/confirma_pedido.dart';
-import 'package:noribox_store/views/produto_detalher.dart';
+import 'package:noribox_store/views/produto_detalhe.dart';
 import 'package:noribox_store/widgets/app_bar.dart';
 import 'package:noribox_store/widgets/card_produto.dart';
 import 'package:noribox_store/widgets/footer_widget.dart';
@@ -190,8 +189,9 @@ class _EcommercePageState extends State<EcommercePage> {
                                           ),
                                         ],
                                       ),
-                                      child: produto.imagem.isNotEmpty
-                                          ? _buildBase64Image(produto.imagem,
+                                      child: produto.imagemPrincipal.isNotEmpty
+                                          ? _buildBase64Image(
+                                              produto.imagemPrincipal,
                                               width: 180,
                                               height: 180,
                                               fit: BoxFit.contain)
@@ -242,24 +242,30 @@ class _EcommercePageState extends State<EcommercePage> {
                             const SizedBox(height: 16),
 
                             Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Wrap(
-                                  spacing: 16,
-                                  runSpacing: 16,
-                                  children: produtosFiltrados.map((produto) {
-                                    return SizedBox(
-                                      width: 200, // largura fixa do card
-                                      child: CardProduto(
-                                        produto: produto,
-                                        onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutoDetalheScreen(produto: produto)));
-                                          //abrirTelaCheckout(context, produto);
-                                        },
-                                      ),
-                                    );
-                                  }).toList(),
-                                )),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Wrap(
+                                spacing: 16,
+                                runSpacing: 16,
+                                children: produtosFiltrados.map((produto) {
+                                  return SizedBox(
+                                    width: 200, // largura fixa do card
+                                    child: CardProduto(
+                                      produto: produto,
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProdutoDetalheScreen(
+                                                        produto: produto)));
+                                        //abrirTelaCheckout(context, produto);
+                                      },
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
                             const SizedBox(height: 32),
                             FooterWidget()
                           ],
@@ -274,7 +280,7 @@ class _EcommercePageState extends State<EcommercePage> {
               bottom: 32,
               right: 32,
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   const url =
                       'https://wa.me/5513996252021?text=Olá! Preciso de ajuda com meu pedido.';
                   // Para web:
@@ -282,10 +288,8 @@ class _EcommercePageState extends State<EcommercePage> {
                   html.window.open(url, '_blank');
                 },
                 child: Image.asset('./assets/images/whatsapp_icon.png',
-                      height: 45, width: 45),
+                    height: 45, width: 45),
               ),
-              
-              
             ),
           ],
         );
