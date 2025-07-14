@@ -26,10 +26,10 @@ class Service {
     }
   }
 
-  Future<List<Produto>> buscarProdutosService() async {
+  Future<List<Produto>> buscarProdutosService() async { 
     final url = Uri.parse('$baseUrl/produtos/produtos');
     final response = await http.get(url);
-
+    print('Response status: ${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => Produto.fromJson(item)).toList();
@@ -61,6 +61,8 @@ class Service {
       final data = jsonDecode(response.body);
       return Produto.fromJson(data);
     } else {
+     
+      print('Erro ao editar produto: ${response.body}');
       throw AppException('Erro ao editar produto: ${response.body}');
     }
   }

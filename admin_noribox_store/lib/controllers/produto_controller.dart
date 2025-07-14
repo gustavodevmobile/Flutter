@@ -47,6 +47,7 @@ class ProdutoController extends ChangeNotifier {
     notifyListeners();
     return result;
   } catch (error) {
+    print('Erro ao editar produto: $error');
     rethrow;
   }
 }

@@ -6,8 +6,6 @@ import 'package:admin_noribox_store/widgets/global_snackbar.dart';
 import 'package:admin_noribox_store/widgets/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
 import '../controllers/produto_controller.dart';
@@ -57,43 +55,6 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
   final TextEditingController _freteController = TextEditingController();
   final TextEditingController _origemController = TextEditingController();
   final TextEditingController _categoriaIdController = TextEditingController();
-  //  final String? id;
-  // final String nome;
-  // final double? valorCompra;
-  // final double valorVenda;
-  // final double? valorNoPix;
-  // final double? valorComJuros;
-  // final double? valorSemJuros;
-  // final double? lucroSobreVenda;
-  // final String descricao;
-  // final String imagemPrincipal;
-  // final String? imagem2;
-  // final String? imagem3;
-  // final String? imagem4;
-  // final String? videoProduto;
-  // final String? material;
-  // final String? marca;
-  // final String? cor;
-  // final String? caracteristicas;
-  // final String? dimensoes;
-  // final String? ocasiao;
-  // final String? sobre;
-  // final String? prazoEntrega;
-  // final String? frete;
-  // final bool freteGratis;
-  // final String? origem;
-  // final bool disponivel;
-  // final bool isEletrico;
-  // final String? consumoEletrico;
-  // final String? peso;
-  // final String? validade;
-  // final String? informacoesAdicionais;
-  // final String? sugestoesDeUso;
-  // final String? urlFornecedor;
-  // final String? idFornecedor;
-  // final String? parcelamento;
-  // final String? categoriaId;
-  // final Categoria? categoria;
 
   // Lista de categorias exemplo (substitua pelo seu backend se necessário)
   final List<Categoria> categorias = [];
@@ -110,27 +71,16 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
   }
 
   String? _categoriaSelecionada;
-
+  bool isLoading = false;
   bool freteGratis = false;
   bool disponivel = true;
   bool isEletrico = false;
-
   XFile? _imagemPrincipal;
   XFile? _imagem2;
   XFile? _imagem3;
   XFile? _imagem4;
   XFile? _videoProduto;
   int _parcelamentoSelecionado = 1;
-
-  // Future<void> selecionarImagemPrincipal() async {
-  //   final picker = ImagePicker();
-  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _imagemPrincipal = pickedFile;
-  //     });
-  //   }
-  // }
 
   Future<void> selecionarImagem(Function(XFile?) setter) async {
     final picker = ImagePicker();
@@ -142,9 +92,153 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
     }
   }
 
+  Future<void> cadastrarProduto() async {
+    String imagePrincipal = '';
+    final produtoController =
+        Provider.of<ProdutoController>(context, listen: false);
+    try {
+      setState(() => isLoading = true);
+      if (!_formKey.currentState!.validate()) {
+        setState(() => isLoading = false);
+        return;
+      }
+      if (_imagemPrincipal == null) {
+        GlobalSnackbar.show('Selecione uma imagem do produto');
+        return;
+      } else {
+        imagePrincipal = await xFileToBase64(_imagemPrincipal!);
+      }
+
+      await produtoController.cadastrarProdutoController(
+        Produto(
+            nome: _nomeController.text,
+            descricao: _descricaoController.text,
+            valorVenda: double.parse(_valorVendaController.text),
+            valorCompra: double.tryParse(_valorCompraController.text),
+            valorNoPix: double.tryParse(_valorNoPixController.text),
+            valorComJuros: double.tryParse(_valorComJurosController.text),
+            valorSemJuros: double.tryParse(_valorSemJurosController.text),
+            lucroSobreVenda: double.tryParse(_lucroSobreVendaController.text),
+            imagemPrincipal: imagePrincipal,
+            imagem2: _imagem2 != null ? await xFileToBase64(_imagem2!) : null,
+            imagem3: _imagem3 != null ? await xFileToBase64(_imagem3!) : null,
+            imagem4: _imagem4 != null ? await xFileToBase64(_imagem4!) : null,
+            videoProduto: _videoProduto != null
+                ? await xFileToBase64(_videoProduto!)
+                : null,
+            material: _materialController.text.isNotEmpty
+                ? _materialController.text
+                : null,
+            marca:
+                _marcaController.text.isNotEmpty ? _marcaController.text : null,
+            cor: _corController.text.isNotEmpty ? _corController.text : null,
+            caracteristicas: _caracteristicasController.text.isNotEmpty
+                ? _caracteristicasController.text
+                : null,
+            dimensoes: _dimensoesController.text.isNotEmpty
+                ? _dimensoesController.text
+                : null,
+            ocasiao: _ocasiaoController.text.isNotEmpty
+                ? _ocasiaoController.text
+                : null,
+            sobre:
+                _sobreController.text.isNotEmpty ? _sobreController.text : null,
+            prazoEntrega: _prazoEntregaController.text.isNotEmpty
+                ? _prazoEntregaController.text
+                : null,
+            frete:
+                _freteController.text.isNotEmpty ? _freteController.text : null,
+            freteGratis: freteGratis,
+            origem: _origemController.text.isNotEmpty
+                ? _origemController.text
+                : null,
+            disponivel: disponivel,
+            isEletrico: isEletrico,
+            consumoEletrico: _consumoEletricoController.text.isNotEmpty
+                ? _consumoEletricoController.text
+                : null,
+            peso: _pesoController.text.isNotEmpty ? _pesoController.text : null,
+            validade: _validadeController.text.isNotEmpty
+                ? _validadeController.text
+                : null,
+            informacoesAdicionais:
+                _informacoesAdicionaisController.text.isNotEmpty
+                    ? _informacoesAdicionaisController.text
+                    : null,
+            sugestoesDeUso: _sugestoesDeUsoController.text.isNotEmpty
+                ? _sugestoesDeUsoController.text
+                : null,
+            urlFornecedor: _urlFornecedorController.text.isNotEmpty
+                ? _urlFornecedorController.text
+                : null,
+            idFornecedor: _idFornecedorController.text.isNotEmpty
+                ? _idFornecedorController.text
+                : null,
+            parcelamento: _parcelamentoSelecionado.toString(),
+            categoriaId: _categoriaSelecionada),
+      );
+
+      setState(() => isLoading = false);
+
+      GlobalSnackbar.show('Produto cadastrado com sucesso!');
+      _nomeController.clear();
+      _valorVendaController.clear();
+      _valorCompraController.clear();
+      _valorNoPixController.clear();
+      _valorComJurosController.clear();
+      _valorSemJurosController.clear();
+      _lucroSobreVendaController.clear();
+      _consumoEletricoController.clear();
+      _sugestoesDeUsoController.clear();
+      _descricaoController.clear();
+      _valorVendaController.clear();
+      _materialController.clear();
+      _marcaController.clear();
+      _corController.clear();
+      _caracteristicasController.clear();
+      _dimensoesController.clear();
+      _ocasiaoController.clear();
+      _sobreController.clear();
+      _prazoEntregaController.clear();
+      _freteController.clear();
+      _origemController.clear();
+      _pesoController.clear();
+      _validadeController.clear();
+      _informacoesAdicionaisController.clear();
+      _urlFornecedorController.clear();
+      _idFornecedorController.clear();
+      _imagemPrincipal = null;
+      _imagem2 = null;
+      _imagem3 = null;
+      _imagem4 = null;
+      _videoProduto = null;
+      freteGratis = false;
+      disponivel = true;
+      _categoriaSelecionada = null;
+    } catch (error) {
+      setState(() => isLoading = false);
+      print('Erro ao cadastrar produto: $error');
+      GlobalSnackbar.show(
+        'Erro ao cadastrar produto: ${error.toString()}',
+      );
+    }
+  }
+
   @override
   void dispose() {
     _nomeController.dispose();
+    _valorCompraController.dispose();
+    _valorNoPixController.dispose();
+    _valorComJurosController.dispose();
+    _valorSemJurosController.dispose();
+    _lucroSobreVendaController.dispose();
+    _pesoController.dispose();
+    _validadeController.dispose();
+    _informacoesAdicionaisController.dispose();
+    _sugestoesDeUsoController.dispose();
+    _urlFornecedorController.dispose();
+    _idFornecedorController.dispose();
+    _consumoEletricoController.dispose();
     _descricaoController.dispose();
     _valorVendaController.dispose();
     _materialController.dispose();
@@ -907,8 +1001,7 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
                               ],
                             ),
                             const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              icon: const Icon(Icons.save),
+                            ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 18),
@@ -917,121 +1010,13 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              label: const Text('Cadastrar Produto'),
-                              onPressed: () async {
-                                String imagePrincipal = '';
-
-                                try {
-                                  if (!_formKey.currentState!.validate()) {
-                                    return;
-                                  }
-                                  if (_imagemPrincipal == null) {
-                                    GlobalSnackbar.show(
-                                        'Selecione uma imagem do produto');
-                                    return;
-                                  } else {
-                                    imagePrincipal =
-                                        await xFileToBase64(_imagemPrincipal!);
-                                  }
-                                  await cadastroController
-                                      .cadastrarProdutoController(
-                                    Produto(
-                                        nome: _nomeController.text,
-                                        descricao: _descricaoController.text,
-                                        valorVenda: double.parse(
-                                            _valorVendaController.text),
-                                        valorCompra: double.tryParse(
-                                            _valorCompraController.text),
-                                        valorNoPix: double.tryParse(
-                                            _valorNoPixController.text),
-                                        valorComJuros: double.tryParse(
-                                            _valorComJurosController.text),
-                                        valorSemJuros: double.tryParse(
-                                            _valorSemJurosController.text),
-                                        lucroSobreVenda: double.tryParse(
-                                            _lucroSobreVendaController.text),
-                                        imagemPrincipal: imagePrincipal,
-                                        imagem2: _imagem2 != null
-                                            ? await xFileToBase64(_imagem2!)
-                                            : null,
-                                        imagem3: _imagem3 != null
-                                            ? await xFileToBase64(_imagem3!)
-                                            : null,
-                                        imagem4: _imagem4 != null
-                                            ? await xFileToBase64(_imagem4!)
-                                            : null,
-                                        videoProduto: _videoProduto != null
-                                            ? await xFileToBase64(_videoProduto!)
-                                            : null,
-                                        material: _materialController.text.isNotEmpty ? _materialController.text : null,
-                                        marca: _marcaController.text.isNotEmpty ? _marcaController.text : null,
-                                        cor: _corController.text.isNotEmpty ? _corController.text : null,
-                                        caracteristicas: _caracteristicasController.text.isNotEmpty ? _caracteristicasController.text : null,
-                                        dimensoes: _dimensoesController.text.isNotEmpty ? _dimensoesController.text : null,
-                                        ocasiao: _ocasiaoController.text.isNotEmpty ? _ocasiaoController.text : null,
-                                        sobre: _sobreController.text.isNotEmpty ? _sobreController.text : null,
-                                        prazoEntrega: _prazoEntregaController.text.isNotEmpty ? _prazoEntregaController.text : null,
-                                        frete: _freteController.text.isNotEmpty ? _freteController.text : null,
-                                        freteGratis: freteGratis,
-                                        origem: _origemController.text.isNotEmpty ? _origemController.text : null,
-                                        disponivel: disponivel,
-                                        isEletrico: isEletrico,
-                                        consumoEletrico: _consumoEletricoController.text.isNotEmpty ? _consumoEletricoController.text : null,
-                                        peso: _pesoController.text.isNotEmpty ? _pesoController.text : null,
-                                        validade: _validadeController.text.isNotEmpty ? _validadeController.text : null,
-                                        informacoesAdicionais: _informacoesAdicionaisController.text.isNotEmpty ? _informacoesAdicionaisController.text : null,
-                                        sugestoesDeUso: _sugestoesDeUsoController.text.isNotEmpty ? _sugestoesDeUsoController.text : null,
-                                        urlFornecedor: _urlFornecedorController.text.isNotEmpty ? _urlFornecedorController.text : null,
-                                        idFornecedor: _idFornecedorController.text.isNotEmpty ? _idFornecedorController.text : null,
-                                        parcelamento: _parcelamentoSelecionado.toString(),
-                                        categoriaId: _categoriaSelecionada),
-                                  );
-                                  GlobalSnackbar.show(
-                                      'Produto cadastrado com sucesso!');
-                                  _nomeController.clear();
-                                  _valorVendaController.clear();
-                                  _valorCompraController.clear();
-                                  _valorNoPixController.clear();
-                                  _valorComJurosController.clear();
-                                  _valorSemJurosController.clear();
-                                  _lucroSobreVendaController.clear();
-                                  _consumoEletricoController.clear();
-                                  _sugestoesDeUsoController.clear();
-                                  _descricaoController.clear();
-                                  _valorVendaController.clear();
-                                  _materialController.clear();
-                                  _marcaController.clear();
-                                  _corController.clear();
-                                  _caracteristicasController.clear();
-                                  _dimensoesController.clear();
-                                  _ocasiaoController.clear();
-                                  _sobreController.clear();
-                                  _prazoEntregaController.clear();
-                                  _freteController.clear();
-                                  _origemController.clear();
-                                  _pesoController.clear();
-                                  _validadeController.clear();
-                                  _informacoesAdicionaisController.clear();
-                                  _urlFornecedorController.clear();
-                                  _idFornecedorController.clear();
-
-                                  setState(() {
-                                    _imagemPrincipal = null;
-                                    _imagem2 = null;
-                                    _imagem3 = null;
-                                    _imagem4 = null;
-                                    _videoProduto = null;
-                                    freteGratis = false;
-                                    disponivel = true;
-                                    _categoriaSelecionada = null;
-                                  });
-                                } catch (error) {
-                                  print('Erro ao cadastrar produto: $error');
-                                  GlobalSnackbar.show(
-                                    'Erro ao cadastrar produto: ${error.toString()}',
-                                  );
-                                }
-                              },
+                              onPressed:
+                                  isLoading ? null : () => cadastrarProduto(),
+                              child: isLoading
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : const Text('Cadastrar Produto'),
                             ),
                           ],
                         ),

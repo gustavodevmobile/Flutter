@@ -1,42 +1,76 @@
-import 'dart:convert';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:noribox_store/controllers/calcular_frete.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
 import 'package:noribox_store/models/produtos_models.dart';
 import 'package:noribox_store/themes/themes.dart';
 import 'package:noribox_store/utils/formatters.dart';
+import 'package:noribox_store/views/produto_detalhe_mobile.dart';
 import 'package:noribox_store/widgets/app_bar.dart';
 import 'package:noribox_store/widgets/calcular_frete.dart';
+import 'package:noribox_store/widgets/card_image_products.dart';
 import 'package:noribox_store/widgets/card_produto.dart';
 import 'package:noribox_store/widgets/contador_quantidade.dart';
 import 'package:noribox_store/widgets/custom_button.dart';
 import 'package:noribox_store/widgets/custom_text_rich.dart';
 import 'package:noribox_store/widgets/footer_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
-class ProdutoDetalheScreen extends StatelessWidget {
+class ProdutoDetalheScreen extends StatefulWidget {
   final Produto produto;
   const ProdutoDetalheScreen({super.key, required this.produto});
 
   @override
+  State<ProdutoDetalheScreen> createState() => _ProdutoDetalheScreenState();
+}
+
+class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
+  final hoje = DateTime.now();
+  late final DateTime dataEntrega;
+  late final String dataFormatada;
+  late final ValueNotifier<String> imagemCentralNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    dataEntrega = hoje.add(const Duration(days: 12));
+    dataFormatada = DateFormat('dd/MM/yyyy').format(dataEntrega);
+    imagemCentralNotifier = ValueNotifier(widget.produto.imagemPrincipal);
+  }
+
+  void atualizarImagemCentral(String novaImagem) {
+    if (imagemCentralNotifier.value != novaImagem) {
+      imagemCentralNotifier.value = novaImagem;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<ProdutosController>(
-        builder: (context, produtosController, child) {
-      return Scaffold(
-        backgroundColor: Themes.colorBackground,
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(140), child: AppBarWidget()),
-        body: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1200),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Container(
+    final produtosController = Provider.of<ProdutosController>(context);
+    final calcularFrete = Provider.of<CalcularFreteController>(context);
+
+    return Scaffold(
+      backgroundColor: Themes.colorBackground,
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(140), child: AppBarWidget()),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: LayoutBuilder(builder: (context, constraints) {
+              if (constraints.maxWidth < 850) {
+                return ProdutoDetalheMobile(
+                  produto: widget.produto,
+                );
+              }
+              return Container(
                 decoration: BoxDecoration(
                   color: Themes.white,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Themes.blackShadow,
@@ -48,71 +82,113 @@ class ProdutoDetalheScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //if (produto.imagem2 != null)
-                              CardImageProdutoWidget(
-                                width: 100,
-                                height: 100,
-                                imagemBase64: produto.imagemPrincipal,
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: MouseRegion(
+                              onExit: (event) => atualizarImagemCentral(
+                                  widget.produto.imagemPrincipal),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  MouseRegion(
+                                    onEnter: (_) => atualizarImagemCentral(
+                                        widget.produto.imagemPrincipal),
+                                    child: CardImageProdutoWidget(
+                                      fit: BoxFit.contain,
+                                      isBorder: true,
+                                      imagemUrl: widget.produto.imagemPrincipal,
+                                    ),
+                                  ),
+                                  MouseRegion(
+                                    onEnter: (_) => atualizarImagemCentral(
+                                        widget.produto.imagem2 ??
+                                            widget.produto.imagemPrincipal),
+                                    child: CardImageProdutoWidget(
+                                      fit: BoxFit.contain,
+                                      isBorder: true,
+                                      imagemUrl: widget.produto.imagem2 != null
+                                          ? widget.produto.imagem2!
+                                          : widget.produto.imagemPrincipal,
+                                    ),
+                                  ),
+                                  MouseRegion(
+                                    onEnter: (_) => atualizarImagemCentral(
+                                        widget.produto.imagem3 ??
+                                            widget.produto.imagemPrincipal),
+                                    child: CardImageProdutoWidget(
+                                      fit: BoxFit.contain,
+                                      isBorder: true,
+                                      imagemUrl: widget.produto.imagem3 != null
+                                          ? widget.produto.imagem3!
+                                          : widget.produto.imagemPrincipal,
+                                    ),
+                                  ),
+                                  MouseRegion(
+                                    onEnter: (_) => atualizarImagemCentral(
+                                        widget.produto.imagem4 ??
+                                            widget.produto.imagemPrincipal),
+                                    child: CardImageProdutoWidget(
+                                      isBorder: true,
+                                      fit: BoxFit.cover,
+                                      padding: 0.0,
+                                      imagemUrl: widget.produto.imagem4 != null
+                                          ? widget.produto.imagem4!
+                                          : widget.produto.imagemPrincipal,
+                                    ),
+                                  ),
+                                ],
                               ),
-
-                              CardImageProdutoWidget(
-                                imagemBase64: produto.imagem2 != null
-                                    ? produto.imagem2!
-                                    : produto.imagemPrincipal,
-                              ),
-
-                              CardImageProdutoWidget(
-                                imagemBase64: produto.imagem3 != null
-                                    ? produto.imagem3!
-                                    : produto.imagemPrincipal,
-                              ),
-
-                              CardImageProdutoWidget(
-                                imagemBase64: produto.imagem4 != null
-                                    ? produto.imagem4!
-                                    : produto.imagemPrincipal,
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                        //const SizedBox(width: 16),
-                        if (produto.imagemPrincipal.isNotEmpty)
-                          Column(
-                            children: [
-                              CardImageProdutoWidget(
-                                imagemBase64: produto.imagemPrincipal,
-                                width: 500,
-                                height: 600,
-                              ),
-                              CustomTextRich(
-                                textPrimary: 'Código do produto:',
-                                fontSizePrimary: 8,
-                                colorTextPrimary: Colors.black,
-                                textSecondary: '12345678',
-                                fontSizeSecondary: 8,
-                                isBoldSecondary: true,
-                              ),
-                            ],
-                          ),
-                        //Spacer(),
-                        const SizedBox(width: 12),
-                        Flexible(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                                      
+                          if (widget.produto.imagemPrincipal.isNotEmpty)
+                            Column(
+                              children: [
+                                ValueListenableBuilder(
+                                    valueListenable: imagemCentralNotifier,
+                                    builder: (context, imagem, _) {
+                                      return AnimatedSwitcher(
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                        child: CardImageProdutoWidget(
+                                          key: ValueKey(
+                                              '${imagem}_${DateTime.now().millisecondsSinceEpoch}'),
+                                          imagemUrl: imagem,
+                                          width: 500,
+                                          height: 500,
+                                          widtthImage: 400,
+                                          heightImage: 400,
+                                          fit: BoxFit.contain,
+                                          isBorder: true,
+                                          
+                                        ),
+                                      );
+                                    }),
+                                CustomTextRich(
+                                  textPrimary: 'Código do produto:',
+                                  fontSizePrimary: 8,
+                                  colorTextPrimary: Colors.black,
+                                  textSecondary: '12345678',
+                                  fontSizeSecondary: 8,
+                                  isBoldSecondary: true,
+                                ),
+                              ],
+                            ),
+                          //Spacer(),
+                          const SizedBox(width: 20),
+                          Flexible(
+                            flex: 2,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               // mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  produto.nome,
+                                  widget.produto.nome,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     fontSize: 35,
@@ -126,7 +202,7 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                   textPrimary: 'Descrição:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.descricao,
+                                  textSecondary: widget.produto.descricao,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true,
                                 ),
@@ -135,7 +211,7 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                   textPrimary: 'Categoria:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: 'Utencílios elétricos',
+                                  textSecondary: 'Utensílios',
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true,
                                 ),
@@ -143,15 +219,15 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                     textPrimary: 'Material:',
                                     fontSizePrimary: 14,
                                     colorTextPrimary: Colors.black,
-                                    textSecondary: produto.material,
+                                    textSecondary: widget.produto.material,
                                     fontSizeSecondary: 16,
                                     isBoldSecondary: true),
-
+                                      
                                 CustomTextRich(
                                   textPrimary: 'Dimensões:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.dimensoes,
+                                  textSecondary: widget.produto.dimensoes,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true,
                                 ),
@@ -161,7 +237,7 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                   textPrimary: 'Peso:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.peso,
+                                  textSecondary: widget.produto.peso,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true,
                                 ),
@@ -184,8 +260,8 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                       fontSizePrimary: 18,
                                       colorTextPrimary: Themes.redPrimary,
                                       textSecondary:
-                                          Formatters.formatercurrency(produto
-                                              .valorNoPix
+                                          Formatters.formatercurrency(widget
+                                              .produto.valorNoPix
                                               .toStringAsFixed(2)),
                                       fontSizeSecondary: 40,
                                       colorTextSecondary: Themes.redPrimary,
@@ -212,24 +288,50 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                         textPrimary: 'de',
                                         fontSizePrimary: 14,
                                         textSecondary:
-                                            'R\$ ${(produto.valorVenda / 12).toStringAsFixed(2)}',
+                                            'R\$ ${(widget.produto.valorVenda / 12).toStringAsFixed(2)}',
                                         colorTextSecondary: Themes.redPrimary,
                                         fontSizeSecondary: 18,
                                       ),
                                     ],
                                   ),
                                 ),
-                                Center(
-                                  child: CalculaFreteWidget(
-                                    onCalcularFrete: (cep) async {
-                                      // Chame sua API de frete aqui e retorne a string do resultado
-                                      // Exemplo simulado:
-                                      await Future.delayed(
-                                          const Duration(seconds: 1));
-                                      return 'Frete: R\$ 19,90 - Entrega em até 7 dias úteis';
-                                    },
-                                  ),
-                                ),
+                                !widget.produto.freteGratis
+                                    ? Center(
+                                        child: CalculaFreteWidget(
+                                          onCalcularFrete: (cep) async {
+                                            final result = await calcularFrete
+                                                .calcularFrete(
+                                                    cepDestino: cep,
+                                                    products: [
+                                                  {
+                                                    'id': widget.produto.id,
+                                                    'width': 23,
+                                                    'height': 12,
+                                                    'length': 11,
+                                                    'weight': 1.2,
+                                                  }
+                                                ]);
+                                            final extrairValores = calcularFrete
+                                                .extrairValoresServicos(result);
+                                            // print(
+                                            //     'Resultado do frete: $result');
+                                            return extrairValores;
+                                          },
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          Text(
+                                            'Frete Grátis',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Themes.green),
+                                          ),
+                                          Text(Formatters.dataEntregaFormatada(
+                                              12))
+                                        ],
+                                      ),
                                 Center(
                                   child: CustomButton(
                                     onPressed: () {},
@@ -244,9 +346,9 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Center(
@@ -260,7 +362,7 @@ class ProdutoDetalheScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Column(
@@ -273,9 +375,9 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                   color: Themes.redPrimary),
                             ),
-                            produto.sobre != null
+                            widget.produto.sobre != null
                                 ? Text(
-                                    produto.sobre!,
+                                    widget.produto.sobre!,
                                     style: GoogleFonts.robotoCondensed(
                                       fontSize: 16,
                                       color: Colors.black87,
@@ -294,55 +396,56 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                   color: Themes.redPrimary),
                             ),
-                            if (produto.peso != null)
+                            if (widget.produto.peso != null)
                               CustomTextRich(
                                 textPrimary: 'Peso:',
                                 fontSizePrimary: 14,
                                 colorTextPrimary: Colors.black,
-                                textSecondary: produto.peso!,
+                                textSecondary: widget.produto.peso!,
                                 fontSizeSecondary: 16,
                                 isBoldSecondary: true,
                                 textTertiary: '(aproximadamente)',
                                 fontSizeTertiary: 12,
                               ),
-                            if (produto.dimensoes != null)
+                            if (widget.produto.dimensoes != null)
                               CustomTextRich(
                                   textPrimary: 'Dimensões:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.dimensoes!,
+                                  textSecondary: widget.produto.dimensoes!,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true),
-                            if (produto.material != null)
+                            if (widget.produto.material != null)
                               CustomTextRich(
                                   textPrimary: 'Material:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.material!,
+                                  textSecondary: widget.produto.material!,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true),
-                            if (produto.marca != null)
+                            if (widget.produto.marca != null)
                               CustomTextRich(
                                   textPrimary: 'Marca:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.marca!,
+                                  textSecondary: widget.produto.marca!,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true),
-                            if (produto.cor != null)
+                            if (widget.produto.cor != null)
                               CustomTextRich(
                                   textPrimary: 'Cor:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.cor!,
+                                  textSecondary: widget.produto.cor!,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true),
-                            if (produto.consumoEletrico != null)
+                            if (widget.produto.consumoEletrico != null)
                               CustomTextRich(
                                   textPrimary: 'Consumo Elétrico:',
                                   fontSizePrimary: 14,
                                   colorTextPrimary: Colors.black,
-                                  textSecondary: produto.consumoEletrico!,
+                                  textSecondary:
+                                      widget.produto.consumoEletrico!,
                                   fontSizeSecondary: 16,
                                   isBoldSecondary: true),
                             const SizedBox(height: 20),
@@ -354,7 +457,7 @@ class ProdutoDetalheScreen extends StatelessWidget {
                                   color: Themes.redPrimary),
                             ),
                             Text(
-                              produto.sugestoesDeUso ??
+                              widget.produto.sugestoesDeUso ??
                                   'Nenhuma sugestão de uso disponível.',
                               style: const TextStyle(
                                   fontSize: 16, fontFamily: 'Roboto'),
@@ -364,122 +467,65 @@ class ProdutoDetalheScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    FutureBuilder(
-                        future: produtosController.buscarProdutos(),
-                        builder: (context, snapshot) {
-                          final produtos = snapshot.data;
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Text('Erro: ${snapshot.error}');
-                          } else {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Wrap(
-                                spacing: 16,
-                                runSpacing: 16,
-                                children: produtos != null &&
-                                        produtos.isNotEmpty
-                                    ? produtos!.map((produto) {
-                                        return SizedBox(
-                                          width: 200, // largura fixa do card
-                                          child: CardProduto(
-                                            produto: produto,
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ProdutoDetalheScreen(
-                                                          produto: produto),
-                                                ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FutureBuilder(
+                          future: produtosController.buscarProdutos(),
+                          builder: (context, snapshot) {
+                            final produtos = snapshot.data;
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text('Erro: ${snapshot.error}');
+                            } else {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Wrap(
+                                  spacing: 16,
+                                  runSpacing: 16,
+                                  children:
+                                      produtos != null && produtos.isNotEmpty
+                                          ? produtos.map((produto) {
+                                              return CardProduto(
+                                                produto: produto,
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProdutoDetalheScreen(
+                                                              produto: produto),
+                                                    ),
+                                                  );
+                                                  //abrirTelaCheckout(context, produto);
+                                                },
                                               );
-                                              //abrirTelaCheckout(context, produto);
-                                            },
-                                          ),
-                                        );
-                                      }).toList()
-                                    : [
-                                        const Text(
-                                          'Nenhum produto encontrado.',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: 'Roboto',
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                      ],
-                              ),
-                            );
-                          }
-                        }),
+                                            }).toList()
+                                          : [
+                                              const Text(
+                                                'Nenhum produto encontrado.',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontFamily: 'Roboto',
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ],
+                                ),
+                              );
+                            }
+                          }),
+                    ),
                     FooterWidget()
                   ],
                 ),
-              ),
-            ),
+              );
+            }),
           ),
         ),
-      );
-    });
-  }
-
-  Widget _campo(String label, String? valor) {
-    if (valor == null || valor.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('$label: ',
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, fontFamily: 'Roboto')),
-          Expanded(
-              child: Text(valor, style: const TextStyle(fontFamily: 'Roboto'))),
-        ],
-      ),
-    );
-  }
-}
-
-class CardImageProdutoWidget extends StatelessWidget {
-  final String imagemBase64;
-  final double? width;
-  final double? height;
-
-  const CardImageProdutoWidget(
-      {this.height, this.width, required this.imagemBase64, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Animate(
-      effects: [
-        FadeEffect(duration: 600.ms),
-        ScaleEffect(duration: 600.ms, curve: Curves.easeOutBack),
-      ],
-      child: Container(
-        width: width ?? 100,
-        height: height ?? 100,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black26,
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.all(18),
-        margin: const EdgeInsets.only(bottom: 24),
-        child: imagemBase64.isNotEmpty
-            ? Image.memory(
-                base64Decode(imagemBase64!),
-                height: 210,
-                fit: BoxFit.contain,
-              )
-            : const Icon(Icons.image_not_supported,
-                size: 48, color: Colors.grey),
       ),
     );
   }

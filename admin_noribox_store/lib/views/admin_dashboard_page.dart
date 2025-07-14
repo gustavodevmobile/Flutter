@@ -10,16 +10,16 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Future.microtask(() {
-  //     if (mounted) {
-  //       Provider.of<ProdutoController>(context, listen: false)
-  //           .buscarProdutosController();
-  //     }
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      if (mounted) {
+        Provider.of<ProdutoController>(context, listen: false)
+            .buscarProdutosController();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

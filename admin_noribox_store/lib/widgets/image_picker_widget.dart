@@ -14,7 +14,7 @@ class ImagemPickerWidget extends StatelessWidget {
     required this.imagem,
     required this.onImagemSelecionada,
     this.label = 'Imagem',
-    this.height = 180,
+  this.height = 180,
   });
 
   Future<void> _selecionarImagem(BuildContext context) async {
@@ -28,9 +28,10 @@ class ImagemPickerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _selecionarImagem(context),
+      onTap: () => _selecionarImagem(context), 
       child: Container(
         height: height,
+        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.grey[100],
           border: Border.all(color: Colors.blueAccent, width: 1.5),

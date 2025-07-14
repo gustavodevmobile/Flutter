@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:admin_noribox_store/controllers/produto_controller.dart';
 import 'package:admin_noribox_store/views/editar_produto_page.dart';
+//import 'package:admin_noribox_store/views/detalhe_produto_page.dart';
 import 'package:admin_noribox_store/widgets/global_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +13,9 @@ class ListaProdutosPage extends StatefulWidget {
 }
 
 class _ListaProdutosPageState extends State<ListaProdutosPage> {
+  final ScrollController _verticalController = ScrollController();
+  final ScrollController _horizontalController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ProdutoController>(
@@ -21,75 +24,188 @@ class _ListaProdutosPageState extends State<ListaProdutosPage> {
           appBar: AppBar(
             title: const Text('Produtos Cadastrados'),
           ),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columns: const [
-                DataColumn(label: Text('Imagem')),
-                DataColumn(label: Text('Nome')),
-                DataColumn(label: Text('Preço')),
-                DataColumn(label: Text('Descrição')),
-                DataColumn(label: Text('Editar')),
-                DataColumn(label: Text('Deletar')),
-              ],
-              rows: produtosController.produtos.map((produto) {
-                return DataRow(cells: [
-                  DataCell(
-                    produto.imagemPrincipal.isNotEmpty
-                        ? SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: produto.imagemPrincipal.startsWith('http')
-                                ? Image.network(produto.imagemPrincipal,
-                                    fit: BoxFit.cover)
-                                : Image.memory(
-                                    // Se for base64, decodifique
-                                    produto.imagemPrincipal.contains(',')
-                                        ? base64Decode(
-                                            produto.imagemPrincipal.split(',').last)
-                                        : base64Decode(produto.imagemPrincipal),
-                                    fit: BoxFit.cover,
-                                  ),
-                          )
-                        : const Icon(Icons.image_not_supported),
+          body: Scrollbar(
+            thumbVisibility: true,
+            controller: _horizontalController,
+            child: SingleChildScrollView(
+              controller: _horizontalController,
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                controller: _verticalController,
+                scrollDirection: Axis.vertical,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 18.0),
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Imagem')),
+                      DataColumn(label: Text('Nome')),
+                      DataColumn(label: Text('Valor Compra')),
+                      DataColumn(label: Text('Valor Venda')),
+                      DataColumn(label: Text('Valor Pix')),
+                      DataColumn(label: Text('Valor c/ Juros')),
+                      DataColumn(label: Text('Valor s/ Juros')),
+                      DataColumn(label: Text('Lucro Venda')),
+                      DataColumn(label: Text('Descrição')),
+                      DataColumn(label: Text('Material')),
+                      DataColumn(label: Text('Marca')),
+                      DataColumn(label: Text('Cor')),
+                      DataColumn(label: Text('Características')),
+                      DataColumn(label: Text('Dimensões')),
+                      DataColumn(label: Text('Ocasião')),
+                      DataColumn(label: Text('Sobre')),
+                      DataColumn(label: Text('Prazo Entrega')),
+                      DataColumn(label: Text('Frete')),
+                      DataColumn(label: Text('Frete Grátis')),
+                      DataColumn(label: Text('Origem')),
+                      DataColumn(label: Text('Disponível')),
+                      DataColumn(label: Text('Elétrico')),
+                      DataColumn(label: Text('Consumo Elétrico')),
+                      DataColumn(label: Text('Peso')),
+                      DataColumn(label: Text('Validade')),
+                      DataColumn(label: Text('Info. Adicionais')),
+                      DataColumn(label: Text('Sugestões de Uso')),
+                      DataColumn(label: Text('URL Fornecedor')),
+                      DataColumn(label: Text('ID Fornecedor')),
+                      DataColumn(label: Text('Parcelamento')),
+                      DataColumn(label: Text('Categoria')),
+                      DataColumn(label: Text('Editar')),
+                      DataColumn(label: Text('Deletar')),
+                    ],
+                    rows: produtosController.produtos.map((produto) {
+                      return DataRow(
+                        onSelectChanged: (selected) {
+                          if (selected == true) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditarProdutoPage(produto: produto),
+                              ),
+                            );
+                          }
+                        },
+                        cells: [
+                          DataCell(
+                            produto.imagemPrincipal.isNotEmpty
+                                ? SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: Image.network(
+                                      produto.imagemPrincipal,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return const Icon(Icons.image_not_supported);
+                                      },
+                                    ),
+                                  )
+                                : const Icon(Icons.image_not_supported),
+                          ),
+                          DataCell(Text(produto.nome)),
+                          DataCell(Text(
+                              produto.valorCompra?.toStringAsFixed(2) ?? '-')),
+                          DataCell(Text(produto.valorVenda.toStringAsFixed(2))),
+                          DataCell(Text(
+                              produto.valorNoPix?.toStringAsFixed(2) ?? '-')),
+                          DataCell(Text(
+                              produto.valorComJuros?.toStringAsFixed(2) ??
+                                  '-')),
+                          DataCell(Text(
+                              produto.valorSemJuros?.toStringAsFixed(2) ??
+                                  '-')),
+                          DataCell(Text(
+                              produto.lucroSobreVenda?.toStringAsFixed(2) ??
+                                  '-')),
+                          DataCell(SizedBox(
+                              width: 120,
+                              child: Text(produto.descricao,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis))),
+                          DataCell(Text(produto.material ?? '-')),
+                          DataCell(Text(produto.marca ?? '-')),
+                          DataCell(Text(produto.cor ?? '-')),
+                          DataCell(Text(produto.caracteristicas ?? '-')),
+                          DataCell(Text(produto.dimensoes ?? '-')),
+                          DataCell(Text(produto.ocasiao ?? '-')),
+                          DataCell(SizedBox(
+                              width: 100,
+                              child: Text(produto.sobre ?? '-',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis))),
+                          DataCell(Text(produto.prazoEntrega ?? '-')),
+                          DataCell(Text(produto.frete ?? '-')),
+                          DataCell(Icon(
+                              produto.freteGratis ? Icons.check : Icons.close,
+                              color: produto.freteGratis
+                                  ? Colors.green
+                                  : Colors.red)),
+                          DataCell(Text(produto.origem ?? '-')),
+                          DataCell(Icon(
+                              produto.disponivel ? Icons.check : Icons.close,
+                              color: produto.disponivel
+                                  ? Colors.green
+                                  : Colors.red)),
+                          DataCell(Icon(
+                              produto.isEletrico
+                                  ? Icons.electric_bolt
+                                  : Icons.close,
+                              color: produto.isEletrico
+                                  ? Colors.amber
+                                  : Colors.grey)),
+                          DataCell(Text(produto.consumoEletrico ?? '-')),
+                          DataCell(Text(produto.peso ?? '-')),
+                          DataCell(Text(produto.validade ?? '-')),
+                          DataCell(Text(produto.informacoesAdicionais ?? '-')),
+                          DataCell(Text(produto.sugestoesDeUso ?? '-')),
+                          DataCell(Text(produto.urlFornecedor ?? '-')),
+                          DataCell(Text(produto.idFornecedor ?? '-')),
+                          DataCell(Text(produto.parcelamento ?? '-')),
+                          DataCell(Text(produto.categoria?.nome ?? '-')),
+                          DataCell(IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditarProdutoPage(produto: produto),
+                                ),
+                              );
+                            },
+                          )),
+                          DataCell(IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () async {
+                              try {
+                                await produtosController
+                                    .deletarProdutoController(produto.id!);
+                                // Exibe Snackbar globalmente, sem depender do contexto local
+                                GlobalSnackbar.show(
+                                    'Produto ${produto.nome} deletado com sucesso');
+                              } on Exception catch (e) {
+                                print(e);
+                                GlobalSnackbar.show(e.toString());
+                              } catch (e) {
+                                GlobalSnackbar.show('Erro: $e');
+                              }
+                            },
+                          )),
+                        ],
+                      );
+                    }).toList(),
                   ),
-                  DataCell(Text(produto.nome)),
-                  DataCell(Text('R\$ ${produto.valorVenda.toStringAsFixed(2)}')),
-                  DataCell(Text(produto.descricao)),
-                  DataCell(IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditarProdutoPage(produto: produto),
-                          ));
-                    },
-                  )),
-                  DataCell(IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () async {
-                      try {
-                        await produtosController
-                            .deletarProdutoController(produto.id!);
-                        GlobalSnackbar.show(
-                            'Produto ${produto.nome} deletado com sucesso');
-                        //setState(() {});
-                      } on Exception catch (e) {
-                        print(e);
-                        GlobalSnackbar.show(e.toString());
-                      } catch (e) {
-                        GlobalSnackbar.show('Erro: $e');
-                      }
-                    },
-                  )),
-                ]);
-              }).toList(),
+                ),
+              ),
             ),
           ),
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _verticalController.dispose();
+    _horizontalController.dispose();
+    super.dispose();
   }
 }

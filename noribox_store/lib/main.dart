@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:noribox_store/controllers/calcular_frete.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
+import 'package:noribox_store/service/calcular_frete_service.dart';
 import 'package:noribox_store/service/produtos_service.dart';
 import 'package:noribox_store/views/home.dart';
 import 'package:provider/provider.dart';
@@ -14,10 +18,18 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => ProdutosController(service: ProdutosService()),
         ),
+        ChangeNotifierProvider(
+          create: (context) => CalcularFreteController(
+            serviceFrete: CalcularFreteService(),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),
   );
+  // final service = ProdutosService();
+  // final transportadoras = await service.buscarTransportadorasMelhorEnvio();
+  // print(transportadoras);
 }
 
 class MyApp extends StatelessWidget {

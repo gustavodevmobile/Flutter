@@ -11,14 +11,14 @@ class FooterWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       decoration: BoxDecoration(
         color: Themes.blackLight,
-        //borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 12,
-            offset: Offset(0, -2),
-          ),
-        ],
+        borderRadius:BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black26,
+        //     blurRadius: 12,
+        //     offset: Offset(0, -2),
+        //   ),
+        // ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -1,13 +1,12 @@
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:noribox_store/models/produtos_models.dart';
 import 'package:noribox_store/themes/themes.dart';
 import 'package:noribox_store/utils/formatters.dart';
-import 'package:noribox_store/widgets/contador_quantidade.dart';
+import 'package:noribox_store/widgets/card_image_products.dart';
 import 'package:noribox_store/widgets/custom_text_rich.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CardProduto extends StatelessWidget {
   final Produto produto;
@@ -19,26 +18,13 @@ class CardProduto extends StatelessWidget {
     this.onTap,
   });
 
-  Widget _buildBase64Image(String base64String,
-      {double? height, double? width, BoxFit? fit}) {
-    try {
-      Uint8List bytes = base64Decode(base64String);
-      return Image.memory(
-        bytes,
-        height: height,
-        width: width,
-        fit: fit,
-      );
-    } catch (e) {
-      return const Icon(Icons.broken_image, color: Colors.grey, size: 48);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 200,
+        //height: 350,
         margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 4),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -59,26 +45,20 @@ class CardProduto extends StatelessWidget {
             // Imagem do produto
             ClipRRect(
               borderRadius: BorderRadius.circular(18),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: produto.imagemPrincipal.isNotEmpty
-                    ? _buildBase64Image(
-                        produto.imagemPrincipal,
-                        // width: 200,
-                        // height: 200,
-                        fit: BoxFit.contain,
-                      )
-                    : Container(
-                        width: 80,
-                        height: 80,
-                        color: Colors.white,
-                        child: const Icon(Icons.shopping_bag,
-                            size: 48, color: Colors.grey),
-                      ),
-              ),
+              child: produto.imagemPrincipal.isNotEmpty
+                  ? CardImageProdutoWidget(
+                      imagemUrl: produto.imagemPrincipal,
+                      width: 150,
+                      height: 170,
+                      fit: BoxFit.cover)
+                  : Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.white,
+                      child: const Icon(Icons.shopping_bag,
+                          size: 48, color: Colors.grey),
+                    ),
             ),
-            const SizedBox(height: 8),
-
             // Nome do produto
             const SizedBox(height: 4),
             Text(
@@ -92,20 +72,17 @@ class CardProduto extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             // const SizedBox(height: 4),
-            SizedBox(
-              height: 50,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  produto.descricao,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.black87,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                produto.descricao,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: Colors.black87,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             // Preço
@@ -115,13 +92,6 @@ class CardProduto extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
                 return Icon(Icons.star, color: Colors.amber, size: 20);
-                // Icon(
-                //   index < (produto.avaliacao ?? '4') // valor mock ou do produto
-                //       ? Icons.star
-                //       : Icons.star_border,
-                //   color: Colors.amber,
-                //   size: 18,
-                // );
               }),
             ),
             const SizedBox(height: 4),
@@ -132,7 +102,8 @@ class CardProduto extends StatelessWidget {
                 fontSizePrimary: 12,
                 colorTextPrimary: Themes.redPrimary,
                 isBoldPrimary: true,
-                textSecondary: Formatters.formatercurrency(produto.valorNoPix.toString()),
+                textSecondary: Formatters.formatercurrency(
+                    produto.valorNoPix.toStringAsFixed(2)),
                 fontSizeSecondary: 26,
                 colorTextSecondary: Themes.redPrimary,
                 isBoldSecondary: true,
@@ -141,7 +112,7 @@ class CardProduto extends StatelessWidget {
                 colorTextTertiary: Themes.green,
               ),
             ),
-            
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: CustomTextRich(
@@ -159,63 +130,13 @@ class CardProduto extends StatelessWidget {
                 fontSizeQuaternary: 12,
                 colorTextQuaternary: Themes.redPrimary,
                 isBoldQuaternary: true,
-                textQuinary: (produto.valorVenda / 12).toString(),
+                textQuinary: (produto.valorVenda / 12).toStringAsFixed(2),
                 fontSizeQuinary: 14,
                 colorTextQuinary: Themes.redPrimary,
                 isBoldQuinary: true,
               ),
             ),
             const SizedBox(height: 12),
-            // Botão comprar
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 12),
-            //   child: Row(
-            //     children: [
-            //       //ContadorQuantidade(),
-            //       const SizedBox(width: 8),
-            //       Expanded(
-            //         child: ElevatedButton(
-            //           onPressed: onTap,
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: Colors.green,
-            //             foregroundColor: Colors.white,
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(8),
-            //             ),
-            //             padding: const EdgeInsets.symmetric(vertical: 10),
-            //             textStyle: const TextStyle(
-            //               fontWeight: FontWeight.bold,
-            //             ),
-            //           ),
-            //           child: const Text('Comprar'),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // const SizedBox(height: 8),
-
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: SizedBox(
-            //     width: double.infinity,
-            //     child: ElevatedButton(
-            //       onPressed: onTap,
-            //       style: ElevatedButton.styleFrom(
-            //         backgroundColor: Colors.lightGreen,
-            //         foregroundColor: Colors.white,
-            //         shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(8),
-            //         ),
-            //         //padding: const EdgeInsets.symmetric(vertical: 10),
-            //         textStyle: const TextStyle(
-            //           fontWeight: FontWeight.bold,
-            //         ),
-            //       ),
-            //       child: const Text('Dúvidas'),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:noribox_store/themes/themes.dart';
 
 class AppBarWidget extends StatefulWidget {
   const AppBarWidget({super.key});
@@ -28,7 +29,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   child: Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(228, 220, 75, 31),
+                      color:Themes.redSecondary,
                     ),
                     padding: const EdgeInsets.only(left: 8),
                   ).animate().fadeIn(delay: 100.ms),
@@ -40,14 +41,11 @@ class _AppBarWidgetState extends State<AppBarWidget> {
               child: Row(
                 children: [
                   // Logotipo da loja
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      './assets/images/logo.png',
-                      height: 70,
-                      width: 70,
-                      fit: BoxFit.cover,
-                    ),
+                  Image.asset(
+                    './assets/images/logo_pequena.png',
+                    height: 70,
+                    width: 70,
+                    fit: BoxFit.contain,
                   ).animate().scale(delay: 200.ms),
                   const SizedBox(width: 16),
 
