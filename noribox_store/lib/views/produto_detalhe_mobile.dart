@@ -6,9 +6,12 @@ import 'package:noribox_store/controllers/produtos_controllers.dart';
 import 'package:noribox_store/models/produtos_models.dart';
 import 'package:noribox_store/themes/themes.dart';
 import 'package:noribox_store/utils/formatters.dart';
+import 'package:noribox_store/widgets/icon_favorito.dart';
 import 'package:noribox_store/views/produto_detalhe.dart';
-import 'package:noribox_store/widgets/app_bar.dart';
+import 'package:noribox_store/widgets/avaliacao_produto.dart';
+import 'package:noribox_store/widgets/avaliacao_usuario.dart';
 import 'package:noribox_store/widgets/calcular_frete.dart';
+import 'package:noribox_store/widgets/caminho_produto.dart';
 import 'package:noribox_store/widgets/card_image_products.dart';
 import 'package:noribox_store/widgets/card_produto.dart';
 import 'package:noribox_store/widgets/contador_quantidade.dart';
@@ -16,10 +19,10 @@ import 'package:noribox_store/widgets/custom_button.dart';
 import 'package:noribox_store/widgets/custom_text_rich.dart';
 import 'package:noribox_store/widgets/footer_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class ProdutoDetalheMobile extends StatefulWidget {
   final Produto produto;
+
   const ProdutoDetalheMobile({super.key, required this.produto});
 
   @override
@@ -29,6 +32,33 @@ class ProdutoDetalheMobile extends StatefulWidget {
 class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
   late final PageController _pageController;
   int paginaAtual = 0;
+
+  final avaliacoesMock = [
+    AvaliacaoUsuario(
+      nome: 'Maria Silva',
+      comentario: 'Produto excelente, superou minhas expectativas!',
+      nota: 5,
+      data: DateTime(2025, 7, 10),
+    ),
+    AvaliacaoUsuario(
+      nome: 'João Souza',
+      comentario: 'Chegou rápido, mas a embalagem veio um pouco amassada.',
+      nota: 4,
+      data: DateTime(2025, 7, 8),
+    ),
+    AvaliacaoUsuario(
+      nome: 'Ana Paula',
+      comentario: 'Gostei bastante, recomendo para todos.',
+      nota: 5,
+      data: DateTime(2025, 7, 5),
+    ),
+    AvaliacaoUsuario(
+      nome: 'Carlos Mendes',
+      comentario: 'Produto bom, mas poderia ser mais barato.',
+      nota: 3,
+      data: DateTime(2025, 7, 2),
+    ),
+  ];
 
   @override
   void initState() {
@@ -56,10 +86,18 @@ class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
         widget.produto.imagem4!,
     ];
     return Container(
-      //padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [
+            Themes.greyLight,
+            Colors.white,
+            Themes.greyTertiary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -70,6 +108,55 @@ class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
       ),
       child: Column(
         children: [
+          const SizedBox(height: 16),
+          CaminhoProduto(nomeProduto: widget.produto.nome),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Código do Produto: ${widget.produto.id}',
+                style: const TextStyle(
+                  fontSize: 8,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.produto.nome,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.aboreto(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Themes.redPrimary,
+                  ),
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                widget.produto.descricao,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.aboreto(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Themes.redPrimary,
+                ),
+              ),
+            ),
+          ),
+          Divider(),
+          const SizedBox(height: 12),
           Stack(
             alignment: Alignment.center,
             children: [
@@ -129,70 +216,70 @@ class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Divider(),
-          Text(
-            widget.produto.nome,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 35,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-              color: Colors.black87,
+
+          Divider(
+            color: Colors.black26,
+            thickness: 1,
+          ),
+
+          Align(
+            alignment: Alignment.center,
+            child: AvaliacoesProdutoWidget(
+              notaMedia: 5,
+              quantidadeAvaliacoes: 4,
             ),
           ),
-          CustomTextRich(
-            textPrimary: 'Descrição:',
-            fontSizePrimary: 14,
-            colorTextPrimary: Colors.black,
-            textSecondary: widget.produto.descricao,
-            fontSizeSecondary: 16,
-            isBoldSecondary: true,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 6),
-                  CustomTextRich(
-                    textPrimary: 'Categoria:',
-                    fontSizePrimary: 14,
-                    colorTextPrimary: Colors.black,
-                    textSecondary: 'Utensílios',
-                    fontSizeSecondary: 16,
-                    isBoldSecondary: true,
-                  ),
-                  CustomTextRich(
-                      textPrimary: 'Material:',
-                      fontSizePrimary: 14,
-                      colorTextPrimary: Colors.black,
-                      textSecondary: widget.produto.material,
-                      fontSizeSecondary: 16,
-                      isBoldSecondary: true),
-                  CustomTextRich(
-                    textPrimary: 'Dimensões:',
-                    fontSizePrimary: 14,
-                    colorTextPrimary: Colors.black,
-                    textSecondary: widget.produto.dimensoes,
-                    fontSizeSecondary: 16,
-                    isBoldSecondary: true,
-                  ),
-                  CustomTextRich(
-                    textPrimary: 'Peso:',
-                    fontSizePrimary: 14,
-                    colorTextPrimary: Colors.black,
-                    textSecondary: widget.produto.peso,
-                    fontSizeSecondary: 16,
-                    isBoldSecondary: true,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          //const SizedBox(height: 12),
+          // Padding(
+          //   padding: const EdgeInsets.all(12.0),
+          //   child: Align(
+          //     alignment: Alignment.centerLeft,
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       mainAxisAlignment: MainAxisAlignment.start,
+          //       children: [
+          //         const SizedBox(height: 6),
+          //         CustomTextRich(
+          //           textPrimary: 'Categoria:',
+          //           fontSizePrimary: 14,
+          //           colorTextPrimary: Colors.black,
+          //           textSecondary: 'Utensílios',
+          //           fontSizeSecondary: 16,
+          //           isBoldSecondary: true,
+          //         ),
+          //         CustomTextRich(
+          //             textPrimary: 'Material:',
+          //             fontSizePrimary: 14,
+          //             colorTextPrimary: Colors.black,
+          //             textSecondary: widget.produto.material,
+          //             fontSizeSecondary: 16,
+          //             isBoldSecondary: true),
+          //         CustomTextRich(
+          //           textPrimary: 'Dimensões:',
+          //           fontSizePrimary: 14,
+          //           colorTextPrimary: Colors.black,
+          //           textSecondary: widget.produto.dimensoes,
+          //           fontSizeSecondary: 16,
+          //           isBoldSecondary: true,
+          //           textTertiary: 'cm',
+          //           colorTextTertiary: Colors.black,
+          //           fontSizeTertiary: 12,
+          //         ),
+          //         CustomTextRich(
+          //           textPrimary: 'Peso:',
+          //           fontSizePrimary: 14,
+          //           colorTextPrimary: Colors.black,
+          //           textSecondary: widget.produto.peso,
+          //           fontSizeSecondary: 16,
+          //           isBoldSecondary: true,
+          //           textTertiary: 'Kg',
+          //           colorTextTertiary: Colors.black,
+          //           fontSizeTertiary: 12,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           const SizedBox(width: 12),
           Column(
             children: [
@@ -282,17 +369,22 @@ class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
                     Text(Formatters.dataEntregaFormatada(12))
                   ],
                 ),
-          Center(
-            child: CustomButton(
-              onPressed: () {},
-              width: 200,
-              height: 50,
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              borderRadius: 12,
-              elevation: 2,
-              child: Text('Adicionar ao Carrinho'),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconFavorito(),
+              const SizedBox(width: 8),
+              CustomButton(
+                onPressed: () {},
+                width: 200,
+                height: 50,
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                borderRadius: 12,
+                elevation: 2,
+                child: Text('Adicionar ao Carrinho'),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
           const Divider(),
@@ -409,6 +501,44 @@ class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Divider(
+              color: Colors.black26,
+              thickness: 1,
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              'Avaliações',
+              style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Themes.redPrimary),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const SizedBox(height: 20),
+          ListaAvaliacoesProduto(avaliacoes: avaliacoesMock),
+          const SizedBox(height: 20),
+          Center(
+            child: CustomButton(
+              onPressed: () {},
+              width: 200,
+              height: 50,
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              borderRadius: 12,
+              elevation: 2,
+              child: Text('Adicionar Avaliação'),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Divider(
+            color: Colors.black26,
+            thickness: 1,
+          ),
           FutureBuilder(
               future: produtosController.buscarProdutos(),
               builder: (context, snapshot) {
@@ -421,8 +551,8 @@ class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
+                      spacing: 10,
+                      runSpacing: 10,
                       children: produtos != null && produtos.isNotEmpty
                           ? produtos.map((produto) {
                               return CardProduto(

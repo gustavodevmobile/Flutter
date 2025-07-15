@@ -36,6 +36,8 @@ class _ListaProdutosPageState extends State<ListaProdutosPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18.0),
                   child: DataTable(
+                    dataRowMinHeight: 80,
+                    dataRowMaxHeight: 100, 
                     columns: const [
                       DataColumn(label: Text('Imagem')),
                       DataColumn(label: Text('Nome')),
@@ -88,13 +90,15 @@ class _ListaProdutosPageState extends State<ListaProdutosPage> {
                           DataCell(
                             produto.imagemPrincipal.isNotEmpty
                                 ? SizedBox(
-                                    width: 50,
-                                    height: 50,
                                     child: Image.network(
                                       produto.imagemPrincipal,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const Icon(Icons.image_not_supported);
+                                      width: 70,
+                                      height: 70,
+                                      fit: BoxFit.contain,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(
+                                            Icons.image_not_supported);
                                       },
                                     ),
                                   )
@@ -209,3 +213,7 @@ class _ListaProdutosPageState extends State<ListaProdutosPage> {
     super.dispose();
   }
 }
+
+// Noribox utilizada para garantir a qualidade do nori (alga marinha), deixando-as crocantes e realçando seu frescor e textura.
+
+// Ao iniciar as atividades com o nori, passe as folhas de baixo para cima, assim você garante noris frescos e crocantes.

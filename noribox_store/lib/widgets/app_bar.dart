@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:noribox_store/themes/themes.dart';
+import 'package:noribox_store/views/cadastro_usuario.dart';
 
 class AppBarWidget extends StatefulWidget {
   const AppBarWidget({super.key});
@@ -29,7 +30,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   child: Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color:Themes.redSecondary,
+                      color: Themes.redSecondary,
                     ),
                     padding: const EdgeInsets.only(left: 8),
                   ).animate().fadeIn(delay: 100.ms),
@@ -42,7 +43,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                 children: [
                   // Logotipo da loja
                   Image.asset(
-                    './assets/images/logo_pequena.png',
+                    './assets/images/logoAsatomaPeq.png',
                     height: 70,
                     width: 70,
                     fit: BoxFit.contain,
@@ -123,7 +124,11 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   // Cadastrar
                   ElevatedButton(
                     onPressed: () {
-                      // TODO: Navegar para cadastro
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CadastroUsuarioScreen(),
+                          ));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,

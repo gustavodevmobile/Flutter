@@ -1,8 +1,9 @@
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:noribox_store/themes/themes.dart';
 import 'package:noribox_store/views/produto_detalhe.dart';
 import 'package:noribox_store/widgets/app_bar.dart';
+import 'package:noribox_store/widgets/button_whatsapp.dart';
 import 'package:noribox_store/widgets/card_image_products.dart';
 import 'package:noribox_store/widgets/card_produto.dart';
 import 'package:noribox_store/widgets/footer_widget.dart';
@@ -203,7 +204,7 @@ class _EcommercePageState extends State<EcommercePage> {
                                   height: 8,
                                   decoration: BoxDecoration(
                                     color: currentSlide == index
-                                        ? Colors.deepPurple
+                                        ? Themes.redPrimary
                                         : Colors.grey.shade300,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
@@ -261,21 +262,7 @@ class _EcommercePageState extends State<EcommercePage> {
             ),
           ),
         ),
-        Positioned(
-          bottom: 32,
-          right: 32,
-          child: GestureDetector(
-            onTap: () {
-              const url =
-                  'https://wa.me/5513996252021?text=Olá! Preciso de ajuda com meu pedido.';
-              // Para web:
-              // ignore: undefined_prefixed_name
-              html.window.open(url, '_blank');
-            },
-            child: Image.asset('./assets/images/whatsapp_icon.png',
-                height: 45, width: 45),
-          ),
-        ),
+        ButtonWhatsapp(),
       ],
     );
   }

@@ -8,6 +8,25 @@ class Formatters {
       '#': RegExp(r'[0-9]'),
     },
   );
+  static final telefoneFormatter = MaskTextInputFormatter(
+    mask: '(##) ####-####',
+    filter: {
+      '#': RegExp(r'[0-9]'),
+    },
+  );
+  
+  static final celularFormatter = MaskTextInputFormatter(
+    mask: '(##) #####-####',
+    filter: {
+      '#': RegExp(r'[0-9]'),
+    },
+  );
+  static final cpfFormatter = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {
+      '#': RegExp(r'[0-9]'),
+    },
+  );
 
   static String formatercurrency(String value) {
     final formatter = NumberFormat.currency(
@@ -15,10 +34,10 @@ class Formatters {
       symbol: '',
       decimalDigits: 2,
     );
-    return formatter.format(double.tryParse(value)?? 0);
+    return formatter.format(double.tryParse(value) ?? 0);
   }
 
-   static String dataEntregaFormatada(int prazoEmDias) {
+  static String dataEntregaFormatada(int prazoEmDias) {
     final dataEntrega = DateTime.now().add(Duration(days: prazoEmDias));
     return DateFormat('dd/MM').format(dataEntrega);
   }
