@@ -1,7 +1,8 @@
 class EnderecoClienteModel {
   String? id;
+  String clienteId;
   String cep;
-  String logradouro;
+  String rua;
   String numero;
   String complemento;
   String bairro;
@@ -10,8 +11,9 @@ class EnderecoClienteModel {
 
   EnderecoClienteModel({
     this.id,
+    required this.clienteId,
     required this.cep,
-    required this.logradouro,
+    required this.rua,
     required this.numero,
     required this.complemento,
     required this.bairro,
@@ -21,8 +23,9 @@ class EnderecoClienteModel {
 
   factory EnderecoClienteModel.fromJson(Map<String, dynamic> json) => EnderecoClienteModel(
         id: json['id'],
+        clienteId: json['clienteId'],
         cep: json['cep'],
-        logradouro: json['logradouro'],
+        rua: json['rua'],
         numero: json['numero'],
         complemento: json['complemento'],
         bairro: json['bairro'],
@@ -32,8 +35,9 @@ class EnderecoClienteModel {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'clienteId': clienteId,
         'cep': cep,
-        'logradouro': logradouro,
+        'rua': rua,
         'numero': numero,
         'complemento': complemento,
         'bairro': bairro,

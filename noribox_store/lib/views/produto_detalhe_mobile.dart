@@ -557,7 +557,7 @@ class _ProdutoDetalheMobileState extends State<ProdutoDetalheMobile> {
                           ? produtos.map((produto) {
                               return CardProduto(
                                 produto: produto,
-                                onTap: () {
+                                onTapCard: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:noribox_store/controllers/calcular_frete.dart';
+import 'package:noribox_store/controllers/carrinho_controllers.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
 import 'package:noribox_store/models/produtos_models.dart';
 import 'package:noribox_store/themes/themes.dart';
@@ -83,6 +84,7 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
   Widget build(BuildContext context) {
     final produtosController = Provider.of<ProdutosController>(context);
     final calcularFrete = Provider.of<CalcularFreteController>(context);
+    final carrinhoController = Provider.of<CarrinhoController>(context, listen: false);
 
     return Stack(
       children: [
@@ -402,7 +404,17 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
                                         Flexible(
                                           flex: 2,
                                           child: CustomButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              carrinhoController
+                                                  .adicionarProduto({
+                                                'id': widget.produto.id,
+                                                'nome': widget.produto.nome,
+                                                'descricao':
+                                                    widget.produto.descricao,
+                                                'imagem': widget
+                                                    .produto.imagemPrincipal
+                                              });
+                                            },
                                             width: 200,
                                             height: 50,
                                             backgroundColor: Colors.green,
@@ -597,7 +609,7 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
                                           ? produtos.map((produto) {
                                               return CardProduto(
                                                 produto: produto,
-                                                onTap: () {
+                                                onTapCard: () {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -625,7 +637,7 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
                                 }
                               }),
                         ),
-                       
+
                         FooterWidget(),
                       ],
                     ),
@@ -635,7 +647,7 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
             ),
           ),
         ),
-         ButtonWhatsapp(),
+        ButtonWhatsapp(),
       ],
     );
   }

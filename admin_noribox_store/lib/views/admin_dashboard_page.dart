@@ -1,3 +1,4 @@
+import 'package:admin_noribox_store/controllers/clientes_controller.dart';
 import 'package:admin_noribox_store/controllers/produto_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,11 +19,19 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         Provider.of<ProdutoController>(context, listen: false)
             .buscarProdutosController();
       }
+      if (mounted) {
+        Provider.of<ClientesController>(context, listen: false)
+            .buscarClientesController();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final produtosController =
+        Provider.of<ProdutoController>(context, listen: true);
+        final clientesController =
+        Provider.of<ClientesController>(context, listen: true);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Dashboard Admin'),
@@ -66,73 +75,71 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ],
           ),
         ),
-        body: Consumer<ProdutoController>(
-            builder: (context, produtosController, child) {
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 1100, // Defina o tamanho máximo desejado
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GridView.count(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.width > 600 ? 4 : 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  children: [
-                    _DashboardCard(
-                      icon: Icons.shopping_bag,
-                      title: 'Produtos',
-                      value: produtosController.produtos.length.toString(),
-                      color: Colors.blue,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/produtos');
-                      },
-                    ),
-                    _DashboardCard(
-                      icon: Icons.shopping_bag,
-                      title: 'Cadastrar Produto',
-                      color: Colors.blue,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/cadastrar-produto');
-                      },
-                    ),
-                    _DashboardCard(
-                      icon: Icons.category,
-                      title: 'Cadastrar Categoria',
-                      color: Colors.blue,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/cadastrar-categoria');
-                      },
-                    ),
-                    _DashboardCard(
-                      icon: Icons.people,
-                      title: 'Clientes',
-                      value: '350',
-                      color: Colors.green,
-                      onTap: () {},
-                    ),
-                    _DashboardCard(
-                      icon: Icons.receipt_long,
-                      title: 'Pedidos',
-                      value: '87',
-                      color: Colors.orange,
-                      onTap: () {},
-                    ),
-                    _DashboardCard(
-                      icon: Icons.attach_money,
-                      title: 'Faturamento',
-                      value: 'R\$ 12.500',
-                      color: Colors.purple,
-                      onTap: () {},
-                    ),
-                  ],
-                ),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 1100, // Defina o tamanho máximo desejado
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.count(
+                crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: [
+                  _DashboardCard(
+                    icon: Icons.shopping_bag,
+                    title: 'Produtos',
+                    value: produtosController.produtos.length.toString(),
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/produtos');
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.shopping_bag,
+                    title: 'Cadastrar Produto',
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/cadastrar-produto');
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.category,
+                    title: 'Cadastrar Categoria',
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/cadastrar-categoria');
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.people,
+                    title: 'Clientes',
+                    value: clientesController.clientes.length.toString(),
+                    color: Colors.green,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/clientes');
+                    },
+                  ),
+                  _DashboardCard(
+                    icon: Icons.receipt_long,
+                    title: 'Pedidos',
+                    value: '87',
+                    color: Colors.orange,
+                    onTap: () {},
+                  ),
+                  _DashboardCard(
+                    icon: Icons.attach_money,
+                    title: 'Faturamento',
+                    value: 'R\$ 12.500',
+                    color: Colors.purple,
+                    onTap: () {},
+                  ),
+                ],
               ),
             ),
-          );
-        }));
+          ),
+        ));
   }
 }
 

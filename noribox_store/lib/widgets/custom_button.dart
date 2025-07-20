@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noribox_store/themes/themes.dart';
 
 class CustomButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -32,7 +33,7 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final btn = ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor ?? Theme.of(context).primaryColor,
+        backgroundColor: backgroundColor ?? Themes.green,
         foregroundColor: foregroundColor ?? Colors.white,
         elevation: elevation,
         shape: RoundedRectangleBorder(

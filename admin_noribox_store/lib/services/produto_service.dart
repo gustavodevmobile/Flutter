@@ -29,7 +29,7 @@ class Service {
   Future<List<Produto>> buscarProdutosService() async { 
     final url = Uri.parse('$baseUrl/produtos/produtos');
     final response = await http.get(url);
-    print('Response status: ${response.body}');
+    //print('Response status: ${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => Produto.fromJson(item)).toList();

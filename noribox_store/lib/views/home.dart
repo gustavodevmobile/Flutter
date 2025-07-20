@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:noribox_store/controllers/carrinho_controllers.dart';
 import 'package:noribox_store/themes/themes.dart';
+import 'package:noribox_store/utils/app_snackbar.dart';
 import 'package:noribox_store/views/produto_detalhe.dart';
 import 'package:noribox_store/widgets/app_bar.dart';
 import 'package:noribox_store/widgets/button_whatsapp.dart';
 import 'package:noribox_store/widgets/card_image_products.dart';
 import 'package:noribox_store/widgets/card_produto.dart';
+import 'package:noribox_store/widgets/custom_button.dart';
 import 'package:noribox_store/widgets/footer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
@@ -39,6 +42,8 @@ class _EcommercePageState extends State<EcommercePage> {
   Widget build(BuildContext context) {
     final produtosController =
         Provider.of<ProdutosController>(context, listen: false);
+    final carrinhoController =
+        Provider.of<CarrinhoController>(context, listen: false);
     return Stack(
       children: [
         Scaffold(
@@ -165,7 +170,6 @@ class _EcommercePageState extends State<EcommercePage> {
                                     blurRadius: 2,
                                     offset: const Offset(0, 2),
                                   ),
-                                 
                                 ],
                               ),
                               child: PageView.builder(
@@ -237,14 +241,31 @@ class _EcommercePageState extends State<EcommercePage> {
                                   //width: 200, // largura fixa do card
                                   child: CardProduto(
                                     produto: produto,
-                                    onTap: () {
+                                    onTapCard: () {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ProdutoDetalheScreen(
-                                                      produto: produto)));
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProdutoDetalheScreen(
+                                                  produto: produto),
+                                        ),
+                                      );
                                       //abrirTelaCheckout(context, produto);
+                                    },
+                                    onTapAddCarinho: () {
+                                      carrinhoController.adicionarProduto({
+                                        'id': produto.id,
+                                        'nome': produto.nome,
+                                        'descricao': produto.descricao,
+                                        'imagem': produto.imagemPrincipal
+                                      });
+
+                                      AppSnackbar.show(
+                                        context,
+                                        backgroundColor: Themes.green,
+                                        '${produto.nome} adicionado ao carrinho',
+                                        duration: const Duration(seconds: 2),
+                                      );
                                     },
                                   ),
                                 );

@@ -14,4 +14,5 @@ abstract class Themes {
   static const Color white = Color(0xFFFFFFFF);
   static const Color blackShadow = Colors.black12;
   static const Color green = Colors.green;
+  static const Color error = Colors.red;
 }

@@ -1,11 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:noribox_store/controllers/calcular_frete.dart';
+import 'package:noribox_store/controllers/carrinho_controllers.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
+import 'package:noribox_store/controllers/cliente_controllers.dart';
 import 'package:noribox_store/service/calcular_frete_service.dart';
 import 'package:noribox_store/service/produtos_service.dart';
-import 'package:noribox_store/views/cadastro_usuario.dart';
+import 'package:noribox_store/service/cliente_service.dart';
+import 'package:noribox_store/views/carrinho_screen.dart';
 import 'package:noribox_store/views/home.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +18,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (context) => CarrinhoController(),
+        ),
+        ChangeNotifierProvider(
           create: (context) => ProdutosController(service: ProdutosService()),
         ),
         ChangeNotifierProvider(
@@ -23,11 +28,14 @@ void main() async {
             serviceFrete: CalcularFreteService(),
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) =>
+              ClienteControllers(clienteService: ClienteService()),
+        ),
       ],
       child: const MyApp(),
     ),
   );
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -40,11 +48,11 @@ class MyApp extends StatelessWidget {
       // theme: ThemeData(
       //   primarySwatch: Colors.deepPurple,
       // ),
-      home: const CadastroUsuarioScreen()
-      //const EcommercePage(),
-      // routes: {
-      //   '/': (context) => const EcommercePage(),
-      // },
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const EcommercePage(),
+        '/carrinho': (context) => const CarrinhoScreen(),
+      },
     );
   }
 }

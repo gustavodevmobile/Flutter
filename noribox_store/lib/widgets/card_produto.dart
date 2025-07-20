@@ -11,13 +11,11 @@ import 'package:noribox_store/widgets/custom_text_rich.dart';
 
 class CardProduto extends StatefulWidget {
   final Produto produto;
-  final VoidCallback? onTap;
+  final VoidCallback? onTapCard;
+  final VoidCallback? onTapAddCarinho;
 
-  const CardProduto({
-    super.key,
-    required this.produto,
-    this.onTap,
-  });
+  const CardProduto(
+      {super.key, required this.produto, this.onTapCard, this.onTapAddCarinho});
 
   @override
   State<CardProduto> createState() => _CardProdutoState();
@@ -35,7 +33,7 @@ class _CardProdutoState extends State<CardProduto> {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
         child: GestureDetector(
-          onTap: widget.onTap,
+          onTap: widget.onTapCard,
           child: Container(
             width: 200,
             //height: 350,
@@ -158,13 +156,13 @@ class _CardProdutoState extends State<CardProduto> {
                 ContadorQuantidade(),
                 const SizedBox(height: 8),
                 CustomButton(
-                  onPressed: () {},
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  borderRadius: 12,
-                  elevation: 2,
-                  child: Text('Adicionar ao Cariinho'),
-                ),
+                    onPressed: widget.onTapAddCarinho,
+                    backgroundColor: Themes.green,
+                    foregroundColor: Colors.white,
+                    //width: 150,
+                    height: 40,
+                    child: const Text('Adicionar ao Carrinho')),
+
                 const SizedBox(height: 8),
               ],
             ),

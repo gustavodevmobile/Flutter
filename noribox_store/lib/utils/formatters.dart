@@ -14,7 +14,7 @@ class Formatters {
       '#': RegExp(r'[0-9]'),
     },
   );
-  
+
   static final celularFormatter = MaskTextInputFormatter(
     mask: '(##) #####-####',
     filter: {
@@ -28,6 +28,20 @@ class Formatters {
     },
   );
 
+  static final cnpjFormatter = MaskTextInputFormatter(
+    mask: '##.###.###/####-##',
+    filter: {
+      '#': RegExp(r'[0-9]'),
+    },
+  );
+
+  static final dataFormatter = MaskTextInputFormatter(
+    mask: '##/##/####',
+    filter: {
+      '#': RegExp(r'[0-9]'),
+    },
+  );
+
   static String formatercurrency(String value) {
     final formatter = NumberFormat.currency(
       locale: 'pt_BR',
@@ -35,6 +49,21 @@ class Formatters {
       decimalDigits: 2,
     );
     return formatter.format(double.tryParse(value) ?? 0);
+  }
+
+  static DateTime? parseDataNascimento(String texto) {
+    try {
+      final partes = texto.split('/');
+      if (partes.length == 3) {
+        final dia = int.parse(partes[0]);
+        final mes = int.parse(partes[1]);
+        final ano = int.parse(partes[2]);
+        return DateTime(ano, mes, dia);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 
   static String dataEntregaFormatada(int prazoEmDias) {
