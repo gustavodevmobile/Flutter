@@ -24,7 +24,9 @@ class EcommercePage extends StatefulWidget {
 class _EcommercePageState extends State<EcommercePage> {
   String busca = '';
   int currentSlide = 0;
+  bool isAddcarrinho = false;
   late PageController pageController;
+  Map<String, int> quantidades = {};
 
   @override
   void initState() {
@@ -252,14 +254,28 @@ class _EcommercePageState extends State<EcommercePage> {
                                       );
                                       //abrirTelaCheckout(context, produto);
                                     },
+                                    onQuantidadeChanged: (c) {
+                                      quantidades[produto.id] = c;
+                                      if (carrinhoController
+                                              .produtosId.isNotEmpty &&
+                                          isAddcarrinho) {
+                                        carrinhoController.atualizarQuantidade(
+                                            produto.id, c);
+                                      }
+                                    },
                                     onTapAddCarinho: () {
                                       carrinhoController.adicionarProduto({
                                         'id': produto.id,
                                         'nome': produto.nome,
                                         'descricao': produto.descricao,
+                                        'preco': produto.valorComJuros,
+                                        'quantidade':
+                                            quantidades[produto.id] ?? 1,
+                                        'peso': produto.peso,
+                                        'dimensoes': produto.dimensoes,
                                         'imagem': produto.imagemPrincipal
                                       });
-
+                                      isAddcarrinho = true;
                                       AppSnackbar.show(
                                         context,
                                         backgroundColor: Themes.green,

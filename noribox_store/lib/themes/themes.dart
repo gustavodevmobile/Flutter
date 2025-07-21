@@ -14,5 +14,32 @@ abstract class Themes {
   static const Color white = Color(0xFFFFFFFF);
   static const Color blackShadow = Colors.black12;
   static const Color green = Colors.green;
+  static const Color greenLight = Color(0xFFB2E1B2);
+  static const Color greenDark = Color.fromARGB(255, 54, 126, 57);
   static const Color error = Colors.red;
+}
+
+class ThemesTextStyle {
+  static const TextStyle title = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: Themes.blackLight,
+  );
+
+  static const TextStyle subtitle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: Themes.greyPrimary,
+  );
+
+  static const TextStyle body = TextStyle(
+    fontSize: 14,
+    color: Themes.blackLight,
+  );
+
+  static const TextStyle button = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Themes.white,
+  );
 }

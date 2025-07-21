@@ -2,17 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:noribox_store/themes/themes.dart';
 
 class ContadorQuantidade extends StatefulWidget {
-  const ContadorQuantidade({super.key});
+  final int quantidadeInicial;
+  final ValueChanged<int>? onQuantidadeChanged;
+
+  const ContadorQuantidade({
+    super.key,
+    this.quantidadeInicial = 1,
+    this.onQuantidadeChanged,
+  });
 
   @override
   State<ContadorQuantidade> createState() => _ContadorQuantidadeState();
 }
 
 class _ContadorQuantidadeState extends State<ContadorQuantidade> {
+  int quantidade = 1;
   bool _isHoverRemove = false;
   bool _isHoverAdd = false;
-  // bool _isPressedRemove = false;
-  // bool _isPressedAdd = false;
+
+  @override
+  void initState() {
+    super.initState();
+    quantidade = widget.quantidadeInicial;
+  }
+
+  void atualizarQuantidade(int novoValor) {
+    setState(() {
+      quantidade = novoValor;
+    });
+    if (widget.onQuantidadeChanged != null) {
+      widget.onQuantidadeChanged!(quantidade);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +55,9 @@ class _ContadorQuantidadeState extends State<ContadorQuantidade> {
                 onExit: (_) => setState(() => _isHoverRemove = false),
                 child: IconButton(
                   onPressed: () {
-                    setState(() {
-                     
-                      // Aqui você pode adicionar a lógica para diminuir a quantidade
-                    });
+                    if (quantidade > 1) {
+                      atualizarQuantidade(quantidade - 1);
+                    }
                   },
                   icon: Icon(
                     Icons.remove,
@@ -55,8 +75,8 @@ class _ContadorQuantidadeState extends State<ContadorQuantidade> {
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                  child: const Text(
-                    '1',
+                  child: Text(
+                    '$quantidade',
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
@@ -66,7 +86,9 @@ class _ContadorQuantidadeState extends State<ContadorQuantidade> {
                 onEnter: (_) => setState(() => _isHoverAdd = true),
                 onExit: (_) => setState(() => _isHoverAdd = false),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    atualizarQuantidade(quantidade + 1);
+                  },
                   icon: Icon(
                     Icons.add,
                     color: _isHoverAdd ? Themes.white : Colors.black,

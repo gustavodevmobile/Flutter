@@ -46,4 +46,16 @@ class CalcularFreteController with ChangeNotifier {
 
     return lista;
   }
+
+  Map<String, dynamic> criarObjetoCalcularFrete(
+      String id, String dimensoes, String peso) {
+    final partes = dimensoes.split('x');
+    return {
+      'id': id,
+      'width': double.tryParse(partes[0].replaceAll(',', '.')) ?? 0,
+      'height': double.tryParse(partes[1].replaceAll(',', '.')) ?? 0,
+      'length': double.tryParse(partes[2].replaceAll(',', '.')) ?? 0,
+      'weight': double.tryParse(peso.replaceAll(',', '.')) ?? 0,
+    };
+  }
 }

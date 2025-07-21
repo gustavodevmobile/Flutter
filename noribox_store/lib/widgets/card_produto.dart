@@ -14,8 +14,14 @@ class CardProduto extends StatefulWidget {
   final VoidCallback? onTapCard;
   final VoidCallback? onTapAddCarinho;
 
+  final ValueChanged<int>? onQuantidadeChanged;
+
   const CardProduto(
-      {super.key, required this.produto, this.onTapCard, this.onTapAddCarinho});
+      {super.key,
+      required this.produto,
+      this.onTapCard,
+      this.onTapAddCarinho,
+      this.onQuantidadeChanged});
 
   @override
   State<CardProduto> createState() => _CardProdutoState();
@@ -23,6 +29,8 @@ class CardProduto extends StatefulWidget {
 
 class _CardProdutoState extends State<CardProduto> {
   bool hovering = false;
+  int quantidade = 1;
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -153,11 +161,27 @@ class _CardProdutoState extends State<CardProduto> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                ContadorQuantidade(),
+                ContadorQuantidade(
+                  quantidadeInicial: 1,
+                  onQuantidadeChanged: (qtd) {
+                    setState(() {
+                      quantidade = qtd;
+                    });
+                    if (widget.onQuantidadeChanged != null) {
+                      widget.onQuantidadeChanged!(qtd);
+                    }
+                  },
+                ),
                 const SizedBox(height: 8),
                 CustomButton(
-                    onPressed: widget.onTapAddCarinho,
-                    backgroundColor: Themes.green,
+                    onPressed: () {
+                      if (widget.onTapAddCarinho != null) {
+                        widget.onTapAddCarinho!();
+                        // Passe a quantidade para onde precisar
+                        print(
+                            'Adicionar ao carrinho com quantidade: $quantidade');
+                      }
+                    },
                     foregroundColor: Colors.white,
                     //width: 150,
                     height: 40,

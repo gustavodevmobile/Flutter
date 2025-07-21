@@ -38,6 +38,7 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
   late final DateTime dataEntrega;
   late final String dataFormatada;
   late final ValueNotifier<String> imagemCentralNotifier;
+  int quantidade = 1;
 
   @override
   void initState() {
@@ -84,7 +85,8 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
   Widget build(BuildContext context) {
     final produtosController = Provider.of<ProdutosController>(context);
     final calcularFrete = Provider.of<CalcularFreteController>(context);
-    final carrinhoController = Provider.of<CarrinhoController>(context, listen: false);
+    final carrinhoController =
+        Provider.of<CarrinhoController>(context, listen: false);
 
     return Stack(
       children: [
@@ -144,292 +146,13 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: MouseRegion(
-                                  onExit: (event) => atualizarImagemCentral(
-                                      widget.produto.imagemPrincipal),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      MouseRegion(
-                                        onEnter: (_) => atualizarImagemCentral(
-                                            widget.produto.imagemPrincipal),
-                                        child: CardImageProdutoWidget(
-                                          fit: BoxFit.contain,
-                                          isBorder: true,
-                                          imagemUrl:
-                                              widget.produto.imagemPrincipal,
-                                        ),
-                                      ),
-                                      MouseRegion(
-                                        onEnter: (_) => atualizarImagemCentral(
-                                            widget.produto.imagem2 ??
-                                                widget.produto.imagemPrincipal),
-                                        child: CardImageProdutoWidget(
-                                          fit: BoxFit.contain,
-                                          isBorder: true,
-                                          imagemUrl: widget.produto.imagem2 !=
-                                                  null
-                                              ? widget.produto.imagem2!
-                                              : widget.produto.imagemPrincipal,
-                                        ),
-                                      ),
-                                      MouseRegion(
-                                        onEnter: (_) => atualizarImagemCentral(
-                                            widget.produto.imagem3 ??
-                                                widget.produto.imagemPrincipal),
-                                        child: CardImageProdutoWidget(
-                                          fit: BoxFit.contain,
-                                          isBorder: true,
-                                          imagemUrl: widget.produto.imagem3 !=
-                                                  null
-                                              ? widget.produto.imagem3!
-                                              : widget.produto.imagemPrincipal,
-                                        ),
-                                      ),
-                                      MouseRegion(
-                                        onEnter: (_) => atualizarImagemCentral(
-                                            widget.produto.imagem4 ??
-                                                widget.produto.imagemPrincipal),
-                                        child: CardImageProdutoWidget(
-                                          isBorder: true,
-                                          fit: BoxFit.cover,
-                                          padding: 0.0,
-                                          imagemUrl: widget.produto.imagem4 !=
-                                                  null
-                                              ? widget.produto.imagem4!
-                                              : widget.produto.imagemPrincipal,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
+                              buildImagensMiniatura(),
                               if (widget.produto.imagemPrincipal.isNotEmpty)
-                                Column(
-                                  children: [
-                                    ValueListenableBuilder(
-                                        valueListenable: imagemCentralNotifier,
-                                        builder: (context, imagem, _) {
-                                          return AnimatedSwitcher(
-                                            duration: const Duration(
-                                                milliseconds: 500),
-                                            child: CardImageProdutoWidget(
-                                              key: ValueKey(
-                                                  '${imagem}_${DateTime.now().millisecondsSinceEpoch}'),
-                                              imagemUrl: imagem,
-                                              width: 500,
-                                              height: 500,
-                                              widtthImage: 400,
-                                              heightImage: 400,
-                                              fit: BoxFit.contain,
-                                              isBorder: true,
-                                            ),
-                                          );
-                                        }),
-                                    AvaliacoesProdutoWidget(
-                                        notaMedia: 5, quantidadeAvaliacoes: 4),
-                                  ],
-                                ),
+                                buildImagemPrincipal(),
                               //Spacer(),
                               const SizedBox(width: 20),
-                              Flexible(
-                                flex: 2,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  // mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      widget.produto.nome,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.aboreto(
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.bold,
-                                        color: Themes.redPrimary,
-                                      ),
-                                    ),
-                                    //const SizedBox(height: 6),
-                                    Text(
-                                      widget.produto.descricao,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.aboreto(
-                                        fontSize: 16,
-                                        color: Themes.redPrimary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    CustomTextRich(
-                                      textPrimary: 'Categoria:',
-                                      fontSizePrimary: 14,
-                                      colorTextPrimary: Colors.black,
-                                      textSecondary: 'Utensílios',
-                                      fontSizeSecondary: 16,
-                                      isBoldSecondary: true,
-                                    ),
-                                    CustomTextRich(
-                                        textPrimary: 'Material:',
-                                        fontSizePrimary: 14,
-                                        colorTextPrimary: Colors.black,
-                                        textSecondary: widget.produto.material,
-                                        fontSizeSecondary: 16,
-                                        isBoldSecondary: true),
-                                    CustomTextRich(
-                                      textPrimary: 'Dimensões:',
-                                      fontSizePrimary: 14,
-                                      colorTextPrimary: Colors.black,
-                                      textSecondary: widget.produto.dimensoes,
-                                      fontSizeSecondary: 16,
-                                      isBoldSecondary: true,
-                                      textTertiary: 'cm',
-                                      fontSizeTertiary: 12,
-                                      colorTextTertiary: Colors.black54,
-                                    ),
-                                    CustomTextRich(
-                                      textPrimary: 'Peso:',
-                                      fontSizePrimary: 14,
-                                      colorTextPrimary: Colors.black,
-                                      textSecondary: widget.produto.peso,
-                                      fontSizeSecondary: 16,
-                                      isBoldSecondary: true,
-                                      textTertiary: 'kg',
-                                      fontSizeTertiary: 12,
-                                      colorTextTertiary: Colors.black54,
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Center(
-                                      child: ContadorQuantidade(),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Center(
-                                      child: Animate(
-                                        effects: [
-                                          FadeEffect(
-                                              duration: 400.ms, delay: 350.ms),
-                                          SlideEffect(
-                                              duration: 400.ms,
-                                              begin: Offset(0, 0.2)),
-                                        ],
-                                        child: CustomTextRich(
-                                          textPrimary: 'R\$',
-                                          fontSizePrimary: 18,
-                                          colorTextPrimary: Themes.redPrimary,
-                                          textSecondary:
-                                              Formatters.formatercurrency(widget
-                                                  .produto.valorNoPix
-                                                  .toStringAsFixed(2)),
-                                          fontSizeSecondary: 40,
-                                          colorTextSecondary: Themes.redPrimary,
-                                          isBoldSecondary: true,
-                                          textTertiary: '(no pix)',
-                                          fontSizeTertiary: 14,
-                                          colorTextTertiary: Themes.green,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          CustomTextRich(
-                                            textPrimary: 'ou em até',
-                                            textSecondary: '12x',
-                                            fontSizePrimary: 14,
-                                            colorTextSecondary:
-                                                Themes.redPrimary,
-                                            fontSizeSecondary: 18,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          CustomTextRich(
-                                            textPrimary: 'de',
-                                            fontSizePrimary: 14,
-                                            textSecondary:
-                                                'R\$ ${(widget.produto.valorVenda / 12).toStringAsFixed(2)}',
-                                            colorTextSecondary:
-                                                Themes.redPrimary,
-                                            fontSizeSecondary: 18,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    !widget.produto.freteGratis
-                                        ? Center(
-                                            child: CalculaFreteWidget(
-                                              onCalcularFrete: (cep) async {
-                                                final result =
-                                                    await calcularFrete
-                                                        .calcularFrete(
-                                                            cepDestino: cep,
-                                                            products: [
-                                                      {
-                                                        'id': widget.produto.id,
-                                                        'width': 23,
-                                                        'height': 12,
-                                                        'length': 11,
-                                                        'weight': 1.2,
-                                                      }
-                                                    ]);
-                                                final extrairValores =
-                                                    calcularFrete
-                                                        .extrairValoresServicos(
-                                                            result);
-                                                // print(
-                                                //     'Resultado do frete: $result');
-                                                return extrairValores;
-                                              },
-                                            ),
-                                          )
-                                        : Column(
-                                            children: [
-                                              Text(
-                                                'Frete Grátis',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Themes.green),
-                                              ),
-                                              Text(Formatters
-                                                  .dataEntregaFormatada(12))
-                                            ],
-                                          ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        IconFavorito(),
-                                        const SizedBox(width: 4),
-                                        Flexible(
-                                          flex: 2,
-                                          child: CustomButton(
-                                            onPressed: () {
-                                              carrinhoController
-                                                  .adicionarProduto({
-                                                'id': widget.produto.id,
-                                                'nome': widget.produto.nome,
-                                                'descricao':
-                                                    widget.produto.descricao,
-                                                'imagem': widget
-                                                    .produto.imagemPrincipal
-                                              });
-                                            },
-                                            width: 200,
-                                            height: 50,
-                                            backgroundColor: Colors.green,
-                                            foregroundColor: Colors.white,
-                                            borderRadius: 12,
-                                            elevation: 2,
-                                            child:
-                                                Text('Adicionar ao Carrinho'),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
+                              buildResumoProduto(
+                                  carrinhoController, calcularFrete),
                             ],
                           ),
                         ),
@@ -569,8 +292,6 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
                                     onPressed: () {},
                                     width: 200,
                                     height: 50,
-                                    backgroundColor: Colors.green,
-                                    foregroundColor: Colors.white,
                                     borderRadius: 12,
                                     elevation: 2,
                                     child: Text('Adicionar Avaliação'),
@@ -649,6 +370,276 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
         ),
         ButtonWhatsapp(),
       ],
+    );
+  }
+
+  Widget buildImagensMiniatura() {
+    return Expanded(
+      child: MouseRegion(
+        onExit: (event) =>
+            atualizarImagemCentral(widget.produto.imagemPrincipal),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MouseRegion(
+              onEnter: (_) =>
+                  atualizarImagemCentral(widget.produto.imagemPrincipal),
+              child: CardImageProdutoWidget(
+                fit: BoxFit.contain,
+                isBorder: true,
+                imagemUrl: widget.produto.imagemPrincipal,
+              ),
+            ),
+            MouseRegion(
+              onEnter: (_) => atualizarImagemCentral(
+                  widget.produto.imagem2 ?? widget.produto.imagemPrincipal),
+              child: CardImageProdutoWidget(
+                fit: BoxFit.contain,
+                isBorder: true,
+                imagemUrl: widget.produto.imagem2 != null
+                    ? widget.produto.imagem2!
+                    : widget.produto.imagemPrincipal,
+              ),
+            ),
+            MouseRegion(
+              onEnter: (_) => atualizarImagemCentral(
+                  widget.produto.imagem3 ?? widget.produto.imagemPrincipal),
+              child: CardImageProdutoWidget(
+                fit: BoxFit.contain,
+                isBorder: true,
+                imagemUrl: widget.produto.imagem3 != null
+                    ? widget.produto.imagem3!
+                    : widget.produto.imagemPrincipal,
+              ),
+            ),
+            MouseRegion(
+              onEnter: (_) => atualizarImagemCentral(
+                  widget.produto.imagem4 ?? widget.produto.imagemPrincipal),
+              child: CardImageProdutoWidget(
+                isBorder: true,
+                fit: BoxFit.cover,
+                padding: 0.0,
+                imagemUrl: widget.produto.imagem4 != null
+                    ? widget.produto.imagem4!
+                    : widget.produto.imagemPrincipal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildImagemPrincipal() {
+    return Column(
+      children: [
+        ValueListenableBuilder(
+            valueListenable: imagemCentralNotifier,
+            builder: (context, imagem, _) {
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child: CardImageProdutoWidget(
+                  key: ValueKey(
+                      '${imagem}_${DateTime.now().millisecondsSinceEpoch}'),
+                  imagemUrl: imagem,
+                  width: 500,
+                  height: 500,
+                  widtthImage: 400,
+                  heightImage: 400,
+                  fit: BoxFit.contain,
+                  isBorder: true,
+                ),
+              );
+            }),
+        AvaliacoesProdutoWidget(notaMedia: 5, quantidadeAvaliacoes: 4),
+      ],
+    );
+  }
+
+  Widget buildResumoProduto(CarrinhoController carrinhoController,
+      CalcularFreteController calcularFrete) {
+    return Flexible(
+      flex: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            widget.produto.nome,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.aboreto(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Themes.redPrimary,
+            ),
+          ),
+          //const SizedBox(height: 6),
+          Text(
+            widget.produto.descricao,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.aboreto(
+              fontSize: 16,
+              color: Themes.redPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 6),
+          CustomTextRich(
+            textPrimary: 'Categoria:',
+            fontSizePrimary: 14,
+            colorTextPrimary: Colors.black,
+            textSecondary: 'Utensílios',
+            fontSizeSecondary: 16,
+            isBoldSecondary: true,
+          ),
+          CustomTextRich(
+              textPrimary: 'Material:',
+              fontSizePrimary: 14,
+              colorTextPrimary: Colors.black,
+              textSecondary: widget.produto.material,
+              fontSizeSecondary: 16,
+              isBoldSecondary: true),
+          CustomTextRich(
+            textPrimary: 'Dimensões:',
+            fontSizePrimary: 14,
+            colorTextPrimary: Colors.black,
+            textSecondary: widget.produto.dimensoes,
+            fontSizeSecondary: 16,
+            isBoldSecondary: true,
+            textTertiary: 'cm',
+            fontSizeTertiary: 12,
+            colorTextTertiary: Colors.black54,
+          ),
+          CustomTextRich(
+            textPrimary: 'Peso:',
+            fontSizePrimary: 14,
+            colorTextPrimary: Colors.black,
+            textSecondary: widget.produto.peso,
+            fontSizeSecondary: 16,
+            isBoldSecondary: true,
+            textTertiary: 'kg',
+            fontSizeTertiary: 12,
+            colorTextTertiary: Colors.black54,
+          ),
+          const SizedBox(height: 12),
+          Center(
+            child: ContadorQuantidade(
+              quantidadeInicial: 1,
+              onQuantidadeChanged: (qtd) {
+                quantidade = qtd;
+                if (carrinhoController.produtosId.isNotEmpty) {
+                  carrinhoController.atualizarQuantidade(
+                      widget.produto.id, qtd);
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+          Center(
+            child: Animate(
+              effects: [
+                FadeEffect(duration: 400.ms, delay: 350.ms),
+                SlideEffect(duration: 400.ms, begin: Offset(0, 0.2)),
+              ],
+              child: CustomTextRich(
+                textPrimary: 'R\$',
+                fontSizePrimary: 18,
+                colorTextPrimary: Themes.redPrimary,
+                textSecondary: Formatters.formatercurrency(
+                    widget.produto.valorNoPix.toStringAsFixed(2)),
+                fontSizeSecondary: 40,
+                colorTextSecondary: Themes.redPrimary,
+                isBoldSecondary: true,
+                textTertiary: '(no pix)',
+                fontSizeTertiary: 14,
+                colorTextTertiary: Themes.green,
+              ),
+            ),
+          ),
+          SizedBox(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomTextRich(
+                  textPrimary: 'ou em até',
+                  textSecondary: '12x',
+                  fontSizePrimary: 14,
+                  colorTextSecondary: Themes.redPrimary,
+                  fontSizeSecondary: 18,
+                ),
+                const SizedBox(width: 4),
+                CustomTextRich(
+                  textPrimary: 'de',
+                  fontSizePrimary: 14,
+                  textSecondary:
+                      'R\$ ${(widget.produto.valorVenda / 12).toStringAsFixed(2)}',
+                  colorTextSecondary: Themes.redPrimary,
+                  fontSizeSecondary: 18,
+                ),
+              ],
+            ),
+          ),
+          !widget.produto.freteGratis
+              ? Center(
+                  child: CalculaFreteWidget(
+                    isBorder: true,
+                    onCalcularFrete: (cep) async {
+                      final result = await calcularFrete
+                          .calcularFrete(cepDestino: cep, products: [
+                        calcularFrete.criarObjetoCalcularFrete(
+                            widget.produto.id,
+                            widget.produto.dimensoes ?? '0x0x0',
+                            widget.produto.peso ?? '0.0'),
+                      ]);
+                      final extrairValores =
+                          calcularFrete.extrairValoresServicos(result);
+                      // print(
+                      //     'Resultado do frete: $result');
+                      return extrairValores;
+                    },
+                  ),
+                )
+              : Column(
+                  children: [
+                    Text(
+                      'Frete Grátis',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Themes.green),
+                    ),
+                    Text(Formatters.dataEntregaFormatada(12))
+                  ],
+                ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconFavorito(),
+              const SizedBox(width: 4),
+              Flexible(
+                flex: 2,
+                child: CustomButton(
+                  onPressed: () {
+                    carrinhoController.adicionarProduto({
+                      'id': widget.produto.id,
+                      'nome': widget.produto.nome,
+                      'descricao': widget.produto.descricao,
+                      'quantidade': quantidade,
+                      'preco': widget.produto.valorComJuros,
+                      'imagem': widget.produto.imagemPrincipal
+                    });
+                  },
+                  width: 200,
+                  height: 50,
+                  borderRadius: 12,
+                  elevation: 2,
+                  child: Text('Adicionar ao Carrinho'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -91,10 +91,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                                       children: [
                                         Text(
                                             '${produtoCarrinho.produtosId[index]['descricao']}'),
-                                        Text(
-                                          'Quantidade: 1',
-                                          style: TextStyle(fontSize: 12),
-                                        ),
+                                        Text('Quantidade: ${produtoCarrinho.produtosId[index]['quantidade']}'),
                                       ],
                                     ),
                                     trailing: IconButton(
@@ -127,7 +124,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                                 child: Text('Ver carrinho'),
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/carrinho');
-                                 // removeCarrinhoOverlay();
+                                  // removeCarrinhoOverlay();
                                 },
                               ),
                             ),
@@ -181,7 +178,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   child: Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: Themes.redSecondary,
+                      color: Themes.redPrimary,
                     ),
                     padding: const EdgeInsets.only(left: 8),
                   ).animate().fadeIn(delay: 100.ms),
@@ -273,7 +270,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Themes.redPrimary,
+                              color:Colors.greenAccent,
                               shape: BoxShape.circle,
                             ),
                             child: Consumer<CarrinhoController>(
@@ -281,7 +278,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                               return Text(
                                 '${qtd.produtosId.length}',
                                 style: const TextStyle(
-                                    color: Colors.white, fontSize: 12),
+                                    color: Colors.black, fontSize: 12),
                               );
                             }),
                           ),
@@ -297,7 +294,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       // TODO: Navegar para login
                     },
                     child: const Text('Entrar',
-                        style: TextStyle(color: Colors.redAccent)),
+                        style: TextStyle(color: Themes.redPrimary)),
                   ).animate().fadeIn(delay: 500.ms),
 
                   // Cadastrar
