@@ -8,8 +8,8 @@ import 'package:noribox_store/widgets/app_bar.dart';
 import 'package:noribox_store/widgets/button_whatsapp.dart';
 import 'package:noribox_store/widgets/card_image_products.dart';
 import 'package:noribox_store/widgets/card_produto.dart';
-import 'package:noribox_store/widgets/custom_button.dart';
 import 'package:noribox_store/widgets/footer_widget.dart';
+import 'package:noribox_store/hive/carrinho_storage_hive.dart';
 import 'package:provider/provider.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
 import 'package:noribox_store/models/produtos_models.dart';
@@ -32,6 +32,12 @@ class _EcommercePageState extends State<EcommercePage> {
   void initState() {
     super.initState();
     pageController = PageController();
+    // Carregar produtos do carrinho ao iniciar a página
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Provider.of<CarrinhoController>(context, listen: false)
+          .recuperarProdutos();
+      // Inicializar quantidades com base nos produtos do carrinho
+    });
   }
 
   @override
@@ -46,6 +52,7 @@ class _EcommercePageState extends State<EcommercePage> {
         Provider.of<ProdutosController>(context, listen: false);
     final carrinhoController =
         Provider.of<CarrinhoController>(context, listen: false);
+
     return Stack(
       children: [
         Scaffold(
@@ -254,16 +261,15 @@ class _EcommercePageState extends State<EcommercePage> {
                                       );
                                       //abrirTelaCheckout(context, produto);
                                     },
-                                    onQuantidadeChanged: (c) {
+                                    onQuantidadeChanged: (c) async {
                                       quantidades[produto.id] = c;
-                                      if (carrinhoController
-                                              .produtosId.isNotEmpty &&
-                                          isAddcarrinho) {
-                                        carrinhoController.atualizarQuantidade(
-                                            produto.id, c);
-                                      }
+                                      await carrinhoController
+                                          .atualizarQuantidade(
+                                        produto.id,
+                                        c,
+                                      );
                                     },
-                                    onTapAddCarinho: () {
+                                    onTapAddCarinho: () async {
                                       carrinhoController.adicionarProduto({
                                         'id': produto.id,
                                         'nome': produto.nome,
@@ -275,11 +281,11 @@ class _EcommercePageState extends State<EcommercePage> {
                                         'dimensoes': produto.dimensoes,
                                         'imagem': produto.imagemPrincipal
                                       });
-                                      isAddcarrinho = true;
+                                      //isAddcarrinho = true;
                                       AppSnackbar.show(
                                         context,
                                         backgroundColor: Themes.green,
-                                        '${produto.nome} adicionado ao carrinho',
+                                        '${produto.descricao} adicionado ao carrinho',
                                         duration: const Duration(seconds: 2),
                                       );
                                     },

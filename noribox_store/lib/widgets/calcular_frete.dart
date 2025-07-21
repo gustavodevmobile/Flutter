@@ -36,6 +36,7 @@ class _CalculaFreteWidgetState extends State<CalculaFreteWidget> {
   List<Map<String, dynamic>>? _resultado;
   bool _loading = false;
   String? _erro;
+  int? _cardSelecionado;
 
   void _calcular() async {
     setState(() {
@@ -144,7 +145,6 @@ class _CalculaFreteWidgetState extends State<CalculaFreteWidget> {
                               )
                             : const Text('Calcular'),
                       ),
-                      
                     ],
                   ),
                 ),
@@ -152,11 +152,18 @@ class _CalculaFreteWidgetState extends State<CalculaFreteWidget> {
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Column(
-                      children: _resultado!.map((item) {
+                      children: _resultado!.asMap().entries.map((entry) {
+                        final idx = entry.key;
+                        final item = entry.value;
                         return Card(
-                          color: widget.color ?? Colors.white,
+                          color: _cardSelecionado == idx
+                              ? Themes.greyTertiary // cor do card selecionado
+                              : (widget.color ?? Colors.white), // cor pa
                           child: InkWell(
                             onTap: () {
+                              setState(() {
+                                _cardSelecionado = idx;
+                              });
                               if (widget.onSelecionarFrete != null) {
                                 widget.onSelecionarFrete!(
                                     double.parse(item['preco']));
@@ -180,7 +187,7 @@ class _CalculaFreteWidgetState extends State<CalculaFreteWidget> {
                                   CustomTextRich(
                                     textPrimary: 'R\$',
                                     fontSizePrimary: 10,
-                                    colorTextPrimary: Themes.greyPrimary,
+                                    colorTextPrimary: Themes.blackLight,
                                     textSecondary: Formatters.formatercurrency(
                                         item['preco'].toString()),
                                     fontSizeSecondary: 16,
@@ -188,7 +195,7 @@ class _CalculaFreteWidgetState extends State<CalculaFreteWidget> {
                                     textTertiary:
                                         ' - ${item['prazoEntrega']} dias úteis',
                                     fontSizeTertiary: 14,
-                                    colorTextTertiary: Themes.greyPrimary,
+                                    colorTextTertiary: Themes.blackLight,
                                   )
                                 ],
                               ),

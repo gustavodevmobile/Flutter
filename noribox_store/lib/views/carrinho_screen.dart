@@ -22,6 +22,7 @@ class CarrinhoScreen extends StatefulWidget {
 }
 
 class _CarrinhoScreenState extends State<CarrinhoScreen> {
+  double freteSelecionado = 0.0;
   @override
   Widget build(BuildContext context) {
     final carrinhoController = Provider.of<CarrinhoController>(context);
@@ -201,9 +202,9 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
                       child: IconButton(
                         icon:
                             const Icon(Icons.delete, color: Themes.redPrimary),
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
-                            carrinhoController.produtosId.removeAt(index);
+                            carrinhoController.removerProduto(produto['id']);
                           });
                         },
                       ),
@@ -327,7 +328,7 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
                 setState(() {
                   // Salve o valor do frete selecionado em uma variável
                   print('Frete selecionado: $precoFrete');
-                  // Aqui você pode atualizar o estado do widget ou fazer outras ações necessárias
+                  freteSelecionado = precoFrete;
                 });
               },
             ),
@@ -397,7 +398,32 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
                       textPrimary: 'R\$',
                       fontSizePrimary: 12,
                       colorTextPrimary: Themes.greyPrimary,
-                      textSecondary: Formatters.formatercurrency('0.00'),
+                      textSecondary: Formatters.formatercurrency(
+                          (freteSelecionado).toString()),
+                      fontSizeSecondary: 16,
+                      colorTextSecondary: Themes.redPrimary,
+                      isBoldSecondary: true,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(
+                      'Desconto',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Themes.greyPrimary,
+                      ),
+                    ),
+                    const Spacer(),
+                    CustomTextRich(
+                      textPrimary: 'R\$',
+                      fontSizePrimary: 12,
+                      colorTextPrimary: Themes.greyPrimary,
+                      textSecondary: Formatters.formatercurrency(
+                          (freteSelecionado).toString()),
                       fontSizeSecondary: 16,
                       colorTextSecondary: Themes.redPrimary,
                       isBoldSecondary: true,
@@ -420,28 +446,37 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
                       textPrimary: 'R\$',
                       fontSizePrimary: 12,
                       colorTextPrimary: Themes.greyPrimary,
-                      textSecondary:
-                          Formatters.formatercurrency(subtotal.toString()),
+                      textSecondary: Formatters.formatercurrency(
+                          (subtotal + freteSelecionado).toString()),
                       fontSizeSecondary: 16,
                       colorTextSecondary: Themes.redPrimary,
                       isBoldSecondary: true,
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Center(
-                  child: CustomButton(
-                    height: 40,
-                    child: const Text('Finalizar compra'),
-                    onPressed: () {
-                      // Aqui você pode adicionar a lógica para finalizar a compra
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Compra finalizada com sucesso!'),
-                        ),
-                      );
-                    },
-                  ),
+                const SizedBox(height: 24),
+                CustomButton(
+                  height: 30,
+                  width: double.infinity,
+                  backgroundColor: Themes.redPrimary,
+                  child: const Text('Continuar comprando'),
+                  onPressed: () {
+                    
+                  },
+                ),
+                const SizedBox(height: 8),
+                CustomButton(
+                  height: 30,
+                  width: double.infinity,
+                  child: const Text('Finalizar compra'),
+                  onPressed: () {
+                    // Aqui você pode adicionar a lógica para finalizar a compra
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Compra finalizada com sucesso!'),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -24,6 +24,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
   void showCarrinhoOverlay(BuildContext context) {
     final produtoCarrinho =
         Provider.of<CarrinhoController>(context, listen: false);
+
     if (_overlayEntry != null) return;
     final overlay = Overlay.of(context);
     _overlayEntry = OverlayEntry(
@@ -64,6 +65,15 @@ class _AppBarWidgetState extends State<AppBarWidget> {
               child: produtoCarrinho.produtosId.isNotEmpty
                   ? Column(
                       children: [
+                        Text(
+                          'Seu carrinho',
+                          style: GoogleFonts.aboreto(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Themes.redPrimary),
+                        ),
+                        const Divider(),
+                        const SizedBox(height: 8),
                         ListView.builder(
                           shrinkWrap: true,
                           itemCount: produtoCarrinho.produtosId.length,
@@ -80,9 +90,13 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: ListTile(
-                                    leading: CachedNetworkImage(
-                                        imageUrl: produtoCarrinho
-                                            .produtosId[index]['imagem']),
+                                    leading: SizedBox(
+                                      width: 60,
+                                      height: 60,
+                                      child: CachedNetworkImage(
+                                          imageUrl: produtoCarrinho
+                                              .produtosId[index]['imagem']),
+                                    ),
                                     title: Text(produtoCarrinho
                                         .produtosId[index]['nome']),
                                     subtitle: Column(
@@ -91,13 +105,14 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                                       children: [
                                         Text(
                                             '${produtoCarrinho.produtosId[index]['descricao']}'),
-                                        Text('Quantidade: ${produtoCarrinho.produtosId[index]['quantidade']}'),
+                                        Text(
+                                            'Quantidade: ${produtoCarrinho.produtosId[index]['quantidade']}'),
                                       ],
                                     ),
                                     trailing: IconButton(
                                       icon: const Icon(
                                         Icons.delete,
-                                        color: Themes.redPrimary,
+                                        color: Colors.red,
                                       ),
                                       onPressed: () {
                                         Provider.of<CarrinhoController>(context,
@@ -114,26 +129,39 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                           },
                         ),
                         const SizedBox(height: 8),
-                        Row(
-                          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        Column(
                           children: [
-                            Expanded(
-                              child: CustomButton(
-                                backgroundColor: Themes.greyLight,
-                                foregroundColor: Colors.black,
-                                child: Text('Ver carrinho'),
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/carrinho');
-                                  // removeCarrinhoOverlay();
-                                },
-                              ),
+                            CustomButton(
+                              width: double.infinity,
+                              backgroundColor: Themes.redPrimary,
+                              foregroundColor: Colors.white,
+                              child: Text('Ver carrinho'),
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/carrinho');
+                                // removeCarrinhoOverlay();
+                              },
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: CustomButton(
-                                child: Text('Finalizar'),
-                                onPressed: () {},
-                              ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomButton(
+                                    child: Text('Finalizar'),
+                                    onPressed: () {},
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: CustomButton(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    child: Text('Limpar'),
+                                    onPressed: () {
+                                      produtoCarrinho.limparCarrinho();
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -270,7 +298,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color:Colors.greenAccent,
+                              color: Colors.greenAccent,
                               shape: BoxShape.circle,
                             ),
                             child: Consumer<CarrinhoController>(
