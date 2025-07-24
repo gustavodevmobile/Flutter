@@ -6,7 +6,8 @@ import 'package:noribox_store/themes/themes.dart';
 import 'package:noribox_store/utils/app_snackbar.dart';
 import 'package:noribox_store/utils/formatters.dart';
 import 'package:noribox_store/utils/validador.dart';
-import 'package:noribox_store/widgets/app_bar.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_desktop.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_widget.dart';
 import 'package:noribox_store/widgets/button_whatsapp.dart';
 // import removido pois não está sendo utilizado
 import 'package:noribox_store/widgets/cadastro_progress_indicator.dart';
@@ -121,7 +122,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
         Scaffold(
           backgroundColor: Themes.greyLight,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(140),
+            preferredSize: ThemesSize.heightAppBar,
             child: AppBarWidget(),
           ),
           body: Padding(
@@ -161,7 +162,7 @@ class _CadastroUsuarioScreenState extends State<CadastroUsuarioScreen> {
                             decoration: BoxDecoration(
                               //color: Colors.white,
                               border: Border.all(
-                                color: Colors.grey.shade300,
+                                color: Themes.greyPrimary,
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.circular(12),

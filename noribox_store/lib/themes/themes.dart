@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 abstract class Themes {
@@ -17,6 +16,18 @@ abstract class Themes {
   static const Color greenLight = Color(0xFFB2E1B2);
   static const Color greenDark = Color.fromARGB(255, 54, 126, 57);
   static const Color error = Colors.red;
+  static const Color warning = Colors.amber;
+  static const Color success = Colors.green;
+  static const Color info = Colors.blue;
+  static const Color bluePrimary = Colors.indigo;
+
+  
+}
+
+class ThemesSize {
+  static const Size heightAppBar = Size.fromHeight(200);
+  static const double defaultBorderRadius = 8.0;
+  static const double defaultIconSize = 24.0;
 }
 
 class ThemesTextStyle {
@@ -41,5 +52,16 @@ class ThemesTextStyle {
     fontSize: 16,
     fontWeight: FontWeight.bold,
     color: Themes.white,
+  );
+
+  static ButtonStyle textButtonHoverNone = ButtonStyle(
+    overlayColor: WidgetStateProperty.all(Colors.transparent),
+  );
+
+  static OutlineInputBorder outlineTextForm = OutlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.indigo, // Altere para a cor desejada
+      width: 2,
+    ),
   );
 }

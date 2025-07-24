@@ -3,6 +3,7 @@ import 'package:noribox_store/hive/carrinho_storage_hive.dart';
 
 class CarrinhoController extends ChangeNotifier {
   List<Map<String, dynamic>> produtosId = [];
+  Map<String, dynamic>? produto = {};
 
   void limparCarrinho() {
     CarrinhoPreferences.limparCarrinho();
@@ -32,6 +33,8 @@ class CarrinhoController extends ChangeNotifier {
 
   Future<void> adicionarProduto(Map<String, dynamic> resumoProduto) async {
     await CarrinhoPreferences.salvarProdutos(resumoProduto);
+
+    notifyListeners();
     produtosId = await CarrinhoPreferences.recuperarProdutos();
     print('Produtos adicionado : ${resumoProduto['descricao']}');
     notifyListeners();
@@ -48,5 +51,11 @@ class CarrinhoController extends ChangeNotifier {
       // Você pode optar por lançar uma exceção ou lidar com o erro de outra forma
       // throw Exception('Erro ao remover produto: $id');
     }
+  }
+
+  Future<void> buscarProdutos(String id) async {
+    produto = await CarrinhoPreferences.buscarProdutoPorId(id);
+    print('Produtos buscados: $produto');
+    notifyListeners();
   }
 }

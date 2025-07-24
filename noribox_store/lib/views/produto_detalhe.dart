@@ -8,10 +8,12 @@ import 'package:noribox_store/controllers/produtos_controllers.dart';
 import 'package:noribox_store/models/produtos_models.dart';
 import 'package:noribox_store/themes/themes.dart';
 import 'package:noribox_store/utils/formatters.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_mobile.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_widget.dart';
 import 'package:noribox_store/widgets/button_whatsapp.dart';
 import 'package:noribox_store/widgets/icon_favorito.dart';
 import 'package:noribox_store/views/produto_detalhe_mobile.dart';
-import 'package:noribox_store/widgets/app_bar.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_desktop.dart';
 import 'package:noribox_store/widgets/avaliacao_produto.dart';
 import 'package:noribox_store/widgets/avaliacao_usuario.dart';
 import 'package:noribox_store/widgets/calcular_frete.dart';
@@ -87,13 +89,16 @@ class _ProdutoDetalheScreenState extends State<ProdutoDetalheScreen> {
     final calcularFrete = Provider.of<CalcularFreteController>(context);
     final carrinhoController =
         Provider.of<CarrinhoController>(context, listen: false);
+    final widthScreen = MediaQuery.of(context).size.width;
 
     return Stack(
       children: [
         Scaffold(
           backgroundColor: Themes.colorBackground,
           appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(140), child: AppBarWidget()),
+            preferredSize: ThemesSize.heightAppBar,
+            child: AppBarWidget()
+          ),
           body: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1200),

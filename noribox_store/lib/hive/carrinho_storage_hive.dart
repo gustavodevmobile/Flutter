@@ -5,7 +5,7 @@ class CarrinhoPreferences {
   static const String _keyCarrinho = 'carrinho_produtos';
 
   // Salvar produto (adiciona se não existir)
-  static Future<void> salvarProdutos(Map<String, dynamic> novoProduto) async {
+  static Future<bool> salvarProdutos(Map<String, dynamic> novoProduto) async {
     final box = await Hive.openBox(_keyCarrinho);
     final produtos = box.get('produtos', defaultValue: <String>[]) as List;
     final lista =
@@ -16,7 +16,9 @@ class CarrinhoPreferences {
       lista.add(novoProduto);
       final novaListaSerializada = lista.map((p) => jsonEncode(p)).toList();
       await box.put('produtos', novaListaSerializada);
+      return true;
     }
+    return false; // Produto foi adicionado com sucesso
   }
 
   // Atualizar quantidade
@@ -44,14 +46,14 @@ class CarrinhoPreferences {
   static Future<List<Map<String, dynamic>>> recuperarProdutos() async {
     final box = await Hive.openBox(_keyCarrinho);
     final produtos = box.get('produtos', defaultValue: <String>[]) as List;
+    //print('Produtos recuperados: $produtos');
     return produtos.map((p) => jsonDecode(p) as Map<String, dynamic>).toList();
   }
 
   // Remover produto pelo id
   static Future<void> removerProduto(String id) async {
     final box = await Hive.openBox(_keyCarrinho);
-    final produtos =
-        box.get('produtos', defaultValue: <String>[]) as List;
+    final produtos = box.get('produtos', defaultValue: <String>[]) as List;
     final lista =
         produtos.map((p) => jsonDecode(p) as Map<String, dynamic>).toList();
 
@@ -65,5 +67,18 @@ class CarrinhoPreferences {
     final box = await Hive.openBox(_keyCarrinho);
     await box.delete('produtos');
     print('Carrinho limpo');
+  }
+
+  // Buscar produto pelo id
+  static Future<Map<String, dynamic>?> buscarProdutoPorId(String id) async {
+    final box = await Hive.openBox(_keyCarrinho);
+    final produtos = box.get('produtos', defaultValue: <String>[]) as List;
+    final lista =
+        produtos.map((p) => jsonDecode(p) as Map<String, dynamic>).toList();
+    try {
+      return lista.firstWhere((produto) => produto['id'] == id);
+    } catch (e) {
+      return null;
+    }
   }
 }

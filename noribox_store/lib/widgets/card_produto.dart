@@ -43,7 +43,7 @@ class _CardProdutoState extends State<CardProduto> {
         child: GestureDetector(
           onTap: widget.onTapCard,
           child: Container(
-            width: 200,
+            width: 190,
             //height: 350,
             margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 4),
             decoration: BoxDecoration(
@@ -173,7 +173,9 @@ class _CardProdutoState extends State<CardProduto> {
                   },
                 ),
                 const SizedBox(height: 8),
-                CustomButton(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CustomButton(
                     onPressed: () {
                       if (widget.onTapAddCarinho != null) {
                         widget.onTapAddCarinho!();
@@ -183,11 +185,18 @@ class _CardProdutoState extends State<CardProduto> {
                       }
                     },
                     foregroundColor: Colors.white,
-                    //width: 150,
                     height: 40,
-                    child: const Text('Adicionar ao Carrinho')),
+                    child: Text(
+                      'Adicionar ao Carrinho',
+                      style: GoogleFonts.aboreto(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
 
-                const SizedBox(height: 8),
+                //const SizedBox(height: 8),
               ],
             ),
           ),

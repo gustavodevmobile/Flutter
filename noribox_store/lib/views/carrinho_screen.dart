@@ -4,7 +4,9 @@ import 'package:noribox_store/controllers/calcular_frete.dart';
 import 'package:noribox_store/controllers/carrinho_controllers.dart';
 import 'package:noribox_store/themes/themes.dart';
 import 'package:noribox_store/utils/formatters.dart';
-import 'package:noribox_store/widgets/app_bar.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_desktop.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_mobile.dart';
+import 'package:noribox_store/widgets/appbar/app_bar_widget.dart';
 import 'package:noribox_store/widgets/button_whatsapp.dart';
 import 'package:noribox_store/widgets/calcular_frete.dart';
 import 'package:noribox_store/widgets/caminho_produto.dart';
@@ -31,12 +33,14 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
       (total, produto) =>
           total + (produto['preco'] * (produto['quantidade'] ?? 1)),
     );
+    final widthScreen = MediaQuery.of(context).size.width;
     return Stack(
       children: [
         Scaffold(
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(140),
-            child: AppBarWidget(),
+            preferredSize: ThemesSize.heightAppBar,
+            child: 
+            AppBarWidget()
           ),
           body: Center(
             child: ConstrainedBox(
@@ -460,9 +464,7 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
                   width: double.infinity,
                   backgroundColor: Themes.redPrimary,
                   child: const Text('Continuar comprando'),
-                  onPressed: () {
-                    
-                  },
+                  onPressed: () {},
                 ),
                 const SizedBox(height: 8),
                 CustomButton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:noribox_store/controllers/calcular_frete.dart';
 import 'package:noribox_store/controllers/carrinho_controllers.dart';
 import 'package:noribox_store/controllers/produtos_controllers.dart';
@@ -9,11 +10,13 @@ import 'package:noribox_store/service/produtos_service.dart';
 import 'package:noribox_store/service/cliente_service.dart';
 import 'package:noribox_store/views/carrinho_screen.dart';
 import 'package:noribox_store/views/home.dart';
+import 'package:noribox_store/views/login_cliente.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(); // CARREGUE O DOTENV ANTES DE TUDO
+  await Hive.initFlutter();
   runApp(
     MultiProvider(
       providers: [
@@ -52,6 +55,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const EcommercePage(),
         '/carrinho': (context) => const CarrinhoScreen(),
+        '/loginCliente': (context) => const LoginClienteScreen(),
       },
     );
   }
